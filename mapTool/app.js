@@ -2,7 +2,8 @@ var app = require('http').createServer(webResponse),
     RequireCheck = require('./requireCheck.js').RequireCheck,
     MapTool = require('./maptool.js').MapTool,
     AWS = require("aws-sdk"),
-    io = require('socket.io').listen(app)
+    io = require('socket.io').listen(app),
+    fs = require('fs');
     
 var rc = null,
     ge = null;

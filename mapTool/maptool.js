@@ -3,6 +3,7 @@
 //----------------------------------------------------------------
 
 var AWS = require("aws-sdk");
+var Player = require("./player.js").Player;
 
 var self = null;
 
@@ -77,7 +78,7 @@ MapTool.prototype.newConnection = function(socket) {
     console.log('Player ID: ' + p.id);
     p.init({socket:socket});
     self.queuePlayer(p,'connInfo', {mapNames: self.maps,id:p.id});
-    self.addPlayer(p);
+    self.players[p.id] = p;
 }
 
 MapTool.prototype.emit = function() {
