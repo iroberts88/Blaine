@@ -40,6 +40,17 @@
                     MainMenu.update(dt);
                 }
             });
+
+            Acorn.addState({
+                stateId: 'mapgen',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    MapGen.init();
+                },
+                update: function(dt){
+                    MapGen.update(dt);
+                }
+            });
             
         },
 
@@ -55,6 +66,15 @@
             });
 
             Acorn.Input.onMouseMove(function(e) {
+                try{
+                    if (Acorn.Input.buttons[2]){
+                        var mX = Acorn.Input.mouse.X - Acorn.Input.mouse.prevX;
+                        var mY = Acorn.Input.mouse.Y - Acorn.Input.mouse.prevY;
+                        window.currentGameMap.move(mX,mY);
+                    }
+                }catch(e){
+                    //TODO handle mousemove for all game states
+                }
             });
 
             Acorn.Input.onTouchEvent(function(e) {

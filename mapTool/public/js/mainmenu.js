@@ -10,7 +10,7 @@
                 interactive: true,buttonMode: true,buttonGlow: true,
                 position: [Graphics.width* 0.25,(Graphics.height * .5)],
                 clickFunc: function onClick(){
-                    
+                    Acorn.changeState('mapgen');
                 }
             });
             this.newText.style.fontSize = 48;
@@ -22,7 +22,7 @@
                 interactive: true,buttonMode: true,buttonGlow: true,
                 position: [Graphics.width* 0.75,(Graphics.height * .5)],
                 clickFunc: function onClick(){
-                    
+                    //send edit request to server
                 }
             });
             this.editText.style.fontSize = 48;

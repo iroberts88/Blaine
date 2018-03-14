@@ -7,6 +7,7 @@
         loader: null,
         resources: null,
         resourcesReady: null,
+        resourceList: null,
 
         pallette: {
             color1:'#AACCDD', // Font color
@@ -28,6 +29,8 @@
             //create the PIXI stage
             this.app = new PIXI.Application(this.width, this.height, {backgroundColor: 0xFFFFFF});
             this.filtersToApply = [];
+
+            this.resourceList = [];
 
             this.ratio = this.width/this.height;
             this.baseWidth = this.width;
@@ -63,6 +66,8 @@
             this.uiContainer.position.x = 0;
             this.uiContainer.position.y = 0;
             this.ui.addChild(this.uiContainer); //ADD UI CONTAINER
+            this.uiPrimitives1 = new PIXI.Graphics();
+            this.ui.addChild(this.uiPrimitives1)
             this.uiContainer2 = new PIXI.Container();
             this.uiContainer2.position.x = 0;
             this.uiContainer2.position.y = 0;
@@ -77,6 +82,7 @@
             this.resources = {};
             this.resourcesReady = false;
             this.animationSpeeds = {};
+
         },
 
         drawBG: function(color1,color2){
@@ -180,14 +186,15 @@
                 'tl_flower_', 4
             ];
             Graphics.animationSpeeds = {
-                'water': .85,
-                'deep_water': .85,
-                'br_flower_': .85,
-                'tl_flower_': .85
+                'water': .05,
+                'deep_water': .05,
+                'br_flower_': .05,
+                'tl_flower_': .05
             };
 
             //add all movie clips to resources
             for (var j = 0; j < animations.length; j += 2){
+                Graphics.resourceList.push(animations[j]);
                 var animTextures = [];
                 for (var i=0; i < animations[j+1]; i++){
                     var texture = PIXI.Texture.fromFrame(animations[j] + (i+1) + ".png");

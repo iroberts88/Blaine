@@ -42,6 +42,7 @@ function init() {
             rc.ready('dbMaps');
         }
     });
+            rc.ready('dbMaps');
 
 }
 init();
