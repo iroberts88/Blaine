@@ -141,6 +141,7 @@
             }
         },
         handleMouseClick: function(e){
+            console.log(e.button)
             Acorn.Input.buttons[e.button] = true;
             if(Acorn.Input.mouseClickCallback && typeof Acorn.Input.mouseClickCallback === 'function') {
                 Acorn.Input.mouseClickCallback(e);

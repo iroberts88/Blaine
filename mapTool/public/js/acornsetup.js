@@ -67,7 +67,7 @@
 
             Acorn.Input.onMouseMove(function(e) {
                 try{
-                    if (Acorn.Input.buttons[2]){
+                    if (Acorn.Input.buttons[1]){
                         var mX = Acorn.Input.mouse.X - Acorn.Input.mouse.prevX;
                         var mY = Acorn.Input.mouse.Y - Acorn.Input.mouse.prevY;
                         window.currentGameMap.move(mX,mY);

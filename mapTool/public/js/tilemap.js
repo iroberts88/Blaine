@@ -29,15 +29,14 @@
     };
 
     TileMap.prototype.move = function(x,y){
-        Graphics.worldContainer.position.x += x/2;
-        Graphics.worldContainer.position.y += y/2;
-        Graphics.worldPrimitives.position.x = Graphics.worldContainer.position.x;
-        Graphics.worldPrimitives.position.y = Graphics.worldContainer.position.y;
+        Graphics.world.position.x += x/2;
+        Graphics.world.position.y += y/2;
     }
 
     TileMap.prototype.createSector = function(x,y){
         //creates a new sector
         //adds it to the sectors list at 'xxy'
+        if (typeof this.sectors[x+'x'+y] != 'undefined'){return;}
         var sArray = []; 
         for (var i = 0; i < this.SECTOR_TILES; i++){
             var arr = [];
@@ -45,13 +44,13 @@
                 var newTile = new Tile();
                 newTile.init({
                     sectorId: x + 'x' + y,
-                    x: j,
-                    y: i,
+                    x: i,
+                    y: y,
                     resource: this.defaultTile,
                     open: false
                 });
-                newTile.sprite.position.x = x*this.fullSectorSize + j*this.TILE_SIZE;
-                newTile.sprite.position.y = y*this.fullSectorSize + i*this.TILE_SIZE;
+                newTile.sprite.position.x = x*this.fullSectorSize + i*this.TILE_SIZE;
+                newTile.sprite.position.y = y*this.fullSectorSize + j*this.TILE_SIZE;
                 Graphics.worldContainer.addChild(newTile.sprite);
                 arr.push(newTile);
             }
@@ -87,6 +86,25 @@
         this.sectors[x + 'x' + y] = sector;
     };
 
+    TileMap.prototype.getTile = function(){
+        //defaults to mouse position
+        try{
+            var mX = (Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.world.position.x;
+            var mY = (Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.world.position.y;
+
+            var sectorX = Math.floor(mX/(this.SECTOR_TILES*this.TILE_SIZE));
+            var sectorY = Math.floor(mY/(this.SECTOR_TILES*this.TILE_SIZE));
+
+            var mTX = mX - sectorX*(this.SECTOR_TILES*this.TILE_SIZE);
+            var mTY = mY - sectorY*(this.SECTOR_TILES*this.TILE_SIZE);
+            var tileX = Math.floor(mTX/(this.TILE_SIZE));
+            var tileY = Math.floor(mTY/(this.TILE_SIZE));
+            return this.sectors[sectorX + 'x' + sectorY].tiles[tileX][tileY];
+        }catch(e){
+            console.log(e);
+            return 'none';
+        }
+    }
     TileMap.prototype.update = function(deltaTime){
 
     };

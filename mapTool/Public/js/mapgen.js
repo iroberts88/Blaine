@@ -3,7 +3,15 @@
     MapGen = {
        
         tileSelectorOn: false,
+
+        //Modes:
+            //place
+            //overlay
+            //triggers
         currentMode: 'place',
+        currentPlaceTile: '1x1',
+
+        linesOn: true,
 
         init: function() {
             this.drawBG();
@@ -51,7 +59,7 @@
             this.tileSelector.position.y = 5 + this.tileSelector.height/2;
             Graphics.uiContainer.addChild(this.tileSelector);
 
-            var tt = new PIXI.Text('Current - ');
+            var tt = new PIXI.Text('Current - ', style);
             tt.position.y = this.tileSelector.position.y;
             tt.anchor.y = 0.5;
             tt.position.x = 10 + this.tileSelector.width + 5;
@@ -91,6 +99,23 @@
             this.exitButton.position.y = 25 + this.exitButton.height/2;
             Graphics.uiContainer.addChild(this.exitButton);
 
+            this.lineButton = Graphics.makeUiElement({
+                text: 'Toggle Lines',
+                style: style,
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    if (MapGen.linesOn){
+                        MapGen.linesOn = false;
+                        Graphics.worldPrimitives.visible = false;
+                    }else{
+                        MapGen.linesOn = true;
+                        Graphics.worldPrimitives.visible = true;
+                    }
+                }
+            });
+            this.lineButton.position.x = Graphics.width/2;
+            this.lineButton.position.y = 25 + this.lineButton.height/2;
+            Graphics.uiContainer.addChild(this.lineButton);
             
 
             this.saveButton = Graphics.makeUiElement({
@@ -168,11 +193,11 @@
 
             this.sectorInfo = new PIXI.Text("Sector: ",style);
             this.tileInfo = new PIXI.Text('',style);
-            this.tileInfo.anchor.x = 1;
+            this.tileInfo.anchor.x = 0.5;
             this.tileInfo.anchor.y = 1;
             this.sectorInfo.anchor.x = 0.5;
             this.sectorInfo.anchor.y = 1;
-            this.tileInfo.position.x = Graphics.width - 20;
+            this.tileInfo.position.x = Graphics.width - 100;
             this.tileInfo.position.y = Graphics.height - 20;
             this.sectorInfo.visible = false;
             this.tileInfo.visible = false;
@@ -204,7 +229,7 @@
                             buttonMode: true,
                             anchor: [0,0],
                             clickFunc: function onClick(e){
-                                MapGen.map.defaultTile = e.currentTarget.resource;
+                                MapGen.currentPlaceTile = e.currentTarget.resource;
                                 Graphics.uiPrimitives1.clear();
                                 Graphics.uiContainer2.removeChildren();
                                 MapGen.tileSelectorOn = false;
@@ -237,7 +262,7 @@
                     buttonMode: true,
                     anchor: [0,0],
                     clickFunc: function onClick(e){
-                        MapGen.map.defaultTile = e.currentTarget.resource;
+                        MapGen.currentPlaceTile = e.currentTarget.resource;
                         Graphics.uiPrimitives1.clear();
                         Graphics.uiContainer2.removeChildren();
                         MapGen.tileSelectorOn = false;
@@ -264,9 +289,65 @@
         update: function(deltaTime){
             this.map.update(deltaTime);
             this.setInfoTexts();
+
+            if (Acorn.Input.mouseDown && Acorn.Input.buttons[2]){
+                Acorn.Input.mouseDown = false;
+                switch(this.currentMode){
+                    case 'place':
+                        //get sector and tile
+                        var tile = this.map.getTile();
+                        if (tile == 'none'){
+                            var sectorX = Math.floor(((Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.world.position.x)/(this.map.SECTOR_TILES*this.map.TILE_SIZE));
+                            var sectorY = Math.floor(((Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.world.position.y)/(this.map.SECTOR_TILES*this.map.TILE_SIZE));
+                            if (confirm('Add sector at ' + sectorX + 'x' + sectorY + '?')){
+                                this.map.createSector(sectorX,sectorY);
+                            }
+                            Acorn.Input.buttons = {}
+                        }else{
+                            Acorn.Input.buttons = {2:true}
+                            Acorn.Input.mouseDown = true;
+                            if (tile.resource != this.currentPlaceTile){
+                                Graphics.worldContainer.removeChild(tile.sprite);
+                                var posX = tile.sprite.position.x;
+                                var posY = tile.sprite.position.y;
+                                console.log(this.currentPlaceTile);
+                                tile.sprite = Graphics.getSprite(this.currentPlaceTile);
+                                console.log(tile);
+                                tile.sprite.position.x = posX;
+                                tile.sprite.position.y = posY;
+                                tile.sprite.scale.x = 2;
+                                tile.sprite.scale.y = 2;
+                                Graphics.worldContainer.addChild(tile.sprite);
+                                tile.resource = this.currentPlaceTile;
+                            }
+                        }
+                }
+            }
         },
 
         setInfoTexts: function(){
+            //get tile and sector
+            var mX = (Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.world.position.x;
+            var mY = (Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.world.position.y;
+
+            var sectorX = Math.floor(mX/(this.map.SECTOR_TILES*this.map.TILE_SIZE));
+            var sectorY = Math.floor(mY/(this.map.SECTOR_TILES*this.map.TILE_SIZE));
+            this.sectorInfo.text = 'Sector: ' + sectorX + 'x' + sectorY;
+            this.sectorInfo.visible = true;
+            this.sectorInfo.position.y = this.tileInfo.position.y - this.tileInfo.height - 10;
+            this.sectorInfo.position.x = Graphics.width/2;
+
+            if (typeof this.map.sectors[sectorX + 'x' + sectorY] == 'undefined'){
+                this.tileInfo.text = 'Click to create new sector at ' + sectorX + 'x' + sectorY;
+            }else{
+                var mTX = mX - sectorX*(this.map.SECTOR_TILES*this.map.TILE_SIZE);
+                var mTY = mY - sectorY*(this.map.SECTOR_TILES*this.map.TILE_SIZE);
+                var tileX = Math.floor(mTX/(this.map.TILE_SIZE));
+                var tileY = Math.floor(mTY/(this.map.TILE_SIZE));
+                this.tileInfo.text = 'Tile: ' + tileX + 'x' + tileY;
+            }
+            this.tileInfo.visible = true;
+            this.tileInfo.position.x = Graphics.width/2;
 
         },
         drawBG: function(){
@@ -276,7 +357,7 @@
                         'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 
                         'silver', 'teal', 'white', 'yellow'
                     ];
-            Graphics.drawBG('white', 'white');
+            Graphics.drawBG('silver', 'silver');
 
         },
 
