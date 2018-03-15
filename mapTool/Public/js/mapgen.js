@@ -1,17 +1,34 @@
 
 (function(window) {
     MapGen = {
-       
+        
+        ZOOM_SETTINGS: [0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8],
+        currentZoomSetting: 4,
         tileSelectorOn: false,
 
         //Modes:
             //place
             //overlay
+            //blocked
+            //directions
             //triggers
+
+        //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        //delete Sectors
+        //overlay
+        //blocked
+        //directions
+        //triggers
+        //save map
+        //edit map
+        //delete map
+        //exit
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         currentMode: 'place',
         currentPlaceTile: '1x1',
 
         linesOn: true,
+
 
         init: function() {
             this.drawBG();
@@ -25,7 +42,7 @@
             var gotTile = false;
             var tile;
             while(!gotTile){
-                tile = prompt("Please enter a default tile for this map", '1x22');
+                tile = prompt("Please enter a default tile for this map", '1x1');
                 try{
                     var sprite = Graphics.resources[tile];
                     this.map.defaultTile = tile;
@@ -75,6 +92,89 @@
             this.currentTileSprite.position.x = tt.position.x + tt.width + this.currentTileSprite.width/2;
             Graphics.uiContainer.addChild(this.currentTileSprite);
 
+            //Tool Selector
+
+            this.modeText = Graphics.makeUiElement({
+                text: 'Mode Select - Current: place',
+                style: style,
+                anchor: [0,1]
+            });
+            this.modeText.position.x = 5;
+            this.modeText.position.y = 150;
+            Graphics.uiContainer.addChild(this.modeText);
+
+            this.placeButton = Graphics.makeUiElement({
+                text: 'place',
+                style: style,
+                position: [5, this.modeText.position.y+35],
+                anchor: [0,0],
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    MapGen.currentMode = 'place'
+                }
+            });
+            Graphics.uiContainer.addChild(this.placeButton);
+
+            this.overlayButton = Graphics.makeUiElement({
+                text: 'overlay',
+                style: style,
+                position: [5, this.placeButton.position.y + 5 + this.placeButton.height],
+                anchor: [0,0],
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    MapGen.currentMode = 'overlay'
+                }
+            });
+            Graphics.uiContainer.addChild(this.overlayButton);
+
+            this.blockedButton = Graphics.makeUiElement({
+                text: 'blocked',
+                style: style,
+                position: [5, this.overlayButton.position.y + 5 + this.overlayButton.height],
+                anchor: [0,0],
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    MapGen.currentMode = 'blocked'
+                }
+            });
+            Graphics.uiContainer.addChild(this.blockedButton);
+
+            this.directionsButton = Graphics.makeUiElement({
+                text: 'directions',
+                style: style,
+                position: [5, this.blockedButton.position.y + 5 + this.blockedButton.height],
+                anchor: [0,0],
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    MapGen.currentMode = 'directions'
+                }
+            });
+            Graphics.uiContainer.addChild(this.directionsButton);
+
+            this.triggersButton = Graphics.makeUiElement({
+                text: 'triggers',
+                style: style,
+                position: [5, this.directionsButton.position.y + 5 + this.directionsButton.height],
+                anchor: [0,0],
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    MapGen.currentMode = 'triggers'
+                }
+            });
+            Graphics.uiContainer.addChild(this.triggersButton);
+
+            this.deleteSectorsButton = Graphics.makeUiElement({
+                text: 'delete sectors',
+                style: style,
+                position: [5, this.triggersButton.position.y + 5 + this.triggersButton.height],
+                anchor: [0,0],
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    MapGen.currentMode = 'deleteSectors'
+                }
+            });
+            Graphics.uiContainer.addChild(this.deleteSectorsButton);
+
             //back button
             this.exitButton = Graphics.makeUiElement({
                 text: 'Exit',
@@ -116,6 +216,42 @@
             this.lineButton.position.x = Graphics.width/2;
             this.lineButton.position.y = 25 + this.lineButton.height/2;
             Graphics.uiContainer.addChild(this.lineButton);
+
+             this.zoomText = Graphics.makeUiElement({
+                text: 'Zoom (Current: 1)',
+                style: style,
+            });
+            this.zoomText.style.fontSize = 20;
+            this.zoomText.position.x = Graphics.width/1.5;
+            this.zoomText.position.y = this.zoomText.height/2;
+            Graphics.uiContainer.addChild(this.zoomText);
+
+            this.zoomUp = Graphics.makeUiElement({
+                text: '+',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    Settings.zoom('in');
+                }
+            });
+            this.zoomUp.style.fontSize = 40;
+            this.zoomUp.position.x = Graphics.width/1.5 - this.zoomUp.width/2 - 20;
+            this.zoomUp.position.y = this.zoomUp.height/2 + this.zoomText.height/2+5;
+            Graphics.uiContainer.addChild(this.zoomUp);
+            this.zoomDown = Graphics.makeUiElement({
+                text: '-',
+                style: style,
+                interactive: true,
+                buttonMode: true,
+                clickFunc: function onClick(){
+                    Settings.zoom('out');
+                }
+            });
+            this.zoomDown.style.fontSize = 40;
+            this.zoomDown.position.x = Graphics.width/1.5 + this.zoomDown.width/2 + 20;
+            this.zoomDown.position.y = this.zoomDown.height/2 + this.zoomText.height/2+5;
+            Graphics.uiContainer.addChild(this.zoomDown);
             
 
             this.saveButton = Graphics.makeUiElement({
@@ -290,6 +426,34 @@
             this.map.update(deltaTime);
             this.setInfoTexts();
 
+            var zoom = this.ZOOM_SETTINGS[this.currentZoomSetting];
+            if (Acorn.Input.isPressed(Acorn.Input.Key.UP)){
+                Graphics.worldContainer.position.y += this.map.fullSectorSize;
+                Graphics.worldPrimitives.position.y += this.map.fullSectorSize;
+                Acorn.Input.setValue(Acorn.Input.Key.UP, false);
+            }
+            if (Acorn.Input.isPressed(Acorn.Input.Key.DOWN)){
+                Graphics.worldContainer.position.y -= this.map.fullSectorSize;
+                Graphics.worldPrimitives.position.y -= this.map.fullSectorSize;
+                Acorn.Input.setValue(Acorn.Input.Key.DOWN, false);
+            }
+            if (Acorn.Input.isPressed(Acorn.Input.Key.LEFT)){
+                Graphics.worldContainer.position.x += this.map.fullSectorSize;
+                Graphics.worldPrimitives.position.x += this.map.fullSectorSize;
+                Acorn.Input.setValue(Acorn.Input.Key.LEFT, false);
+            }
+            if (Acorn.Input.isPressed(Acorn.Input.Key.RIGHT)){
+                Graphics.worldContainer.position.x -= this.map.fullSectorSize;
+                Graphics.worldPrimitives.position.x -= this.map.fullSectorSize;
+                Acorn.Input.setValue(Acorn.Input.Key.RIGHT, false);
+            }
+            if (Acorn.Input.isPressed(Acorn.Input.Key.HOME)){
+                Graphics.worldContainer.position.y = Graphics.height/2;
+                Graphics.worldPrimitives.position.y = Graphics.height/2;
+                Graphics.worldContainer.position.x = Graphics.width/2;
+                Graphics.worldPrimitives.position.x = Graphics.width/2;
+                Acorn.Input.setValue(Acorn.Input.Key.HOME, false);
+            }
             if (Acorn.Input.mouseDown && Acorn.Input.buttons[2]){
                 Acorn.Input.mouseDown = false;
                 switch(this.currentMode){
@@ -297,8 +461,8 @@
                         //get sector and tile
                         var tile = this.map.getTile();
                         if (tile == 'none'){
-                            var sectorX = Math.floor(((Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.world.position.x)/(this.map.SECTOR_TILES*this.map.TILE_SIZE));
-                            var sectorY = Math.floor(((Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.world.position.y)/(this.map.SECTOR_TILES*this.map.TILE_SIZE));
+                            var sectorX = Math.floor(((Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.worldContainer.position.x)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                            var sectorY = Math.floor(((Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.worldContainer.position.y)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
                             if (confirm('Add sector at ' + sectorX + 'x' + sectorY + '?')){
                                 this.map.createSector(sectorX,sectorY);
                             }
@@ -327,11 +491,14 @@
 
         setInfoTexts: function(){
             //get tile and sector
-            var mX = (Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.world.position.x;
-            var mY = (Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.world.position.y;
+            var zoom = this.ZOOM_SETTINGS[this.currentZoomSetting];
+            this.zoomText.text = 'Zoom (Current: ' + zoom + ')';
+            this.modeText.text = 'Mode Select - Current: ' + this.currentMode;
+            var mX = (Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.worldContainer.position.x;
+            var mY = (Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.worldContainer.position.y;
 
-            var sectorX = Math.floor(mX/(this.map.SECTOR_TILES*this.map.TILE_SIZE));
-            var sectorY = Math.floor(mY/(this.map.SECTOR_TILES*this.map.TILE_SIZE));
+            var sectorX = Math.floor(mX/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+            var sectorY = Math.floor(mY/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
             this.sectorInfo.text = 'Sector: ' + sectorX + 'x' + sectorY;
             this.sectorInfo.visible = true;
             this.sectorInfo.position.y = this.tileInfo.position.y - this.tileInfo.height - 10;
@@ -340,10 +507,10 @@
             if (typeof this.map.sectors[sectorX + 'x' + sectorY] == 'undefined'){
                 this.tileInfo.text = 'Click to create new sector at ' + sectorX + 'x' + sectorY;
             }else{
-                var mTX = mX - sectorX*(this.map.SECTOR_TILES*this.map.TILE_SIZE);
-                var mTY = mY - sectorY*(this.map.SECTOR_TILES*this.map.TILE_SIZE);
-                var tileX = Math.floor(mTX/(this.map.TILE_SIZE));
-                var tileY = Math.floor(mTY/(this.map.TILE_SIZE));
+                var mTX = mX - sectorX*(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom);
+                var mTY = mY - sectorY*(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom);
+                var tileX = Math.floor(mTX/(this.map.TILE_SIZE*zoom));
+                var tileY = Math.floor(mTY/(this.map.TILE_SIZE*zoom));
                 this.tileInfo.text = 'Tile: ' + tileX + 'x' + tileY;
             }
             this.tileInfo.visible = true;

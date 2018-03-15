@@ -63,6 +63,11 @@
             });
 
             Acorn.Input.onScroll(function(e) {
+                if (e.deltaY < 0){
+                    Settings.zoom('in');
+                }else{
+                    Settings.zoom('out');
+                }
             });
 
             Acorn.Input.onMouseMove(function(e) {

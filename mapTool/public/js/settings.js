@@ -22,6 +22,32 @@
             this.currentMap = null;
         },
         
+         zoom: function(dir){
+            var changed = true;
+            if (dir == 'in'){
+                MapGen.currentZoomSetting += 1;
+                if (MapGen.currentZoomSetting == MapGen.ZOOM_SETTINGS.length){
+                    MapGen.currentZoomSetting = MapGen.ZOOM_SETTINGS.length-1;
+                    changed = false
+                }
+            }else if (dir == 'out'){
+                MapGen.currentZoomSetting -= 1;
+                if (MapGen.currentZoomSetting == -1){
+                    MapGen.currentZoomSetting = 0;
+                    changed = false
+                }
+            }
+            if (changed){
+                var t = 1;
+                Graphics.worldContainer.scale.x = MapGen.ZOOM_SETTINGS[MapGen.currentZoomSetting];
+                Graphics.worldContainer.scale.y = MapGen.ZOOM_SETTINGS[MapGen.currentZoomSetting];
+                Graphics.worldPrimitives.clear();
+                for (var i in MapGen.map.sectors){
+                    sector = MapGen.map.sectors[i];
+                    MapGen.map.drawLines(sector);
+                }
+            }
+        },
         toggleAutoFullScreen: function(){
             if (this.autoFullScreen){
                 this.autoFullScreen = false;

@@ -39,8 +39,8 @@
 
             this.world = new PIXI.Container();
             this.world.interactive = true;
-            this.world.position.x = this.width/2;
-            this.world.position.y = this.height/2;
+            this.world.position.x = 0;
+            this.world.position.y = 0;
             this.ui = new PIXI.Container();
             this.bgContainer = new PIXI.Graphics();
             this.bgContainer.position.x = 0;
@@ -54,11 +54,13 @@
             this.showLoadingMessage(true);
 
             this.worldContainer = new PIXI.Container();
-            this.worldContainer.position.x = 0;
-            this.worldContainer.position.y = 0;
+            this.worldContainer.position.x = Graphics.width/2;
+            this.worldContainer.position.y = Graphics.width/2;
             this.worldContainer.interactive = true;
             this.world.addChild(this.worldContainer); // ADD WORLD CONTAINER
             this.worldPrimitives = new PIXI.Graphics();
+            this.worldPrimitives.position.x = Graphics.width/2;
+            this.worldPrimitives.position.y = Graphics.width/2;
             this.world.addChild(this.worldPrimitives); //ADD WORLD PRIMS (Cleared on update);
             this.uiPrimitives = new PIXI.Graphics();
             this.ui.addChild(this.uiPrimitives); // ADD UI PRIMS

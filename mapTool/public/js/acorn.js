@@ -49,12 +49,12 @@
             DOWN: 1,
             LEFT: 2,
             RIGHT: 3,
-            INVENTORY: 4,
+            HOME: 4,
             CHARSHEET: 5,
             ROTATE1: 6,
             ROTATE2: 7,
-            YSCALE1: 8,
-            YSCALE2: 9,
+            DOWN: 8,
+            UP: 9,
             TOGGLEMAP: 10,
             TOGGLESTATS: 11,
             BACKSPACE: 12,
@@ -89,15 +89,13 @@
             window.onwheel = Acorn.Input.handleScroll;
         },
         bind: function() {
-            this.keyBindings[83] = Acorn.Input.Key.YSCALE1; //default S
-            this.keyBindings[87] = Acorn.Input.Key.YSCALE2; //default W
+            this.keyBindings[83] = Acorn.Input.Key.DOWN; //default S
+            this.keyBindings[87] = Acorn.Input.Key.UP; //default W
             this.keyBindings[65] = Acorn.Input.Key.LEFT; //default D
             this.keyBindings[68] = Acorn.Input.Key.RIGHT; //default A
             this.keyBindings[32] = Acorn.Input.Key.TOGGLESTATS; //default Space
-            this.keyBindings[67] = Acorn.Input.Key.CHARSHEET; //default C
+            this.keyBindings[36] = Acorn.Input.Key.HOME; //default C
             this.keyBindings[69] = Acorn.Input.Key.INTERACT; //default E
-            this.keyBindings[68] = Acorn.Input.Key.ROTATE2; //default A
-            this.keyBindings[65] = Acorn.Input.Key.ROTATE1; //default D
             this.keyBindings[77] = Acorn.Input.Key.TOGGLEMAP; //default M
             this.keyBindings[8] = Acorn.Input.Key.BACKSPACE; //default M
             this.keyBindings[38] = Acorn.Input.Key.SCROLLUP; //default M
@@ -107,7 +105,7 @@
             return this.keyBindings[keyCode];
         },
         keyDown: function(keyCode) {
-            //console.log(keyCode);
+            console.log(keyCode);
             this.keysPressed[this.getBinding(keyCode)] = true;
         },
         keyUp: function(keyCode) {
@@ -141,7 +139,6 @@
             }
         },
         handleMouseClick: function(e){
-            console.log(e.button)
             Acorn.Input.buttons[e.button] = true;
             if(Acorn.Input.mouseClickCallback && typeof Acorn.Input.mouseClickCallback === 'function') {
                 Acorn.Input.mouseClickCallback(e);

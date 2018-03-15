@@ -29,8 +29,10 @@
     };
 
     TileMap.prototype.move = function(x,y){
-        Graphics.world.position.x += x/2;
-        Graphics.world.position.y += y/2;
+        Graphics.worldContainer.position.x += x/2;
+        Graphics.worldContainer.position.y += y/2;
+        Graphics.worldPrimitives.position.x += x/2;
+        Graphics.worldPrimitives.position.y += y/2;
     }
 
     TileMap.prototype.createSector = function(x,y){
@@ -63,42 +65,39 @@
             y: y,
             pos: [x*this.fullSectorSize,y*this.fullSectorSize]
         }
-
-        //draw lines
-        Graphics.worldPrimitives.lineStyle(3,0xFF0000,0.5)
-        Graphics.worldPrimitives.moveTo(sector.pos[0],sector.pos[1]);
-        Graphics.worldPrimitives.lineTo(sector.pos[0]+this.fullSectorSize,sector.pos[1]);
-        Graphics.worldPrimitives.lineTo(sector.pos[0]+this.fullSectorSize,sector.pos[1]+this.fullSectorSize);
-        Graphics.worldPrimitives.lineTo(sector.pos[0],sector.pos[1]+this.fullSectorSize);
-        Graphics.worldPrimitives.lineTo(sector.pos[0],sector.pos[1]);
-
-
-        Graphics.worldPrimitives.lineStyle(1,0xFF0000,0.5);
-        for (var i = 1;i < this.SECTOR_TILES;i++){
-            Graphics.worldPrimitives.moveTo(sector.pos[0] + this.TILE_SIZE*i,sector.pos[1]);
-            Graphics.worldPrimitives.lineTo(sector.pos[0] + this.TILE_SIZE*i,sector.pos[1]+this.fullSectorSize);
-        }
-
-        for (var i = 1;i < this.SECTOR_TILES;i++){
-            Graphics.worldPrimitives.moveTo(sector.pos[0],sector.pos[1] + this.TILE_SIZE*i);
-            Graphics.worldPrimitives.lineTo(sector.pos[0]+this.fullSectorSize,sector.pos[1] + this.TILE_SIZE*i);
-        }
         this.sectors[x + 'x' + y] = sector;
-    };
 
+        this.drawLines(sector);
+    };
+    TileMap.prototype.drawLines = function(sector){
+        var zoom = MapGen.ZOOM_SETTINGS[MapGen.currentZoomSetting];
+        //draw lines
+        Graphics.worldPrimitives.lineStyle(1,0xFF0000,0.5);
+
+        for (var i = 0;i <= this.SECTOR_TILES;i++){
+            Graphics.worldPrimitives.moveTo(sector.pos[0]*zoom + this.TILE_SIZE*i*zoom,sector.pos[1]*zoom);
+            Graphics.worldPrimitives.lineTo(sector.pos[0]*zoom + this.TILE_SIZE*i*zoom,sector.pos[1]*zoom+this.fullSectorSize*zoom);
+        }
+
+        for (var i = 0;i <= this.SECTOR_TILES;i++){
+            Graphics.worldPrimitives.moveTo(sector.pos[0]*zoom,sector.pos[1]*zoom + this.TILE_SIZE*i*zoom);
+            Graphics.worldPrimitives.lineTo(sector.pos[0]*zoom+this.fullSectorSize*zoom,sector.pos[1]*zoom + this.TILE_SIZE*i*zoom);
+        }
+    };
     TileMap.prototype.getTile = function(){
         //defaults to mouse position
+        var zoom = MapGen.ZOOM_SETTINGS[MapGen.currentZoomSetting];
         try{
-            var mX = (Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.world.position.x;
-            var mY = (Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.world.position.y;
+            var mX = (Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.worldContainer.position.x;
+            var mY = (Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.worldContainer.position.y;
 
-            var sectorX = Math.floor(mX/(this.SECTOR_TILES*this.TILE_SIZE));
-            var sectorY = Math.floor(mY/(this.SECTOR_TILES*this.TILE_SIZE));
+            var sectorX = Math.floor(mX/(this.SECTOR_TILES*this.TILE_SIZE*zoom));
+            var sectorY = Math.floor(mY/(this.SECTOR_TILES*this.TILE_SIZE*zoom));
 
-            var mTX = mX - sectorX*(this.SECTOR_TILES*this.TILE_SIZE);
-            var mTY = mY - sectorY*(this.SECTOR_TILES*this.TILE_SIZE);
-            var tileX = Math.floor(mTX/(this.TILE_SIZE));
-            var tileY = Math.floor(mTY/(this.TILE_SIZE));
+            var mTX = mX - sectorX*(this.SECTOR_TILES*this.TILE_SIZE*zoom);
+            var mTY = mY - sectorY*(this.SECTOR_TILES*this.TILE_SIZE*zoom);
+            var tileX = Math.floor(mTX/(this.TILE_SIZE*zoom));
+            var tileY = Math.floor(mTY/(this.TILE_SIZE*zoom));
             return this.sectors[sectorX + 'x' + sectorY].tiles[tileX][tileY];
         }catch(e){
             console.log(e);
@@ -127,7 +126,8 @@
             this.sprite = Graphics.getSprite(data.resource); //tile sprite
             this.sprite.scale.x = 2;
             this.sprite.scale.y = 2;
-            this.open = true; //tile is open for movement
+            this.open = true; //tile is open for movement?
+            this.directions = [true,true,true,true]; //able to move [up,right,down,left]
 
             this.overlaySprite = null; //2nd layer sprite
             this.moveTrigger = null; //tile triggers an event when stepped on

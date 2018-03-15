@@ -75,6 +75,7 @@ $(function() {
         if ((key === 32 || key === 38 || key === 37 || key === 39 || key === 40 || key === 127)){
             e.preventDefault();
         }
+        Acorn.Input.keyDown(key);
     });
 
     $(document).keyup(function(e) {
