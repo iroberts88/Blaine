@@ -6,6 +6,7 @@
         currentZoomSetting: 4,
         tileSelectorOn: false,
 
+        changesMade: false,
         //Modes:
             //place
             //overlay
@@ -110,7 +111,7 @@
                 anchor: [0,0],
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentMode = 'place'
+                    MapGen.changeMode('place');
                 }
             });
             Graphics.uiContainer.addChild(this.placeButton);
@@ -122,7 +123,7 @@
                 anchor: [0,0],
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentMode = 'overlay'
+                    MapGen.changeMode('overlay');
                 }
             });
             Graphics.uiContainer.addChild(this.overlayButton);
@@ -134,46 +135,82 @@
                 anchor: [0,0],
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentMode = 'blocked'
+                   MapGen.changeMode('blocked');
                 }
             });
             Graphics.uiContainer.addChild(this.blockedButton);
 
-            this.directionsButton = Graphics.makeUiElement({
-                text: 'directions',
+            this.triggersButton = Graphics.makeUiElement({
+                text: 'set trigger',
                 style: style,
                 position: [5, this.blockedButton.position.y + 5 + this.blockedButton.height],
                 anchor: [0,0],
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentMode = 'directions'
-                }
-            });
-            Graphics.uiContainer.addChild(this.directionsButton);
-
-            this.triggersButton = Graphics.makeUiElement({
-                text: 'triggers',
-                style: style,
-                position: [5, this.directionsButton.position.y + 5 + this.directionsButton.height],
-                anchor: [0,0],
-                interactive: true,buttonMode: true,buttonGlow: true,
-                clickFunc: function onClick(){
-                    MapGen.currentMode = 'triggers'
+                    MapGen.changeMode('settrigger');
                 }
             });
             Graphics.uiContainer.addChild(this.triggersButton);
 
-            this.deleteSectorsButton = Graphics.makeUiElement({
-                text: 'delete sectors',
+            this.triggers2Button = Graphics.makeUiElement({
+                text: 'apply trigger',
                 style: style,
                 position: [5, this.triggersButton.position.y + 5 + this.triggersButton.height],
                 anchor: [0,0],
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.currentMode = 'deleteSectors'
+                    MapGen.changeMode('applytrigger');
+                }
+            });
+            Graphics.uiContainer.addChild(this.triggers2Button);
+
+            this.deleteSectorsButton = Graphics.makeUiElement({
+                text: 'remove sectors',
+                style: style,
+                position: [5, this.triggers2Button.position.y + 5 + this.triggers2Button.height],
+                anchor: [0,0],
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    MapGen.changeMode('deleteSectors');
                 }
             });
             Graphics.uiContainer.addChild(this.deleteSectorsButton);
+
+            this.deleteOverlayButton = Graphics.makeUiElement({
+                text: 'remove overlay',
+                style: style,
+                position: [5, this.deleteSectorsButton.position.y + 5 + this.deleteSectorsButton.height],
+                anchor: [0,0],
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    MapGen.changeMode('deleteOverlay');
+                }
+            });
+            Graphics.uiContainer.addChild(this.deleteOverlayButton);
+
+            this.deleteBlockedButton = Graphics.makeUiElement({
+                text: 'remove blocked',
+                style: style,
+                position: [5, this.deleteOverlayButton.position.y + 5 + this.deleteOverlayButton.height],
+                anchor: [0,0],
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    MapGen.changeMode('deleteblocked');
+                }
+            });
+            Graphics.uiContainer.addChild(this.deleteBlockedButton);
+
+            this.deleteTriggersButton = Graphics.makeUiElement({
+                text: 'remove triggers',
+                style: style,
+                position: [5, this.deleteBlockedButton.position.y + 5 + this.deleteBlockedButton.height],
+                anchor: [0,0],
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    MapGen.changeMode('deletetriggers');
+                }
+            });
+            Graphics.uiContainer.addChild(this.deleteTriggersButton);
 
             //back button
             this.exitButton = Graphics.makeUiElement({
@@ -343,6 +380,36 @@
             Graphics.showLoadingMessage(false);
         },
 
+        changeMode: function(mode){
+            this.currentMode = mode;
+            if (mode == 'blocked' || mode == 'deleteblocked'){
+                for (var k in this.map.sectors){
+                    for (var i = 0; i < this.map.sectors[k].tiles.length;i++){
+                        for (var j = 0; j < this.map.sectors[k].tiles[i].length;j++){
+                            var tile = this.map.sectors[k].tiles[i][j];
+                            if (tile.blocked){
+                                tile.sprite.tint =  0xfcd9d9;
+                                if (tile.overlaySprite){
+                                    tile.overlaySprite.tint = 0xfcd9d9;
+                                }
+                            }
+                        }
+                    }
+                }
+            }else{
+                for (var k in this.map.sectors){
+                    for (var i = 0; i < this.map.sectors[k].tiles.length;i++){
+                        for (var j = 0; j < this.map.sectors[k].tiles[i].length;j++){
+                            var tile = this.map.sectors[k].tiles[i][j];
+                            tile.sprite.tint =  0xFFFFFF;
+                            if (tile.overlaySprite){
+                                tile.overlaySprite.tint = 0xFFFFFF;
+                            }     
+                        }
+                    }
+                }
+            }
+        },
 
         showTileSelector: function(){
             if (this.tileSelectorOn){return;}
@@ -454,6 +521,15 @@
                 Graphics.worldPrimitives.position.x = Graphics.width/2;
                 Acorn.Input.setValue(Acorn.Input.Key.HOME, false);
             }
+            if (Acorn.Input.isPressed(Acorn.Input.Key.TILESELECT)){
+                MapGen.showTileSelector();
+                Acorn.Input.setValue(Acorn.Input.Key.TILESELECT, false);
+            }
+            if (Acorn.Input.isPressed(Acorn.Input.Key.ESCAPE)){
+                Graphics.uiPrimitives1.clear();
+                Graphics.uiContainer2.removeChildren();
+                MapGen.tileSelectorOn = false;
+            }
             if (Acorn.Input.mouseDown && Acorn.Input.buttons[2]){
                 Acorn.Input.mouseDown = false;
                 switch(this.currentMode){
@@ -465,26 +541,122 @@
                             var sectorY = Math.floor(((Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.worldContainer.position.y)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
                             if (confirm('Add sector at ' + sectorX + 'x' + sectorY + '?')){
                                 this.map.createSector(sectorX,sectorY);
+                                this.changesMade = true;
                             }
-                            Acorn.Input.buttons = {}
+                            Acorn.Input.buttons = {};
                         }else{
                             Acorn.Input.buttons = {2:true}
                             Acorn.Input.mouseDown = true;
                             if (tile.resource != this.currentPlaceTile){
-                                Graphics.worldContainer.removeChild(tile.sprite);
-                                var posX = tile.sprite.position.x;
-                                var posY = tile.sprite.position.y;
-                                console.log(this.currentPlaceTile);
-                                tile.sprite = Graphics.getSprite(this.currentPlaceTile);
-                                console.log(tile);
-                                tile.sprite.position.x = posX;
-                                tile.sprite.position.y = posY;
-                                tile.sprite.scale.x = 2;
-                                tile.sprite.scale.y = 2;
-                                Graphics.worldContainer.addChild(tile.sprite);
-                                tile.resource = this.currentPlaceTile;
+                                tile.setSprite(this.currentPlaceTile);
+                                this.changesMade = true;
+                                if (tile.sprite instanceof PIXI.extras.MovieClip){
+                                    for (var k in this.map.sectors){
+                                        for (var i = 0; i < this.map.sectors[k].tiles.length;i++){
+                                            for (var j = 0; j < this.map.sectors[k].tiles[i].length;j++){
+                                                if (this.map.sectors[k].tiles[i][j].sprite instanceof PIXI.extras.MovieClip){
+                                                    this.map.sectors[k].tiles[i][j].sprite.gotoAndPlay(1);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
+                        break;
+                    case 'deleteSectors':
+                        var sectorX = Math.floor(((Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.worldContainer.position.x)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        var sectorY = Math.floor(((Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.worldContainer.position.y)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        //clicked on a sector?
+                        if (typeof this.map.sectors[sectorX + 'x' + sectorY] == 'undefined'){
+                            break;
+                        }else{
+                            if (confirm('Remove sector at ' + sectorX + 'x' + sectorY + '?')){
+                                this.changesMade = true;
+                                this.map.deleteSector(sectorX,sectorY);
+                            }
+                        }
+                        this.map.reDraw();
+                        Acorn.Input.buttons = {}
+                        break;
+                    case 'overlay':
+                        //set overlay sprite
+                        var tile = this.map.getTile();
+                        var sectorX = Math.floor(((Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.worldContainer.position.x)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        var sectorY = Math.floor(((Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.worldContainer.position.y)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        //clicked on a sector?
+                        if (typeof this.map.sectors[sectorX + 'x' + sectorY] == 'undefined'){
+                            break;
+                        }else{
+                            Acorn.Input.buttons = {2:true}
+                            Acorn.Input.mouseDown = true;
+                            if (tile.resource != this.currentPlaceTile){
+                                tile.setOverlaySprite(this.currentPlaceTile);
+                                this.changesMade = true;
+                            }
+                        }
+                        break;
+                    case 'deleteOverlay':
+                        //set overlay sprite
+                        var tile = this.map.getTile();
+                        var sectorX = Math.floor(((Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.worldContainer.position.x)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        var sectorY = Math.floor(((Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.worldContainer.position.y)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        //clicked on a sector?
+                        if (typeof this.map.sectors[sectorX + 'x' + sectorY] == 'undefined'){
+                            break;
+                        }else{
+                            Acorn.Input.buttons = {2:true}
+                            Acorn.Input.mouseDown = true;
+                            if (tile.overlaySprite){
+                                this.changesMade = true;
+                                Graphics.worldContainer.removeChild(tile.overlaySprite);
+                                tile.overlaySprite = null;
+                                tile.overlayResource = null;
+                            }
+                        }
+                        break;
+                    case 'blocked':
+                        //toggle blocked on a node
+                        var tile = this.map.getTile();
+                        var sectorX = Math.floor(((Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.worldContainer.position.x)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        var sectorY = Math.floor(((Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.worldContainer.position.y)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        //clicked on a sector?
+                        if (typeof this.map.sectors[sectorX + 'x' + sectorY] == 'undefined'){
+                            break;
+                        }else{
+                            Acorn.Input.buttons = {2:true}
+                            Acorn.Input.mouseDown = true;
+                            if (!tile.blocked){
+                                this.changesMade = true;
+                                tile.blocked = true;
+                                tile.sprite.tint = 0xfcd9d9;
+                                if (tile.overlaySprite){
+                                    tile.overlaySprite.tint = 0xfcd9d9;
+                                }
+                            }
+                        }
+                        break;
+                    case 'deleteblocked':
+                        //toggle blocked on a node
+                        var tile = this.map.getTile();
+                        var sectorX = Math.floor(((Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.worldContainer.position.x)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        var sectorY = Math.floor(((Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.worldContainer.position.y)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        //clicked on a sector?
+                        if (typeof this.map.sectors[sectorX + 'x' + sectorY] == 'undefined'){
+                            break;
+                        }else{
+                            Acorn.Input.buttons = {2:true}
+                            Acorn.Input.mouseDown = true;
+                            if (tile.blocked){
+                                this.changesMade = true;
+                                tile.blocked = false;
+                                tile.sprite.tint = 0xffffff;
+                                if (tile.overlaySprite){
+                                    tile.overlaySprite.tint = 0xffffff;
+                                }
+                            }
+                        }
+                        break;
                 }
             }
         },

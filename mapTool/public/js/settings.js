@@ -41,11 +41,7 @@
                 var t = 1;
                 Graphics.worldContainer.scale.x = MapGen.ZOOM_SETTINGS[MapGen.currentZoomSetting];
                 Graphics.worldContainer.scale.y = MapGen.ZOOM_SETTINGS[MapGen.currentZoomSetting];
-                Graphics.worldPrimitives.clear();
-                for (var i in MapGen.map.sectors){
-                    sector = MapGen.map.sectors[i];
-                    MapGen.map.drawLines(sector);
-                }
+                MapGen.map.reDraw();
             }
         },
         toggleAutoFullScreen: function(){

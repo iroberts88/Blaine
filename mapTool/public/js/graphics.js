@@ -242,7 +242,7 @@
     			if (t.constructor === Array){
     				var s = new PIXI.extras.MovieClip(t);
                     s.animationSpeed = Graphics.animationSpeeds[id];
-                    s.gotoAndPlay(1)
+                    s.gotoAndPlay(1);
     			}else{
     				var s = new PIXI.Sprite(t);
     			}

@@ -50,16 +50,8 @@
             LEFT: 2,
             RIGHT: 3,
             HOME: 4,
-            CHARSHEET: 5,
-            ROTATE1: 6,
-            ROTATE2: 7,
-            DOWN: 8,
-            UP: 9,
-            TOGGLEMAP: 10,
-            TOGGLESTATS: 11,
-            BACKSPACE: 12,
-            SCROLLUP: 13,
-            SCROLLDOWN: 14
+            ESCAPE: 5,
+            TILESELECT: 6,
         },
         keysPressed: [],
         keyBindings: [],
@@ -93,13 +85,9 @@
             this.keyBindings[87] = Acorn.Input.Key.UP; //default W
             this.keyBindings[65] = Acorn.Input.Key.LEFT; //default D
             this.keyBindings[68] = Acorn.Input.Key.RIGHT; //default A
-            this.keyBindings[32] = Acorn.Input.Key.TOGGLESTATS; //default Space
+            this.keyBindings[32] = Acorn.Input.Key.TILESELECT; //default Space
             this.keyBindings[36] = Acorn.Input.Key.HOME; //default C
-            this.keyBindings[69] = Acorn.Input.Key.INTERACT; //default E
-            this.keyBindings[77] = Acorn.Input.Key.TOGGLEMAP; //default M
-            this.keyBindings[8] = Acorn.Input.Key.BACKSPACE; //default M
-            this.keyBindings[38] = Acorn.Input.Key.SCROLLUP; //default M
-            this.keyBindings[40] = Acorn.Input.Key.SCROLLDOWN; //default M
+            this.keyBindings[27] = Acorn.Input.Key.ESCAPE; //default E
         },
         getBinding: function(keyCode) {
             return this.keyBindings[keyCode];

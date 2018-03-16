@@ -33,8 +33,26 @@
         Graphics.worldContainer.position.y += y/2;
         Graphics.worldPrimitives.position.x += x/2;
         Graphics.worldPrimitives.position.y += y/2;
-    }
+    };
 
+    TileMap.prototype.deleteSector = function(x,y){
+        try{
+            var sector = this.sectors[x+'x'+y];
+            for (var i = 0; i < sector.tiles.length;i++){
+                for (var j = 0; j < sector.tiles[i].length;j++){
+                    if (sector.tiles[i][j].sprite){
+                        Graphics.worldContainer.removeChild(sector.tiles[i][j].sprite);
+                    }
+                    if (sector.tiles[i][j].overlaySprite){
+                        Graphics.worldContainer.removeChild(sector.tiles[i][j].overlaySprite);
+                    }
+                }
+            }
+            delete this.sectors[x+'x'+y];
+        }catch(e){
+            console.log(e);
+        }
+    };
     TileMap.prototype.createSector = function(x,y){
         //creates a new sector
         //adds it to the sectors list at 'xxy'
@@ -69,6 +87,15 @@
 
         this.drawLines(sector);
     };
+
+    TileMap.prototype.reDraw = function(){
+        Graphics.worldPrimitives.clear();
+        for (var i in this.sectors){
+            sector = this.sectors[i];
+            this.drawLines(sector);
+        }
+    };
+
     TileMap.prototype.drawLines = function(sector){
         var zoom = MapGen.ZOOM_SETTINGS[MapGen.currentZoomSetting];
         //draw lines
@@ -127,16 +154,56 @@
             this.sprite.scale.x = 2;
             this.sprite.scale.y = 2;
             this.open = true; //tile is open for movement?
-            this.directions = [true,true,true,true]; //able to move [up,right,down,left]
 
+            this.overlayResource = null;
             this.overlaySprite = null; //2nd layer sprite
-            this.moveTrigger = null; //tile triggers an event when stepped on
-            this.interactTrigger = null;//tile triggers an event when interacted with
+            this.triggers = {};
         }catch(e){
             console.log("failed to init Tile");
             console.log(e);
         }
-    }
+    };
+
+    Tile.prototype.setSprite = function(resource){
+        try{
+            Graphics.worldContainer.removeChild(this.sprite);
+        }catch(e){}
+        var posX = this.sprite.position.x;
+        var posY = this.sprite.position.y;
+        this.sprite = Graphics.getSprite(resource);
+        this.sprite.position.x = posX;
+        this.sprite.position.y = posY;
+        this.sprite.scale.x = 2;
+        this.sprite.scale.y = 2;
+        Graphics.worldContainer.addChild(this.sprite);
+        this.resource = resource;
+        try{
+            //check if sprite is above overlay
+            if (Graphics.worldContainer.getChildIndex(this.sprite) > Graphics.worldContainer.getChildIndex(this.overlaySprite)){
+                console.log('swapped');
+                Graphics.worldContainer.swapChildren(this.sprite,this.overlaySprite);
+            }
+        }catch(e){
+            console.log(e);
+        }
+    };
+
+    Tile.prototype.setOverlaySprite = function(resource){
+        try{
+            //remove sprite if one exists
+            Graphics.worldContainer.removeChild(this.overlaySprite);
+        }catch(e){};
+        var posX = this.sprite.position.x;
+        var posY = this.sprite.position.y;
+        this.overlaySprite = Graphics.getSprite(resource);
+        this.overlaySprite.position.x = posX;
+        this.overlaySprite.position.y = posY;
+        this.overlaySprite.scale.x = 2;
+        this.overlaySprite.scale.y = 2;
+        this.overlaySprite.alpha = 0.5;
+        Graphics.worldContainer.addChild(this.overlaySprite);
+        this.overlayResource = resource;
+    };
 
     window.Tile = Tile;
 })(window);
