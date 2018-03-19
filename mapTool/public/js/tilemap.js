@@ -89,7 +89,7 @@
                         y: j,
                         resource: this.defaultTile,
                         open: true,
-                        triggers: {},
+                        triggers: [],
                         overlayResource: 0
                     });
                 }

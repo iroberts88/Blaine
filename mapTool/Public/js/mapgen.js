@@ -4,7 +4,13 @@
         
         ZOOM_SETTINGS: [0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8],
         currentZoomSetting: 4,
+
         tileSelectorOn: false,
+        triggerSelectorOn: false,
+
+        currentOnTrigger: 'arrival',
+        currentDoTrigger: 'changeMap',
+        triggerDoInfo: {},
 
         changesMade: false,
 
@@ -150,6 +156,7 @@
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
                     MapGen.changeMode('settrigger');
+                    MapGen.showTriggerSelector();
                 }
             });
             Graphics.uiContainer.addChild(this.triggersButton);
@@ -348,6 +355,18 @@
             this.deleteButton.visible = false;
             Graphics.uiContainer.addChild(this.deleteButton);
 
+            this.triggerInfo = new PIXI.Text('',{
+                font: '20px Sigmar One', 
+                fill: 'white', 
+                align: 'left',
+                wordWrap: true,
+                wordWrapWidth: 300
+            });
+            this.triggerInfo.anchor.x = 0.5;
+            this.triggerInfo.anchor.y = 0;
+            this.triggerInfo.position.x = Graphics.width*0.75;
+            this.triggerInfo.position.y = 200;
+            this.triggerInfo.visible = false;
             this.sectorInfo = new PIXI.Text("Sector: ",style);
             this.tileInfo = new PIXI.Text('',style);
             this.tileInfo.anchor.x = 0.5;
@@ -358,6 +377,7 @@
             this.tileInfo.position.y = Graphics.height - 20;
             this.sectorInfo.visible = false;
             this.tileInfo.visible = false;
+            Graphics.uiContainer.addChild(this.triggerInfo);
             Graphics.uiContainer.addChild(this.sectorInfo);
             Graphics.uiContainer.addChild(this.tileInfo);
 
@@ -376,6 +396,30 @@
                                 if (tile.overlaySprite){
                                     tile.overlaySprite.tint = 0xfcd9d9;
                                 }
+                            }else{
+                                tile.sprite.tint =  0xFFFFFF;
+                                if (tile.overlaySprite){
+                                    tile.overlaySprite.tint = 0xFFFFFF;
+                                }
+                            }
+                        }
+                    }
+                }
+            }else if (mode == 'applytrigger' || mode == 'deletetriggers'){
+                for (var k in this.map.sectors){
+                    for (var i = 0; i < this.map.sectors[k].tiles.length;i++){
+                        for (var j = 0; j < this.map.sectors[k].tiles[i].length;j++){
+                            var tile = this.map.sectors[k].tiles[i][j];
+                            if (tile.triggers.length > 0){
+                                tile.sprite.tint =  0xc0d5f7;
+                                if (tile.overlaySprite){
+                                    tile.overlaySprite.tint = 0xc0d5f7;
+                                }
+                            }else{
+                                tile.sprite.tint =  0xFFFFFF;
+                                if (tile.overlaySprite){
+                                    tile.overlaySprite.tint = 0xFFFFFF;
+                                }
                             }
                         }
                     }
@@ -393,10 +437,123 @@
                     }
                 }
             }
+
+        },
+
+        clearSelectors: function(){
+            Graphics.uiPrimitives1.clear();
+            Graphics.uiContainer2.removeChildren();
+            MapGen.tileSelectorOn = false;
+            MapGen.triggerSelectorOn = false;
+            if (this.currentMode == 'settrigger'){
+                this.changeMode('applytrigger');
+            }
+        },
+
+        showTriggerSelector: function(){
+            if (this.triggerSelectorOn){return;}
+            this.clearSelectors();
+            this.currentMode = 'settrigger';
+            this.triggerSelectorOn = true;
+            Graphics.uiPrimitives1.lineStyle(1,0x000000,0.9);
+            Graphics.uiPrimitives1.beginFill(0x000000,0.9)
+            Graphics.uiPrimitives1.drawRect(50,50,Graphics.width-100,Graphics.height-100);
+            Graphics.uiPrimitives1.endFill()
+
+            var style = AcornSetup.baseStyle;
+            style.fontSize = 24;
+
+            var onText = new PIXI.Text("On:",style);
+            onText.position.x = 55;
+            onText.position.y = 55;
+            Graphics.uiContainer2.addChild(onText);
+
+            var onCommands = [
+                'arrival',
+                'up',
+                'down',
+                'left',
+                'right',
+                'interact'
+            ];
+
+            var start = [150,150];
+            for (var i = 0; i < onCommands.length;i++){
+                var onButton = Graphics.makeUiElement({
+                    text: onCommands[i],
+                    style: style,
+                    interactive: true,
+                    buttonMode: true,buttonGlow: true,
+                    position: [start[0],start[1] + i*30],
+                    clickFunc: function onClick(e){
+                        MapGen.currentOnTrigger = e.currentTarget.onCommand;
+                    }
+                })
+                onButton.onCommand = onCommands[i];
+                Graphics.uiContainer2.addChild(onButton);
+            }
+
+            var doText = new PIXI.Text("Do:",style);
+            doText.position.x = Graphics.width/2 + 5;
+            doText.position.y = 55;
+            Graphics.uiContainer2.addChild(doText);
+
+            var doCommands = [
+                'changeMap',
+                'blockMovement',
+                'downwardHop',
+                'jumpToTile'
+            ];
+
+            var start = [Graphics.width/2 + 150,150];
+            for (var i = 0; i < doCommands.length;i++){
+                var doButton = Graphics.makeUiElement({
+                    text: doCommands[i],
+                    style: style,
+                    interactive: true,
+                    buttonMode: true,buttonGlow: true,
+                    position: [start[0],start[1] + i*30],
+                    clickFunc: function onClick(e){
+                        MapGen.triggerDoInfo = {};
+                        if (e.currentTarget.doCommand == 'changeMap'){
+                            MapGen.triggerDoInfo.map = prompt('enter map name','');
+                            MapGen.triggerDoInfo.sector = prompt('enter sector','');
+                            MapGen.triggerDoInfo.tile = prompt('enter tile','');
+                        }
+                        if (e.currentTarget.doCommand == 'jumpToTile'){
+                            MapGen.triggerDoInfo.sector = prompt('enter sector','');
+                            MapGen.triggerDoInfo.tile = prompt('enter tile','');
+                        }
+                        MapGen.currentDoTrigger = e.currentTarget.doCommand;
+                    }
+                })
+                doButton.doCommand = doCommands[i];
+                Graphics.uiContainer2.addChild(doButton);
+            }
+
+            this.currentTriggerText = new PIXI.Text('',style);
+            this.currentTriggerText.anchor.x = 0.5;
+            this.currentTriggerText.anchor.y = 1;
+            this.currentTriggerText.position.x = Graphics.width/2;
+            this.currentTriggerText.position.y = Graphics.height - 55;
+            Graphics.uiContainer2.addChild(this.currentTriggerText);
+
+            var okButton = Graphics.makeUiElement({
+                text: 'Ok',
+                style: style,
+                anchor: [1,1],
+                position: [Graphics.width - 55,Graphics.height - 55],
+                interactive: true,buttonMode: true,buttonGlow: true,
+                clickFunc: function onClick(){
+                    MapGen.clearSelectors();
+                }
+            });
+            Graphics.uiContainer2.addChild(okButton);
         },
 
         showTileSelector: function(){
             if (this.tileSelectorOn){return;}
+            this.clearSelectors();
             this.tileSelectorOn = true;
             Graphics.uiPrimitives1.lineStyle(1,0x000000,0.5);
             Graphics.uiPrimitives1.beginFill(0x000000,0.5)
@@ -417,9 +574,7 @@
                             anchor: [0,0],
                             clickFunc: function onClick(e){
                                 MapGen.currentPlaceTile = e.currentTarget.resource;
-                                Graphics.uiPrimitives1.clear();
-                                Graphics.uiContainer2.removeChildren();
-                                MapGen.tileSelectorOn = false;
+                                MapGen.clearSelectors();
                                 var sprite = Graphics.makeUiElement({
                                     sprite: e.currentTarget.resource,
                                     position: [MapGen.currentTileSprite.position.x,MapGen.currentTileSprite.position.y]
@@ -450,9 +605,7 @@
                     anchor: [0,0],
                     clickFunc: function onClick(e){
                         MapGen.currentPlaceTile = e.currentTarget.resource;
-                        Graphics.uiPrimitives1.clear();
-                        Graphics.uiContainer2.removeChildren();
-                        MapGen.tileSelectorOn = false;
+                        MapGen.clearSelectors();
                         var sprite = Graphics.makeUiElement({
                             sprite: e.currentTarget.resource,
                             position: [MapGen.currentTileSprite.position.x,MapGen.currentTileSprite.position.y]
@@ -476,6 +629,15 @@
         update: function(deltaTime){
             this.map.update(deltaTime);
             this.setInfoTexts();
+
+
+            if (this.currentMode == 'settrigger'){
+                var str = 'Current Trigger: ON <' + this.currentOnTrigger + '> DO <' + this.currentDoTrigger + '>';
+                for (var i in this.triggerDoInfo){
+                    str += '(' + i + ' = ' + this.triggerDoInfo[i] + ')';
+                }
+                this.currentTriggerText.text = str;
+            }
 
             if (this.mapName != ''){this.deleteButton.visible = true}
             var zoom = this.ZOOM_SETTINGS[this.currentZoomSetting];
@@ -511,9 +673,7 @@
                 Acorn.Input.setValue(Acorn.Input.Key.TILESELECT, false);
             }
             if (Acorn.Input.isPressed(Acorn.Input.Key.ESCAPE)){
-                Graphics.uiPrimitives1.clear();
-                Graphics.uiContainer2.removeChildren();
-                MapGen.tileSelectorOn = false;
+                MapGen.clearSelectors();
             }
             if (Acorn.Input.mouseDown && Acorn.Input.buttons[2]){
                 Acorn.Input.mouseDown = false;
@@ -642,12 +802,67 @@
                             }
                         }
                         break;
+                    case 'applytrigger':
+                        //set trigger
+                        var tile = this.map.getTile();
+                        var sectorX = Math.floor(((Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.worldContainer.position.x)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        var sectorY = Math.floor(((Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.worldContainer.position.y)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        //clicked on a sector?
+                        if (typeof this.map.sectors[sectorX + 'x' + sectorY] == 'undefined'){
+                            break;
+                        }else{
+                            Acorn.Input.buttons = {2:true}
+                            Acorn.Input.mouseDown = true;
+                            //make sure this tile doesnt have the same type of trigger
+                            var alreadyHasTrigger = false;
+                            for (var i = 0; i < tile.triggers.length; i++){
+                                if (tile.triggers[i].on == this.currentOnTrigger){
+                                    alreadyHasTrigger = true;
+                                    break;
+                                }
+                            }
+                            if (!alreadyHasTrigger){
+                                tile.triggers.push({
+                                    on: this.currentOnTrigger,
+                                    do: this.currentDoTrigger,
+                                    data: this.triggerDoInfo
+                                });
+                                this.changesMade = true;
+                                tile.sprite.tint = 0xc0d5f7;
+                                if (tile.overlaySprite){
+                                    tile.overlaySprite.tint = 0xc0d5f7;
+                                }
+                            }
+                        }
+                        break;
+                    case 'deletetriggers':
+                        //toggle blocked on a node
+                        var tile = this.map.getTile();
+                        var sectorX = Math.floor(((Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.worldContainer.position.x)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        var sectorY = Math.floor(((Acorn.Input.mouse.Y / Graphics.actualRatio[1]) - Graphics.worldContainer.position.y)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));
+                        //clicked on a sector?
+                        if (typeof this.map.sectors[sectorX + 'x' + sectorY] == 'undefined'){
+                            break;
+                        }else{
+                            Acorn.Input.buttons = {2:true}
+                            Acorn.Input.mouseDown = true;
+                            if (tile.triggers.length > 0){
+                                this.changesMade = true;
+                                tile.triggers = [];
+                                tile.sprite.tint = 0xffffff;
+                                if (tile.overlaySprite){
+                                    tile.overlaySprite.tint = 0xffffff;
+                                }
+                            }
+                        }
+                        break;
                 }
             }
         },
 
         setInfoTexts: function(){
             //get tile and sector
+            this.triggerInfo.visible = false;
             var zoom = this.ZOOM_SETTINGS[this.currentZoomSetting];
             this.zoomText.text = 'Zoom (Current: ' + zoom + ')';
             this.modeText.text = 'Mode Select - Current: ' + this.currentMode;
@@ -662,16 +877,35 @@
             this.sectorInfo.position.x = Graphics.width/2;
 
             if (typeof this.map.sectors[sectorX + 'x' + sectorY] == 'undefined'){
-                this.tileInfo.text = 'Click to create new sector at ' + sectorX + 'x' + sectorY;
+                this.tileInfo.text = 'Click to create new sector at ' + sectorX + 'x' + sectorY + ' (must be in place mode)';
             }else{
                 var mTX = mX - sectorX*(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom);
                 var mTY = mY - sectorY*(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom);
                 var tileX = Math.floor(mTX/(this.map.TILE_SIZE*zoom));
                 var tileY = Math.floor(mTY/(this.map.TILE_SIZE*zoom));
                 this.tileInfo.text = 'Tile: ' + tileX + 'x' + tileY;
+
+                var tile = this.map.sectors[sectorX + 'x' + sectorY].tiles[tileX][tileY];
+                if (tile.triggers.length > 0){
+                    var str = '';
+                    for (var i = 0; i < tile.triggers.length; i++){
+                        var tstr = 'Trigger ' + i + ': ON <' + tile.triggers[i].on + '> DO <' + tile.triggers[i].do + '>';
+                        if (tile.triggers[i].data){
+                            for (var i in tile.triggers[i].data){
+                                tstr += '(' + i + ' = ' + this.triggerDoInfo[i] + ')';
+                            }
+                        }
+                        str += tstr + ' --- ';
+                    }
+                    this.triggerInfo.text = str;
+                    this.triggerInfo.visible = true;
+                }
             }
             this.tileInfo.visible = true;
             this.tileInfo.position.x = Graphics.width/2;
+
+
+
 
         },
         drawBG: function(){
