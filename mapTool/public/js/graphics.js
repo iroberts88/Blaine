@@ -10,7 +10,7 @@
         resourceList: null,
 
         pallette: {
-            color1:'#AACCDD', // Font color
+            color1:'#f4bc42', // Font color
             color2:'#000022', // BG color 
             color3: 0x79A1F2, //outline color
             color4: 'hsla(300, 82%, 71%, 0.5)', //button glow color
@@ -20,7 +20,7 @@
         },
 
         init: function(w,h) {
-
+            PIXI.settings.SCALE_MODE = 1;
             this.width = w;
             this.height = h;
             this.diameter = Math.sqrt(w*w+h*h);
@@ -214,7 +214,7 @@
                         var texture = PIXI.Texture.fromFrame(i + 'x' + j + ".png");
                         Graphics.resources[i + 'x' + j] = texture;
                     }catch(e){
-
+                        
                     }
                 }
             }

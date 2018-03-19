@@ -356,11 +356,13 @@
             Graphics.uiContainer.addChild(this.deleteButton);
 
             this.triggerInfo = new PIXI.Text('',{
-                font: '20px Sigmar One', 
-                fill: 'white', 
+                font: '20px Sigmar One',
+                fill: Graphics.pallette.color1,
                 align: 'left',
+                stroke: '#000000',
+                strokeThickness: 2,
                 wordWrap: true,
-                wordWrapWidth: 300
+                wordWrapWidth: 500
             });
             this.triggerInfo.anchor.x = 0.5;
             this.triggerInfo.anchor.y = 0;
@@ -891,8 +893,8 @@
                     for (var i = 0; i < tile.triggers.length; i++){
                         var tstr = 'Trigger ' + i + ': ON <' + tile.triggers[i].on + '> DO <' + tile.triggers[i].do + '>';
                         if (tile.triggers[i].data){
-                            for (var i in tile.triggers[i].data){
-                                tstr += '(' + i + ' = ' + this.triggerDoInfo[i] + ')';
+                            for (var j in tile.triggers[i].data){
+                                tstr += ' (' + j + '=' + tile.triggers[i].data[j] + ') ';
                             }
                         }
                         str += tstr + ' --- ';
