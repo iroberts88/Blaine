@@ -7,23 +7,32 @@
     };
 
     TileMap.prototype.init = function(data) {
-        if (typeof data.name == 'undefined'){
+        if (MapGen.mapName == ''){
             this.fullSectorSize = this.TILE_SIZE*this.SECTOR_TILES;
             this.sectors = {};
-            this.defaultTile = data.dTile; //black tile??
             var s = this.getSector(0,0);
         }else{
             this.name = data.name;
+            this.fullSectorSize = this.TILE_SIZE*this.SECTOR_TILES;
+            this.sectors = {};
+            console.log(data.mapData);
+            for (var sector in data.mapData){
+                //init sectors;
+                console.log(sector);
+                var s = this.getSector(data.mapData[sector].x*this.fullSectorSize,data.mapData[sector].y*this.fullSectorSize,data.mapData[sector]);
+            }
         }
     };
+    TileMap.prototype.setSector = function(data){
 
-    TileMap.prototype.getSector = function(x,y){
+    };
+    TileMap.prototype.getSector = function(x,y,data){
         //gets the sector at position x,y
         var xPos = Math.floor(x/this.fullSectorSize);
         var yPos = Math.floor(y/this.fullSectorSize);
         //if sector does not exist, create one
         if (typeof this.sectors[xPos + 'x' + yPos] == 'undefined'){
-            this.createSector(xPos,yPos);
+            this.createSector(xPos,yPos,data);
         }
         return this.sectors[xPos,yPos];
     };
@@ -53,7 +62,8 @@
             console.log(e);
         }
     };
-    TileMap.prototype.createSector = function(x,y){
+    TileMap.prototype.createSector = function(x,y,data){
+        console.log('creating sector ' + x + ',' + y)
         //creates a new sector
         //adds it to the sectors list at 'xxy'
         if (typeof this.sectors[x+'x'+y] != 'undefined'){return;}
@@ -62,16 +72,35 @@
             var arr = [];
             for (var j = 0; j < this.SECTOR_TILES; j++){
                 var newTile = new Tile();
-                newTile.init({
-                    sectorId: x + 'x' + y,
-                    x: i,
-                    y: y,
-                    resource: this.defaultTile,
-                    open: false
-                });
+                if (data){
+                    newTile.init({
+                        sectorId: x + 'x' + y,
+                        x: i,
+                        y: j,
+                        resource: data.tiles[i][j].resource,
+                        open: data.tiles[i][j].open,
+                        triggers: data.tiles[i][j].triggers,
+                        overlayResource: data.tiles[i][j].overlayResource
+                    });
+                }else{
+                    newTile.init({
+                        sectorId: x + 'x' + y,
+                        x: i,
+                        y: j,
+                        resource: this.defaultTile,
+                        open: true,
+                        triggers: {},
+                        overlayResource: 0
+                    });
+                }
                 newTile.sprite.position.x = x*this.fullSectorSize + i*this.TILE_SIZE;
                 newTile.sprite.position.y = y*this.fullSectorSize + j*this.TILE_SIZE;
                 Graphics.worldContainer.addChild(newTile.sprite);
+                if (newTile.overlaySprite){
+                    newTile.overlaySprite.position.x = x*this.fullSectorSize + i*this.TILE_SIZE;
+                    newTile.overlaySprite.position.y = y*this.fullSectorSize + j*this.TILE_SIZE;
+                    Graphics.worldContainer.addChild(newTile.overlaySprite);
+                }
                 arr.push(newTile);
             }
             sArray.push(arr);
@@ -153,11 +182,17 @@
             this.sprite = Graphics.getSprite(data.resource); //tile sprite
             this.sprite.scale.x = 2;
             this.sprite.scale.y = 2;
-            this.open = true; //tile is open for movement?
+            this.open = data.open
 
-            this.overlayResource = null;
+            this.overlayResource = data.overlayResource;
             this.overlaySprite = null; //2nd layer sprite
-            this.triggers = {};
+            if (this.overlayResource){
+                this.overlaySprite = Graphics.getSprite(data.overlayResource); //tile sprite
+                this.overlaySprite.scale.x = 2;
+                this.overlaySprite.scale.y = 2;
+                this.overlaySprite.alpha = 0.5;
+            }
+            this.triggers = data.triggers;
         }catch(e){
             console.log("failed to init Tile");
             console.log(e);

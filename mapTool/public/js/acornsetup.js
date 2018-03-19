@@ -17,9 +17,22 @@
                 window.playerID = data.id;
                 checkReady();
             });
-            Acorn.Net.on('mapInfo', function(data) {
+            Acorn.Net.on('editMap', function (data) {
                 console.log(data);
+                if (data.found){
+                  MapGen.data = data;
+                  Acorn.changeState('mapgen');
+                }else{
+                    Graphics.showLoadingMessage(false);
+                }
+            });
 
+             Acorn.Net.on('confirmMapSave', function (data) {
+                if (confirm('Overwrite map "' + data.name + '"?') == true) {
+                    Acorn.Net.socket_.emit('confirmMapSave',{c:true});
+                }else{
+                    Acorn.Net.socket_.emit('confirmMapSave',{c:false});
+                }
             });
             
         },
@@ -72,7 +85,7 @@
 
             Acorn.Input.onMouseMove(function(e) {
                 try{
-                    if (Acorn.Input.buttons[1]){
+                    if (Acorn.Input.buttons[1] || Acorn.Input.isPressed(Acorn.Input.Key.PERIOD)){
                         var mX = Acorn.Input.mouse.X - Acorn.Input.mouse.prevX;
                         var mY = Acorn.Input.mouse.Y - Acorn.Input.mouse.prevY;
                         window.currentGameMap.move(mX,mY);

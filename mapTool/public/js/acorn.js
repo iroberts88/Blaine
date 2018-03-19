@@ -52,6 +52,7 @@
             HOME: 4,
             ESCAPE: 5,
             TILESELECT: 6,
+            PERIOD: 7,
         },
         keysPressed: [],
         keyBindings: [],
@@ -88,6 +89,7 @@
             this.keyBindings[32] = Acorn.Input.Key.TILESELECT; //default Space
             this.keyBindings[36] = Acorn.Input.Key.HOME; //default C
             this.keyBindings[27] = Acorn.Input.Key.ESCAPE; //default E
+            this.keyBindings[190] = Acorn.Input.Key.PERIOD;
         },
         getBinding: function(keyCode) {
             return this.keyBindings[keyCode];

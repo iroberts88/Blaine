@@ -7,6 +7,9 @@
         tileSelectorOn: false,
 
         changesMade: false,
+
+        mapName: '',
+        data: {},
         //Modes:
             //place
             //overlay
@@ -43,21 +46,20 @@
             var gotTile = false;
             var tile;
             while(!gotTile){
-                tile = prompt("Please enter a default tile for this map", '1x1');
+                this.data.tile = prompt("Please enter a default tile for this map", '1x1');
                 try{
-                    var sprite = Graphics.resources[tile];
-                    this.map.defaultTile = tile;
+                    var sprite = Graphics.resources[this.data.tile];
+                    this.map.defaultTile = this.data.tile;
                     gotTile = true;
                     console.log('Got Default Tile!!!');
                 }catch(e){
                     console.log('fail');
+                    this.data.tile = '1x1';
                 }
             }
 
 
-            this.map.init({
-                dTile: tile
-            });
+            this.map.init(this.data);
 
             //create tool buttons
             var style = AcornSetup.baseStyle;
@@ -218,18 +220,17 @@
                 style: style,
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    /*console.log(MapGen.changesMade)
                     if (MapGen.changesMade){
                         if (confirm('Exit and lose unsaved data?') == true) {
                             MapGen.data = null;
-                            MapGen.mapName = null;
-                            Acorn.changeState('mainMenu');
+                            MapGen.mapName = '';
+                            Acorn.changeState('mainmenu');
                         }
                     }else{
                         MapGen.data = null;
-                        MapGen.mapName = null;
-                        Acorn.changeState('mainMenu');
-                    }*/
+                        MapGen.mapName = '';
+                        Acorn.changeState('mainmenu');
+                    }
                 }
             });
             this.exitButton.position.x = Graphics.width - 25 - this.exitButton.width/2;
@@ -297,51 +298,33 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    /*var name = prompt("Please enter a name for the map", MapGen.mapName);
+                    var name = prompt("Please enter a name for the map", MapGen.mapName);
                     if (!name || name == ''){
                         alert('Map not saved.');
                     }else{
                         var mapData = {};
-                        var sz1 = [];
-                        var sz2 = [];
-                        for (var i = 0; i < MapGen.map.startZone1.length;i++){
-                            var node = {
-                                q: MapGen.map.startZone1[i].q,
-                                r: MapGen.map.startZone1[i].r,
-                                h: MapGen.map.startZone1[i].h,
-                                deleted: MapGen.map.startZone1[i].deleted,
-                                tile: MapGen.map.startZone1[i].tile
-                            }
-                            sz1.push(node);
-                        }
-                        for (var i = 0; i < MapGen.map.startZone2.length;i++){
-                            var node = {
-                                q: MapGen.map.startZone2[i].q,
-                                r: MapGen.map.startZone2[i].r,
-                                h: MapGen.map.startZone2[i].h,
-                                deleted: MapGen.map.startZone2[i].deleted,
-                                tile: MapGen.map.startZone2[i].tile
-                            }
-                            sz2.push(node);
-                        }
-                        for (var i in MapGen.map.axialMap){
-                            for (var j in MapGen.map.axialMap[i]){
-                                if (typeof mapData[i] == 'undefined'){
-                                    mapData[i] = {};
+                        for (var i in MapGen.map.sectors){
+                            mapData[i] = {tiles: [],x: MapGen.map.sectors[i].x,y: MapGen.map.sectors[i].y};
+                            for (var j = 0; j < MapGen.map.sectors[i].tiles.length;j++){
+                                var arr = [];
+                                for (var k = 0; k < MapGen.map.sectors[i].tiles[j].length;k++){
+                                    var tile = MapGen.map.sectors[i].tiles[j][k];
+                                    arr.push({
+                                        x: tile.x,
+                                        y: tile.y,
+                                        resource: tile.resource,
+                                        open: tile.open,
+                                        overlayResource: tile.overlayResource,
+                                        triggers: tile.triggers
+                                    })
                                 }
-                                var node = {
-                                    q: MapGen.map.axialMap[i][j].q,
-                                    r: MapGen.map.axialMap[i][j].r,
-                                    h: MapGen.map.axialMap[i][j].h,
-                                    deleted: MapGen.map.axialMap[i][j].deleted,
-                                    tile: MapGen.map.axialMap[i][j].tile
-                                }
-                                mapData[i][j] = node;
+                                mapData[i].tiles.push(arr);
                             }
                         }
                         MapGen.changesMade = false;
-                        Acorn.Net.socket_.emit('createMap',{name: name,mapData: mapData,sz1: sz1,sz2:sz2});
-                    }*/
+                        MapGen.mapName = name;
+                        Acorn.Net.socket_.emit('createMap',{name: name,mapData: mapData});
+                    }
                 }
             });
             this.saveButton.position.x = this.exitButton.position.x - this.exitButton.width/2 - 25- this.saveButton.width/2;
@@ -354,14 +337,15 @@
                 interactive: true,
                 buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    /*if (confirm('Delete map "' + MapGen.mapName + '"?') == true) {
+                    if (confirm('Delete map "' + MapGen.mapName + '"?') == true) {
                         Acorn.Net.socket_.emit('deleteMap',{name:MapGen.mapName});
-                        Acorn.changeState('mainMenu');
-                    }*/
+                        Acorn.changeState('mainmenu');
+                    }
                 }
             });
             this.deleteButton.position.x = this.saveButton.position.x - this.saveButton.width/2 - 25- this.deleteButton.width/2;
             this.deleteButton.position.y = this.exitButton.position.y;
+            this.deleteButton.visible = false;
             Graphics.uiContainer.addChild(this.deleteButton);
 
             this.sectorInfo = new PIXI.Text("Sector: ",style);
@@ -387,7 +371,7 @@
                     for (var i = 0; i < this.map.sectors[k].tiles.length;i++){
                         for (var j = 0; j < this.map.sectors[k].tiles[i].length;j++){
                             var tile = this.map.sectors[k].tiles[i][j];
-                            if (tile.blocked){
+                            if (!tile.open){
                                 tile.sprite.tint =  0xfcd9d9;
                                 if (tile.overlaySprite){
                                     tile.overlaySprite.tint = 0xfcd9d9;
@@ -493,6 +477,7 @@
             this.map.update(deltaTime);
             this.setInfoTexts();
 
+            if (this.mapName != ''){this.deleteButton.visible = true}
             var zoom = this.ZOOM_SETTINGS[this.currentZoomSetting];
             if (Acorn.Input.isPressed(Acorn.Input.Key.UP)){
                 Graphics.worldContainer.position.y += this.map.fullSectorSize;
@@ -626,9 +611,9 @@
                         }else{
                             Acorn.Input.buttons = {2:true}
                             Acorn.Input.mouseDown = true;
-                            if (!tile.blocked){
+                            if (tile.open){
                                 this.changesMade = true;
-                                tile.blocked = true;
+                                tile.open = false;
                                 tile.sprite.tint = 0xfcd9d9;
                                 if (tile.overlaySprite){
                                     tile.overlaySprite.tint = 0xfcd9d9;
@@ -647,9 +632,9 @@
                         }else{
                             Acorn.Input.buttons = {2:true}
                             Acorn.Input.mouseDown = true;
-                            if (tile.blocked){
+                            if (!tile.open){
                                 this.changesMade = true;
-                                tile.blocked = false;
+                                tile.open = true;
                                 tile.sprite.tint = 0xffffff;
                                 if (tile.overlaySprite){
                                     tile.overlaySprite.tint = 0xffffff;
