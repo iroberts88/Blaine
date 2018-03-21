@@ -56,7 +56,7 @@ $(function() {
     Graphics.startLoad();
 
     // Set up keyboard bindings
-
+    
     $(document).keypress(function(e) {
         if(e.keyCode === 32) {
             e.preventDefault();

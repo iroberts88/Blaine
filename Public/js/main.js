@@ -62,7 +62,6 @@ $(function() {
         if(e.keyCode === 32) {
             e.preventDefault();
         }
-        ChatConsole.keyPress(e.which);
     });
     $(document).keydown(function(e) {
         var key = e.which;
@@ -87,7 +86,7 @@ $(function() {
             e.preventDefault();
         }
 
-        if ((key === 32 || key === 38 || key === 37 || key === 39 || key === 40 || key === 127) && !ChatConsole.active){
+        if ((key === 32 || key === 38 || key === 37 || key === 39 || key === 40 || key === 127) ){
             e.preventDefault();
         }
     });
