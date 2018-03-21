@@ -9,14 +9,15 @@
         resourcesReady: null,
         resourceList: null,
 
+        elements: [],
         pallette: {
-            color1:'#f4bc42', // Font color
-            color2:'#000022', // BG color 
+            color1:'#484848', // Font color
+            color2:'#FFFFFF', // BG color 
             color3: 0x79A1F2, //outline color
-            color4: 'hsla(300, 82%, 71%, 0.5)', //button glow color
-            color5: 'hsla(300, 82%, 90%, 0.5)', //button clicked color
-            color6: "#952547",
-            color7: 0x952547
+            color4: '#BDBDBD', //button glow color
+            color5: '#D2D2D2', //button clicked color
+            color6: "#505050",
+            color7: 0x232C2D
         },
 
         init: function(w,h) {
@@ -155,6 +156,16 @@
             this.app.renderer.view.style.width = w + 'px';
             this.app.renderer.view.style.height = h + 'px';
             this.actualRatio = [w/this.baseWidth,h/this.baseHeight];
+            for (var e = 0; e < this.elements.length;e++){
+                try{
+                    var element = document.getElementById(this.elements[e]);
+                    element.style.transform = 'scale(' + this.actualRatio[0] + ',' + this.actualRatio[1] + ')';
+                    element.style.left = w/2-150;
+                }catch(e){
+                    console.log("error resizing html elements");
+                    console.log(e);
+                }
+            }
         },
         startLoad: function(){
             Graphics.app.loader

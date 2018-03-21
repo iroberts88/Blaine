@@ -32,33 +32,61 @@
             Graphics.worldPrimitives.drawRect(0,0,Graphics.width,Graphics.height);
             Graphics.worldPrimitives.endFill()
 
-            this.newText = Graphics.makeUiElement({
-                text: 'NEW',
-                style: AcornSetup.baseStyle,
-                interactive: true,buttonMode: true,buttonGlow: true,
-                position: [Graphics.width* 0.25,(Graphics.height * .5)],
-                clickFunc: function onClick(){
-                }
-            });
-            this.newText.style.fontSize = 48;
-            //Graphics.uiContainer.addChild(this.newText);
+            Graphics.uiPrimitives.lineStyle(2,0x000000,1);
+            Graphics.uiPrimitives.beginFill(0xFFFFFF,1)
+            Graphics.uiPrimitives.drawRoundedRect(Graphics.width/2 - 200,Graphics.height/2 -200,400,400,25);
+            Graphics.uiPrimitives.endFill()
 
-            this.editText = Graphics.makeUiElement({
-                text: 'EDIT',
+
+            this.logoText = Graphics.makeUiElement({
+                text: 'Logo Here',
+                style: AcornSetup.baseStyle,
+                position: [Graphics.width* 0.5,Graphics.height*0.5 - 150],
+            });
+            Graphics.uiContainer.addChild(this.logoText);
+
+            var usernameInput = document.createElement( 'input' );
+            usernameInput.id = 'username';
+            usernameInput.type = 'text';
+            usernameInput.name = 'username';
+            usernameInput.placeholder = 'Name';
+            usernameInput.maxlength = 16;
+            usernameInput.style.cssText = 'text-shadow:rgba(0,30,84,0.3) 0 -1px 0;width:300px;height:45px;top:42%;left:42.2%;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
+            usernameInput.style.display = 'block';
+            document.body.appendChild( usernameInput );
+
+            Graphics.elements.push('username');
+
+            this.guestText = Graphics.makeUiElement({
+                text: 'Play as a guest',
                 style: AcornSetup.baseStyle,
                 interactive: true,buttonMode: true,buttonGlow: true,
-                position: [Graphics.width* 0.75,(Graphics.height * .5)],
+                position: [Graphics.width* 0.5,Graphics.height * 0.5-15],
                 clickFunc: function onClick(){
                 }
             });
-            this.editText.style.fontSize = 48;
-            //Graphics.uiContainer.addChild(this.editText);
+            this.guestText.style.fontSize = 24;
+            Graphics.uiContainer.addChild(this.guestText);
+
+            var usernameInput = document.createElement( 'input' );
+            usernameInput.id = 'password';
+            usernameInput.type = 'password';
+            usernameInput.name = 'password';
+            usernameInput.placeholder = 'password';
+            usernameInput.maxlength = 16;
+            usernameInput.style.cssText = 'text-shadow:rgba(0,30,84,0.3) 0 -1px 0;width:300px;height:45px;top:52%;left:42.2%;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
+            usernameInput.style.display = 'block';
+            document.body.appendChild( usernameInput );
+
+            Graphics.elements.push('password');
+
+
+            Graphics.resize();
             console.log('Main Menu INITIALIZED')
         },
         
         update: function(dt){
             Graphics.uiPrimitives2.clear();
-
             
         }
 

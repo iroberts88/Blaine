@@ -235,7 +235,7 @@
         this.overlaySprite.position.y = posY;
         this.overlaySprite.scale.x = 2;
         this.overlaySprite.scale.y = 2;
-        this.overlaySprite.alpha = 0.5;
+        //this.overlaySprite.alpha = 0.5;
         Graphics.worldContainer.addChild(this.overlaySprite);
         this.overlayResource = resource;
     };

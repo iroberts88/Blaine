@@ -22,7 +22,7 @@ $(function() {
     //Configure fonts
     WebFontConfig = {
       google: {
-        families: [ 'Audiowide', 'Arvo', 'Podkova:700' , 'Electrolize', 'Orbitron', 'Sigmar One','Audiowide']
+        families: ['Lato','Open Sans', 'Permanent Marker']
       },
 
       active: function() {

@@ -3,11 +3,9 @@
     AcornSetup = {
         
         baseStyle: {
-            font: '64px Sigmar One',
+            font: '48px Permanent Marker',
             fill: Graphics.pallette.color1,
-            align: 'left',
-            stroke: '#000000',
-            strokeThickness: 2,
+            align: 'left'
         },
 
         net: function() {
