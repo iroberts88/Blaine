@@ -32,53 +32,55 @@
             Graphics.worldPrimitives.drawRect(0,0,Graphics.width,Graphics.height);
             Graphics.worldPrimitives.endFill()
 
-            Graphics.uiPrimitives.lineStyle(2,0x000000,1);
-            Graphics.uiPrimitives.beginFill(0xFFFFFF,1)
-            Graphics.uiPrimitives.drawRoundedRect(Graphics.width/2 - 200,Graphics.height/2 -200,400,400,25);
-            Graphics.uiPrimitives.endFill()
+            var mainPanel = document.createElement('div');
+            mainPanel.id = 'mainPanel'
+            mainPanel.style.cssText = 'width:400px;height:400px;top:35%;left:40%;background-color:#fff;position:absolute;border-radius:12px;margin:2px;padding:5px 15px 5px 15px;vertical-align:top;'
+            mainPanel.style.display = 'block';
+            document.body.appendChild( mainPanel );
+            Graphics.elements.push('mainPanel');
 
-
-            this.logoText = Graphics.makeUiElement({
-                text: 'Logo Here',
-                style: AcornSetup.baseStyle,
-                position: [Graphics.width* 0.5,Graphics.height*0.5 - 150],
-            });
-            Graphics.uiContainer.addChild(this.logoText);
+              var logoText = document.createElement( 'div' );
+            logoText.id = 'logoText';
+            logoText.type = 'text';
+            logoText.style.cssText = 'position:relative;background-color: #FFF;text-align: center;display: inline-block;font-size: 18px;top:25px;left:65px;color:#484848;font-family:"Permanent Marker";font-size: 48px;font-weight:bold;line-height:15px';
+            logoText.innerHTML = 'logo here';
+            mainPanel.appendChild( logoText );
 
             var usernameInput = document.createElement( 'input' );
             usernameInput.id = 'username';
             usernameInput.type = 'text';
             usernameInput.name = 'username';
-            usernameInput.placeholder = 'Name';
+            usernameInput.placeholder = 'name';
             usernameInput.maxlength = 16;
-            usernameInput.style.cssText = 'text-shadow:rgba(0,30,84,0.3) 0 -1px 0;width:300px;height:45px;top:42%;left:42.2%;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
+            usernameInput.style.cssText = 'width:300px;height:45px;top:101px;left:51px;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
             usernameInput.style.display = 'block';
-            document.body.appendChild( usernameInput );
+            mainPanel.appendChild( usernameInput );
 
-            Graphics.elements.push('username');
+             var guestText = document.createElement( 'div' );
+            guestText.id = 'guestText';
+            guestText.type = 'button';
+            guestText.style.cssText = 'cursor: pointer;position:relative;transition-duration: 0.4s;-webkit-transition-duration: 0.4s;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;top:150px;left:50px;color:#D2D2D2;font-family:"Permanent Marker";font-size:32px;font-weight:bold;line-height:15px';
+            guestText.innerHTML = 'Play as guest ';
+            guestText.onmouseover = function() 
+            {
+                this.style.backgroundColor = "blue";
+            }
+            guestText.onmouseout = function() 
+            {
+                this.style.backgroundColor = "#484848";
+            }
+            mainPanel.appendChild( guestText );
 
-            this.guestText = Graphics.makeUiElement({
-                text: 'Play as a guest',
-                style: AcornSetup.baseStyle,
-                interactive: true,buttonMode: true,buttonGlow: true,
-                position: [Graphics.width* 0.5,Graphics.height * 0.5-15],
-                clickFunc: function onClick(){
-                }
-            });
-            this.guestText.style.fontSize = 24;
-            Graphics.uiContainer.addChild(this.guestText);
+            var passwordInput = document.createElement( 'input' );
+            passwordInput.id = 'password';
+            passwordInput.type = 'password';
+            passwordInput.name = 'password';
+            passwordInput.placeholder = 'password';
+            passwordInput.maxlength = 16;
+            passwordInput.style.cssText = 'width:300px;height:45px;top:251px;left:51px;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
+            passwordInput.style.display = 'block';
+            mainPanel.appendChild( passwordInput );
 
-            var usernameInput = document.createElement( 'input' );
-            usernameInput.id = 'password';
-            usernameInput.type = 'password';
-            usernameInput.name = 'password';
-            usernameInput.placeholder = 'password';
-            usernameInput.maxlength = 16;
-            usernameInput.style.cssText = 'text-shadow:rgba(0,30,84,0.3) 0 -1px 0;width:300px;height:45px;top:52%;left:42.2%;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
-            usernameInput.style.display = 'block';
-            document.body.appendChild( usernameInput );
-
-            Graphics.elements.push('password');
 
 
             Graphics.resize();
