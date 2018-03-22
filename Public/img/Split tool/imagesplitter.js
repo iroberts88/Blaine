@@ -2,7 +2,7 @@ var fs = require('fs'),
 	Jimp = require('jimp');
 
 var interval,
-	columns = 38,
+	columns = 28,
 	rows = 41,
 	s = 16,
 	x = 0,

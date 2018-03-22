@@ -160,7 +160,8 @@
                 try{
                     var element = document.getElementById(this.elements[e]);
                     element.style.transform = 'scale(' + this.actualRatio[0] + ',' + this.actualRatio[1] + ')';
-                    element.style.left = w/2-150;
+                    element.style.left = w/2-(200*this.actualRatio[0]);
+                    element.style.top = h/2-(200*this.actualRatio[1]);
                 }catch(e){
                     console.log("error resizing html elements");
                     console.log(e);

@@ -79,12 +79,12 @@ $(function() {
         Acorn.Input.keyDown(key);
 
         // Prevent system wide stops
-        if (
+        /*if (
                 key === 8 || // Backspace
                 key === 16// Delete
             ){
             e.preventDefault();
-        }
+        }*/
 
         if ((key === 32 || key === 38 || key === 37 || key === 39 || key === 40 || key === 127) ){
             e.preventDefault();

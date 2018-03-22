@@ -2,7 +2,7 @@
 (function(window) {
     MainMenu = {
         bgMap: null,
-
+        loginType: null,
         init: function() {
 
             //draw the map BG
@@ -32,56 +32,134 @@
             Graphics.worldPrimitives.drawRect(0,0,Graphics.width,Graphics.height);
             Graphics.worldPrimitives.endFill()
 
-            var mainPanel = document.createElement('div');
-            mainPanel.id = 'mainPanel'
-            mainPanel.style.cssText = 'width:400px;height:400px;top:35%;left:40%;background-color:#fff;position:absolute;border-radius:12px;margin:2px;padding:5px 15px 5px 15px;vertical-align:top;'
-            mainPanel.style.display = 'block';
-            document.body.appendChild( mainPanel );
+            this.mainPanel = document.createElement('div');
+            this.mainPanel.id = 'mainPanel'
+            this.mainPanel.style.cssText = 'width:400px;height:225px;top:' + (window.innerHeight/2-200) + 'px;left:' + (window.innerWidth/2-200) + 'px;background-color:#fff;position:absolute;border-radius:12px;margin:2px;padding:5px 15px 5px 15px;vertical-align:top;'
+            this.mainPanel.style.display = 'block';
+            document.body.appendChild( this.mainPanel );
             Graphics.elements.push('mainPanel');
 
-              var logoText = document.createElement( 'div' );
-            logoText.id = 'logoText';
-            logoText.type = 'text';
-            logoText.style.cssText = 'position:relative;background-color: #FFF;text-align: center;display: inline-block;font-size: 18px;top:25px;left:65px;color:#484848;font-family:"Permanent Marker";font-size: 48px;font-weight:bold;line-height:15px';
-            logoText.innerHTML = 'logo here';
-            mainPanel.appendChild( logoText );
-
-            var usernameInput = document.createElement( 'input' );
-            usernameInput.id = 'username';
-            usernameInput.type = 'text';
-            usernameInput.name = 'username';
-            usernameInput.placeholder = 'name';
-            usernameInput.maxlength = 16;
-            usernameInput.style.cssText = 'width:300px;height:45px;top:101px;left:51px;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
-            usernameInput.style.display = 'block';
-            mainPanel.appendChild( usernameInput );
-
-             var guestText = document.createElement( 'div' );
-            guestText.id = 'guestText';
-            guestText.type = 'button';
-            guestText.style.cssText = 'cursor: pointer;position:relative;transition-duration: 0.4s;-webkit-transition-duration: 0.4s;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;top:150px;left:50px;color:#D2D2D2;font-family:"Permanent Marker";font-size:32px;font-weight:bold;line-height:15px';
-            guestText.innerHTML = 'Play as guest ';
-            guestText.onmouseover = function() 
-            {
-                this.style.backgroundColor = "blue";
+            //Logo Text
+            this.logoText = document.createElement( 'div' );
+            this.logoText.id = 'logoText';
+            this.logoText.type = 'text';
+            this.logoText.style.cssText = 'position:absolute;background-color: #FFF;text-align: center;display: inline-block;font-size: 18px;top:35px;left:80px;color:#484848;font-family:"Lato";font-size: 48px;font-weight:bold;line-height:15px';
+            this.logoText.innerHTML = 'Pokè Project';
+            this.mainPanel.appendChild( this.logoText );
+            //Username input box
+            this.usernameInput = document.createElement( 'input' );
+            this.usernameInput.id = 'username';
+            this.usernameInput.type = 'text';
+            this.usernameInput.name = 'username';
+            this.usernameInput.placeholder = 'username';
+            this.usernameInput.maxlength = 16;
+            this.usernameInput.style.cssText = 'border-width:1px;border-style:solid;width:200px;height:40px;top:101px;left:115px;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
+            this.usernameInput.style.display = 'inline-block';
+            //password input box
+            this.passwordInput = document.createElement( 'input' );
+            this.passwordInput.id = 'password';
+            this.passwordInput.type = 'password';
+            this.passwordInput.placeholder = 'password';
+            this.passwordInput.maxlength = 16;
+            this.passwordInput.style.cssText = 'border-width:1px;border-style:solid;width:200px;height:40px;top:145px;left:115px;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
+            this.passwordInput.style.display = 'inline-block';
+            //play as a guest button
+            this.guestButton = document.createElement( 'div' );
+            this.guestButton.id = 'guestButton';
+            this.guestButton.type = 'button';
+            this.guestButton.style.cssText = 'top:155px;left:75px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:"Permanent Marker";font-size:32px;font-weight:bold;line-height:15px';
+            this.guestButton.innerHTML = 'Play as guest ';
+            this.guestButton.onpointerup = function(){
+                MainMenu.loginType = 'guest';
+                MainMenu.mainPanel.style.height = '225px';
+                MainMenu.mainPanel.appendChild(MainMenu.usernameInput);
+                MainMenu.mainPanel.appendChild(MainMenu.submitButton);
+                MainMenu.mainPanel.appendChild(MainMenu.cancelButton);
+                MainMenu.submitButton.style.top = '150px';
+                MainMenu.cancelButton.style.top = '150px';
+                MainMenu.mainPanel.removeChild(MainMenu.loginButton);
+                MainMenu.mainPanel.removeChild(MainMenu.createButton);
+                MainMenu.mainPanel.removeChild(MainMenu.guestButton);
             }
-            guestText.onmouseout = function() 
-            {
-                this.style.backgroundColor = "#484848";
+            this.mainPanel.appendChild( this.guestButton );
+            //login and play button
+            this.loginButton = document.createElement( 'div' );
+            this.loginButton.id = 'loginButton';
+            this.loginButton.type = 'button';
+            this.loginButton.style.cssText = 'top:100px;left:75px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:"Permanent Marker";font-size:18px;font-weight:bold;line-height:15px';
+            this.loginButton.innerHTML = 'Login';
+            this.loginButton.onpointerup = function(){
+                MainMenu.loginType = 'normal';
+                MainMenu.mainPanel.style.height = '255px';
+                MainMenu.mainPanel.appendChild(MainMenu.usernameInput);
+                MainMenu.mainPanel.appendChild(MainMenu.passwordInput);
+                MainMenu.mainPanel.appendChild(MainMenu.submitButton);
+                MainMenu.mainPanel.appendChild(MainMenu.cancelButton);
+                MainMenu.submitButton.style.top = '200px';
+                MainMenu.cancelButton.style.top = '200px';
+                MainMenu.mainPanel.removeChild(MainMenu.loginButton);
+                MainMenu.mainPanel.removeChild(MainMenu.createButton);
+                MainMenu.mainPanel.removeChild(MainMenu.guestButton);
             }
-            mainPanel.appendChild( guestText );
-
-            var passwordInput = document.createElement( 'input' );
-            passwordInput.id = 'password';
-            passwordInput.type = 'password';
-            passwordInput.name = 'password';
-            passwordInput.placeholder = 'password';
-            passwordInput.maxlength = 16;
-            passwordInput.style.cssText = 'width:300px;height:45px;top:251px;left:51px;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
-            passwordInput.style.display = 'block';
-            mainPanel.appendChild( passwordInput );
-
-
+            this.mainPanel.appendChild( this.loginButton );
+            //create a new user and play button
+            this.createButton = document.createElement( 'div' );
+            this.createButton.id = 'createButton';
+            this.createButton.type = 'button';
+            this.createButton.style.cssText = 'top:100px;left:195px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:"Permanent Marker";font-size:18px;font-weight:bold;line-height:15px';
+            this.createButton.innerHTML = 'New Player';
+            this.createButton.onpointerup = function(){
+                MainMenu.loginType = 'new';
+                MainMenu.mainPanel.style.height = '255px';
+                MainMenu.mainPanel.appendChild(MainMenu.usernameInput);
+                MainMenu.mainPanel.appendChild(MainMenu.passwordInput);
+                MainMenu.mainPanel.appendChild(MainMenu.submitButton);
+                MainMenu.mainPanel.appendChild(MainMenu.cancelButton);
+                MainMenu.submitButton.style.top = '200px';
+                MainMenu.cancelButton.style.top = '200px';
+                MainMenu.mainPanel.removeChild(MainMenu.loginButton);
+                MainMenu.mainPanel.removeChild(MainMenu.createButton);
+                MainMenu.mainPanel.removeChild(MainMenu.guestButton);
+            }
+            this.mainPanel.appendChild( this.createButton );
+            //create submit and cancel buttons
+            this.submitButton = document.createElement( 'div' );
+            this.submitButton.id = 'submitButton';
+            this.submitButton.type = 'button';
+            this.submitButton.style.cssText = 'top:150px;left:85px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:"Permanent Marker";font-size:18px;font-weight:bold;line-height:15px';
+            this.submitButton.innerHTML = 'submit';
+            this.submitButton.onpointerup = function(){
+                switch(MainMenu.loginType){
+                    case 'normal':
+                        Acorn.Net.socket_.emit('loginAttempt',{sn: document.getElementById('usernameInput').value,pw:document.getElementById('passwordInput').value});
+                        break;
+                    case 'new':
+                        Acorn.Net.socket_.emit('createUser',{sn: document.getElementById('usernameInput').value,pw:document.getElementById('passwordInput').value});
+                        break;
+                    case 'guest':
+                        Acorn.Net.socket_.emit('guestLogin',{sn: document.getElementById('usernameInput').value});
+                        break;
+                }
+            }
+            this.cancelButton = document.createElement( 'div' );
+            this.cancelButton.id = 'cancelButton';
+            this.cancelButton.type = 'button';
+            this.cancelButton.style.cssText = 'top:150px;left:210px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:"Permanent Marker";font-size:18px;font-weight:bold;line-height:15px';
+            this.cancelButton.innerHTML = 'cancel';
+            this.cancelButton.onpointerup = function(){
+                MainMenu.mainPanel.style.height = '225px';
+                MainMenu.mainPanel.removeChild(MainMenu.usernameInput);
+                try{
+                    MainMenu.mainPanel.removeChild(MainMenu.passwordInput);
+                }catch(e){}
+                MainMenu.mainPanel.removeChild(MainMenu.submitButton);
+                MainMenu.mainPanel.removeChild(MainMenu.cancelButton);
+                MainMenu.mainPanel.appendChild(MainMenu.loginButton);
+                MainMenu.mainPanel.appendChild(MainMenu.createButton);
+                MainMenu.mainPanel.appendChild(MainMenu.guestButton);
+                MainMenu.passwordInput.value = '';
+                MainMenu.usernameInput.value = '';
+            }
 
             Graphics.resize();
             console.log('Main Menu INITIALIZED')
