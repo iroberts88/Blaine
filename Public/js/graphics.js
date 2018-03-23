@@ -171,6 +171,7 @@
         startLoad: function(){
             Graphics.app.loader
                 .add('img/sprite.json')
+                .add('img/sprite2.json')
                 .load(Graphics.loadResources);
             
         },
@@ -218,9 +219,29 @@
 
             }
 
+            var r = Graphics.app._loader.resources['img/sprite2.json']
+
+            for (var i in r.textures){
+
+                var texture = PIXI.Texture.fromFrame(i);
+                var name = i.slice(0,i.length-4);
+                if (typeof Graphics.animationSpeeds[name] == 'undefined'){
+                    Graphics.resources[name] = texture;
+                }
+            }
+
+            var r = Graphics.app._loader.resources['img/sprite.json']
+
+            for (var i in r.textures){
+                var texture = PIXI.Texture.fromFrame(i);
+                var name = i.slice(0,i.length-4);
+                if (typeof Graphics.animationSpeeds[name] == 'undefined'){
+                    Graphics.resources[name] = texture;
+                }
+            }
 
             //add all textures to resources
-            for(var i = 0; i < 38; i++) {
+            /*for(var i = 0; i < 38; i++) {
                 for (var j = 0; j < 41;j++){
                     try{
                         var texture = PIXI.Texture.fromFrame(i + 'x' + j + ".png");
@@ -230,6 +251,16 @@
                     }
                 }
             }
+            for(var i = 1; i < 152; i++) {
+                try{
+                    var texture = PIXI.Texture.fromFrame(i + ".png");
+                    Graphics.resources[i] = texture;
+                    var texture2 = PIXI.Texture.fromFrame('b' + i + ".png");
+                    Graphics.resources['b' + i] = texture2;
+                }catch(e){
+                    
+                }
+            }*/
             
             Graphics.onReady();
         },
