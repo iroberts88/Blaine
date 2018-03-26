@@ -22,7 +22,7 @@ function User() {
         init: function(d){
 
             if (!d.guest){
-                this.characters = [];
+                this.characters = {};
                 this.userData = {
                     username: d.username,
                     password: d.password,
@@ -49,7 +49,8 @@ function User() {
                     }
                 });
             }else{
-                this.characters = [];
+                this.guest = true;
+                this.characters = {};
                 this.userData = {
                     username: d.username,
                     password: '',
@@ -62,7 +63,7 @@ function User() {
         },
         lock: function(){
             this.userData.loggedin = true;
-            if (this.userData.username != 'guest'){
+            if (!this.guest){
                 try{
                     var d = this.userData;
                     var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
@@ -89,7 +90,7 @@ function User() {
         },
         unlock: function(){
             this.userData.loggedin = false;
-            if (this.userData.username != 'guest'){
+            if (!this.guest){
                 try{
                     var d = this.userData;
                     var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });

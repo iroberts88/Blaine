@@ -102,7 +102,11 @@ $(function() {
 
     // Load Sounds
     Acorn.Sound.init();
-    Acorn.Sound.addSound({url: 'sounds/my_sound.mp3', id: 'item', volume: 1, preload: true});
+    //Music
+    Acorn.Sound.addSound({url: 'sounds/music/1_opening.mp3', id: 'opening', volume: 0.7, preload: true,type:'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/3_newChar.mp3', id: 'newChar', volume: 0.7, preload: true,type:'music'});
+    //sfx
+    Acorn.Sound.addSound({url: 'sounds/sfx/select.mp3', id: 'select', volume: 1.0, preload: true});
 });
 
 function setupSocket() {
@@ -135,6 +139,7 @@ function init() {
     Graphics.app.ticker.add(function update(){
         Settings.stats.begin();
         Acorn.states[Acorn.currentState].update(Graphics.app.ticker.elapsedMS/1000); //update the current state
+        Acorn.Sound.update(Graphics.app.ticker.elapsedMS/1000)
         Graphics.app.renderer.render(Graphics.app.stage);
 
         //TODO Put this stuff in the correct state!

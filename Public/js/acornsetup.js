@@ -3,8 +3,14 @@
     AcornSetup = {
         
         baseStyle: {
-            font: '48px Permanent Marker',
+            font: '18px Pokemon',
             fill: Graphics.pallette.color1,
+            align: 'left'
+        },
+
+        style2: {
+            font: '18px Pokemon',
+            fill: 'black',
             align: 'left'
         },
 
@@ -20,12 +26,15 @@
             });
 
             Acorn.Net.on('loggedIn', function (data) {
-                console.log(data);
+                Player.init(data);
+                document.body.removeChild(MainMenu.mainPanel);
+                MainMenu.showCharacterSelection(data);
             });
 
             Acorn.Net.on('logout', function (data) {
+                console.log(data);
                 Player.userData = null;
-                Acorn.changeState('loginScreen');
+                Acorn.changeState('mainmenu');
             });
 
             
@@ -74,6 +83,17 @@
                 },
                 update: function(dt){
                     MainMenu.update(dt);
+                }
+            });
+
+            Acorn.addState({
+                stateId: 'newchar',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    NewChar.init();
+                },
+                update: function(dt){
+                    NewChar.update(dt);
                 }
             });
             

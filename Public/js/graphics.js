@@ -11,8 +11,8 @@
 
         elements: [],
         pallette: {
-            color1:'#484848', // Font color
-            color2:'#FFFFFF', // BG color 
+            color1:'#D2D2D2', // Font color
+            color2:'#484848', // BG color 
             color3: 0x79A1F2, //outline color
             color4: '#BDBDBD', //button glow color
             color5: '#D2D2D2', //button clicked color
@@ -128,6 +128,9 @@
             this.uiPrimitives.clear();
             this.uiPrimitives.position.x = 0;
             this.uiPrimitives.position.y = 0;
+            this.uiPrimitives1.clear();
+            this.uiPrimitives1.position.x = 0;
+            this.uiPrimitives1.position.y = 0;
             this.uiPrimitives2.clear();
             this.uiPrimitives2.position.x = 0;
             this.uiPrimitives2.position.y = 0;
@@ -353,6 +356,10 @@
             // OPTIONAL data.anchor
             if (typeof data.anchor == 'undefined'){
                 data.anchor = [0.5,0.5];
+            }
+            // OPTIONAL data.padding
+            if (typeof data.padding == 'undefined'){
+                data.padding = [0,0];
             }
             if (typeof data.sprite != 'undefined'){
                 var button = Graphics.getSprite(data.sprite);

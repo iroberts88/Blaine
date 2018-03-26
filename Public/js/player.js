@@ -1,8 +1,11 @@
 
 (function(window) {
     Player = {
+    	userData: null,
+
 
         init: function(data){
+        	userData = data;
         },
        
     }

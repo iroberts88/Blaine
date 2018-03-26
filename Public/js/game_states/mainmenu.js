@@ -8,7 +8,17 @@
         errorVisible: false,
         errorAlpha: 1.0,
 
+        charSelect: false,
+        currentChar: null,
+
+        fadeOut: null,
+        fadeOutTicker: null,
+
         init: function() {
+            this.currentChar = null;
+            this.charSelect = false;
+            this.fadeOut = false;
+            this.fadeOutTicker = 0;
 
             //draw the map BG
             for (var i = 0; i < this.bgMap.length;i++){
@@ -49,13 +59,13 @@
             this.logoText.id = 'logoText';
             this.logoText.type = 'text';
             this.logoText.style.cssText = 'position:absolute;background-color: #FFF;text-align: center;display: inline-block;font-size: 24px;top:35px;left:90px;color:#484848;font-family:Pokemon,Lato;font-weight:bold;line-height:15px';
-            this.logoText.innerHTML = 'PKMN Project';
+            this.logoText.innerHTML = 'PROJECT PKMN';
             this.mainPanel.appendChild( this.logoText );
             //Logo Text
             this.errorText = document.createElement( 'div' );
             this.errorText.id = 'errorText';
             this.errorText.type = 'text';
-            this.errorText.style.cssText = 'position:absolute;background-color: #FFF;text-align: center;display: inline-block;font-size: 12px;top:75px;left:80px;color:#FF0000;font-family:Pokemon;font-weight:bold;line-height:15px';
+            this.errorText.style.cssText = 'position:absolute;background-color: #FFF;text-align: center;display: inline-block;font-size: 10px;top:75px;left:80px;color:#FF0000;font-family:Pokemon;font-weight:bold;line-height:15px';
             this.errorText.innerHTML = '';
             this.mainPanel.appendChild( this.errorText );
             //Username input box
@@ -83,6 +93,7 @@
             this.guestButton.innerHTML = 'play as guest ';
             this.guestButton.onpointerup = function(){
                 MainMenu.loginType = 'guest';
+                Acorn.Sound.play('select');
                 MainMenu.mainPanel.style.height = '225px';
                 MainMenu.mainPanel.appendChild(MainMenu.usernameInput);
                 MainMenu.usernameInput.focus();
@@ -103,6 +114,7 @@
             this.loginButton.innerHTML = 'login';
             this.loginButton.onpointerup = function(){
                 MainMenu.loginType = 'normal';
+                Acorn.Sound.play('select');
                 MainMenu.mainPanel.style.height = '255px';
                 MainMenu.mainPanel.appendChild(MainMenu.usernameInput);
                 MainMenu.usernameInput.focus();
@@ -124,6 +136,7 @@
             this.createButton.innerHTML = 'new player';
             this.createButton.onpointerup = function(){
                 MainMenu.loginType = 'new';
+                Acorn.Sound.play('select');
                 MainMenu.mainPanel.style.height = '255px';
                 MainMenu.mainPanel.appendChild(MainMenu.usernameInput);
                 MainMenu.usernameInput.focus();
@@ -145,6 +158,7 @@
             this.submitButton.innerHTML = 'submit';
             this.submitButton.onpointerup = function(){
                 //check for valid sn/pw;
+                Acorn.Sound.play('select');
                 var sn = MainMenu.usernameInput.value;
                 var pw = MainMenu.passwordInput.value;
                 switch(MainMenu.loginType){
@@ -162,7 +176,7 @@
             this.cancelButton = document.createElement( 'div' );
             this.cancelButton.id = 'cancelButton';
             this.cancelButton.type = 'button';
-            this.cancelButton.style.cssText = 'top:150px;left:210px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:Pokemon;font-size:14px;font-weight:bold;line-height:15px';
+            this.cancelButton.style.cssText = 'top:150px;left:215px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:Pokemon;font-size:14px;font-weight:bold;line-height:15px';
             this.cancelButton.innerHTML = 'cancel';
             this.cancelButton.onpointerup = function(){
                 MainMenu.mainPanel.style.height = '225px';
@@ -180,7 +194,8 @@
             }
 
             Graphics.resize();
-            console.log('Main Menu INITIALIZED')
+            console.log('Main Menu INITIALIZED');
+            Acorn.Sound.play('opening');
         },
         setLoginErrorText: function(s){
             this.errorText.innerHTML = s;
@@ -189,6 +204,110 @@
             this.errorTicker = 0;
             this.errorAlpha = 1.0;
             this.errorText.style.color = 'rgba(255, 0, 0,' +  this.errorAlpha + ')';
+        },
+        showCharacterSelection(data){
+            this.charSelect = true;
+            Graphics.uiPrimitives.lineStyle(1,0xFFFFFF,1);
+            Graphics.uiPrimitives.beginFill(0xFFFFFF,1)
+            Graphics.uiPrimitives.drawRoundedRect(Graphics.width/2-200,Graphics.height/2-200,400,400,12);
+            Graphics.uiPrimitives.endFill()
+            var charSelection = new PIXI.Text('SELECT A CHARACTER',AcornSetup.style2);
+            charSelection.anchor.x = 0.5;
+            charSelection.anchor.y = 0.5;
+            charSelection.position.x = Graphics.width/2;
+            charSelection.position.y = Graphics.height/2 - 175;
+            Graphics.uiContainer.addChild(charSelection);
+            for (var i = 0; i < 3;i++){
+                var num = new PIXI.Text(i+1,AcornSetup.style2);
+                num.anchor.y = 0.5;
+                num.position.x = Graphics.width/2 - 190;
+                num.position.y = Graphics.height/2 - 120 + i*60;
+                Graphics.uiContainer.addChild(num);
+                //check if character exists
+                if (typeof data.characters[i] == 'undefined'){
+                    button = Graphics.makeUiElement({
+                        text: 'NEW CHARACTER',
+                        style: AcornSetup.baseStyle,
+                        interactive: true,buttonMode: true,
+                        position: [(Graphics.width/2 - 150),Graphics.height/2 - 120 + i*60],
+                        anchor: [0,0.5],
+                        clickFunc: function onClick(e){
+                            //new character!
+                            Acorn.Sound.play('select');
+                            MainMenu.playButton.visible = true;
+                            if(!e.currentTarget.newChar){
+                                MainMenu.deleteButton.visible = true;
+                            }
+                            MainMenu.currentChar = e.currentTarget.num;
+                            var start = [e.currentTarget.position.x + e.currentTarget.width + 20,e.currentTarget.position.y];
+                            console.log(start)
+                            Graphics.uiPrimitives1.clear();
+                            Graphics.uiPrimitives1.lineStyle(1,0x484848,1);
+                            Graphics.uiPrimitives1.beginFill(0x484848,1)
+                            Graphics.uiPrimitives1.moveTo(start[0],start[1]);
+                            Graphics.uiPrimitives1.lineTo(start[0]+10,start[1]-15);
+                            Graphics.uiPrimitives1.lineTo(start[0]+10,start[1]+15);
+                            Graphics.uiPrimitives1.lineTo(start[0],start[1]);
+                            Graphics.uiPrimitives1.endFill();
+                        }
+                    });
+                    button.num = 1;
+                    button.newChar = true;
+                    button.style.fontSize = 24;
+                    Graphics.uiContainer.addChild(button);
+                }else{
+                    //enter already created character!
+                }
+                Graphics.uiPrimitives.lineStyle(1,0x484848,1);
+                Graphics.uiPrimitives.beginFill(0x484848,1)
+                Graphics.uiPrimitives.drawRoundedRect(button.position.x - 7,button.position.y - button.height/2 - 10,button.width + 15,button.height + 15,12);
+                Graphics.uiPrimitives.endFill();
+            }
+            this.playButton = Graphics.makeUiElement({
+                text: 'PLAY!',
+                style: AcornSetup.style2,
+                interactive: true,buttonMode: true,
+                position: [(Graphics.width/2),Graphics.height/2 +60],
+                anchor: [0.5,0.5],
+                clickFunc: function onClick(){
+                    console.log('play')
+                    Acorn.Sound.play('newChar');
+                    Graphics.uiPrimitives.clear()
+                    Graphics.uiPrimitives1.clear()
+                    Graphics.uiContainer.removeChildren()
+                    MainMenu.fadeOut = true;
+                }
+            });
+            this.playButton.style.fontSize = 24;
+            this.playButton.visible = false;
+            Graphics.uiContainer.addChild(this.playButton);
+
+            this.deleteButton = Graphics.makeUiElement({
+                text: 'DELETE',
+                style: AcornSetup.style2,
+                interactive: true,buttonMode: true,
+                position: [(Graphics.width/2-190),Graphics.height/2 +190],
+                anchor: [0,1],
+                clickFunc: function onClick(){
+                    console.log('delete')
+                }
+            });
+            this.deleteButton.style.fontSize = 24;
+            this.deleteButton.visible = false;
+            Graphics.uiContainer.addChild(this.deleteButton);
+
+            backButton = Graphics.makeUiElement({
+                text: 'LOGOUT',
+                style: AcornSetup.style2,
+                interactive: true,buttonMode: true,
+                position: [Graphics.width/2+190,Graphics.height/2+190],
+                anchor: [1,1],
+                clickFunc: function onClick(){
+                        Acorn.Net.socket_.emit('playerUpdate',{command: 'logout'});
+                }
+            });
+            backButton.style.fontSize = 24;
+            Graphics.uiContainer.addChild(backButton);
         },
         update: function(dt){
             Graphics.uiPrimitives2.clear();
@@ -203,6 +322,16 @@
                         this.errorVisible = false;
 
                     }
+                }
+            }
+
+            if (this.fadeOut){
+                this.fadeOutTicker += dt;
+                if (this.fadeOutTicker >= 1){
+                    NewChar.slot = MainMenu.currentChar;
+                    Acorn.changeState('newchar');
+                }else{
+                    Graphics.bgContainer.alpha = (1.0-this.fadeOutTicker);
                 }
             }
         }

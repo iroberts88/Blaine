@@ -91,12 +91,18 @@ GameEngine.prototype.addPlayer = function(p){
 
 GameEngine.prototype.removePlayer = function(p){
     this.playerLogout(p);
+    delete this.users[p.user.userData.username];
     delete this.players[p.id];
     this.playerCount -= 1;
 }
 
 GameEngine.prototype.playerLogout = function(p){
     //do logout stuff here if needed
+    try{
+        delete this.users[p.user.userData.username];
+    }catch(e){
+        console.log("error on player logout");
+    }
 }
 
 // ----------------------------------------------------------

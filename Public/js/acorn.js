@@ -178,10 +178,24 @@
         ready: false,
         required: null, //number of sounds that need to be pre-loaded
         requiredCurrent: null,
+        currentMusic: null,
+        fadeOver: 2.0,
+        fadeTicker: 0,
+        next: null,
 
         init: function() {
             this.required = 0;
             this.requiredCurrent = 0;
+            this.fadeOver = 2.2;
+            this.fadeTicker = 0;
+        },
+        getSound: function(id) {
+            for(var i = 0; i < this._sounds.length; i++) {
+                if(this._sounds[i].id == id) {
+                    return this._sounds[i];
+                }
+            }
+            return null;
         },
         addSound: function(sound) {
             // url + id
@@ -190,7 +204,7 @@
             newSound.id = sound.id;
             //Set optional property multi
             if (typeof sound.multi == 'undefined'){
-                newSound.multi = true;
+                newSound.multi = false;
             }else{
                 newSound.multi = sound.multi;
             }
@@ -213,6 +227,9 @@
                 newSound.type = 'sfx';
             }else{
                 newSound.type = sound.type;
+                if (sound.type == 'music'){
+                    newSound._sound.loop = true;
+                }
             }
 
             //set optional property onEnd
@@ -246,22 +263,8 @@
                 mainObj.checkReady();
             }
         },
-        play: function(id,loc) {
+        play: function(id) {
             var vMod = 1.0;
-            if (typeof loc != 'undefined'){
-                var xDist = (Graphics.world.position.x*-1+(Graphics.width/2)) - loc[0];
-                var yDist = (Graphics.world.position.y*-1+(Graphics.height/2)) - loc[1];
-                var h = Math.sqrt(xDist * xDist + yDist * yDist);
-                if (h != 0){
-                    var vMod  =  (Graphics.diameter / (Graphics.diameter + (h*(h/25))));
-                }
-                if (vMod < 0){
-                    vMod = 0;
-                }else if (vMod > 1.0){
-                    vMod = 1.0;
-                }
-
-            }
             for(var i = 0; i < this._sounds.length; i++) {
                 if(this._sounds[i].id == id) {
                     var snd = this._sounds[i];
@@ -281,7 +284,15 @@
                             snd._sound[snd._sound.length - 1].play();
                         }
                     } else {
-                        if (snd._sound.paused) {
+                        if (snd.type == 'music'){
+                            if (Acorn.Sound.currentMusic != id && Acorn.Sound.currentMusic != null){
+                                Acorn.Sound.next = id;
+                            }else{
+                                snd._sound.volume = snd.volume*vMod;
+                                snd._sound.play();
+                                Acorn.Sound.currentMusic = id;
+                            }
+                        }else if (snd._sound.paused) {
                             snd._sound.volume = snd.volume*vMod;
                             snd._sound.play();
                         } else {
@@ -290,6 +301,24 @@
                     }
                     break;
                 }
+            }
+        },
+        update: function(dt){
+            if (Acorn.Sound.next != null){
+                Acorn.Sound.fadeTicker += dt;
+                var current = Acorn.Sound.getSound(Acorn.Sound.currentMusic);
+                if (Acorn.Sound.fadeTicker >= Acorn.Sound.fadeOver){
+                    //play new music
+                    Acorn.Sound.stop(Acorn.Sound.currentMusic);
+                    var newMusic = Acorn.Sound.getSound(Acorn.Sound.next);
+                    newMusic._sound.volume = newMusic.volume;
+                    newMusic._sound.play();
+                    Acorn.Sound.currentMusic = Acorn.Sound.next;
+                    Acorn.Sound.next = null;
+                    Acorn.Sound.fadeTicker = 0;
+                }
+                var val = current.volume*((Acorn.Sound.fadeOver-Acorn.Sound.fadeTicker)/Acorn.Sound.fadeOver);
+                current._sound.volume = val;
             }
         }
     };

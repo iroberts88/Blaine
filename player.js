@@ -63,6 +63,15 @@ Player.prototype.setupSocket = function() {
                         that.gameEngine.debug(that,{id: 'logoutError', error: e.stack});
                     }
                     break;
+                case 'newChar':
+                    try{
+                        console.log(data);
+                        //create new character
+                        //send down initail map data, character data etc..
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'newCharError', error: e.stack});
+                    }
+                    break;
             }
         }catch(e){
             console.log("Player Update Error");
@@ -170,7 +179,7 @@ Player.prototype.setupSocket = function() {
                 if (err) {
                 } else {
                     console.log("Attempting guest logon...");
-                    if (d.sn.length >= 3 && d.sn.length <= 16 && typeof data.Item == 'undefined'){
+                    if (d.sn.length >= 3 && d.sn.length <= 16 && typeof data.Item == 'undefined' && typeof that.gameEngine.users[d.sn] == 'undefined'){
                         console.log('valid username - adding guest');
                         var u = {
                             username: d.sn,
@@ -181,7 +190,7 @@ Player.prototype.setupSocket = function() {
                         that.user.init(u);
                         that.gameEngine.users[d.sn] = that.user;
                         that.gameEngine.queuePlayer(that,"loggedIn", {name:d.sn, characters: that.user.characters});
-                    }else if (typeof data.Item != 'undefined'){
+                    }else if (typeof data.Item != 'undefined' || typeof that.gameEngine.users[d.sn] != 'undefined'){
                         that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
                     }else{
                         that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'snlength'});
@@ -218,7 +227,7 @@ Player.prototype.setupSocket = function() {
                                 TableName: 'blaine_userdata',
                                 Item: {
                                     'username': d.sn,
-                                    'characters': [],
+                                    'characters': {},
                                 }
                             }
                             docClient.put(params2, function(err, data2) {
