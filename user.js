@@ -14,66 +14,55 @@ function User() {
     return {
         userData: null,
         owner: null,
+
+        guest: false,
+
+        characters: null,
        
         init: function(d){
-            this.userData = {
-                username: 'guest',
-                password: 'guest',
-                chatLog: [],
-                admin: false,
-                createDate: new Date().toJSON(),
-                lastLogin: new Date().toJSON(),
-                loggedin: true
-            };
 
-            if (typeof d.username != 'undefined'){
-                this.userData.username = d.username;
-                this.userData.password = d.password;
-                this.userData.chatLog = d.chatLog;
+            if (!d.guest){
+                this.characters = [];
+                this.userData = {
+                    username: d.username,
+                    password: d.password,
+                    admin: false,
+                    createDate: new Date().toJSON(),
+                    lastLogin: new Date().toJSON(),
+                    loggedin: true
+                };
                 this.userData.admin = d.admin;
                 this.userData.createDate = d.createDate;
-                try{
-                    var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
-                    var params = {
-                        TableName: 'blaine_userdata',
-                        Key: {
-                            username: this.userData.username
-                        }
+                var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
+                var params = {
+                    TableName: 'blaine_userdata',
+                    Key: {
+                        username: this.userData.username
                     }
-                    var that = this;
-                    docClient.get(params, function(err, data) {
-                        if (err) {
-                            console.error("Unable to find user data. Error JSON:", JSON.stringify(err, null, 2));
-                        } else {
-                            //get user data?
-                        }
-                    });
-                }catch(e){
                 }
-            }
+                var that = this;
+                docClient.get(params, function(err, data) {
+                    if (err) {
+                        console.error("Unable to find user data. Error JSON:", JSON.stringify(err, null, 2));
+                    } else {
 
-            try{
-                if (d.guest){
-                    //guest stuff?
-                }
-            }catch(e){
-                console.log(e);
-            }
-
-        },
-        
-        setLastLogin: function(date){
-            //TODO this should change the actual mongodb lastLogin
-            var ge = this.owner.gameEngine;
-            if (this.userData.username != 'guest'){
-                ge.users[ge._userIndex[this.userData.username]].lastLogin = date;
+                    }
+                });
+            }else{
+                this.characters = [];
+                this.userData = {
+                    username: d.username,
+                    password: '',
+                    admin: false,
+                    createDate: new Date().toJSON(),
+                    lastLogin: new Date().toJSON(),
+                    loggedin: true
+                };
             }
         },
         lock: function(){
-            var ge = this.owner.gameEngine;
             this.userData.loggedin = true;
             if (this.userData.username != 'guest'){
-                ge.users[ge._userIndex[this.userData.username]].loggedin = true;
                 try{
                     var d = this.userData;
                     var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
@@ -99,10 +88,8 @@ function User() {
             }
         },
         unlock: function(){
-            var ge = this.owner.gameEngine;
             this.userData.loggedin = false;
             if (this.userData.username != 'guest'){
-                ge.users[ge._userIndex[this.userData.username]].loggedin = false;
                 try{
                     var d = this.userData;
                     var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });

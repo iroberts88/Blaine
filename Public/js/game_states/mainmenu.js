@@ -3,6 +3,11 @@
     MainMenu = {
         bgMap: null,
         loginType: null,
+
+        errorTicker: 0,
+        errorVisible: false,
+        errorAlpha: 1.0,
+
         init: function() {
 
             //draw the map BG
@@ -43,9 +48,16 @@
             this.logoText = document.createElement( 'div' );
             this.logoText.id = 'logoText';
             this.logoText.type = 'text';
-            this.logoText.style.cssText = 'position:absolute;background-color: #FFF;text-align: center;display: inline-block;font-size: 18px;top:35px;left:80px;color:#484848;font-family:"Lato";font-size: 48px;font-weight:bold;line-height:15px';
-            this.logoText.innerHTML = 'Pokè Project';
+            this.logoText.style.cssText = 'position:absolute;background-color: #FFF;text-align: center;display: inline-block;font-size: 24px;top:35px;left:90px;color:#484848;font-family:Pokemon,Lato;font-weight:bold;line-height:15px';
+            this.logoText.innerHTML = 'PKMN Project';
             this.mainPanel.appendChild( this.logoText );
+            //Logo Text
+            this.errorText = document.createElement( 'div' );
+            this.errorText.id = 'errorText';
+            this.errorText.type = 'text';
+            this.errorText.style.cssText = 'position:absolute;background-color: #FFF;text-align: center;display: inline-block;font-size: 12px;top:75px;left:80px;color:#FF0000;font-family:Pokemon;font-weight:bold;line-height:15px';
+            this.errorText.innerHTML = '';
+            this.mainPanel.appendChild( this.errorText );
             //Username input box
             this.usernameInput = document.createElement( 'input' );
             this.usernameInput.id = 'username';
@@ -53,7 +65,7 @@
             this.usernameInput.name = 'username';
             this.usernameInput.placeholder = 'username';
             this.usernameInput.maxlength = 16;
-            this.usernameInput.style.cssText = 'border-width:1px;border-style:solid;width:200px;height:40px;top:101px;left:115px;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
+            this.usernameInput.style.cssText = 'border-width:1px;border-style:solid;width:200px;height:40px;top:101px;left:105px;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
             this.usernameInput.style.display = 'inline-block';
             //password input box
             this.passwordInput = document.createElement( 'input' );
@@ -61,18 +73,19 @@
             this.passwordInput.type = 'password';
             this.passwordInput.placeholder = 'password';
             this.passwordInput.maxlength = 16;
-            this.passwordInput.style.cssText = 'border-width:1px;border-style:solid;width:200px;height:40px;top:145px;left:115px;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
+            this.passwordInput.style.cssText = 'border-width:1px;border-style:solid;width:200px;height:40px;top:145px;left:105px;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
             this.passwordInput.style.display = 'inline-block';
             //play as a guest button
             this.guestButton = document.createElement( 'div' );
             this.guestButton.id = 'guestButton';
             this.guestButton.type = 'button';
-            this.guestButton.style.cssText = 'top:155px;left:75px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:"Permanent Marker";font-size:32px;font-weight:bold;line-height:15px';
-            this.guestButton.innerHTML = 'Play as guest ';
+            this.guestButton.style.cssText = 'top:155px;left:75px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:Pokemon;font-size:24px;font-weight:bold;line-height:15px';
+            this.guestButton.innerHTML = 'play as guest ';
             this.guestButton.onpointerup = function(){
                 MainMenu.loginType = 'guest';
                 MainMenu.mainPanel.style.height = '225px';
                 MainMenu.mainPanel.appendChild(MainMenu.usernameInput);
+                MainMenu.usernameInput.focus();
                 MainMenu.mainPanel.appendChild(MainMenu.submitButton);
                 MainMenu.mainPanel.appendChild(MainMenu.cancelButton);
                 MainMenu.submitButton.style.top = '150px';
@@ -86,12 +99,13 @@
             this.loginButton = document.createElement( 'div' );
             this.loginButton.id = 'loginButton';
             this.loginButton.type = 'button';
-            this.loginButton.style.cssText = 'top:100px;left:75px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:"Permanent Marker";font-size:18px;font-weight:bold;line-height:15px';
-            this.loginButton.innerHTML = 'Login';
+            this.loginButton.style.cssText = 'top:100px;left:75px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:Pokemon;font-size:14px;font-weight:bold;line-height:15px';
+            this.loginButton.innerHTML = 'login';
             this.loginButton.onpointerup = function(){
                 MainMenu.loginType = 'normal';
                 MainMenu.mainPanel.style.height = '255px';
                 MainMenu.mainPanel.appendChild(MainMenu.usernameInput);
+                MainMenu.usernameInput.focus();
                 MainMenu.mainPanel.appendChild(MainMenu.passwordInput);
                 MainMenu.mainPanel.appendChild(MainMenu.submitButton);
                 MainMenu.mainPanel.appendChild(MainMenu.cancelButton);
@@ -106,12 +120,13 @@
             this.createButton = document.createElement( 'div' );
             this.createButton.id = 'createButton';
             this.createButton.type = 'button';
-            this.createButton.style.cssText = 'top:100px;left:195px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:"Permanent Marker";font-size:18px;font-weight:bold;line-height:15px';
-            this.createButton.innerHTML = 'New Player';
+            this.createButton.style.cssText = 'top:100px;left:195px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:Pokemon;font-size:14px;font-weight:bold;line-height:15px';
+            this.createButton.innerHTML = 'new player';
             this.createButton.onpointerup = function(){
                 MainMenu.loginType = 'new';
                 MainMenu.mainPanel.style.height = '255px';
                 MainMenu.mainPanel.appendChild(MainMenu.usernameInput);
+                MainMenu.usernameInput.focus();
                 MainMenu.mainPanel.appendChild(MainMenu.passwordInput);
                 MainMenu.mainPanel.appendChild(MainMenu.submitButton);
                 MainMenu.mainPanel.appendChild(MainMenu.cancelButton);
@@ -126,25 +141,28 @@
             this.submitButton = document.createElement( 'div' );
             this.submitButton.id = 'submitButton';
             this.submitButton.type = 'button';
-            this.submitButton.style.cssText = 'top:150px;left:85px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:"Permanent Marker";font-size:18px;font-weight:bold;line-height:15px';
+            this.submitButton.style.cssText = 'top:150px;left:83px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:Pokemon;font-size:14px;font-weight:bold;line-height:15px';
             this.submitButton.innerHTML = 'submit';
             this.submitButton.onpointerup = function(){
+                //check for valid sn/pw;
+                var sn = MainMenu.usernameInput.value;
+                var pw = MainMenu.passwordInput.value;
                 switch(MainMenu.loginType){
                     case 'normal':
-                        Acorn.Net.socket_.emit('loginAttempt',{sn: document.getElementById('usernameInput').value,pw:document.getElementById('passwordInput').value});
+                        Acorn.Net.socket_.emit('loginAttempt',{sn: sn,pw:pw});
                         break;
                     case 'new':
-                        Acorn.Net.socket_.emit('createUser',{sn: document.getElementById('usernameInput').value,pw:document.getElementById('passwordInput').value});
+                        Acorn.Net.socket_.emit('createUser',{sn: sn,pw:pw});
                         break;
                     case 'guest':
-                        Acorn.Net.socket_.emit('guestLogin',{sn: document.getElementById('usernameInput').value});
+                        Acorn.Net.socket_.emit('guestLogin',{sn: sn});
                         break;
                 }
             }
             this.cancelButton = document.createElement( 'div' );
             this.cancelButton.id = 'cancelButton';
             this.cancelButton.type = 'button';
-            this.cancelButton.style.cssText = 'top:150px;left:210px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:"Permanent Marker";font-size:18px;font-weight:bold;line-height:15px';
+            this.cancelButton.style.cssText = 'top:150px;left:210px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:Pokemon;font-size:14px;font-weight:bold;line-height:15px';
             this.cancelButton.innerHTML = 'cancel';
             this.cancelButton.onpointerup = function(){
                 MainMenu.mainPanel.style.height = '225px';
@@ -164,10 +182,29 @@
             Graphics.resize();
             console.log('Main Menu INITIALIZED')
         },
-        
+        setLoginErrorText: function(s){
+            this.errorText.innerHTML = s;
+            this.errorText.style.left = 200 - this.errorText.clientWidth/2;
+            this.errorVisible = true;
+            this.errorTicker = 0;
+            this.errorAlpha = 1.0;
+            this.errorText.style.color = 'rgba(255, 0, 0,' +  this.errorAlpha + ')';
+        },
         update: function(dt){
             Graphics.uiPrimitives2.clear();
-            
+
+            if (this.errorVisible){
+                this.errorTicker += dt;
+                if (this.errorTicker > 5){
+                    this.errorAlpha = this.errorAlpha*0.95;
+                    this.errorText.style.color = 'rgba(255, 0, 0,' +  this.errorAlpha + ')';
+                    if (this.errorAlpha < 0.02){
+                        this.errorText.innerHTML = '';
+                        this.errorVisible = false;
+
+                    }
+                }
+            }
         }
 
     }

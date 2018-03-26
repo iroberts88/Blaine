@@ -20,9 +20,7 @@
             });
 
             Acorn.Net.on('loggedIn', function (data) {
-                Player.userData = data;
-                Settings.toggleCredentials(false);
-                Acorn.changeState('mainMenu');
+                console.log(data);
             });
 
             Acorn.Net.on('logout', function (data) {
@@ -39,6 +37,25 @@
 
             Acorn.Net.on('ping', function (data) {
                 Settings.stats.pingReturn();
+            });
+
+            Acorn.Net.on('setLoginErrorText', function (data) {
+                var s = 'Login Error';
+                switch(data.text){
+                    case 'userexists':
+                        s = 'Username is already in use. Please try another!'
+                        break;
+                    case 'snlength':
+                        s = 'Username length must be between 3 and 16 characters';
+                        break;
+                    case 'plength':
+                        s = 'Password length must be at least 6 characters'
+                        break;
+                    case 'wrongpass':
+                        s = 'Incorrect username or password';
+                        break;
+                }
+                MainMenu.setLoginErrorText(s);
             });
 
         },

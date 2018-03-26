@@ -100,11 +100,7 @@ Player.prototype.setupSocket = function() {
             that.user.unlock();
             console.log('Player ' + that.id + ' (' + that.user.userData.username + ') has disconnected.');
             that.user.updateDB();
-            if (that.gameSession){
-                that.gameSession.handleDisconnect(that,false);
-            }else{
-                that.gameEngine.removePlayer(that);
-            }
+            that.gameEngine.removePlayer(that);
             // If callback exists, call it
             if(that.onDisconnectHandler != null && typeof that.onDisconnectHandler == 'function' ) {
                 that.onDisconnectHandler();
@@ -116,62 +112,9 @@ Player.prototype.setupSocket = function() {
 
     
     this.socket.on('loginAttempt', function (d) {
-
         try{
-            if (!that.gameSession){
-                if (d.guest){
-                    //SET USER DATA TO GUEST
-                    that.user = User();
-                    that.user.setOwner(that);
-                    that.user.init({guest: true});
-                    that.user.setLastLogin(Date.now());
-                    that.gameEngine.queuePlayer(that,"loggedIn", {name:that.user.userData.username,stats:that.user.userData.stats});
-                }else if (d.sn && d.pw){
-                    d.sn = d.sn.toLowerCase();
-                    if (!that.gameEngine.users[that.gameEngine._userIndex[d.sn]].loggedin){
-                        var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
-                        var params = {
-                            TableName: 'users',
-                            Key: {
-                                username: d.sn
-                            }
-                        }
-                        docClient.get(params, function(err, data) {
-                            if (err) {
-                                console.error("Unable to find user. Error JSON:", JSON.stringify(err, null, 2));
-                            } else {
-                                const hash = crypto.createHmac('sha256', d.pw);
-                                if (hash.digest('hex') == data.Item.password){
-                                    //SET USER DATA TO EXISTING USER
-                                    that.user = User();
-                                    that.user.setOwner(that);
-                                    that.user.init(data.Item);
-                                    that.user.lock();
-                                    that.user.setLastLogin(Date.now().toJSON);
-                                    that.gameEngine.queuePlayer(that,"loggedIn", {name:data.Item.username});
-                                }else{
-                                    that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'wp'});
-                                }
-                            }
-                        });
-                    }else{
-                        that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'l'});
-                    }
-                }
-            }
-        }catch(e){
-            console.log('Login Attempt failed');
-            console.log(e);
-            that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'wp'});
-        }
-    });
-    //TODO - set player variable to show they are logged in
-    //on the client - catch "loggedIn" and move to the main menu, display stats, add logout button
-    this.socket.on('createUser', function (d) {
-        console.log(d);
-        try{
-            d.sn = d.sn.toLowerCase();
-            if (!that.gameSession && d.sn != 'guest' && d.pw){
+            if (d.sn && d.pw){
+                d.sn = d.sn.toLowerCase();
                 var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                 var params = {
                     TableName: 'users',
@@ -180,69 +123,153 @@ Player.prototype.setupSocket = function() {
                     }
                 }
                 docClient.get(params, function(err, data) {
-                if (err) {
-                } else {
-                    //check password lengths, and if item exists
-                    console.log("Create user succeeded:", JSON.stringify(data, null, 2));
-                    if (d.sn.length >= 3 && d.sn.length <= 16 && d.pw.length >= 8 && d.pw.length <= 16 && typeof data.Item == 'undefined'){
-                        console.log('valid account info - creating account');
-                        //first, initialize the user data
-                        var params2 = {
-                            TableName: 'tactics_userdata',
-                            Item: {
-                                'username': d.sn,
-                                'characters': [],
-                                'inventory': []
+                    try{
+                        if (err) {
+                            console.error("Unable to find user. Error JSON:", JSON.stringify(err, null, 2));
+                        } else {
+                            if (typeof data.Item != 'undefined'){
+                                const hash = crypto.createHmac('sha256', d.pw);
+                                if (hash.digest('hex') == data.Item.password){
+                                    //SET USER DATA TO EXISTING USER
+                                    that.user = User();
+                                    that.user.setOwner(that);
+                                    that.user.init(data.Item);
+                                    that.user.lock();
+                                    that.gameEngine.users[d.sn] = that.user;
+                                    that.gameEngine.queuePlayer(that,"loggedIn", {name:data.Item.username, characters: that.user.characters});
+                                }else{
+                                    that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'wrongpass'});
+                                }
+                            }else{
+                                that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'wrongpass'});
                             }
                         }
-                        docClient.put(params2, function(err, data2) {
-                            if (err) {
-                                console.error("Unable to add user data. Error JSON:", JSON.stringify(err, null, 2));
-                            } else {
-                                console.log("Create userdata succeeded:", JSON.stringify(data2, null, 2));
-                                //hash the password
-                                const hash = crypto.createHmac('sha256', d.pw);
-                                var u = {
-                                    username: d.sn,
-                                    password: hash.digest('hex')
-                                };
-                                that.user = User();
-                                that.user.setOwner(that);
-                                that.user.init(u);
-                                var params3 = {
-                                    TableName: 'users',
-                                    Item: {
-                                        'username': d.sn,
-                                        'password': that.user.userData.password,
-                                        'admin': false,
-                                        'chatlog': [],
-                                        'loggedin': true,
-                                        'createDate': new Date().toJSON(),
-                                        'lastLogin': new Date().toJSON()
-                                    }
-                                }
-                                docClient.put(params3, function(err, data3) {
-                                    if (err) {
-                                        console.error("Unable to add user. Error JSON:", JSON.stringify(err, null, 2));
-                                    } else {
-                                        console.log("Create user succeeded:", JSON.stringify(data3, null, 2));
-                                        that.gameEngine.users[d.sn] = params3.Item;
-                                        that.gameEngine._userIndex[d.sn] = d.sn;
-                                        that.gameEngine.queuePlayer(that,"loggedIn", {name:d.sn});
-                                    }
-                                });
-                            }
-                        });
-                        
+                    }catch(e){
+                        console.log(e);
+                    }
+                });
+            }
+        }catch(e){
+            console.log('Login Attempt failed');
+            console.log(e);
+            that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'wrongpass'});
+        }
+    });
+    this.socket.on('guestLogin', function (d) {
+        console.log(d);
+        try{
+            d.sn = d.sn.toLowerCase();
+            var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
+            var params = {
+                TableName: 'users',
+                Key: {
+                    username: d.sn
+                }
+            }
+            docClient.get(params, function(err, data) {
+                if (err) {
+                } else {
+                    console.log("Attempting guest logon...");
+                    if (d.sn.length >= 3 && d.sn.length <= 16 && typeof data.Item == 'undefined'){
+                        console.log('valid username - adding guest');
+                        var u = {
+                            username: d.sn,
+                            guest: true
+                        };
+                        that.user = User();
+                        that.user.setOwner(that);
+                        that.user.init(u);
+                        that.gameEngine.users[d.sn] = that.user;
+                        that.gameEngine.queuePlayer(that,"loggedIn", {name:d.sn, characters: that.user.characters});
                     }else if (typeof data.Item != 'undefined'){
-                        that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'uiu'});
-                    }else if (d.sn.length < 3 || d.sn.length > 16){
-                        that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'ule'});
-                    }else if (d.pw.length < 8 || d.pw.length > 16){
-                        that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'ple'});
+                        that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
+                    }else{
+                        that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'snlength'});
                     }
                 }
+            });
+        }catch(e){
+            console.log('error creating user');
+            console.log(e.stack);
+        }
+    });
+    this.socket.on('createUser', function (d) {
+        console.log(d);
+        try{
+            d.sn = d.sn.toLowerCase();
+            if (typeof that.gameEngine.users[d.sn] == 'undefined'){
+                var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
+                var params = {
+                    TableName: 'users',
+                    Key: {
+                        username: d.sn
+                    }
+                };
+                docClient.get(params, function(err, data) {
+                    if (err) {
+                        console.error("Unable to find user. Error JSON:", JSON.stringify(err, null, 2));
+                    } else {
+                        //check password lengths, and if item exists
+                        console.log("Create user succeeded:", JSON.stringify(data, null, 2));
+                        if (d.sn.length >= 3 && d.sn.length <= 16 && d.pw.length >= 6 && typeof data.Item == 'undefined'){
+                            console.log('valid account info - creating account');
+                            //first, initialize the user data
+                            var params2 = {
+                                TableName: 'blaine_userdata',
+                                Item: {
+                                    'username': d.sn,
+                                    'characters': [],
+                                }
+                            }
+                            docClient.put(params2, function(err, data2) {
+                                if (err) {
+                                    console.error("Unable to add user data. Error JSON:", JSON.stringify(err, null, 2));
+                                } else {
+                                    console.log("Create userdata succeeded:", JSON.stringify(data2, null, 2));
+                                    //hash the password
+                                    const hash = crypto.createHmac('sha256', d.pw);
+                                    var u = {
+                                        username: d.sn,
+                                        password: hash.digest('hex')
+                                    };
+                                    that.user = User();
+                                    that.user.setOwner(that);
+                                    that.user.init(u);
+                                    that.gameEngine.users[d.sn] = that.user;
+                                    that.gameEngine.queuePlayer(that,"loggedIn", {name:d.sn, characters: that.user.characters});
+                                    var params3 = {
+                                        TableName: 'users',
+                                        Item: {
+                                            'username': d.sn,
+                                            'password': that.user.userData.password,
+                                            'admin': false,
+                                            'loggedin': true,
+                                            'createDate': new Date().toJSON(),
+                                            'lastLogin': new Date().toJSON()
+                                        }
+                                    }
+                                    docClient.put(params3, function(err, data3) {
+                                        if (err) {
+                                            console.error("Unable to add user. Error JSON:", JSON.stringify(err, null, 2));
+                                        } else {
+                                            console.log("Create user succeeded:", JSON.stringify(data3, null, 2));
+                                        }
+                                    });
+                                }
+                            });
+                            
+                        }else if (typeof data.Item != 'undefined'){
+                            that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
+                        }else if (d.sn.length < 3 || d.sn.length > 16){
+                            that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'snlength'});
+                        }else if (d.pw.length < 8 || d.pw.length > 16){
+                            that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'plength'});
+                        }
+                    }
                 });
+            }else{
+                //user exists
+                that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
             }
         }catch(e){
             console.log('error creating user');

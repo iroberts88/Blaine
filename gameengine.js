@@ -9,7 +9,6 @@ var self = null;
 
 var GameEngine = function() {
     this.users = {};
-    this._userIndex = {};
     this.gameTickInterval = 20;
     this.lastTime = Date.now();
 
@@ -25,6 +24,7 @@ var GameEngine = function() {
     this.possibleIDChars = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwyz";
 
     this.debugList = {}; //used avoid multiple debug chains in tick()
+    this.ready = false;
 }
 
 GameEngine.prototype.init = function () {
@@ -79,15 +79,7 @@ GameEngine.prototype.loadMaps = function(arr) {
         this.mapids.push(arr[i].mapid);
     }
     console.log('loaded ' + arr.length + ' Maps from db');
-}
-
-GameEngine.prototype.loadUsers = function(arr) {
-    for (var i = 0;i < arr.length;i++){
-        this.users[arr[i].username] = arr[i];
-        this.users[arr[i].username].loggedin = false;
-        this._userIndex[arr[i].username] = arr[i].username;
-    }
-    console.log("loaded " + (i) + ' users from db');
+    this.ready = true;
 }
 
 //Player functions
@@ -112,47 +104,49 @@ GameEngine.prototype.playerLogout = function(p){
 // ----------------------------------------------------------
 
 GameEngine.prototype.newConnection = function(socket) {
-    console.log('New Player Connected');
-    console.log('Socket ID: ' + socket.id);
-    //Initialize new player
-    var p = new Player();
-    p.id = self.getId();
-    p.setGameEngine(self);
-    console.log('Player ID: ' + p.id);
-    p.init({socket:socket});
-    //send down map info fo intro screen?
-    //only send down the correct amount of tiles
-    var sectorXStart = -1;
-    var tileXStart = 7
-    var sectorX = -1;
-    var sectorY = -4;
-    var tileX = 7;
-    var tileY = 18;
-    var bgMap = [];
-    for (var i = 0;i < 28;i++){
-        var arr = []
-        if (tileY > 20){
-            tileY = 0;
-            sectorY +=1;
-        }
-        for (var j = 0; j < 49;j++){
-            if (tileX > 20){
-                tileX = 0;
-                sectorX +=1;
+    if (self.ready){
+        console.log('New Player Connected');
+        console.log('Socket ID: ' + socket.id);
+        //Initialize new player
+        var p = new Player();
+        p.id = self.getId();
+        p.setGameEngine(self);
+        console.log('Player ID: ' + p.id);
+        p.init({socket:socket});
+        //send down map info fo intro screen?
+        //only send down the correct amount of tiles
+        var sectorXStart = -1;
+        var tileXStart = 7
+        var sectorX = -1;
+        var sectorY = -4;
+        var tileX = 7;
+        var tileY = 18;
+        var bgMap = [];
+        for (var i = 0;i < 28;i++){
+            var arr = []
+            if (tileY > 20){
+                tileY = 0;
+                sectorY +=1;
             }
-            arr.push({
-                tex: self.maps['pallet'].mapData[sectorX + 'x' + sectorY].tiles[tileX][tileY].resource,
-                oTex: self.maps['pallet'].mapData[sectorX + 'x' + sectorY].tiles[tileX][tileY].overlayResource
-            });
-            tileX += 1;
+            for (var j = 0; j < 49;j++){
+                if (tileX > 20){
+                    tileX = 0;
+                    sectorX +=1;
+                }
+                arr.push({
+                    tex: self.maps['pallet'].mapData[sectorX + 'x' + sectorY].tiles[tileX][tileY].resource,
+                    oTex: self.maps['pallet'].mapData[sectorX + 'x' + sectorY].tiles[tileX][tileY].overlayResource
+                });
+                tileX += 1;
+            }
+            bgMap.push(arr);
+            tileY += 1;
+            tileX = tileXStart;
+            sectorX = sectorXStart;
         }
-        bgMap.push(arr);
-        tileY += 1;
-        tileX = tileXStart;
-        sectorX = sectorXStart;
+        self.queuePlayer(p,'connInfo', {bgMap: bgMap});
+        self.addPlayer(p);
     }
-    self.queuePlayer(p,'connInfo', {bgMap: bgMap});
-    self.addPlayer(p);
 }
 
 GameEngine.prototype.emit = function() {

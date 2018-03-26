@@ -107,7 +107,6 @@
             return this.keyBindings[keyCode];
         },
         keyDown: function(keyCode) {
-            console.log(keyCode);
             this.keysPressed[this.getBinding(keyCode)] = true;
         },
         keyUp: function(keyCode) {

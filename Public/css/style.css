@@ -6,3 +6,9 @@ body {
 	/* width: 100%;
 	height: 100%; */
 }
+
+@font-face {
+  font-family: "Pokemon";
+  src: url("/pokemon_generation_1.woff") format("woff");
+}
+h1 { font-family: "Pokemon", Lato }

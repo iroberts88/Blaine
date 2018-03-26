@@ -49,9 +49,27 @@ function init() {
         if (err) {
             console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
         } else {
-            console.log("Loading users... " + data.Items.length + ' found');
-            ge.loadUsers(data.Items);
-            rc.ready('dbUsers');
+            console.log("Checking user logged-in status...");
+            for (var i = 0; i < data.Items.length;i++){
+                if (data.Items[i].loggedin){
+                    var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
+                    var params = {
+                        TableName: 'users',
+                        Key:{username: data.Items[i].username},
+                        UpdateExpression: "set loggedin = :bool",
+                        ExpressionAttributeValues: {
+                            ":bool": false
+                        }
+                    }
+                    docClient.update(params, function(err, data) {
+                        if (err) {
+                            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+                        } else {
+                            console.log("Update loggedin->false succeeded:", JSON.stringify(data, null, 2));
+                        }
+                    });
+                }
+            }
         }
     });
 
