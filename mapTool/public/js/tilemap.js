@@ -19,9 +19,30 @@
             for (var sector in data.mapData){
                 //init sectors;
                 console.log(sector);
-                var s = this.getSector(data.mapData[sector].x*this.fullSectorSize,data.mapData[sector].y*this.fullSectorSize,data.mapData[sector]);
+                var sectorCoords = this.getXY(sector);
+                var s = this.getSector(sectorCoords.x*this.fullSectorSize,sectorCoords.y*this.fullSectorSize,data.mapData[sector]);
             }
         }
+    };
+    TileMap.prototype.getXY = function(string){
+        var x = '';
+        var y = '';
+        var coords = {};
+        var onX = true;
+        for (var i = 0; i < string.length;i++){
+            if (string.charAt(i) == 'x'){
+                onX = false;
+                continue;
+            }
+            if (onX){
+                x = x + string.charAt(i);
+            }else{
+                y = y + string.charAt(i);
+            }
+        }
+        coords.x = parseInt(x);
+        coords.y = parseInt(y);
+        return coords;
     };
     TileMap.prototype.setSector = function(data){
 

@@ -44,7 +44,6 @@ GameEngine.prototype.tick = function() {
     var now = Date.now();
     var deltaTime = (now-self.lastTime) / 1000.0;
     
-
     //update debug list
     for (var k in self.debugList){
         self.debugList[k].t -= deltaTime;
@@ -75,10 +74,31 @@ GameEngine.prototype.getId = function() {
 
 GameEngine.prototype.loadMaps = function(arr) {
     for (var i = 0; i < arr.length;i++){
-        this.maps[arr[i].mapid] = arr[i];
+        var map = {sectorArray: arr[i].mapData,mapid: arr[i].mapid};
+        this.maps[arr[i].mapid] = map;
         this.mapids.push(arr[i].mapid);
     }
+
     console.log('loaded ' + arr.length + ' Maps from db');
+}
+
+GameEngine.prototype.loadSectors = function(arr) {
+    var sectors = {};
+    for (var i = 0; i < arr.length;i++){
+        sectors[arr[i].sectorid] = arr[i];
+    }
+
+    for (var m in this.maps){
+        var map = this.maps[m];
+        map.mapData = {};
+        for (var i = 0; i < map.sectorArray.length;i++){
+            var sec = sectors[map.mapid + '_' + map.sectorArray[i]];
+            map.mapData[map.sectorArray[i]] = sec;
+        }
+    }
+
+    console.log('loaded ' + arr.length + ' Sectors from db');
+    console.log(this.maps);
     this.ready = true;
 }
 
@@ -98,6 +118,9 @@ GameEngine.prototype.removePlayer = function(p){
 
 GameEngine.prototype.playerLogout = function(p){
     //do logout stuff here if needed
+    p.user.unlock();
+    p.user.updateDB();
+    p.user = null;
     try{
         delete this.users[p.user.userData.username];
     }catch(e){

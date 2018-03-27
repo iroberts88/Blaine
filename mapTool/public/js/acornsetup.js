@@ -29,7 +29,7 @@
 
              Acorn.Net.on('confirmMapSave', function (data) {
                 if (confirm('Overwrite map "' + data.name + '"?') == true) {
-                    Acorn.Net.socket_.emit('confirmMapSave',{c:true});
+                    Acorn.Net.socket_.emit('confirmMapSave',{name:data.name,c:true});
                 }else{
                     Acorn.Net.socket_.emit('confirmMapSave',{c:false});
                 }

@@ -38,6 +38,11 @@ MapTool.prototype.tick = function() {
     var now = Date.now();
     var deltaTime = (now-self.lastTime) / 1000.0;
     
+
+    for (var i in self.players){
+        self.players[i].tick(deltaTime);
+    }
+    
     self.emit();
     self.clearQueue();
     self.lastTime = now;
@@ -58,10 +63,31 @@ MapTool.prototype.getId = function() {
 
 MapTool.prototype.loadMaps = function(arr) {
     for (var i = 0; i < arr.length;i++){
-        this.maps[arr[i].mapid] = arr[i];
+        var map = {sectorArray: arr[i].mapData,mapid: arr[i].mapid};
+        this.maps[arr[i].mapid] = map;
         this.mapids.push(arr[i].mapid);
     }
+
     console.log('loaded ' + arr.length + ' Maps from db');
+}
+
+MapTool.prototype.loadSectors = function(arr) {
+    var sectors = {};
+    for (var i = 0; i < arr.length;i++){
+        sectors[arr[i].sectorid] = arr[i];
+    }
+
+    for (var m in this.maps){
+        var map = this.maps[m];
+        map.mapData = {};
+        for (var i = 0; i < map.sectorArray.length;i++){
+            var sec = sectors[map.mapid + '_' + map.sectorArray[i]];
+            map.mapData[map.sectorArray[i]] = sec;
+        }
+    }
+
+    console.log('loaded ' + arr.length + ' Sectors from db');
+    this.ready = true;
 }
 
 // ----------------------------------------------------------

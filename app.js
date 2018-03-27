@@ -31,7 +31,7 @@ function init() {
     // ----------------------------------------------------------
 
     rc.ready();
-    rc.require('dbMaps','dbUsers');
+    rc.require('dbMaps','dbUsers','dbSectors');
 
     // ---- Load Maps ----
     docClient.scan({TableName: 'blaine_maps'}, function(err, data) {
@@ -40,9 +40,21 @@ function init() {
         } else {
             console.log("Loading maps... " + data.Items.length + ' found');
             ge.loadMaps(data.Items);
+            // ---- Load Sectors ----
+            docClient.scan({TableName: 'blaine_sectors'}, function(err, data2) {
+                if (err) {
+                    console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+                } else {
+                    console.log("Loading maps... " + data2.Items.length + ' found');
+                    ge.loadSectors(data2.Items);
+                    rc.ready('dbSectors');
+                }
+            });
             rc.ready('dbMaps');
         }
     });
+
+    
 
     // ---- Load Userbase ----
     docClient.scan({TableName: 'users'}, function(err, data) {

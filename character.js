@@ -2,6 +2,7 @@ var Character = function(){
     this.id = null;
     this.owner = null;
     this.name = null;
+    this.rival = null;
     this.sex = null;
 
     //game stats (games won etc)
@@ -29,6 +30,7 @@ var Character = function(){
 Character.prototype.init = function(data) {
     //Set up all stats and attributes
     this.name = data.name;
+    this.rivalName = data.rival;
     this.sex = data.sex;
     this.owner = data.owner;
     this.id = data.id;

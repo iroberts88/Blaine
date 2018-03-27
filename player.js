@@ -1,7 +1,8 @@
 //----------------------------------------------------------------
 //player.js
 //----------------------------------------------------------------
-var User = require('./user.js').User;
+var User = require('./user.js').User,
+    Character = require('./character.js').Character;
 
 const crypto = require('crypto');
 
@@ -56,9 +57,6 @@ Player.prototype.setupSocket = function() {
                     try{
                         that.gameEngine.playerLogout(that);
                         that.gameEngine.queuePlayer(that,'logout', {});
-                        that.user.unlock();
-                        that.user.updateDB();
-                        that.user = null;
                     }catch(e){
                         that.gameEngine.debug(that,{id: 'logoutError', error: e.stack});
                     }
@@ -66,8 +64,13 @@ Player.prototype.setupSocket = function() {
                 case 'newChar':
                     try{
                         console.log(data);
-                        //create new character
-                        //send down initail map data, character data etc..
+                        if (data.slot < 1 || data.slot > 3){
+                            break;
+                        }else{
+                            //create new character
+                            var char = new Character();
+                            char.init(data);
+                        }
                     }catch(e){
                         that.gameEngine.debug(that,{id: 'newCharError', error: e.stack});
                     }
