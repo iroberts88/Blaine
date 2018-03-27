@@ -49,17 +49,37 @@ Player.prototype.setupSocket = function() {
                 var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                 var params = {
                     TableName: 'blaine_maps',
-                    Key:{mapid: that.mapData.name},
-                    UpdateExpression: "set mapData = :m",
-                    ExpressionAttributeValues: {
-                        ':m': that.mapData.mapData
-                    }
+                    Key:{mapid: d.name}
                 }
-                docClient.update(params, function(err, data) {
+                docClient.delete(params, function(err, data) {
                     if (err) {
-                        console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
+                        console.error("Unable to delete map. Error JSON:", JSON.stringify(err, null, 2));
                     } else {
-                        console.log("Map saved:", JSON.stringify(data, null, 2));
+                        console.log("Delete map succeeded:", JSON.stringify(data, null, 2));
+                        var sectorList = [];
+                        for (var i in that.mapData){
+                            sectorList.push(i);
+                        }
+                        var params2 = {
+                            TableName: 'blaine_maps',
+                            Item: {
+                                'mapid': d.name,
+                                'mapData': sectorList
+                            }
+                        }
+                        docClient.put(params2, function(err, data2) {
+                            if (err) {
+                                console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
+                            } else {
+                                console.log("Create map succeeded:", JSON.stringify(data2, null, 2));
+                                that.mapTool.mapids.push(d.name);
+                                that.mapTool.maps[d.name] = {
+                                    'mapid': d.name,
+                                    'mapData': sectorList
+                                }
+                                that.mapTool.queuePlayer(that,"mapSaved", {name:d.name});
+                            }
+                        });
                     }
                 });
             }else{
@@ -110,11 +130,15 @@ Player.prototype.setupSocket = function() {
                     console.error("Unable to check for map. Error JSON:", JSON.stringify(err, null, 2));
                 } else {
                     if (typeof data.Item == 'undefined'){
+                        var sectorList = [];
+                        for (var i in d.mapData){
+                            sectorList.push(i);
+                        }
                         var params2 = {
                             TableName: 'blaine_maps',
                             Item: {
                                 'mapid': d.name,
-                                'mapData': d.mapData
+                                'mapData': sectorList
                             }
                         }
                         docClient.put(params2, function(err, data2) {
@@ -125,9 +149,26 @@ Player.prototype.setupSocket = function() {
                                 that.mapTool.mapids.push(d.name);
                                 that.mapTool.maps[d.name] = {
                                     'mapid': d.name,
-                                    'mapData': d.mapData
+                                    'mapData': sectorList
+                                }
+                                for (var i in d.mapData){
+                                    var params3 = {
+                                        TableName: 'blaine_sectors',
+                                        Item: {
+                                            'sectorid': d.name + '_' + i,
+                                            'tiles': d.mapData[i].tiles
+                                        }
+                                    }
+                                    docClient.put(params3, function(err, data2) {
+                                        if (err) {
+                                            console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
+                                        } else {
+                                            console.log("Create map succeeded:", JSON.stringify(data2, null, 2));
+                                        }
+                                    });
                                 }
                                 that.mapTool.queuePlayer(that,"mapSaved", {name:d.name});
+
                             }
                         });
                     }else{

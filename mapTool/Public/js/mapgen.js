@@ -317,8 +317,6 @@
                                 for (var k = 0; k < MapGen.map.sectors[i].tiles[j].length;k++){
                                     var tile = MapGen.map.sectors[i].tiles[j][k];
                                     arr.push({
-                                        x: tile.x,
-                                        y: tile.y,
                                         resource: tile.resource,
                                         open: tile.open,
                                         overlayResource: tile.overlayResource,
@@ -330,7 +328,7 @@
                         }
                         MapGen.changesMade = false;
                         MapGen.mapName = name;
-                        Acorn.Net.socket_.emit('createMap',{name: name,mapData: mapData});
+                        Acorn.Net.socket_.emit('createMap',{name:name,mapData: mapData});
                     }
                 }
             });
