@@ -4,6 +4,7 @@
 
 var AWS = require("aws-sdk");
 var Player = require("./player.js").Player;
+var fs = require('fs');
 
 var self = null;
 
@@ -63,31 +64,18 @@ MapTool.prototype.getId = function() {
 
 MapTool.prototype.loadMaps = function(arr) {
     for (var i = 0; i < arr.length;i++){
-        var map = {sectorArray: arr[i].mapData,mapid: arr[i].mapid};
-        this.maps[arr[i].mapid] = map;
-        this.mapids.push(arr[i].mapid);
+        var d;
+        fs.readFile('./maps/' + arr[i], "utf8",function read(err, data) {
+            if (err) {
+                throw err;
+            }
+            var obj = JSON.parse(data);
+            console.log(obj.mapid)
+            self.maps[obj.mapid] = obj;
+            self.mapids.push(obj.mapid);
+        });
     }
-
     console.log('loaded ' + arr.length + ' Maps from db');
-}
-
-MapTool.prototype.loadSectors = function(arr) {
-    var sectors = {};
-    for (var i = 0; i < arr.length;i++){
-        sectors[arr[i].sectorid] = arr[i];
-    }
-
-    for (var m in this.maps){
-        var map = this.maps[m];
-        map.mapData = {};
-        for (var i = 0; i < map.sectorArray.length;i++){
-            var sec = sectors[map.mapid + '_' + map.sectorArray[i]];
-            map.mapData[map.sectorArray[i]] = sec;
-        }
-    }
-
-    console.log('loaded ' + arr.length + ' Sectors from db');
-    this.ready = true;
 }
 
 // ----------------------------------------------------------

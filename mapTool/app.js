@@ -1,7 +1,6 @@
 var app = require('http').createServer(webResponse),
     RequireCheck = require('./requireCheck.js').RequireCheck,
     MapTool = require('./maptool.js').MapTool,
-    AWS = require("aws-sdk"),
     io = require('socket.io').listen(app),
     fs = require('fs');
     
@@ -9,15 +8,9 @@ var rc = null,
     ge = null;
 
 
-AWS.config.update({
-  region: "us-east-1",
-  endpoint: "https://dynamodb.us-east-1.amazonaws.com"
-});
-
 
 function init() {
 
-    var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
 
     rc = new RequireCheck();
     mt = new MapTool();
@@ -29,28 +22,16 @@ function init() {
     // ----------------------------------------------------------
 
     rc.ready();
-    rc.ready();
-    rc.require('dbMaps','dbSectors');
+    rc.require('dbMaps');
 
     // ---- Load Maps ----
-    docClient.scan({TableName: 'blaine_maps'}, function(err, data) {
-        if (err) {
-            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-        } else {
-            console.log("Loading maps... " + data.Items.length + ' found');
-            mt.loadMaps(data.Items);
-            // ---- Load Sectors ----
-            docClient.scan({TableName: 'blaine_sectors'}, function(err, data2) {
-                if (err) {
-                    console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-                } else {
-                    console.log("Loading maps... " + data2.Items.length + ' found');
-                    mt.loadSectors(data2.Items);
-                    rc.ready('dbSectors');
-                }
-            });
-            rc.ready('dbMaps');
-        }
+    fs.readdir( './maps', function( err, files ) {
+        if( err ) {
+            console.error( "Could not list the directory.", err );
+            process.exit( 1 );
+        } 
+        mt.loadMaps(files);
+        rc.ready('dbMaps');
     });
 
 }

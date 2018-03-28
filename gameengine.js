@@ -3,6 +3,7 @@
 //----------------------------------------------------------------
 
 var Player = require('./player.js').Player,
+    fs = require('fs'),
     AWS = require("aws-sdk");
 
 var self = null;
@@ -18,6 +19,7 @@ var GameEngine = function() {
     //database objects
     this.maps = {};
     this.mapids = [];
+    this.mapCount = 0; //for checking if all maps have loaded before ready
    
     //variables for ID's
     this.idIterator = 0;
@@ -74,36 +76,24 @@ GameEngine.prototype.getId = function() {
 
 GameEngine.prototype.loadMaps = function(arr) {
     for (var i = 0; i < arr.length;i++){
-        var map = {sectorArray: arr[i].mapData,mapid: arr[i].mapid};
-        this.maps[arr[i].mapid] = map;
-        this.mapids.push(arr[i].mapid);
+        var d;
+        fs.readFile('./mapTool/maps/' + arr[i], "utf8",function read(err, data) {
+            if (err) {
+                throw err;
+            }
+            var obj = JSON.parse(data);
+            console.log(obj.mapid)
+            self.maps[obj.mapid] = obj;
+            self.mapids.push(obj.mapid);
+            if (self.mapids.length == self.mapCount){
+                self.ready = true;
+            }
+        });
     }
-
     console.log('loaded ' + arr.length + ' Maps from db');
 }
 
-GameEngine.prototype.loadSectors = function(arr) {
-    var sectors = {};
-    for (var i = 0; i < arr.length;i++){
-        sectors[arr[i].sectorid] = arr[i];
-    }
-
-    for (var m in this.maps){
-        var map = this.maps[m];
-        map.mapData = {};
-        for (var i = 0; i < map.sectorArray.length;i++){
-            var sec = sectors[map.mapid + '_' + map.sectorArray[i]];
-            map.mapData[map.sectorArray[i]] = sec;
-        }
-    }
-
-    console.log('loaded ' + arr.length + ' Sectors from db');
-    console.log(this.maps);
-    this.ready = true;
-}
-
 //Player functions
-
 GameEngine.prototype.addPlayer = function(p){
     this.players[p.id] = p;
     this.playerCount += 1;

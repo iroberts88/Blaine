@@ -1,0 +1,2722 @@
+{
+  "sectorArray": [
+    "0x0"
+  ],
+  "mapid": "pallet_house2",
+  "mapData": {
+    "0x0": {
+      "tiles": [
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "16x24",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "16x25",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": "2x31"
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": "2x32"
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "16x24",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "16x25",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x16",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "10x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "10x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [
+              {
+                "data": {
+                  "tile": "16x7",
+                  "map": "pallet",
+                  "sector": "0x0"
+                },
+                "on": "down",
+                "do": "changeMap"
+              }
+            ],
+            "resource": "6x18",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "13x26",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "16x26",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "18x25",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [
+              {
+                "data": {
+                  "tile": "16x7",
+                  "map": "pallet",
+                  "sector": "0x0"
+                },
+                "on": "down",
+                "do": "changeMap"
+              }
+            ],
+            "resource": "6x18",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x16",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "17x26",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "19x25",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "12x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "10x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "10x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x16",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "16x24",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "16x25",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": "2x31"
+          },
+          {
+            "triggers": [],
+            "resource": "0x17",
+            "open": true,
+            "overlayResource": "2x32"
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ],
+        [
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          },
+          {
+            "triggers": [],
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0
+          }
+        ]
+      ],
+      "sectornumber": "0x0",
+      "sectorid": "pallet_house2_0x0"
+    }
+  }
+}

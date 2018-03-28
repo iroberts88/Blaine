@@ -25,13 +25,14 @@ var Character = function(){
 
     this.money = null;
 
+    this.slot = null;
 }
 
 Character.prototype.init = function(data) {
     //Set up all stats and attributes
     this.name = data.name;
     this.rivalName = data.rival;
-    this.sex = data.sex;
+    this.slot = data.slot;
     this.owner = data.owner;
     this.id = data.id;
 };

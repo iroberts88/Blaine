@@ -2,7 +2,8 @@
 //player.js
 //----------------------------------------------------------------
 var User = require('./user.js').User,
-    Character = require('./character.js').Character;
+    Character = require('./character.js').Character,
+    Zone = require('./zone.js').Zone;
 
 const crypto = require('crypto');
 
@@ -17,6 +18,7 @@ var Player = function(){
     this.user = null;
 
     this.ready = null;
+    this.character = null;
 };
 
 Player.prototype.init = function (data) {
@@ -31,7 +33,16 @@ Player.prototype.init = function (data) {
 
     this.ready = false;
 };
-    
+
+Player.prototype.startGame = function(char){
+    this.character = char;
+
+    //add character to zone
+
+    //send down data to start new game
+
+};
+
 Player.prototype.tick = function(deltaTime){
    
 };
@@ -43,7 +54,6 @@ Player.prototype.onDisconnect = function(callback) {
 Player.prototype.setGameEngine = function(ge){
     this.gameEngine = ge;
 };
-
 
 Player.prototype.setupSocket = function() {
 
@@ -69,7 +79,10 @@ Player.prototype.setupSocket = function() {
                         }else{
                             //create new character
                             var char = new Character();
+                            data.owner = that;
+                            data.id = that.gameEngine.getId();
                             char.init(data);
+                            that.startGame(char);
                         }
                     }catch(e){
                         that.gameEngine.debug(that,{id: 'newCharError', error: e.stack});
