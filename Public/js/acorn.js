@@ -89,15 +89,13 @@
             window.onwheel = Acorn.Input.handleScroll;
         },
         bind: function() {
-            this.keyBindings[83] = Acorn.Input.Key.YSCALE1; //default S
-            this.keyBindings[87] = Acorn.Input.Key.YSCALE2; //default W
-            this.keyBindings[65] = Acorn.Input.Key.LEFT; //default D
-            this.keyBindings[68] = Acorn.Input.Key.RIGHT; //default A
+            this.keyBindings[83] = Acorn.Input.Key.DOWN; //default S
+            this.keyBindings[87] = Acorn.Input.Key.UP; //default W
+            this.keyBindings[68] = Acorn.Input.Key.RIGHT; //default D
+            this.keyBindings[65] = Acorn.Input.Key.LEFT; //default A
             this.keyBindings[32] = Acorn.Input.Key.TOGGLESTATS; //default Space
             this.keyBindings[67] = Acorn.Input.Key.CHARSHEET; //default C
             this.keyBindings[69] = Acorn.Input.Key.INTERACT; //default E
-            this.keyBindings[68] = Acorn.Input.Key.ROTATE2; //default A
-            this.keyBindings[65] = Acorn.Input.Key.ROTATE1; //default D
             this.keyBindings[77] = Acorn.Input.Key.TOGGLEMAP; //default M
             this.keyBindings[8] = Acorn.Input.Key.BACKSPACE; //default M
             this.keyBindings[38] = Acorn.Input.Key.SCROLLUP; //default M
@@ -264,7 +262,7 @@
             }
         },
         play: function(id) {
-            var vMod = 1.0;
+            var vMod = 0;
             for(var i = 0; i < this._sounds.length; i++) {
                 if(this._sounds[i].id == id) {
                     var snd = this._sounds[i];
@@ -311,14 +309,14 @@
                     //play new music
                     Acorn.Sound.stop(Acorn.Sound.currentMusic);
                     var newMusic = Acorn.Sound.getSound(Acorn.Sound.next);
-                    newMusic._sound.volume = newMusic.volume;
+                    newMusic._sound.volume = newMusic.volume*0;
                     newMusic._sound.play();
                     Acorn.Sound.currentMusic = Acorn.Sound.next;
                     Acorn.Sound.next = null;
                     Acorn.Sound.fadeTicker = 0;
                 }
-                var val = current.volume*((Acorn.Sound.fadeOver-Acorn.Sound.fadeTicker)/Acorn.Sound.fadeOver);
-                current._sound.volume = val;
+                //var val = current.volume*((Acorn.Sound.fadeOver-Acorn.Sound.fadeTicker)/Acorn.Sound.fadeOver);
+                //current._sound.volume = val;
             }
         }
     };

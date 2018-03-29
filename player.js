@@ -38,9 +38,25 @@ Player.prototype.startGame = function(char){
     this.character = char;
 
     //add character to zone
-
+    this.gameEngine.addPlayerToZone(this,this.character.currentMap);
     //send down data to start new game
-
+    var zone = this.gameEngine.zones[this.character.currentMap];
+    var mapData = {};
+    var sector = zone.map[this.character.currentSector];
+    for (var i = -1;i < 2;i++){
+        for (var j = -1;j < 2;j++){
+            var s = (sector.sectorX+i) + 'x' + (sector.sectorY+j);
+            console.log(s);
+            if (typeof zone.map[s] != 'undefined'){
+                //sector exists, get info
+                mapData[s] = zone.map[s].tiles;
+            }
+        }
+    }
+    this.gameEngine.queuePlayer(this,'startGame',{
+        map: mapData,
+        character: this.character.getClientData()
+    });
 };
 
 Player.prototype.tick = function(deltaTime){
@@ -75,12 +91,17 @@ Player.prototype.setupSocket = function() {
                     try{
                         console.log(data);
                         if (data.slot < 1 || data.slot > 3){
+                            //TODO deal with bad char info
                             break;
                         }else{
                             //create new character
                             var char = new Character();
                             data.owner = that;
                             data.id = that.gameEngine.getId();
+                            data.money = 0;
+                            data.currentMap = 'pallet_house1_floor2';
+                            data.currentSector = '0x0';
+                            data.currentTile = [9,12];
                             char.init(data);
                             that.startGame(char);
                         }

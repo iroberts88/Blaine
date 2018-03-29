@@ -5,115 +5,89 @@
 var Player = require('./player.js').Player,
     AWS = require("aws-sdk");
 
-var Zone = function() {
+var Zone = function(ge) {
 
-    //list of players in this zone
-    this.players = {};
+    this.gameEngine = ge;
+
+    //map info
+    this.mapid = null;
+    this.map = {};
+    this.sectorArray = null;
+
+    this.players = {}; //players in this zone
     this.playerCount = 0;
-
-    //this zone's map
-    this.map = null;
-   
-    //variables for ID's
-    this.debugList = {}; //used avoid multiple debug chains in tick()
 }
 
 Zone.prototype.init = function (data) {
     //basically just initialize the map here
+    this.mapid = data.mapid;
+    this.mapData = data.mapData;
+    this.sectorArray = data.sectorArray;
+    for (var i = 0; i < this.sectorArray.length;i++){
+        this.map[this.sectorArray[i]] = new Sector(this.sectorArray[i],data.mapData[this.sectorArray[i]]);
+    }
 };
 
 Zone.prototype.tick = function(deltaTime) {
-
-    //update debug list
-    for (var k in this.debugList){
-        this.debugList[k].t -= deltaTime;
-        if (this.debugList[k].t <= -5.0){
-            //debug hasnt been updated in 5 seconds
-            //remove from debug list
-            console.log('deleting debug with id ' + this.debugList[k].id);
-            delete this.debugList[k];
-        }
-    }
-    this.emit();
-    this.clearQueue();
-    this.lastTime = now;
 }
 
-//Player functions
-
+// ----------------------------------------------------------
+// Player Functions
+// ----------------------------------------------------------
 Zone.prototype.addPlayer = function(p){
     this.players[p.id] = p;
+    //TODO add player to all players in the zone within 1 sector
+
+    this.map[p.character.currentSector].addPlayer(p);
     this.playerCount += 1;
     return this.playerCount;
 }
 
 Zone.prototype.removePlayer = function(p){
-    this.playerLogout(p);
-    delete this.users[p.user.userData.username];
+    this.map[p.character.currentSector].removePlayer(p);
+    //TODO remove player from all players in the zone within 1 sector
     delete this.players[p.id];
     this.playerCount -= 1;
     return this.playerCount;
 }
 
 // ----------------------------------------------------------
-// Socket Functions
+// Sector Functions
 // ----------------------------------------------------------
 
-Zone.prototype.emit = function() {
-    try{
-        for(var i in this.players) {
-            if (this.players[i].netQueue.length > 0){
-                this.players[i].socket.emit('serverUpdate', this.players[i].netQueue);
-            }
-        }
-    }catch(e){
-        try{
-            console.log(this.players[i].netQueue);
-        }catch(e){}
-        console.log(e);
-        console.log(i);
-    }
-}
-Zone.prototype.clearQueue = function() {
-    for(var i in this.players) {
-        this.players[i].netQueue = [];
-    }
-}
-
-//Queue data to all players in the session
-Zone.prototype.queueData = function(c, d) {
-    var data = { call: c, data: d};
-    for(var i in this.players) {
-        this.players[i].netQueue.push(data);
-    }
-}
-//Queue data to a specific player
-Zone.prototype.queuePlayer = function(player, c, d) {
-    var data = { call: c, data: d};
-    player.netQueue.push(data);
-}
-
-//Queue DEBUG data to a specific player
-Zone.prototype.debug = function(player, d) {
-    var data = { call: 'debug', data: d};
-    if (typeof this.debugList[d.id] == 'undefined'){
-        //new debug error
-        //add to debug list and send to client
-        this.debugList[d.id] = {
-            id: d.id,
-            n: 1,
-            t: 1.0
-        }
-        data.data.n = 1;
-        player.netQueue.push(data);
-    }else{
-        this.debugList[d.id].n += 1;
-        data.data.n = this.debugList[d.id].n
-        if (this.debugList[d.id].t <= 0){
-            player.netQueue.push(data);
-            this.debugList[d.id].t = 1.0;
-        }
-    }
-}
-
 exports.Zone = Zone;
+
+
+//Sector
+var Sector = function(id,data) {
+    this.players = {}; //players in this zone
+    this.playerCount = 0; //players in this sector
+    this.id = id;
+    var x = '';
+    var y = '';
+    var toX = true;
+    for (var i = 0; i < id.length;i++){
+        if (id.charAt(i) == 'x'){
+            toX = false;
+        }else if (toX){
+            x += id.charAt(i);
+        }else{
+            y += id.charAt(i);
+        }
+    }
+    this.sectorX = parseInt(x);
+    this.sectorY = parseInt(y);
+    this.tiles = data.tiles;
+};
+
+Sector.prototype.addPlayer = function(p){
+    this.players[p.id] = p;
+    this.playerCount += 1;
+};
+
+Sector.prototype.removePlayer = function(p){
+    delete this.players[p.id];
+    this.playerCount -= 1;
+};
+
+exports.Sector = Sector;

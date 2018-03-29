@@ -25,6 +25,16 @@
                 checkReady();
             });
 
+            Acorn.Net.on('startGame', function (data) {
+                console.log('Game Started!');
+                console.log(data);
+                Acorn.changeState('ingame')
+                Game.map = new GameMap();
+                Game.map.init(data.map);
+                Player.initCharacter(data.character);
+                Game.resetPos();
+            });
+
             Acorn.Net.on('loggedIn', function (data) {
                 Player.init(data);
                 document.body.removeChild(MainMenu.mainPanel);
@@ -94,6 +104,17 @@
                 },
                 update: function(dt){
                     NewChar.update(dt);
+                }
+            });
+
+            Acorn.addState({
+                stateId: 'ingame',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    Game.init();
+                },
+                update: function(dt){
+                    Game.update(dt);
                 }
             });
             

@@ -20,8 +20,8 @@ var Character = function(){
 
     //Map stuff
     this.currentMap = null;
-    this.currentNode = null;
-    this.direction = null;
+    this.currentSector = null;
+    this.currentTile = null;
 
     this.money = null;
 
@@ -31,30 +31,44 @@ var Character = function(){
 Character.prototype.init = function(data) {
     //Set up all stats and attributes
     this.name = data.name;
-    this.rivalName = data.rival;
+    this.rival = data.rival;
     this.slot = data.slot;
     this.owner = data.owner;
     this.id = data.id;
+    this.money = data.money;
+
+    this.currentMap = data.currentMap;
+    this.currentSector = data.currentSector;
+    this.currentTile = data.currentTile;
+
+    //init badges
+    //initpokedex
+    //init pokemon
+    //init pc stuff
+    //init inventory
 };
 
 Character.prototype.getDBObj = function(){
     var dbObj = {};
     dbObj.name = this.name;
-    dbObj.sex = this.sex;
-    
-    dbObj.inventory = [];
    
     return dbObj;
 }
 Character.prototype.getClientData = function(){
     //create object to send to the client
-    
+    var data = {}
     data.owner = this.owner.id;
     data.name = this.name;
-    data.sex = this.sex;
-    data.id = this.id;
+    data.rival = this.rival
+    data.id = this.id
+    data.money = this.money;
+    data.sector = this.currentSector;
+    data.tile = this.currentTile;
     
-    data.inventory = {};
+    //data.inventory = {};
+    //badges
+    //pokemon
+    //pokedex ETCCCC
     return data;
 }
 

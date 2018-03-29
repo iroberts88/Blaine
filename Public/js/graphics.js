@@ -274,7 +274,7 @@
             if (typeof Graphics.resources[id] === 'undefined'){
                 console.log(id);
                 console.log('-- Graphics resource not found' )
-                return Graphics.resources['base_tile1'];
+                return Graphics.resources['ow_ash_d1'];
             }else{
                 return Graphics.resources[id];
             }

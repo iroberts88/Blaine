@@ -3,6 +3,7 @@
 //----------------------------------------------------------------
 
 var Player = require('./player.js').Player,
+    Zone = require('./zone.js').Zone,
     fs = require('fs'),
     AWS = require("aws-sdk");
 
@@ -17,10 +18,12 @@ var GameEngine = function() {
     this.playerCount = 0;
 
     //database objects
-    this.maps = {};
     this.mapids = [];
     this.mapCount = 0; //for checking if all maps have loaded before ready
-   
+
+    this.zones = {};
+    this.zoneUpdateList = {}; //a list of zones with active players
+
     //variables for ID's
     this.idIterator = 0;
     this.possibleIDChars = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwyz";
@@ -46,6 +49,11 @@ GameEngine.prototype.tick = function() {
     var now = Date.now();
     var deltaTime = (now-self.lastTime) / 1000.0;
     
+    //update all zones with players
+    for (var z in self.zoneUpdateList){
+        var zone = self.zones[z];
+        zone.tick(deltaTime);
+    }
     //update debug list
     for (var k in self.debugList){
         self.debugList[k].t -= deltaTime;
@@ -82,9 +90,12 @@ GameEngine.prototype.loadMaps = function(arr) {
                 throw err;
             }
             var obj = JSON.parse(data);
-            console.log(obj.mapid)
-            self.maps[obj.mapid] = obj;
             self.mapids.push(obj.mapid);
+
+            var newZone = new Zone(self);
+            newZone.init(obj);
+            self.zones[newZone.mapid] = newZone;
+
             if (self.mapids.length == self.mapCount){
                 self.ready = true;
             }
@@ -106,16 +117,33 @@ GameEngine.prototype.removePlayer = function(p){
     this.playerCount -= 1;
 }
 
+GameEngine.prototype.addPlayerToZone = function(p,z){
+    var count = this.zones[z].addPlayer(p);
+
+    if (count == 1){
+        //zone is no longer empty, ready to update
+        this.zoneUpdateList[z] = true;
+    }
+}
+
+GameEngine.prototype.removePlayerFromZone = function(p,z){
+    var count = this.zones[z].removePlayer(p);
+
+    if (count == 0){
+        //zone is empty, no longer update
+        delete this.zoneUpdateList[z]; 
+    }
+}
+
 GameEngine.prototype.playerLogout = function(p){
-    //do logout stuff here if needed
-    p.user.unlock();
-    p.user.updateDB();
-    p.user = null;
     try{
         delete this.users[p.user.userData.username];
     }catch(e){
         console.log("error on player logout");
     }
+    p.user.unlock();
+    p.user.updateDB();
+    p.user = null;
 }
 
 // ----------------------------------------------------------
@@ -153,8 +181,8 @@ GameEngine.prototype.newConnection = function(socket) {
                     sectorX +=1;
                 }
                 arr.push({
-                    tex: self.maps['pallet'].mapData[sectorX + 'x' + sectorY].tiles[tileX][tileY].resource,
-                    oTex: self.maps['pallet'].mapData[sectorX + 'x' + sectorY].tiles[tileX][tileY].overlayResource
+                    tex: self.zones['pallet'].mapData[sectorX + 'x' + sectorY].tiles[tileX][tileY].resource,
+                    oTex: self.zones['pallet'].mapData[sectorX + 'x' + sectorY].tiles[tileX][tileY].overlayResource
                 });
                 tileX += 1;
             }
