@@ -27,16 +27,12 @@
             Graphics.uiPrimitives2.clear();
             if (Acorn.Input.isPressed(Acorn.Input.Key.UP)){
             	Player.move(0,-1);
-            	Acorn.Input.setValue(Acorn.Input.Key.UP, false);
             }else if (Acorn.Input.isPressed(Acorn.Input.Key.DOWN)){
             	Player.move(0,1);
-           	 	Acorn.Input.setValue(Acorn.Input.Key.DOWN, false);
             }else if (Acorn.Input.isPressed(Acorn.Input.Key.LEFT)){
             	Player.move(-1,0);
-            	Acorn.Input.setValue(Acorn.Input.Key.LEFT, false);
             }else if (Acorn.Input.isPressed(Acorn.Input.Key.RIGHT)){
             	Player.move(1,0);
-            	Acorn.Input.setValue(Acorn.Input.Key.RIGHT, false);
             }
             Player.update(dt);
         }

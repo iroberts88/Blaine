@@ -6,6 +6,10 @@
         animateInfo: null,
         moving: false,
         owTexture: 'ash',
+        speed: 0.25,//time it takes in seconds to reach next tile
+        targetPosition: null,
+        startPosition: null,
+        moveTicker: 0,
 
         init: function(data){
         	userData = data;
@@ -39,17 +43,31 @@
             //attempt to move in the target direction
             if (this.moving){return;}
             var tile = Game.map.getTileAt(x,y);
-            console.log(tile);
             if (tile.open && (tile.resource != 'deep_water' && tile.resource != 'water')){
                 Graphics.worldContainer.position.x += -32*x;
                 Graphics.worldContainer.position.y += -32*y;
                 this.character.tile[0] = tile.x;
                 this.character.tile[1] = tile.y;
-                this.character.sector = tile.sectorid
+                this.character.sector = tile.sectorid;
+                this.character.moving = true;
+                this.targetPosition = {
+                    x: Graphics.worldContainer.position.x + -32*x;
+                    y: Graphics.worldContainer.position.y + -32*y
+                }
+                this.startPosition = {
+                    x: Graphics.worldContainer.position.x;
+                    y: Graphics.worldContainer.position.y;
+                }
+                this.moveTicker = 0;
             }
         },
         update(dt){
             this.animate(dt);
+
+            if (this.moving){
+                this.moveTicker += dt;
+                //do stuff
+            }
         },
         animate(dt){
             var dir = 'none'

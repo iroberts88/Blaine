@@ -37,8 +37,6 @@
                 tile.y = 0;
                 coords.y += 1;
             }
-            console.log(coords);
-            console.log(tile)
             return this[coords.x + 'x' + coords.y].tiles[tile.x][tile.y];
         }catch(e){
             console.log(e);
