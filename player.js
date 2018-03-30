@@ -99,9 +99,12 @@ Player.prototype.setupSocket = function() {
                             data.owner = that;
                             data.id = that.gameEngine.getId();
                             data.money = 0;
-                            data.currentMap = 'pallet_house1_floor2';
+                            //data.currentMap = 'pallet_house1_floor2';
+                            //data.currentSector = '0x0';
+                            //data.currentTile = [9,12];
+                            data.currentMap = 'pallet';
                             data.currentSector = '0x0';
-                            data.currentTile = [9,12];
+                            data.currentTile = [8,8];
                             char.init(data);
                             that.startGame(char);
                         }

@@ -39,37 +39,56 @@
                 stopped: true
             }
         },
-        move(x,y){
+        move: function(x,y){
             //attempt to move in the target direction
             if (this.moving){return;}
             var tile = Game.map.getTileAt(x,y);
             if (tile.open && (tile.resource != 'deep_water' && tile.resource != 'water')){
-                Graphics.worldContainer.position.x += -32*x;
-                Graphics.worldContainer.position.y += -32*y;
                 this.character.tile[0] = tile.x;
                 this.character.tile[1] = tile.y;
                 this.character.sector = tile.sectorid;
-                this.character.moving = true;
+                this.moving = true;
+                if (x == 0 && y == 1){
+                    this.animateInfo.direction = 'd';
+                }
+                if (x == 0 && y == -1){
+                    this.animateInfo.direction = 'u';
+                }
+                if (x == 1 && y == 0){
+                    this.animateInfo.direction = 'r';
+                }
+                if (x == -1 && y == 0){
+                    this.animateInfo.direction = 'l';
+                }
                 this.targetPosition = {
-                    x: Graphics.worldContainer.position.x + -32*x;
+                    x: Graphics.worldContainer.position.x + -32*x,
                     y: Graphics.worldContainer.position.y + -32*y
-                }
+                };
                 this.startPosition = {
-                    x: Graphics.worldContainer.position.x;
-                    y: Graphics.worldContainer.position.y;
-                }
+                    x: Graphics.worldContainer.position.x,
+                    y: Graphics.worldContainer.position.y
+                };
                 this.moveTicker = 0;
+                this.animateInfo.ticker = this.animateInfo.swapEvery;
             }
         },
-        update(dt){
+        update: function(dt){
             this.animate(dt);
-
             if (this.moving){
                 this.moveTicker += dt;
-                //do stuff
+                if (this.moveTicker >= this.speed){
+                    Graphics.worldContainer.position.x = this.targetPosition.x;
+                    Graphics.worldContainer.position.y = this.targetPosition.y;
+                    this.moving = false;
+                }else{
+                    var dX = (this.targetPosition.x - this.startPosition.x)*(this.moveTicker/this.speed);
+                    var dY = (this.targetPosition.y - this.startPosition.y)*(this.moveTicker/this.speed);
+                    Graphics.worldContainer.position.x = this.startPosition.x + dX;
+                    Graphics.worldContainer.position.y = this.startPosition.y + dY;
+                }
             }
         },
-        animate(dt){
+        animate: function(dt){
             var dir = 'none'
             var aI = this.animateInfo;
             if (Acorn.Input.isPressed(Acorn.Input.Key.UP)){
@@ -92,18 +111,17 @@
                     var stopDir = aI.direction
                     if (stopDir == 'r'){
                         stopDir = 'l';
-
                     }
                     this.character.sprite.texture = Graphics.getResource('ow_' + this.owTexture + '_' + stopDir + '1');
                 }
             }
             if (dir != 'none' || this.moving){
-                if (dir != aI.direction){
+                if (dir != aI.direction && !this.moving){
                     aI.direction = dir;
                 }
                 aI.ticker += dt;
                 if (aI.ticker >= aI.swapEvery){
-                    var animateDir = aI.direction
+                    var animateDir = aI.direction;
                     if (animateDir == 'r'){
                         animateDir = 'l';
                     }
