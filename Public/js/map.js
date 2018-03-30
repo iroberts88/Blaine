@@ -15,7 +15,13 @@
     	sector.init(s,data);
     	return sector;
     };
+    GameMap.prototype.setVisible = function(sString,visible){
+        try{
+            this[sString].setVisible(sString,visible)
+        }catch(e){}
+    };
     GameMap.prototype.getTileAt = function(x,y){
+        //character is attempting to move
         try{
             var coords = getSectorXY(Player.character.sector);
             var tile = {
@@ -27,12 +33,63 @@
             if (tile.x < 0){
                 tile.x = 20;
                 coords.x -= 1;
+                this.setVisible((coords.x-1) + 'x' + coords.y,true);
+                this.setVisible((coords.x-1) + 'x' + (coords.y-1),true);
+                this.setVisible((coords.x-1) + 'x' + (coords.y+1),true);
+                this.setVisible((coords.x+2) + 'x' + coords.y,false);
+                this.setVisible((coords.x+2) + 'x' + (coords.y-1),false);
+                this.setVisible((coords.x+2) + 'x' + (coords.y+1),false);
             }else if (tile.y < 0){
                 tile.y = 20;
-                coords.x += 1;
+                coords.y -= 1;
+                this.setVisible(coords.x + 'x' + (coords.y-1),true);
+                this.setVisible((coords.x-1) + 'x' + (coords.y-1),true);
+                this.setVisible((coords.x+1) + 'x' + (coords.y-1),true);
+                this.setVisible(coords.x + 'x' + (coords.y+2),false);
+                this.setVisible((coords.x+1) + 'x' + (coords.y+2),false);
+                this.setVisible((coords.x-1) + 'x' + (coords.y+2),false);
             }else if (tile.x > 20){
                 tile.x = 0;
+                coords.x += 1;
+                this.setVisible((coords.x+1) + 'x' + coords.y,true);
+                this.setVisible((coords.x+1) + 'x' + (coords.y-1),true);
+                this.setVisible((coords.x+1) + 'x' + (coords.y+1),true);
+                this.setVisible((coords.x-2) + 'x' + coords.y,false);
+                this.setVisible((coords.x-2) + 'x' + (coords.y-1),false);
+                this.setVisible((coords.x-2) + 'x' + (coords.y+1),false);
+            }else if (tile.y > 20){
+                tile.y = 0;
+                coords.y += 1;
+                this.setVisible(coords.x + 'x' + (coords.y+1),true);
+                this.setVisible((coords.x-1) + 'x' + (coords.y+1),true);
+                this.setVisible((coords.x+1) + 'x' + (coords.y+1),true);
+                this.setVisible((coords.x+1) + 'x' + (coords.y+2),false);
+                this.setVisible((coords.x-1) + 'x' + (coords.y+2),false);
+            }
+            return this[coords.x + 'x' + coords.y].tiles[tile.x][tile.y];
+        }catch(e){
+            console.log(e);
+        }
+    };
+    GameMap.prototype.getTileAtPC = function(pc,x,y){
+        //PC is attempting to move
+        try{
+            var coords = getSectorXY(pc.sector);
+            var tile = {
+                x: pc.tile[0],
+                y: pc.tile[1]
+            }
+            tile.x += x;
+            tile.y += y;
+            if (tile.x < 0){
+                tile.x = 20;
+                coords.x -= 1;
+            }else if (tile.y < 0){
+                tile.y = 20;
                 coords.y -= 1;
+            }else if (tile.x > 20){
+                tile.x = 0;
+                coords.x += 1;
             }else if (tile.y > 20){
                 tile.y = 0;
                 coords.y += 1;
@@ -78,18 +135,18 @@ var getSectorXY = function(string){
     Sector.prototype.init = function(s,data){
     	this.pos = getSectorXY(s);
     	this.tiles = [];
-    	for (var i = 0; i < data.length;i++){
+    	for (var i = 0; i < data.tiles.length;i++){
     		var arr = [];
-    		for (var j = 0; j < data[i].length;j++){
+    		for (var j = 0; j < data.tiles[i].length;j++){
  				var newTile = new Tile();
                 newTile.init({
                 	sectorid: s,
                     x: i,
                     y: j,
-                    resource: data[i][j].resource,
-                    open: data[i][j].open,
-                    triggers: data[i][j].triggers,
-                    overlayResource: data[i][j].overlayResource
+                    resource: data.tiles[i][j].resource,
+                    open: data.tiles[i][j].open,
+                    triggers: data.tiles[i][j].triggers,
+                    overlayResource: data.tiles[i][j].overlayResource
                 });
                 newTile.sprite.position.x = this.pos.x*this.fullSectorSize + i*this.TILE_SIZE;
                 newTile.sprite.position.y = this.pos.y*this.fullSectorSize + j*this.TILE_SIZE;
@@ -103,6 +160,16 @@ var getSectorXY = function(string){
     		}
             this.tiles.push(arr);
     	}
+    };
+    Sector.prototype.setVisible = function(bool){
+        for (var i = 0; i < this.tiles.length;i++){
+            for (var j = 0; j < this.tiles[i].length;j++){
+                this.tiles[i][j].sprite.visible = bool;
+                if (this.tiles[i][j].overlaySprite){
+                    this.tiles[i][j].overlaySprite.visible = bool;
+                }
+            }
+        }
     };
 
     window.Sector = Sector;
@@ -129,8 +196,10 @@ var getSectorXY = function(string){
                 this.overlaySprite = Graphics.getSprite(data.overlayResource); //tile sprite
                 this.overlaySprite.scale.x = 2;
                 this.overlaySprite.scale.y = 2;
+                this.overlaySprite.visible = false;
             }
             this.triggers = data.triggers;
+            this.sprite.visible = false;
         }catch(e){
             console.log("failed to init Tile");
             console.log(e);

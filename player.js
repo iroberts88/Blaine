@@ -16,7 +16,7 @@ AWS.config.update({
 var Player = function(){
     this.gameEngine = null;
     this.user = null;
-
+    this.id = null;
     this.ready = null;
     this.character = null;
 };
@@ -30,7 +30,6 @@ Player.prototype.init = function (data) {
         this.socket = data.socket;
         this.setupSocket();
     }
-
     this.ready = false;
 };
 
@@ -40,22 +39,31 @@ Player.prototype.startGame = function(char){
     //add character to zone
     this.gameEngine.addPlayerToZone(this,this.character.currentMap);
     //send down data to start new game
+    var players = [];
     var zone = this.gameEngine.zones[this.character.currentMap];
-    var mapData = {};
     var sector = zone.map[this.character.currentSector];
     for (var i = -1;i < 2;i++){
         for (var j = -1;j < 2;j++){
-            var s = (sector.sectorX+i) + 'x' + (sector.sectorY+j);
-            console.log(s);
-            if (typeof zone.map[s] != 'undefined'){
-                //sector exists, get info
-                mapData[s] = zone.map[s].tiles;
+            try{
+                for (var pl in zone.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players){
+                    var player = zone.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players[pl];
+                    players.push({
+                        id: player.id,
+                        name: player.user.username,
+                        owSprite: player.character.owSprite,
+                        tile: player.character.currentTile,
+                        sector: player.character.currentSector
+                    })
+                }
+            }catch(e){
+                console.log(e);
             }
         }
     }
     this.gameEngine.queuePlayer(this,'startGame',{
-        map: mapData,
-        character: this.character.getClientData()
+        map: this.character.currentMap,
+        character: this.character.getClientData(),
+        players: players
     });
 };
 
@@ -69,6 +77,7 @@ Player.prototype.onDisconnect = function(callback) {
 
 Player.prototype.setGameEngine = function(ge){
     this.gameEngine = ge;
+    this.id = ge.getId();
 };
 
 Player.prototype.setupSocket = function() {
@@ -99,17 +108,53 @@ Player.prototype.setupSocket = function() {
                             data.owner = that;
                             data.id = that.gameEngine.getId();
                             data.money = 0;
-                            //data.currentMap = 'pallet_house1_floor2';
-                            //data.currentSector = '0x0';
-                            //data.currentTile = [9,12];
-                            data.currentMap = 'pallet';
                             data.currentSector = '0x0';
-                            data.currentTile = [8,8];
+                            data.currentTile = [9,12];
+                            data.currentMap = 'pallet_house1_floor2';
                             char.init(data);
                             that.startGame(char);
                         }
                     }catch(e){
                         that.gameEngine.debug(that,{id: 'newCharError', error: e.stack});
+                    }
+                    break;
+                case 'moveAttempt':
+                    //get tile at x/y
+                    try{
+                        var zone = that.gameEngine.zones[that.character.currentMap];
+                        var coords = zone.getSectorXY(that.character.currentSector);
+                        var tile = {
+                            x: that.character.currentTile[0],
+                            y: that.character.currentTile[1]
+                        }
+                        tile.x += data.x;
+                        tile.y += data.y;
+                        if (tile.x < 0){tile.x = 20;coords.x -=1;}
+                        if (tile.y < 0){tile.y = 20;coords.y -=1;}
+                        if (tile.x > 20){tile.x = 0;coords.x +=1;}
+                        if (tile.y > 20){tile.y = 0;coords.y +=1;}
+                        var newTile = zone.map[coords.x + 'x' + coords.y].tiles[tile.x][tile.y];
+                        if (newTile.open && (newTile.resource != 'deep_water' && newTile.resource != 'water')){
+                            //move!!!
+                            for (var i = -1;i < 2;i++){
+                                for (var j = -1;j < 2;j++){
+                                    var coords = zone.getSectorXY(that.character.currentSector);
+                                    for (var pl in zone.map[(coords.x+i) + 'x' + (coords.y+j)].players){
+                                        var player = zone.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
+                                        that.gameEngine.queuePlayer(player,'movePC',{
+                                            id: that.id,
+                                            x:data.x,
+                                            y:data.y,
+                                            start: [that.character.currentTile[0],that.character.currentTile[1]]
+                                        })
+                                    }
+                                }
+                            }
+                            that.character.currentSector = coords.x + 'x' + coords.y;
+                            that.character.currentTile = [tile.x, tile.y];
+                        }
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'moveAttempt', error: e.stack});
                     }
                     break;
             }

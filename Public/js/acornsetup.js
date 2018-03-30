@@ -18,21 +18,78 @@
             Acorn.Net.on('connInfo', function (data) {
                 console.log('Connected to server: Info Received');
                 console.log(data);
-                MainMenu.bgMap = data.bgMap;
-                console.log('Net ready!')
-                Acorn.Net.ready = true;
-                window.playerID = data.id;
-                checkReady();
+                mainObj.id = data.id;
+                var xmlhttp = new XMLHttpRequest();
+                var map = 'pallet';
+                xmlhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var myObj = JSON.parse(this.responseText);
+                        var sectorXStart = -1;
+                        var tileXStart = 7
+                        var sectorX = -1;
+                        var sectorY = -4;
+                        var tileX = 7;
+                        var tileY = 18;
+                        var bgMap = [];
+                        for (var i = 0;i < 28;i++){
+                            var arr = []
+                            if (tileY > 20){
+                                tileY = 0;
+                                sectorY +=1;
+                            }
+                            for (var j = 0; j < 49;j++){
+                                if (tileX > 20){
+                                    tileX = 0;
+                                    sectorX +=1;
+                                }
+                                arr.push({
+                                    tex: myObj.mapData[sectorX + 'x' + sectorY].tiles[tileX][tileY].resource,
+                                    oTex: myObj.mapData[sectorX + 'x' + sectorY].tiles[tileX][tileY].overlayResource
+                                });
+                                tileX += 1;
+                            }
+                            bgMap.push(arr);
+                            tileY += 1;
+                            tileX = tileXStart;
+                            sectorX = sectorXStart;
+                        }
+                        
+                        MainMenu.bgMap = bgMap;
+                        console.log('Net ready!')
+                        Acorn.Net.ready = true;
+                        checkReady();
+                    }
+                };
+                xmlhttp.open("GET",'./maps/' + map + '.json', true);
+                xmlhttp.send();
             });
 
             Acorn.Net.on('startGame', function (data) {
                 console.log('Game Started!');
                 console.log(data);
-                Acorn.changeState('ingame')
-                Game.map = new GameMap();
-                Game.map.init(data.map);
-                Player.initCharacter(data.character);
-                Game.resetPos();
+                Acorn.changeState('ingame');
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var myObj = JSON.parse(this.responseText);
+                        Game.map = new GameMap();
+                        console.log(myObj);
+                        Game.map.init(myObj.mapData);
+                        Player.initCharacter(data.character);
+                        Game.resetPos();
+                        for (var i = 0; i < data.players.length;i++){
+                            if (data.players[i].id != mainObj.id){
+                                var pc = new PlayerCharacter();
+                                pc.init(data.players[i]);
+                                Game.pcs[data.players[i].id] = pc;
+                            }
+                        }
+                        Game.ready = true;
+                    }
+                };
+                xmlhttp.open("GET",'./maps/' + data.map + '.json', true);
+                xmlhttp.send();
+
             });
 
             Acorn.Net.on('loggedIn', function (data) {
@@ -45,6 +102,35 @@
                 console.log(data);
                 Player.userData = null;
                 Acorn.changeState('mainmenu');
+            });
+
+            //Player Character Functions
+
+            Acorn.Net.on('addPC', function (data) {
+                console.log(data);
+                if (data.id == mainObj.id){return;}
+                var pc = new PlayerCharacter();
+                pc.init(data);
+                Game.pcs[data.id] = pc;
+            });
+
+            Acorn.Net.on('removePC', function (data) {
+                console.log(data);
+                if (data.id == mainObj.id){return;}
+                try{
+                    Game.removePC(data);
+                }catch(e){
+                    console.log(e);
+                }
+            });
+
+            Acorn.Net.on('movePC', function (data) {
+                if (data.id == mainObj.id){return;}
+                try{
+                    Game.pcs[data.id].moveQueue.push(data);
+                }catch(e){
+                    console.log(e);
+                }
             });
 
             

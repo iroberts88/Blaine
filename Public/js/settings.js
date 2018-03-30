@@ -13,8 +13,6 @@
         stats: null,
         statsOn: null,
         currentRotation: null,
-        credentials: null,
-        credentialsOn: null,
         charScrollSpeed: null,
 
         init: function() {
@@ -34,9 +32,6 @@
             this.stats.domElement.style.left = '0px';
             this.stats.domElement.style.top = '0px';
             this.statsOn = false;
-            this.credentials = new Credentials();
-            this.credentials.domElement.style.position = 'absolute';
-            this.credentialsOn = false;
             this.currentRotation = 0;
         },
         zoom: function(dir){
@@ -134,19 +129,6 @@
                     angle: ((360/window.currentGameMap.totalRotations)*Math.PI/180)*d
                 }
             }
-        },
-        toggleCredentials: function(on){
-            try{
-                if (!on){
-                    this.credentialsOn = false;
-                    document.body.removeChild( this.credentials.domElement );
-                }else{
-                    this.credentialsOn = true;
-                    document.body.appendChild( this.credentials.domElement );
-                    document.getElementById('usrInput').value = '';
-                    document.getElementById('pwInput').value = '';
-                }
-            }catch(e){}
         },
         toggleStats: function(){
             if (this.statsOn){

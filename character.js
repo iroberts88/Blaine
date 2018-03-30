@@ -24,7 +24,7 @@ var Character = function(){
     this.currentTile = null;
 
     this.money = null;
-
+    this.owSprite = null;
     this.slot = null;
 }
 
@@ -40,6 +40,8 @@ Character.prototype.init = function(data) {
     this.currentMap = data.currentMap;
     this.currentSector = data.currentSector;
     this.currentTile = data.currentTile;
+
+    this.owSprite = 'ash';
 
     //init badges
     //initpokedex

@@ -44,6 +44,7 @@
             if (this.moving){return;}
             var tile = Game.map.getTileAt(x,y);
             if (tile.open && (tile.resource != 'deep_water' && tile.resource != 'water')){
+                Acorn.Net.socket_.emit('playerUpdate',{command:'moveAttempt',x:x,y:y});
                 this.character.tile[0] = tile.x;
                 this.character.tile[1] = tile.y;
                 this.character.sector = tile.sectorid;

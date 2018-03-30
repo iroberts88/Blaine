@@ -31,21 +31,64 @@ Zone.prototype.init = function (data) {
 Zone.prototype.tick = function(deltaTime) {
 }
 
+Zone.prototype.getSectorXY = function(string){
+    var x = '';
+    var y = '';
+    var coords = {};
+    var onX = true;
+    for (var i = 0; i < string.length;i++){
+        if (string.charAt(i) == 'x'){
+            onX = false;
+            continue;
+        }
+        if (onX){
+            x = x + string.charAt(i);
+        }else{
+            y = y + string.charAt(i);
+        }
+    }
+    coords.x = parseInt(x);
+    coords.y = parseInt(y);
+    return coords;
+};
+
 // ----------------------------------------------------------
 // Player Functions
 // ----------------------------------------------------------
 Zone.prototype.addPlayer = function(p){
     this.players[p.id] = p;
     //TODO add player to all players in the zone within 1 sector
-
     this.map[p.character.currentSector].addPlayer(p);
     this.playerCount += 1;
+    for (var i = -1;i < 2;i++){
+        for (var j = -1;j < 2;j++){
+            var coords = this.getSectorXY(p.character.currentSector);
+            for (var pl in this.map[(coords.x+i) + 'x' + (coords.y+j)].players){
+                var player = this.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
+                this.gameEngine.queuePlayer(player,'addPC',{
+                    id: p.id,name:p.user.username,
+                    owSprite: p.character.owSprite,
+                    tile: p.character.currentTile,
+                    sector: p.character.currentSector
+                });
+            }
+        }
+    }
     return this.playerCount;
 }
 
 Zone.prototype.removePlayer = function(p){
     this.map[p.character.currentSector].removePlayer(p);
     //TODO remove player from all players in the zone within 1 sector
+    for (var i = -1;i < 2;i++){
+        for (var j = -1;j < 2;j++){
+            var coords = this.getSectorXY(p.character.currentSector);
+            for (var pl in this.map[(coords.x+i) + 'x' + (coords.y+j)].players){
+                var player = this.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
+                this.gameEngine.queuePlayer(player,'removePC',{id: p.id})
+            }
+        }
+    }
     delete this.players[p.id];
     this.playerCount -= 1;
     return this.playerCount;
