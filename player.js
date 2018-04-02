@@ -93,9 +93,9 @@ Player.prototype.setupSocket = function() {
                             data.owner = that;
                             data.id = that.gameEngine.getId();
                             data.money = 0;
-                            data.currentSector = '0x0';
-                            data.currentTile = [9,12];
-                            data.currentMap = 'pallet_house1_floor2';
+                            data.currentSector = '0x-3';
+                            data.currentTile = [16,19];
+                            data.currentMap = 'pallet';
                             //data.currentSector = '0x0';
                             //data.currentTile = [9,12];
                             //data.currentMap = 'pallet';
@@ -120,19 +120,19 @@ Player.prototype.setupSocket = function() {
                         tile.y += data.y;
                         var moveSector = [0,0];
                         if (tile.x < 0){
-                            tile.x = 20;
+                            tile.x = 21+data.x;
                             coords.x -=1;
-                            moveSector[0] -=1;
+                            moveSector[0] -= 1;
                         }else if (tile.y < 0){
-                            tile.y = 20;
+                            tile.y = 21+data.y;
                             coords.y -=1;
-                            moveSector[1] -=1;
+                            moveSector[1] -= 1;
                         }else if (tile.x > 20){
-                            tile.x = 0;
+                            tile.x = tile.x-21;
                             coords.x +=1;
                             moveSector[0] +=1;
                         }else if (tile.y > 20){
-                            tile.y = 0;
+                            tile.y = tile.y-21;
                             coords.y +=1;
                             moveSector[1] +=1;
                         }
@@ -178,15 +178,14 @@ Player.prototype.setupSocket = function() {
                             var trigger = tile.triggers[i];
                             console.log(trigger);
                             if (trigger.do == 'changeMap' && trigger.data.map == data.map && trigger.data.sector == data.sector && trigger.data.tile == data.tile){
+                                that.gameEngine.removePlayerFromZone(that,that.character.currentMap);
                                 that.character.currentSector = data.sector;
-                                console.log('derp')
                                 var c = zone.getSectorXY(trigger.data.tile);
                                 that.character.currentTile = [c.x,c.y];
-                                that.gameEngine.removePlayerFromZone(that,that.character.currentMap);
                                 that.character.currentMap = data.map;
                                 that.gameEngine.addPlayerToZone(that,data.map);
                                 var newZone = that.gameEngine.zones[that.character.currentMap];
-                                var newSector = zone.map[that.character.currentSector];
+                                var newSector = newZone.map[that.character.currentSector];
                                 var players = newZone.getPlayers(newSector);
                                 that.gameEngine.queuePlayer(that,'changeMap',{
                                     map: that.character.currentMap,

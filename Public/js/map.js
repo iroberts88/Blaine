@@ -31,7 +31,7 @@
             tile.x += x;
             tile.y += y;
             if (tile.x < 0){
-                tile.x = 20;
+                tile.x = 21+x;
                 coords.x -= 1;
                 this.setVisible((coords.x-1) + 'x' + coords.y,true);
                 this.setVisible((coords.x-1) + 'x' + (coords.y-1),true);
@@ -40,7 +40,7 @@
                 this.setVisible((coords.x+2) + 'x' + (coords.y-1),false);
                 this.setVisible((coords.x+2) + 'x' + (coords.y+1),false);
             }else if (tile.y < 0){
-                tile.y = 20;
+                tile.y = 21+y;
                 coords.y -= 1;
                 this.setVisible(coords.x + 'x' + (coords.y-1),true);
                 this.setVisible((coords.x-1) + 'x' + (coords.y-1),true);
@@ -49,7 +49,7 @@
                 this.setVisible((coords.x+1) + 'x' + (coords.y+2),false);
                 this.setVisible((coords.x-1) + 'x' + (coords.y+2),false);
             }else if (tile.x > 20){
-                tile.x = 0;
+                tile.x = tile.x-21;
                 coords.x += 1;
                 this.setVisible((coords.x+1) + 'x' + coords.y,true);
                 this.setVisible((coords.x+1) + 'x' + (coords.y-1),true);
@@ -58,7 +58,7 @@
                 this.setVisible((coords.x-2) + 'x' + (coords.y-1),false);
                 this.setVisible((coords.x-2) + 'x' + (coords.y+1),false);
             }else if (tile.y > 20){
-                tile.y = 0;
+                tile.y = tile.y-21;
                 coords.y += 1;
                 this.setVisible(coords.x + 'x' + (coords.y+1),true);
                 this.setVisible((coords.x-1) + 'x' + (coords.y+1),true);
@@ -82,16 +82,16 @@
             tile.x += x;
             tile.y += y;
             if (tile.x < 0){
-                tile.x = 20;
+                tile.x = 21+x;
                 coords.x -= 1;
             }else if (tile.y < 0){
-                tile.y = 20;
+                tile.y = 21+y;
                 coords.y -= 1;
             }else if (tile.x > 20){
-                tile.x = 0;
+                tile.x = tile.x-21;
                 coords.x += 1;
             }else if (tile.y > 20){
-                tile.y = 0;
+                tile.y = tile.y-21;
                 coords.y += 1;
             }
             return this[coords.x + 'x' + coords.y].tiles[tile.x][tile.y];
@@ -128,8 +128,8 @@ var getSectorXY = function(string){
     var Sector = function(){
     	this.pos = null;
     	this.tiles = null;
-    	this.TILE_SIZE = 32;
-    	this.fullSectorSize = 32*21;
+    	this.TILE_SIZE = mainObj.TILE_SIZE;
+    	this.fullSectorSize = mainObj.TILE_SIZE*21;
     };
 
     Sector.prototype.init = function(s,data){
@@ -186,16 +186,16 @@ var getSectorXY = function(string){
             this.y = data.y;
             this.resource = data.resource; //the graphics resource used
             this.sprite = Graphics.getSprite(data.resource); //tile sprite
-            this.sprite.scale.x = 2;
-            this.sprite.scale.y = 2;
+            this.sprite.scale.x = mainObj.GAME_SCALE;
+            this.sprite.scale.y = mainObj.GAME_SCALE;
             this.open = data.open
 
             this.overlayResource = data.overlayResource;
             this.overlaySprite = null; //2nd layer sprite
             if (this.overlayResource){
                 this.overlaySprite = Graphics.getSprite(data.overlayResource); //tile sprite
-                this.overlaySprite.scale.x = 2;
-                this.overlaySprite.scale.y = 2;
+                this.overlaySprite.scale.x = mainObj.GAME_SCALE;
+                this.overlaySprite.scale.y = mainObj.GAME_SCALE;
                 this.overlaySprite.visible = false;
             }
             this.triggers = data.triggers;

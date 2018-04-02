@@ -1283,6 +1283,13 @@
                 "data": {
                   "sound": "exit"
                 }
+              },
+              {
+                "on": "down",
+                "do": "playMusic",
+                "data": {
+                  "sound": "pallet"
+                }
               }
             ]
           },
@@ -1427,6 +1434,13 @@
                 "do": "playSound",
                 "data": {
                   "sound": "exit"
+                }
+              },
+              {
+                "on": "down",
+                "do": "playMusic",
+                "data": {
+                  "sound": "pallet"
                 }
               }
             ]

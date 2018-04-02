@@ -16,19 +16,19 @@
         newMapData: null,
 
         init: function() {
-            Graphics.uiPrimitives.lineStyle(1,0xFFFFFF,1);
+            /*Graphics.uiPrimitives.lineStyle(1,0xFFFFFF,1);
             Graphics.uiPrimitives.beginFill(0xFFFFFF,1)
             Graphics.uiPrimitives.drawRect(0,0,Graphics.width/2-336,Graphics.height);
             Graphics.uiPrimitives.drawRect(0,0,Graphics.width,Graphics.height/2-336);
             Graphics.uiPrimitives.drawRect(Graphics.width/2+336,0,Graphics.width/2-336,Graphics.height);
             Graphics.uiPrimitives.drawRect(0,Graphics.height/2+336,Graphics.width,Graphics.height/2-336);
-            Graphics.uiPrimitives.endFill()
+            Graphics.uiPrimitives.endFill()*/
         },
         
         resetPos: function(){
             //set world position to sector 0,0 position
-            Graphics.worldContainer.position.x = Graphics.width/2-16;
-            Graphics.worldContainer.position.y = Graphics.height/2-16;
+            Graphics.worldContainer.position.x = Graphics.width/2-mainObj.TILE_SIZE/2;
+            Graphics.worldContainer.position.y = Graphics.height/2-mainObj.TILE_SIZE/2;
             //get sector
             var sector = this.map[Player.character.sector];
             for (var i = -1; i < 2;i++){
@@ -43,8 +43,10 @@
             }
             Graphics.worldContainer.position.x -= sector.pos.x*sector.fullSectorSize;
             Graphics.worldContainer.position.y -= sector.pos.y*sector.fullSectorSize;
-            Graphics.worldContainer.position.x -= Player.character.tile[0]*32;
-            Graphics.worldContainer.position.y -= Player.character.tile[1]*32;
+            Graphics.worldContainer.position.x -= Player.character.tile[0]*mainObj.TILE_SIZE;
+            Graphics.worldContainer.position.y -= Player.character.tile[1]*mainObj.TILE_SIZE;
+
+            Player.resetPos();
         },
         update: function(dt){
             if (!this.ready){return;}
@@ -55,6 +57,7 @@
                     xmlhttp.onreadystatechange = function() {
                         if (this.readyState == 4 && this.status == 200) {
                             var myObj = JSON.parse(this.responseText);
+                            console.log('hey!')
                             Graphics.worldContainer.removeChildren();
                             Graphics.uiPrimitives2.clear();
                             Game.map = new GameMap();
@@ -73,6 +76,7 @@
                                     Game.pcs[Game.newMapData.players[i].id] = pc;
                                 }
                             }
+                            Game.newMapData = null;
                         }
                     };
                     xmlhttp.open("GET",'./maps/' + this.newMapData.map + '.json', true);
@@ -80,24 +84,25 @@
                 }else{
                     Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.05);
                     Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.05)
-                    Graphics.uiPrimitives2.drawRect(Graphics.width/2-336,Graphics.height/2-336,672,672);
+                    Graphics.uiPrimitives2.drawRect(0,0,Graphics.width,Graphics.height);
                     Graphics.uiPrimitives2.endFill()
                 }
                 return;
-            }
-            Graphics.uiPrimitives2.clear();
-            if (Acorn.Input.isPressed(Acorn.Input.Key.UP)){
-            	Player.move(0,-1);
-            }else if (Acorn.Input.isPressed(Acorn.Input.Key.DOWN)){
-            	Player.move(0,1);
-            }else if (Acorn.Input.isPressed(Acorn.Input.Key.LEFT)){
-            	Player.move(-1,0);
-            }else if (Acorn.Input.isPressed(Acorn.Input.Key.RIGHT)){
-            	Player.move(1,0);
-            }
-            Player.update(dt);
-            for (var i in this.pcs){
-                this.pcs[i].update(dt);
+            }else{
+                Graphics.uiPrimitives2.clear();
+                if (Acorn.Input.isPressed(Acorn.Input.Key.UP)){
+                	Player.move(0,-1);
+                }else if (Acorn.Input.isPressed(Acorn.Input.Key.DOWN)){
+                	Player.move(0,1);
+                }else if (Acorn.Input.isPressed(Acorn.Input.Key.LEFT)){
+                	Player.move(-1,0);
+                }else if (Acorn.Input.isPressed(Acorn.Input.Key.RIGHT)){
+                	Player.move(1,0);
+                }
+                Player.update(dt);
+                for (var i in this.pcs){
+                    this.pcs[i].update(dt);
+                }
             }
         },
 
@@ -106,6 +111,8 @@
                 var pc = Game.pcs[data.id];
                 Graphics.worldContainer.removeChild(pc.sprite);
                 Graphics.worldContainer.removeChild(pc.sprite2);
+                Graphics.worldContainer.removeChild(pc.nameTag);
+                Graphics.worldContainer.removeChild(pc.playerMask);
                 delete Game.pcs[data.id];
             }catch(e){
 

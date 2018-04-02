@@ -17,12 +17,15 @@ var requestAnimFrame = (function(){
 var mainObj = this;
 mainObj.playerId = 'none';
 
+mainObj.GAME_SCALE = 3;
+mainObj.TILE_SIZE = 16*mainObj.GAME_SCALE;
+
 $(function() {
 
     //Configure fonts
     WebFontConfig = {
       google: {
-        families: ['Lato','Open Sans', 'Permanent Marker']
+        families: ['Lato','Open Sans', 'Permanent Marker','Orbitron']
       },
 
       active: function() {
@@ -107,6 +110,9 @@ $(function() {
     Acorn.Sound.addSound({url: 'sounds/music/3_newChar.mp3', id: 'newChar', volume: 0.7, preload: true,type:'music'});
     Acorn.Sound.addSound({url: 'sounds/music/4_pallet.mp3', id: 'pallet', volume: 0.7, preload: true,type:'music'});
     Acorn.Sound.addSound({url: 'sounds/music/5_road_to_veridian.mp3', id: 'roadToVeridian', volume: 0.7, preload: true,type:'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/6_pewter.mp3', id: 'pewter', volume: 0.7, preload: true,type:'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/7_pcenter.mp3', id: 'pcenter', volume: 0.7, preload: true,type:'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/8_oaklab.mp3', id: 'oaklab', volume: 0.7, preload: true,type:'music'});
     //sfx
     Acorn.Sound.addSound({url: 'sounds/sfx/select.mp3', id: 'select', volume: 1.0, preload: true});
     Acorn.Sound.addSound({url: 'sounds/sfx/bump.mp3', id: 'bump', volume: 1.0, preload: true});

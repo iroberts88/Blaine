@@ -28,7 +28,7 @@
 
             this.buttonCD = 0;
             //create the PIXI stage
-            this.app = new PIXI.Application(this.width, this.height, {backgroundColor: 0xFFFFFF});
+            this.app = new PIXI.Application(this.width, this.height, {backgroundColor: 0xDCDCDC});
             this.filtersToApply = [];
 
             this.resourceList = [];
@@ -59,6 +59,13 @@
             this.worldContainer.position.y = Graphics.width/2;
             this.worldContainer.interactive = true;
             this.world.addChild(this.worldContainer); // ADD WORLD CONTAINER
+
+            this.world2Container = new PIXI.Container();
+            this.world2Container.position.x = Graphics.width/2;
+            this.world2Container.position.y = Graphics.width/2;
+            this.world2Container.interactive = true;
+            this.world.addChild(this.world2Container); // ADD WORLD CONTAINER2
+
             this.worldPrimitives = new PIXI.Graphics();
             this.worldPrimitives.position.x = Graphics.width/2;
             this.worldPrimitives.position.y = Graphics.width/2;

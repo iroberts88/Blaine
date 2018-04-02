@@ -15,12 +15,12 @@
         },
 
         nameStyle: {
-            font: '18px Lato',
+            font: '18px Pokemon',
             fill: 'orange',
             align: 'left',
             stroke: '#000000',
             strokeThickness: 1,
-
+            fontWeight: 'bold'
         },
 
         net: function() {

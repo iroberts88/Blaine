@@ -4,7 +4,8 @@ TriggerEnums = {
 	ChangeMap: 'changeMap',
 	PlaySound: 'playSound',
 	PlayMusic: 'playMusic',
-	BlocksMovement: 'blocksMovement'
+	BlocksMovement: 'blocksMovement',
+	DownwardHop: 'downwardHop'
 };
 
 (function(window) {
@@ -12,8 +13,6 @@ TriggerEnums = {
 	Triggers = {
 
 		changeMap: function(data){
-			console.log('changing map');
-			console.log(data);
 			Game.screenChange = true;
             Acorn.Net.socket_.emit('playerUpdate',{command:'changeMap',map:data.map,sector:data.sector,tile:data.tile});
 			for (var i in Game.pcs){
@@ -40,6 +39,11 @@ TriggerEnums = {
 			return true;
 		},
 
+		downwardHop: function(data){
+			Player.move(0,2);
+			return true;
+		},
+
 		doTrigger: function(trigger){
 			try{
 				switch(trigger.do){
@@ -54,6 +58,9 @@ TriggerEnums = {
 						break;
 					case TriggerEnums.BlocksMovement:
 						return this.blocksMovement(trigger.data);
+						break;
+					case TriggerEnums.DownwardHop:
+						return this.downwardHop(trigger.data);
 						break;
 				}
 			}catch(e){

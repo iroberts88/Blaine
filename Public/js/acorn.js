@@ -283,13 +283,7 @@
                         }
                     } else {
                         if (snd.type == 'music'){
-                            if (Acorn.Sound.currentMusic != id && Acorn.Sound.currentMusic != null){
-                                Acorn.Sound.next = id;
-                            }else{
-                                snd._sound.volume = snd.volume*vMod;
-                                snd._sound.play();
-                                Acorn.Sound.currentMusic = id;
-                            }
+                            Acorn.Sound.next = id;
                         }else if (snd._sound.paused) {
                             snd._sound.volume = snd.volume*vMod;
                             snd._sound.play();
@@ -302,21 +296,29 @@
             }
         },
         update: function(dt){
-            if (Acorn.Sound.next != null){
-                Acorn.Sound.fadeTicker += dt;
-                var current = Acorn.Sound.getSound(Acorn.Sound.currentMusic);
-                if (Acorn.Sound.fadeTicker >= Acorn.Sound.fadeOver){
-                    //play new music
-                    Acorn.Sound.stop(Acorn.Sound.currentMusic);
-                    var newMusic = Acorn.Sound.getSound(Acorn.Sound.next);
-                    newMusic._sound.volume = newMusic.volume;
-                    newMusic._sound.play();
+            try{
+                if (Acorn.Sound.currentMusic == null){
                     Acorn.Sound.currentMusic = Acorn.Sound.next;
-                    Acorn.Sound.next = null;
-                    Acorn.Sound.fadeTicker = 0;
+                    Acorn.Sound.fadeTicker = Acorn.Sound.fadeOver;
                 }
-                var val = current.volume*((Acorn.Sound.fadeOver-Acorn.Sound.fadeTicker)/Acorn.Sound.fadeOver);
-                current._sound.volume = val;
+                if (Acorn.Sound.next != null){
+                    Acorn.Sound.fadeTicker += dt;
+                    var current = Acorn.Sound.getSound(Acorn.Sound.currentMusic);
+                    if (Acorn.Sound.fadeTicker >= Acorn.Sound.fadeOver){
+                        //play new music
+                        Acorn.Sound.stop(Acorn.Sound.currentMusic);
+                        var newMusic = Acorn.Sound.getSound(Acorn.Sound.next);
+                        newMusic._sound.volume = newMusic.volume;
+                        newMusic._sound.play();
+                        Acorn.Sound.currentMusic = Acorn.Sound.next;
+                        Acorn.Sound.next = null;
+                        Acorn.Sound.fadeTicker = 0;
+                    }
+                    var val = current.volume*((Acorn.Sound.fadeOver-Acorn.Sound.fadeTicker)/Acorn.Sound.fadeOver);
+                    current._sound.volume = val;
+                }
+            }catch(e){
+                console.log('wtf');
             }
         }
     };
