@@ -39,33 +39,18 @@ Player.prototype.startGame = function(char){
     //add character to zone
     this.gameEngine.addPlayerToZone(this,this.character.currentMap);
     //send down data to start new game
-    var players = [];
     var zone = this.gameEngine.zones[this.character.currentMap];
     var sector = zone.map[this.character.currentSector];
-    for (var i = -1;i < 2;i++){
-        for (var j = -1;j < 2;j++){
-            try{
-                for (var pl in zone.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players){
-                    var player = zone.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players[pl];
-                    players.push({
-                        id: player.id,
-                        name: player.user.username,
-                        owSprite: player.character.owSprite,
-                        tile: player.character.currentTile,
-                        sector: player.character.currentSector
-                    })
-                }
-            }catch(e){
-                console.log(e);
-            }
-        }
-    }
+    var players = zone.getPlayers(sector);
+
     this.gameEngine.queuePlayer(this,'startGame',{
         map: this.character.currentMap,
+        music: this.character.currentMusic,
         character: this.character.getClientData(),
         players: players
     });
 };
+
 
 Player.prototype.tick = function(deltaTime){
    
@@ -111,6 +96,10 @@ Player.prototype.setupSocket = function() {
                             data.currentSector = '0x0';
                             data.currentTile = [9,12];
                             data.currentMap = 'pallet_house1_floor2';
+                            //data.currentSector = '0x0';
+                            //data.currentTile = [9,12];
+                            //data.currentMap = 'pallet';
+                            data.music = 'pallet';
                             char.init(data);
                             that.startGame(char);
                         }
@@ -129,32 +118,87 @@ Player.prototype.setupSocket = function() {
                         }
                         tile.x += data.x;
                         tile.y += data.y;
-                        if (tile.x < 0){tile.x = 20;coords.x -=1;}
-                        if (tile.y < 0){tile.y = 20;coords.y -=1;}
-                        if (tile.x > 20){tile.x = 0;coords.x +=1;}
-                        if (tile.y > 20){tile.y = 0;coords.y +=1;}
+                        var moveSector = [0,0];
+                        if (tile.x < 0){
+                            tile.x = 20;
+                            coords.x -=1;
+                            moveSector[0] -=1;
+                        }else if (tile.y < 0){
+                            tile.y = 20;
+                            coords.y -=1;
+                            moveSector[1] -=1;
+                        }else if (tile.x > 20){
+                            tile.x = 0;
+                            coords.x +=1;
+                            moveSector[0] +=1;
+                        }else if (tile.y > 20){
+                            tile.y = 0;
+                            coords.y +=1;
+                            moveSector[1] +=1;
+                        }
                         var newTile = zone.map[coords.x + 'x' + coords.y].tiles[tile.x][tile.y];
                         if (newTile.open && (newTile.resource != 'deep_water' && newTile.resource != 'water')){
                             //move!!!
+                            //first, if the sector changed move sectors
+                            zone.changeSector(that,moveSector,coords.x + 'x' + coords.y,tile);
+                            //send a move command to all players in adjacent sectors
+                            var coords2 = zone.getSectorXY(that.character.currentSector);
                             for (var i = -1;i < 2;i++){
                                 for (var j = -1;j < 2;j++){
-                                    var coords = zone.getSectorXY(that.character.currentSector);
-                                    for (var pl in zone.map[(coords.x+i) + 'x' + (coords.y+j)].players){
-                                        var player = zone.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
-                                        that.gameEngine.queuePlayer(player,'movePC',{
-                                            id: that.id,
-                                            x:data.x,
-                                            y:data.y,
-                                            start: [that.character.currentTile[0],that.character.currentTile[1]]
-                                        })
+                                    try{
+                                        for (var pl in zone.map[(coords2.x+i) + 'x' + (coords2.y+j)].players){
+                                            var player = zone.map[(coords2.x+i) + 'x' + (coords2.y+j)].players[pl];
+                                            that.gameEngine.queuePlayer(player,'movePC',{
+                                                id: that.id,
+                                                x:data.x,
+                                                y:data.y,
+                                                start: [that.character.currentTile[0],that.character.currentTile[1]]
+                                            })
+                                        }
+                                    }catch(e){
+                                        that.gameEngine.debug(that,{id: 'moveAttempt', error: e.stack});
                                     }
                                 }
                             }
+                            //change the sector/tile variables
                             that.character.currentSector = coords.x + 'x' + coords.y;
                             that.character.currentTile = [tile.x, tile.y];
                         }
                     }catch(e){
                         that.gameEngine.debug(that,{id: 'moveAttempt', error: e.stack});
+                    }
+                    break;
+                case 'changeMap':
+                    try{
+                        console.log(data);
+                        //check current Tile
+                        var zone = that.gameEngine.zones[that.character.currentMap]
+                        var tile = zone.map[that.character.currentSector].tiles[that.character.currentTile[0]][that.character.currentTile[1]];
+                        for (var i = 0; i < tile.triggers.length;i++){
+                            var trigger = tile.triggers[i];
+                            console.log(trigger);
+                            if (trigger.do == 'changeMap' && trigger.data.map == data.map && trigger.data.sector == data.sector && trigger.data.tile == data.tile){
+                                that.character.currentSector = data.sector;
+                                console.log('derp')
+                                var c = zone.getSectorXY(trigger.data.tile);
+                                that.character.currentTile = [c.x,c.y];
+                                that.gameEngine.removePlayerFromZone(that,that.character.currentMap);
+                                that.character.currentMap = data.map;
+                                that.gameEngine.addPlayerToZone(that,data.map);
+                                var newZone = that.gameEngine.zones[that.character.currentMap];
+                                var newSector = zone.map[that.character.currentSector];
+                                var players = newZone.getPlayers(newSector);
+                                that.gameEngine.queuePlayer(that,'changeMap',{
+                                    map: that.character.currentMap,
+                                    sector: that.character.currentSector,
+                                    tile: that.character.currentTile,
+                                    players: players
+                                });
+                            }
+                        }
+                    }catch(e){
+                        console.log("error changing map...reset pos?");
+                        that.gameEngine.debug(that,{id: 'changeMap', error: e.stack});
                     }
                     break;
             }

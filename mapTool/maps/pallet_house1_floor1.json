@@ -553,201 +553,73 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          }
-        ],
-        [
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -809,6 +681,78 @@
           },
           {
             "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
             "open": true,
             "overlayResource": 0,
             "triggers": []
@@ -816,6 +760,62 @@
           {
             "resource": "1x22",
             "open": true,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0,
+            "triggers": []
+          }
+        ],
+        [
+          {
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": true,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -869,13 +869,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -937,13 +937,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -997,13 +997,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1065,13 +1065,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1130,18 +1130,25 @@
                 },
                 "on": "down",
                 "do": "changeMap"
+              },
+              {
+                "on": "down",
+                "do": "playSound",
+                "data": {
+                  "sound": "exit"
+                }
               }
             ]
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1203,13 +1210,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1268,18 +1275,25 @@
                 },
                 "on": "down",
                 "do": "changeMap"
+              },
+              {
+                "on": "down",
+                "do": "playSound",
+                "data": {
+                  "sound": "exit"
+                }
               }
             ]
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1341,13 +1355,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1401,13 +1415,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1469,13 +1483,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1529,13 +1543,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1597,13 +1611,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1657,13 +1671,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1725,13 +1739,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1747,13 +1761,20 @@
             "overlayResource": 0,
             "triggers": [
               {
-                "data": {
-                  "tile": "13x7",
-                  "map": "pallet_house1_floor2",
-                  "sector": "0x0"
-                },
                 "on": "arrival",
-                "do": "changeMap"
+                "do": "playSound",
+                "data": {
+                  "sound": "exit"
+                }
+              },
+              {
+                "on": "arrival",
+                "do": "changeMap",
+                "data": {
+                  "map": "pallet_house1_floor2",
+                  "sector": "0x0",
+                  "tile": "13x7"
+                }
               }
             ]
           },
@@ -1795,141 +1816,13 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          }
-        ],
-        [
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
-            "overlayResource": 0,
-            "triggers": []
-          },
-          {
-            "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -1991,7 +1884,73 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
@@ -2024,7 +1983,9 @@
             "open": true,
             "overlayResource": 0,
             "triggers": []
-          },
+          }
+        ],
+        [
           {
             "resource": "1x22",
             "open": true,
@@ -2051,13 +2012,73 @@
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },
           {
             "resource": "1x22",
-            "open": true,
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
+            "overlayResource": 0,
+            "triggers": []
+          },
+          {
+            "resource": "1x22",
+            "open": false,
             "overlayResource": 0,
             "triggers": []
           },

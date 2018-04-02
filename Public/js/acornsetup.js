@@ -14,6 +14,15 @@
             align: 'left'
         },
 
+        nameStyle: {
+            font: '18px Lato',
+            fill: 'orange',
+            align: 'left',
+            stroke: '#000000',
+            strokeThickness: 1,
+
+        },
+
         net: function() {
             Acorn.Net.on('connInfo', function (data) {
                 console.log('Connected to server: Info Received');
@@ -73,7 +82,6 @@
                     if (this.readyState == 4 && this.status == 200) {
                         var myObj = JSON.parse(this.responseText);
                         Game.map = new GameMap();
-                        console.log(myObj);
                         Game.map.init(myObj.mapData);
                         Player.initCharacter(data.character);
                         Game.resetPos();
@@ -85,11 +93,18 @@
                             }
                         }
                         Game.ready = true;
+                        Acorn.Sound.play(data.music);
                     }
                 };
                 xmlhttp.open("GET",'./maps/' + data.map + '.json', true);
                 xmlhttp.send();
 
+            });
+
+            Acorn.Net.on('changeMap', function (data) {
+                console.log('newMap!!');
+                console.log(data);
+                Game.newMapData = data;
             });
 
             Acorn.Net.on('loggedIn', function (data) {
@@ -129,7 +144,6 @@
                 try{
                     Game.pcs[data.id].moveQueue.push(data);
                 }catch(e){
-                    console.log(e);
                 }
             });
 

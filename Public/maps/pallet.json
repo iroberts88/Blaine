@@ -9305,6 +9305,13 @@
                 },
                 "on": "arrival",
                 "do": "changeMap"
+              },
+              {
+                "on": "arrival",
+                "do": "playSound",
+                "data": {
+                  "sound": "enter"
+                }
               }
             ]
           },
@@ -9910,13 +9917,29 @@
             "resource": "1x1",
             "open": true,
             "overlayResource": 0,
-            "triggers": []
+            "triggers": [
+              {
+                "on": "down",
+                "do": "playMusic",
+                "data": {
+                  "sound": "pallet"
+                }
+              }
+            ]
           },
           {
             "resource": "1x1",
             "open": true,
             "overlayResource": 0,
-            "triggers": []
+            "triggers": [
+              {
+                "on": "up",
+                "do": "playMusic",
+                "data": {
+                  "sound": "roadToVeridian"
+                }
+              }
+            ]
           },
           {
             "resource": "1x1",
@@ -10038,13 +10061,29 @@
             "resource": "1x1",
             "open": true,
             "overlayResource": 0,
-            "triggers": []
+            "triggers": [
+              {
+                "on": "down",
+                "do": "playMusic",
+                "data": {
+                  "sound": "pallet"
+                }
+              }
+            ]
           },
           {
             "resource": "1x1",
             "open": true,
             "overlayResource": 0,
-            "triggers": []
+            "triggers": [
+              {
+                "on": "up",
+                "do": "playMusic",
+                "data": {
+                  "sound": "roadToVeridian"
+                }
+              }
+            ]
           },
           {
             "resource": "1x1",
@@ -10240,13 +10279,20 @@
             "overlayResource": 0,
             "triggers": [
               {
-                "data": {
-                  "tile": "16x9",
-                  "map": "pallet_lab",
-                  "sector": "0x0"
-                },
                 "on": "arrival",
-                "do": "changeMap"
+                "do": "changeMap",
+                "data": {
+                  "map": "pallet_lab",
+                  "sector": "0x0",
+                  "tile": "9x16"
+                }
+              },
+              {
+                "on": "arrival",
+                "do": "playSound",
+                "data": {
+                  "sound": "enter"
+                }
               }
             ]
           },
@@ -10349,6 +10395,13 @@
                 },
                 "on": "arrival",
                 "do": "changeMap"
+              },
+              {
+                "on": "arrival",
+                "do": "playSound",
+                "data": {
+                  "sound": "enter"
+                }
               }
             ]
           },

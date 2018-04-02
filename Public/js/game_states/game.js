@@ -9,6 +9,12 @@
 
         npcs: {},
 
+        screenChange: false,
+        screenTicker: 0,
+        screenChangeTime: 0.5,
+
+        newMapData: null,
+
         init: function() {
             Graphics.uiPrimitives.lineStyle(1,0xFFFFFF,1);
             Graphics.uiPrimitives.beginFill(0xFFFFFF,1)
@@ -42,6 +48,43 @@
         },
         update: function(dt){
             if (!this.ready){return;}
+            if (this.screenChange){
+                this.screenTicker += dt;
+                if (this.screenTicker > this.screenChangeTime && this.newMapData){
+                    var xmlhttp = new XMLHttpRequest();
+                    xmlhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            var myObj = JSON.parse(this.responseText);
+                            Graphics.worldContainer.removeChildren();
+                            Graphics.uiPrimitives2.clear();
+                            Game.map = new GameMap();
+                            Game.map.init(myObj.mapData);
+                            Player.character.tile = Game.newMapData.tile;
+                            Player.character.sector = Game.newMapData.sector;
+                            Player.character.map = Game.newMapData.map;
+                            Game.resetPos();
+                            Game.screenChange = false;
+                            Game.screenTicker = 0;
+                            Graphics.uiPrimitives2.clear();
+                            for (var i = 0; i < Game.newMapData.players.length;i++){
+                                if (Game.newMapData.players[i].id != mainObj.id){
+                                    var pc = new PlayerCharacter();
+                                    pc.init(Game.newMapData.players[i]);
+                                    Game.pcs[Game.newMapData.players[i].id] = pc;
+                                }
+                            }
+                        }
+                    };
+                    xmlhttp.open("GET",'./maps/' + this.newMapData.map + '.json', true);
+                    xmlhttp.send();
+                }else{
+                    Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.05);
+                    Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.05)
+                    Graphics.uiPrimitives2.drawRect(Graphics.width/2-336,Graphics.height/2-336,672,672);
+                    Graphics.uiPrimitives2.endFill()
+                }
+                return;
+            }
             Graphics.uiPrimitives2.clear();
             if (Acorn.Input.isPressed(Acorn.Input.Key.UP)){
             	Player.move(0,-1);
@@ -59,9 +102,14 @@
         },
 
         removePC: function(data){
-            var pc = Game.pcs[data.id];
-            Graphics.worldContainer.removeChild(pc.sprite);
-            delete Game.pcs[data.id];
+            try{
+                var pc = Game.pcs[data.id];
+                Graphics.worldContainer.removeChild(pc.sprite);
+                Graphics.worldContainer.removeChild(pc.sprite2);
+                delete Game.pcs[data.id];
+            }catch(e){
+
+            }
         },
 
         getSectorXY: function(string){

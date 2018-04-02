@@ -105,8 +105,13 @@ $(function() {
     //Music
     Acorn.Sound.addSound({url: 'sounds/music/1_opening.mp3', id: 'opening', volume: 0.7, preload: true,type:'music'});
     Acorn.Sound.addSound({url: 'sounds/music/3_newChar.mp3', id: 'newChar', volume: 0.7, preload: true,type:'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/4_pallet.mp3', id: 'pallet', volume: 0.7, preload: true,type:'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/5_road_to_veridian.mp3', id: 'roadToVeridian', volume: 0.7, preload: true,type:'music'});
     //sfx
     Acorn.Sound.addSound({url: 'sounds/sfx/select.mp3', id: 'select', volume: 1.0, preload: true});
+    Acorn.Sound.addSound({url: 'sounds/sfx/bump.mp3', id: 'bump', volume: 1.0, preload: true});
+    Acorn.Sound.addSound({url: 'sounds/sfx/exit.mp3', id: 'exit', volume: 1.0, preload: true});
+    Acorn.Sound.addSound({url: 'sounds/sfx/enter.mp3', id: 'enter', volume: 1.0, preload: true});
 });
 
 function setupSocket() {

@@ -13,6 +13,8 @@
         this.startPosition = null;
         this.moveTicker = 0;
         this.moveQueue = [];
+
+        this.nameDistance = 30;
     }
 
     PlayerCharacter.prototype.init = function(data){
@@ -29,7 +31,15 @@
         var coords = Game.getSectorXY(this.sector);
         this.sprite.position.x = 16+Game.map[this.sector].fullSectorSize*coords.x + 32*this.tile[0];
         this.sprite.position.y = 8+Game.map[this.sector].fullSectorSize*coords.y + 32*this.tile[1];
+
+        this.sprite2 = new PIXI.Text(data.name,AcornSetup.nameStyle);
+        this.sprite2.anchor.x = 0.5;
+        this.sprite2.anchor.y = 0.5;
+        this.sprite2.position.x = 16+Game.map[this.sector].fullSectorSize*coords.x + 32*this.tile[0];
+        this.sprite2.position.y = 8+Game.map[this.sector].fullSectorSize*coords.y + 32*this.tile[1] - this.nameDistance;
+
         Graphics.worldContainer.addChild(this.sprite);
+        Graphics.worldContainer.addChild(this.sprite2);
         this.animateInfo = {
             ticker: 0,
             swapEvery: 0.15,
@@ -41,9 +51,12 @@
 
     PlayerCharacter.prototype.move = function(x,y){
         //attempt to move in the target direction
+            console.log('here?3');
         if (this.moving){return;}
         var tile = Game.map.getTileAtPC(this,x,y);
+            console.log('here?2');
         if (tile.open && (tile.resource != 'deep_water' && tile.resource != 'water')){
+            console.log('here?');
             this.tile[0] = tile.x;
             this.tile[1] = tile.y;
             this.sector = tile.sectorid;
@@ -80,6 +93,8 @@
             if (this.moveTicker >= this.SPEED){
                 this.sprite.position.x = this.targetPosition.x;
                 this.sprite.position.y = this.targetPosition.y;
+                this.sprite2.position.x = this.targetPosition.x;
+                this.sprite2.position.y = this.targetPosition.y-this.nameDistance;
                 this.moving = false;
                 this.moveQueue.shift();
                 if (this.moveQueue.length == 0){
@@ -92,15 +107,23 @@
                 var dY = (this.targetPosition.y - this.startPosition.y)*(this.moveTicker/this.SPEED);
                 this.sprite.position.x = this.startPosition.x + dX;
                 this.sprite.position.y = this.startPosition.y + dY;
+                this.sprite2.position.x = this.startPosition.x + dX;
+                this.sprite2.position.y = this.startPosition.y + dY-this.nameDistance;
             }
         }
+
+            console.log('here?6');
         if (this.moveQueue.length > 0 && !this.moving){
 
             //if the length is greater than 3-5ish just move to the tile??
 
             //check if on correct tile
+
+            console.log('here?5');
             if (this.tile[0] == this.moveQueue[0].start[0] && this.tile[1] == this.moveQueue[0].start[1]){
                 //try to move
+
+            console.log('here?4');
                 this.move(this.moveQueue[0].x,this.moveQueue[0].y);
             }
         }

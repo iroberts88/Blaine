@@ -26,6 +26,8 @@ var Character = function(){
     this.money = null;
     this.owSprite = null;
     this.slot = null;
+
+    this.currentMusic = null;
 }
 
 Character.prototype.init = function(data) {
@@ -40,6 +42,8 @@ Character.prototype.init = function(data) {
     this.currentMap = data.currentMap;
     this.currentSector = data.currentSector;
     this.currentTile = data.currentTile;
+
+    this.currentMusic = data.music;
 
     this.owSprite = 'ash';
 

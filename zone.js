@@ -55,6 +55,113 @@ Zone.prototype.getSectorXY = function(string){
 // ----------------------------------------------------------
 // Player Functions
 // ----------------------------------------------------------
+
+Zone.prototype.changeSector = function(p,arr,id,tile){
+    //p = the player to change sector
+    //arr = the coordinates of the sector change
+    //id the id of the new sector
+    if (arr[0] == 0 && arr[1] == 0){
+        return;
+    }
+    var current = this.getSector(p.character.currentSector);
+    if (current){
+        current.removePlayer(p);
+    }
+    var newSector = this.getSector(id);
+    if (newSector){
+        newSector.addPlayer(p);
+    }
+    var newCoords = this.getSectorXY(id);
+    var removeList = [];
+    var addList = [];
+    if (arr[0] == -1){
+        for (var i = -1;i < 2;i++){
+            addList.push(this.getSector((newCoords.x-1) + 'x' + (newCoords.y+i)));
+            removeList.push(this.getSector((newCoords.x+2) + 'x' + (newCoords.y+i)));
+        }
+    }else if (arr[1] == -1){
+        for (var i = -1;i < 2;i++){
+            addList.push(this.getSector((newCoords.x+i) + 'x' + (newCoords.y-1)));
+            removeList.push(this.getSector((newCoords.x+i) + 'x' + (newCoords.y+2)));
+        }
+    }else if (arr[0] == 1){
+        for (var i = -1;i < 2;i++){
+            addList.push(this.getSector((newCoords.x+1) + 'x' + (newCoords.y+i)));
+            removeList.push(this.getSector((newCoords.x-2) + 'x' + (newCoords.y+i)));
+        }
+    }else if (arr[1] == 1){
+        for (var i = -1;i < 2;i++){
+            addList.push(this.getSector((newCoords.x+i) + 'x' + (newCoords.y+1)));
+            removeList.push(this.getSector((newCoords.x+i) + 'x' + (newCoords.y-2)));
+        }
+    }
+    for (var i = 0; i < addList.length;i++){
+        try{
+            if (addList[i] == null){continue;}
+            for (var pl in addList[i].players){
+                var player = addList[i].players[pl];
+                this.gameEngine.queuePlayer(player,'addPC',{
+                    id: p.id,
+                    name:p.user.userData.username,
+                    owSprite: p.character.owSprite,
+                    tile: [tile.x,tile.y],
+                    sector: id
+                });
+                this.gameEngine.queuePlayer(p,'addPC',{
+                    id: player.id,
+                    name:player.user.userData.username,
+                    owSprite: player.character.owSprite,
+                    tile: player.character.currentTile,
+                    sector: player.character.currentSector
+                });
+            }
+        }catch(e){
+            console.log(e);
+        }
+    }
+    for (var i = 0; i < removeList.length;i++){
+        try{
+            if (removeList[i] == null){continue;}
+            for (var pl in removeList[i].players){
+                var player = removeList[i].players[pl];
+                this.gameEngine.queuePlayer(player,'removePC',{id: p.id})
+                this.gameEngine.queuePlayer(p,'removePC',{id: player.id})
+            }
+        }catch(e){
+            console.log(e);
+        }
+    }
+}
+
+Zone.prototype.getSector = function(id){
+    if (typeof this.map[id] != 'undefined'){
+        return this.map[id];
+    }else{
+        return null;
+    }
+}
+Zone.prototype.getPlayers = function(sector){
+    var players = [];
+    for (var i = -1;i < 2;i++){
+        for (var j = -1;j < 2;j++){
+            try{
+                for (var pl in this.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players){
+                    var player = this.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players[pl];
+                    players.push({
+                        id: player.id,
+                        name: player.user.userData.username,
+                        owSprite: player.character.owSprite,
+                        tile: player.character.currentTile,
+                        sector: player.character.currentSector
+                    })
+                }
+            }catch(e){
+                console.log(e);
+            }
+        }
+    }
+    return players;
+}
 Zone.prototype.addPlayer = function(p){
     this.players[p.id] = p;
     //TODO add player to all players in the zone within 1 sector
@@ -66,7 +173,8 @@ Zone.prototype.addPlayer = function(p){
             for (var pl in this.map[(coords.x+i) + 'x' + (coords.y+j)].players){
                 var player = this.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
                 this.gameEngine.queuePlayer(player,'addPC',{
-                    id: p.id,name:p.user.username,
+                    id: p.id,
+                    name:p.user.userData.username,
                     owSprite: p.character.owSprite,
                     tile: p.character.currentTile,
                     sector: p.character.currentSector

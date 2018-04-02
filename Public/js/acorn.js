@@ -262,7 +262,7 @@
             }
         },
         play: function(id) {
-            var vMod = 0;
+            var vMod = 1.0;
             for(var i = 0; i < this._sounds.length; i++) {
                 if(this._sounds[i].id == id) {
                     var snd = this._sounds[i];
@@ -309,14 +309,14 @@
                     //play new music
                     Acorn.Sound.stop(Acorn.Sound.currentMusic);
                     var newMusic = Acorn.Sound.getSound(Acorn.Sound.next);
-                    newMusic._sound.volume = newMusic.volume*0;
+                    newMusic._sound.volume = newMusic.volume;
                     newMusic._sound.play();
                     Acorn.Sound.currentMusic = Acorn.Sound.next;
                     Acorn.Sound.next = null;
                     Acorn.Sound.fadeTicker = 0;
                 }
-                //var val = current.volume*((Acorn.Sound.fadeOver-Acorn.Sound.fadeTicker)/Acorn.Sound.fadeOver);
-                //current._sound.volume = val;
+                var val = current.volume*((Acorn.Sound.fadeOver-Acorn.Sound.fadeTicker)/Acorn.Sound.fadeOver);
+                current._sound.volume = val;
             }
         }
     };

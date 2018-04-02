@@ -502,7 +502,9 @@
                 'changeMap',
                 'blockMovement',
                 'downwardHop',
-                'jumpToTile'
+                'jumpToTile',
+                'playSound',
+                'playMusic'
             ];
 
             var start = [Graphics.width/2 + 150,150];
@@ -519,6 +521,9 @@
                             MapGen.triggerDoInfo.map = prompt('enter map name','');
                             MapGen.triggerDoInfo.sector = prompt('enter sector','');
                             MapGen.triggerDoInfo.tile = prompt('enter tile','');
+                        }
+                        if (e.currentTarget.doCommand == 'playSound' || e.currentTarget.doCommand == 'playMusic'){
+                            MapGen.triggerDoInfo.sound = prompt('enter sound name','');
                         }
                         if (e.currentTarget.doCommand == 'jumpToTile'){
                             MapGen.triggerDoInfo.sector = prompt('enter sector','');
@@ -816,7 +821,7 @@
                             //make sure this tile doesnt have the same type of trigger
                             var alreadyHasTrigger = false;
                             for (var i = 0; i < tile.triggers.length; i++){
-                                if (tile.triggers[i].on == this.currentOnTrigger){
+                                if (tile.triggers[i].on == this.currentOnTrigger && tile.triggers[i].do == this.currentDoTrigger){
                                     alreadyHasTrigger = true;
                                     break;
                                 }
@@ -889,7 +894,7 @@
                 if (tile.triggers.length > 0){
                     var str = '';
                     for (var i = 0; i < tile.triggers.length; i++){
-                        var tstr = 'Trigger ' + i + ': ON <' + tile.triggers[i].on + '> DO <' + tile.triggers[i].do + '>';
+                        var tstr = 'Trigger ' + (i+1) + ': ON <' + tile.triggers[i].on + '> DO <' + tile.triggers[i].do + '>';
                         if (tile.triggers[i].data){
                             for (var j in tile.triggers[i].data){
                                 tstr += ' (' + j + '=' + tile.triggers[i].data[j] + ') ';

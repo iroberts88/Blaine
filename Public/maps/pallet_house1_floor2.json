@@ -1727,13 +1727,20 @@
             "overlayResource": 0,
             "triggers": [
               {
-                "data": {
-                  "tile": "13x7",
-                  "map": "pallet_house1_floor1",
-                  "sector": "0x0"
-                },
                 "on": "arrival",
-                "do": "changeMap"
+                "do": "changeMap",
+                "data": {
+                  "map": "pallet_house1_floor1",
+                  "sector": "0x0",
+                  "tile": "13x7"
+                }
+              },
+              {
+                "on": "arrival",
+                "do": "playSound",
+                "data": {
+                  "sound": "exit"
+                }
               }
             ]
           },
