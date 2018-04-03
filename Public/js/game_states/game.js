@@ -11,9 +11,11 @@
 
         screenChange: false,
         screenTicker: 0,
-        screenChangeTime: 0.5,
+        screenChangeTime: 0.75,
 
         newMapData: null,
+
+        requestMade: false,
 
         init: function() {
             /*Graphics.uiPrimitives.lineStyle(1,0xFFFFFF,1);
@@ -52,38 +54,74 @@
             if (!this.ready){return;}
             if (this.screenChange){
                 this.screenTicker += dt;
-                if (this.screenTicker > this.screenChangeTime && this.newMapData){
-                    var xmlhttp = new XMLHttpRequest();
-                    xmlhttp.onreadystatechange = function() {
-                        if (this.readyState == 4 && this.status == 200) {
-                            var myObj = JSON.parse(this.responseText);
-                            console.log('hey!')
-                            Graphics.worldContainer.removeChildren();
-                            Graphics.uiPrimitives2.clear();
-                            Game.map = new GameMap();
-                            Game.map.init(myObj.mapData);
-                            Player.character.tile = Game.newMapData.tile;
-                            Player.character.sector = Game.newMapData.sector;
-                            Player.character.map = Game.newMapData.map;
-                            Game.resetPos();
-                            Game.screenChange = false;
-                            Game.screenTicker = 0;
-                            Graphics.uiPrimitives2.clear();
-                            for (var i = 0; i < Game.newMapData.players.length;i++){
-                                if (Game.newMapData.players[i].id != mainObj.id){
-                                    var pc = new PlayerCharacter();
-                                    pc.init(Game.newMapData.players[i]);
-                                    Game.pcs[Game.newMapData.players[i].id] = pc;
+                if (this.screenTicker > this.screenChangeTime && this.newMapData && !this.requestMade){
+                    $.ajax({
+                        url: './maps/' + this.newMapData.map + '.json',
+                        success: function(data){
+                            try{
+                                var myObj = JSON.parse(data);
+                                Graphics.worldContainer.removeChildren();
+                                Graphics.uiPrimitives2.clear();
+                                Game.map = new GameMap();
+                                Game.map.init(myObj.mapData);
+                                Player.character.tile = Game.newMapData.tile;
+                                Player.character.sector = Game.newMapData.sector;
+                                Player.character.map = Game.newMapData.map;
+                                Game.resetPos();
+                                Game.screenChange = false;
+                                Game.screenTicker = 0;
+                                Graphics.uiPrimitives2.clear();
+                                for (var i = 0; i < Game.newMapData.players.length;i++){
+                                    if (Game.newMapData.players[i].id != mainObj.id){
+                                        var pc = new PlayerCharacter();
+                                        pc.init(Game.newMapData.players[i]);
+                                        Game.pcs[Game.newMapData.players[i].id] = pc;
+                                    }
                                 }
+                                Game.newMapData = null;
+                                Game.requestMade = false;
+                            }catch(e){
+                                console.log(e);
                             }
-                            Game.newMapData = null;
+                        }
+                    });
+                    /*var xmlhttp = new XMLHttpRequest();
+                    xmlhttp.onreadystatechange = function() {
+                        console.log('state change')
+                        if (xmlhttp.readyState == 4 && xmlhttp.status == 200 && Game.newMapData != null) {
+                            try{
+                                var myObj = JSON.parse(xmlhttp.responseText);
+                                Graphics.worldContainer.removeChildren();
+                                Graphics.uiPrimitives2.clear();
+                                Game.map = new GameMap();
+                                Game.map.init(myObj.mapData);
+                                Player.character.tile = Game.newMapData.tile;
+                                Player.character.sector = Game.newMapData.sector;
+                                Player.character.map = Game.newMapData.map;
+                                Game.resetPos();
+                                Game.screenChange = false;
+                                Game.screenTicker = 0;
+                                Graphics.uiPrimitives2.clear();
+                                for (var i = 0; i < Game.newMapData.players.length;i++){
+                                    if (Game.newMapData.players[i].id != mainObj.id){
+                                        var pc = new PlayerCharacter();
+                                        pc.init(Game.newMapData.players[i]);
+                                        Game.pcs[Game.newMapData.players[i].id] = pc;
+                                    }
+                                }
+                                Game.newMapData = null;
+                                Game.requestMade = false;
+                            }catch(e){
+                                console.log(e);
+                            }
                         }
                     };
                     xmlhttp.open("GET",'./maps/' + this.newMapData.map + '.json', true);
-                    xmlhttp.send();
+                    xmlhttp.send();*/
+                    Game.requestMade = true;
                 }else{
-                    Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.05);
-                    Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.05)
+                    Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.25);
+                    Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.25)
                     Graphics.uiPrimitives2.drawRect(0,0,Graphics.width,Graphics.height);
                     Graphics.uiPrimitives2.endFill()
                 }

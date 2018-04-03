@@ -17,7 +17,7 @@
     };
     GameMap.prototype.setVisible = function(sString,visible){
         try{
-            this[sString].setVisible(sString,visible)
+            this[sString].setVisible(visible)
         }catch(e){}
     };
     GameMap.prototype.getTileAt = function(x,y){

@@ -45,7 +45,44 @@ Character.prototype.init = function(data) {
 
     this.currentMusic = data.music;
 
-    this.owSprite = 'ash';
+    var owSpriteOptions = {
+        'ash': true,
+        'rival':true,
+        'beauty': true,
+        'chef': true,
+        'coolt': true,
+        'fatty': true,
+        'gent': true,
+        'hatguy': true,
+        'headband': true,
+        'hiker': true,
+        'james': true,
+        'jessie': true,
+        'jenny': true,
+        'kid': true,
+        'lad': true,
+        'lady': true,
+        'lady2': true,
+        'lass': true,
+        'monk': true,
+        'oldguy': true,
+        'punk': true,
+        'sailor': true,
+        'scientist': true,
+        'youngster': true
+
+    }
+    if (data.sprite == 'random'){
+        var arr = []
+        for (var i in owSpriteOptions){
+            arr.push(i);
+        }
+        this.owSprite = arr[Math.floor(Math.random()*arr.length)];
+    }else if (owSpriteOptions[data.sprite]){
+        this.owSprite = data.sprite;
+    }else{
+        this.owSprite = 'ash';
+    }
 
     //init badges
     //initpokedex
@@ -70,6 +107,7 @@ Character.prototype.getClientData = function(){
     data.money = this.money;
     data.sector = this.currentSector;
     data.tile = this.currentTile;
+    data.owSprite = this.owSprite;
     
     //data.inventory = {};
     //badges

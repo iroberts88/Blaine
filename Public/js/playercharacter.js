@@ -42,7 +42,7 @@
         
         this.playerMask = new PIXI.Graphics();
         this.playerMask.beginFill(0xFFFFFF,1);
-        this.playerMask.drawRect(0,0,mainObj.TILE_SIZE,mainObj.TILE_SIZE*0.6);
+        this.playerMask.drawRect(0,0,mainObj.TILE_SIZE,mainObj.TILE_SIZE*0.75);
         this.playerMask.endFill();
         this.playerMask.position.x = this.sprite.position.x - mainObj.TILE_SIZE/2;
         this.playerMask.position.y = this.sprite.position.y - mainObj.TILE_SIZE/2;

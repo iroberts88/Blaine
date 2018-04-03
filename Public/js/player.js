@@ -5,7 +5,7 @@
     	character: null,
         animateInfo: null,
         moving: false,
-        owTexture: 'ash',
+        owTexture: null,
         speed: 0.25,//time it takes in seconds to reach next tile
         targetPosition: null,
         targetTile: null,
@@ -20,6 +20,7 @@
         },
 
         initCharacter: function(data){
+            this.owTexture = data.owSprite;
         	this.character = {
         		name: data.name,
         		rival: data.rival,
@@ -40,7 +41,7 @@
             this.character.sprite2.anchor.y = 0.5;
             this.playerMask = new PIXI.Graphics();
             this.playerMask.beginFill(0xFFFFFF,1);
-            this.playerMask.drawRect(0,0,mainObj.TILE_SIZE,mainObj.TILE_SIZE*0.6);
+            this.playerMask.drawRect(0,0,mainObj.TILE_SIZE,mainObj.TILE_SIZE*0.75);
             this.playerMask.endFill();
             this.character.sprite2.mask = this.playerMask;
             this.resetPos();
