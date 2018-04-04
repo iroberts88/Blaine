@@ -1,6 +1,7 @@
 (function(window) {
 
     var GameMap = function(){
+        sectorData: null;
     };
 
     GameMap.prototype.init = function(data){
@@ -18,7 +19,46 @@
     GameMap.prototype.setVisible = function(sString,visible){
         try{
             this[sString].setVisible(visible)
-        }catch(e){}
+        }catch(e){
+            console.log(e);
+            console.log(sString);
+            console.log(visible)
+        }
+    };
+    GameMap.prototype.changeVisibleSectors = function(){
+        if (this.sectorData){
+            console.log(this.sectorData)
+            if (this.sectorData.dir == 'left'){
+                this.setVisible((this.sectorData.x-1) + 'x' + this.sectorData.y,true);
+                this.setVisible((this.sectorData.x-1) + 'x' + (this.sectorData.y-1),true);
+                this.setVisible((this.sectorData.x-1) + 'x' + (this.sectorData.y+1),true);
+                this.setVisible((this.sectorData.x+2) + 'x' + this.sectorData.y,false);
+                this.setVisible((this.sectorData.x+2) + 'x' + (this.sectorData.y-1),false);
+                this.setVisible((this.sectorData.x+2) + 'x' + (this.sectorData.y+1),false);
+            }else if (this.sectorData.dir == 'up'){
+                this.setVisible(this.sectorData.x + 'x' + (this.sectorData.y-1),true);
+                this.setVisible((this.sectorData.x-1) + 'x' + (this.sectorData.y-1),true);
+                this.setVisible((this.sectorData.x+1) + 'x' + (this.sectorData.y-1),true);
+                this.setVisible(this.sectorData.x + 'x' + (this.sectorData.y+2),false);
+                this.setVisible((this.sectorData.x+1) + 'x' + (this.sectorData.y+2),false);
+                this.setVisible((this.sectorData.x-1) + 'x' + (this.sectorData.y+2),false);
+            }else if (this.sectorData.dir == 'right'){
+                this.setVisible((this.sectorData.x+1) + 'x' + this.sectorData.y,true);
+                this.setVisible((this.sectorData.x+1) + 'x' + (this.sectorData.y-1),true);
+                this.setVisible((this.sectorData.x+1) + 'x' + (this.sectorData.y+1),true);
+                this.setVisible((this.sectorData.x-2) + 'x' + this.sectorData.y,false);
+                this.setVisible((this.sectorData.x-2) + 'x' + (this.sectorData.y-1),false);
+                this.setVisible((this.sectorData.x-2) + 'x' + (this.sectorData.y+1),false);
+            }else if (this.sectorData.dir == 'down'){
+                this.setVisible(this.sectorData.x + 'x' + (this.sectorData.y+1),true);
+                this.setVisible((this.sectorData.x-1) + 'x' + (this.sectorData.y+1),true);
+                this.setVisible((this.sectorData.x+1) + 'x' + (this.sectorData.y+1),true);
+                this.setVisible((this.sectorData.x+1) + 'x' + (this.sectorData.y-2),false);
+                this.setVisible((this.sectorData.x-1) + 'x' + (this.sectorData.y-2),false);
+                this.setVisible(this.sectorData.x + 'x' + (this.sectorData.y-2),false);
+            }
+            this.sectorData = null;
+        }
     };
     GameMap.prototype.getTileAt = function(x,y){
         //character is attempting to move
@@ -33,38 +73,19 @@
             if (tile.x < 0){
                 tile.x = 21+x;
                 coords.x -= 1;
-                this.setVisible((coords.x-1) + 'x' + coords.y,true);
-                this.setVisible((coords.x-1) + 'x' + (coords.y-1),true);
-                this.setVisible((coords.x-1) + 'x' + (coords.y+1),true);
-                this.setVisible((coords.x+2) + 'x' + coords.y,false);
-                this.setVisible((coords.x+2) + 'x' + (coords.y-1),false);
-                this.setVisible((coords.x+2) + 'x' + (coords.y+1),false);
+                this.sectorData = {dir: 'left',x:coords.x,y:coords.y};
             }else if (tile.y < 0){
                 tile.y = 21+y;
                 coords.y -= 1;
-                this.setVisible(coords.x + 'x' + (coords.y-1),true);
-                this.setVisible((coords.x-1) + 'x' + (coords.y-1),true);
-                this.setVisible((coords.x+1) + 'x' + (coords.y-1),true);
-                this.setVisible(coords.x + 'x' + (coords.y+2),false);
-                this.setVisible((coords.x+1) + 'x' + (coords.y+2),false);
-                this.setVisible((coords.x-1) + 'x' + (coords.y+2),false);
+                this.sectorData = {dir: 'up',x:coords.x,y:coords.y};
             }else if (tile.x > 20){
                 tile.x = tile.x-21;
                 coords.x += 1;
-                this.setVisible((coords.x+1) + 'x' + coords.y,true);
-                this.setVisible((coords.x+1) + 'x' + (coords.y-1),true);
-                this.setVisible((coords.x+1) + 'x' + (coords.y+1),true);
-                this.setVisible((coords.x-2) + 'x' + coords.y,false);
-                this.setVisible((coords.x-2) + 'x' + (coords.y-1),false);
-                this.setVisible((coords.x-2) + 'x' + (coords.y+1),false);
+                this.sectorData = {dir: 'right',x:coords.x,y:coords.y};
             }else if (tile.y > 20){
                 tile.y = tile.y-21;
                 coords.y += 1;
-                this.setVisible(coords.x + 'x' + (coords.y+1),true);
-                this.setVisible((coords.x-1) + 'x' + (coords.y+1),true);
-                this.setVisible((coords.x+1) + 'x' + (coords.y+1),true);
-                this.setVisible((coords.x+1) + 'x' + (coords.y+2),false);
-                this.setVisible((coords.x-1) + 'x' + (coords.y+2),false);
+                this.sectorData = {dir: 'down',x:coords.x,y:coords.y};
             }
             return this[coords.x + 'x' + coords.y].tiles[tile.x][tile.y];
         }catch(e){

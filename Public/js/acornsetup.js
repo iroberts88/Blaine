@@ -77,34 +77,33 @@
                 console.log('Game Started!');
                 console.log(data);
                 Acorn.changeState('ingame');
-                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        var myObj = JSON.parse(this.responseText);
-                        Game.map = new GameMap();
-                        Game.map.init(myObj.mapData);
-                        Player.initCharacter(data.character);
-                        Game.resetPos();
-                        for (var i = 0; i < data.players.length;i++){
-                            if (data.players[i].id != mainObj.id){
-                                var pc = new PlayerCharacter();
-                                pc.init(data.players[i]);
-                                Game.pcs[data.players[i].id] = pc;
-                            }
-                        }
-                        Game.ready = true;
-                        Acorn.Sound.play(data.music);
+                var myObj = data.zoneData;
+                Game.map = new GameMap();
+                Game.map.init(myObj.mapData);
+                Player.initCharacter(data.character);
+                Game.resetPos();
+                for (var i = 0; i < data.players.length;i++){
+                    if (data.players[i].id != mainObj.id){
+                        var pc = new PlayerCharacter();
+                        pc.init(data.players[i]);
+                        Game.pcs[data.players[i].id] = pc;
                     }
-                };
-                xmlhttp.open("GET",'./maps/' + data.map + '.json', true);
-                xmlhttp.send();
-
+                }
+                Game.ready = true;
+                Acorn.Sound.play(data.music);
             });
 
             Acorn.Net.on('changeMap', function (data) {
                 console.log('newMap!!');
                 console.log(data);
                 Game.newMapData = data;
+            });
+
+            Acorn.Net.on('mapData', function (data) {
+                console.log('received map data');
+                console.log(data);
+                Game.mapsCache[data.name] = data.zoneData;
+                Game.setNewMap(data.name);
             });
 
             Acorn.Net.on('loggedIn', function (data) {

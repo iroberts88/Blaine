@@ -141,6 +141,7 @@
             }
             if (tile.open && (tile.resource != 'deep_water' && tile.resource != 'water')){
                 //check for grass
+                Game.map.changeVisibleSectors();
                 if (tile.resource == '1x1' && Graphics.worldContainer.getChildIndex(tile.sprite) < Graphics.worldContainer.getChildIndex(this.character.sprite)){
                     Graphics.worldContainer.removeChild(tile.sprite);
                     Graphics.worldContainer.removeChild(this.character.sprite2);
@@ -171,6 +172,7 @@
                     Acorn.Sound.play('bump');
                     this.bumpTicker = 0;
                 }
+                Game.map.sectorData = null;
             }
         },
         update: function(dt){

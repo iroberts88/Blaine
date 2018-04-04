@@ -17,22 +17,25 @@
         mapName: '',
         data: {},
         //Modes:
-            //place
-            //overlay
-            //blocked
-            //directions
-            //triggers
+            //place - change tile textures and place new sectors
+            //overlay - add/change overlay textures
+            //blocked - apply blocked status to tiles
+            //settrigger - choose the current trigger
+            //applytrigger - apply the current trigger to tiles
+            //deleteblocked - remove blocked status from tiles
+            //deleteoverlay - remove overlay textures from tiles
+            //deletetriggers - remove all triggers from tiles
+            //deletesectors - delete sectors
+
+            //addNPC - add an NPC to the map
+            //editNPC - edit an NPC's properties
+            //deleteNPC - remove the NPC
+
+            //setPKMN - set wild pokemon chances on a tile
+            //deletePKMN - delete wild pokemon chances on a tile
 
         //TODO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        //delete Sectors
-        //overlay
-        //blocked
-        //directions
-        //triggers
-        //save map
-        //edit map
-        //delete map
-        //exit
+        //NPCS
         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         currentMode: 'place',
         currentPlaceTile: '1x1',
@@ -192,7 +195,7 @@
                 anchor: [0,0],
                 interactive: true,buttonMode: true,buttonGlow: true,
                 clickFunc: function onClick(){
-                    MapGen.changeMode('deleteOverlay');
+                    MapGen.changeMode('deleteoverlay');
                 }
             });
             Graphics.uiContainer.addChild(this.deleteOverlayButton);
@@ -746,7 +749,7 @@
                             }
                         }
                         break;
-                    case 'deleteOverlay':
+                    case 'deleteoverlay':
                         //set overlay sprite
                         var tile = this.map.getTile();
                         var sectorX = Math.floor(((Acorn.Input.mouse.X / Graphics.actualRatio[0]) - Graphics.worldContainer.position.x)/(this.map.SECTOR_TILES*this.map.TILE_SIZE*zoom));

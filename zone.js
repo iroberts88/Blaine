@@ -16,10 +16,13 @@ var Zone = function(ge) {
 
     this.players = {}; //players in this zone
     this.playerCount = 0;
+
+    this.zoneData = null;
 }
 
 Zone.prototype.init = function (data) {
     //basically just initialize the map here
+    this.zoneData = data;
     this.mapid = data.mapid;
     this.mapData = data.mapData;
     this.sectorArray = data.sectorArray;

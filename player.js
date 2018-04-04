@@ -42,9 +42,10 @@ Player.prototype.startGame = function(char){
     var zone = this.gameEngine.zones[this.character.currentMap];
     var sector = zone.map[this.character.currentSector];
     var players = zone.getPlayers(sector);
-
+    var zoneData = this.gameEngine.zones[this.character.currentMap].zoneData;
     this.gameEngine.queuePlayer(this,'startGame',{
         map: this.character.currentMap,
+        zoneData: zoneData,
         music: this.character.currentMusic,
         character: this.character.getClientData(),
         players: players
@@ -197,7 +198,19 @@ Player.prototype.setupSocket = function() {
                         }
                     }catch(e){
                         console.log("error changing map...reset pos?");
-                        that.gameEngine.debug(that,{id: 'changeMap', error: e.stack});
+                        that.gameEngine.debug(that,{id: 'changeMapError', error: e.stack});
+                    }
+                    break;
+                case 'requestMapData':
+                    try{
+                        console.log(data);
+                        var zoneData = that.gameEngine.zones[data.name].zoneData;
+                        that.gameEngine.queuePlayer(that,'mapData',{
+                            zoneData: zoneData,
+                            name: data.name
+                        });
+                    }catch(e){
+                        that.gameEngine.debug(that,{id: 'requestMapDataError', error: e.stack});
                     }
                     break;
             }

@@ -16,6 +16,8 @@
         newMapData: null,
 
         requestMade: false,
+        call: null,
+        mapsCache: {},
 
         init: function() {
             /*Graphics.uiPrimitives.lineStyle(1,0xFFFFFF,1);
@@ -50,14 +52,54 @@
 
             Player.resetPos();
         },
+        setNewMap: function(name){
+            console.log(name);
+            try{
+                var myObj = this.mapsCache[name];
+                Graphics.worldContainer.removeChildren();
+                Graphics.uiPrimitives2.clear();
+                Game.map = new GameMap();
+                Game.map.init(myObj.mapData);
+                Player.character.tile = Game.newMapData.tile;
+                Player.character.sector = Game.newMapData.sector;
+                Player.character.map = Game.newMapData.map;
+                Game.resetPos();
+                Game.screenChange = false;
+                Game.screenTicker = 0;
+                Graphics.uiPrimitives2.clear();
+                for (var i = 0; i < Game.newMapData.players.length;i++){
+                    if (Game.newMapData.players[i].id != mainObj.id){
+                        var pc = new PlayerCharacter();
+                        pc.init(Game.newMapData.players[i]);
+                        Game.pcs[Game.newMapData.players[i].id] = pc;
+                    }
+                }
+                Game.newMapData = null;
+                Game.requestMade = false;
+            }catch(e){
+                console.log(e);
+            }
+        },
         update: function(dt){
             if (!this.ready){return;}
             if (this.screenChange){
                 this.screenTicker += dt;
                 if (this.screenTicker > this.screenChangeTime && this.newMapData && !this.requestMade){
+                    if (typeof this.mapsCache[this.newMapData.map] == 'undefined'){
+                        Acorn.Net.socket_.emit('playerUpdate',{command: 'requestMapData',name: this.newMapData.map});
+                        Game.requestMade = true;
+                    }else{
+                        //function here?
+                        this.setNewMap(this.newMapData.map);
+                    }
+
+                    /*
                     $.ajax({
                         url: './maps/' + this.newMapData.map + '.json',
-                        success: function(data){
+                        cache: false,
+                        timeout: 4.0,
+                        dataType: 'json',
+                        done: function(data){
                             try{
                                 var myObj = JSON.parse(data);
                                 Graphics.worldContainer.removeChildren();
@@ -83,8 +125,15 @@
                             }catch(e){
                                 console.log(e);
                             }
-                        }
-                    });
+                        },
+                        fail: function(data){
+                            console.log('ERROR');
+                            console.log(data);
+                            if (confirm("Error loading map. Retry?")){
+                                this.requestMade = false;
+                            }
+                        } 
+                    });*/
                     /*var xmlhttp = new XMLHttpRequest();
                     xmlhttp.onreadystatechange = function() {
                         console.log('state change')
@@ -118,7 +167,6 @@
                     };
                     xmlhttp.open("GET",'./maps/' + this.newMapData.map + '.json', true);
                     xmlhttp.send();*/
-                    Game.requestMade = true;
                 }else{
                     Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.25);
                     Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.25)

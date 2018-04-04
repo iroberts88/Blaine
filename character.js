@@ -46,13 +46,18 @@ Character.prototype.init = function(data) {
     this.currentMusic = data.music;
 
     var owSpriteOptions = {
+        'agatha': true,
         'ash': true,
         'rival':true,
         'beauty': true,
+        'bruno': true,
         'chef': true,
+        'channeler': true,
         'coolt': true,
+        'erika': true,
         'fatty': true,
         'gent': true,
+        'gio': true,
         'hatguy': true,
         'headband': true,
         'hiker': true,
@@ -63,14 +68,19 @@ Character.prototype.init = function(data) {
         'lad': true,
         'lady': true,
         'lady2': true,
+        'lance': true,
         'lass': true,
+        'lorelei': true,
+        'misty': true,
         'monk': true,
+        'oak': true,
         'oldguy': true,
         'punk': true,
+        'rocket': true,
+        'sabrina': true,
         'sailor': true,
         'scientist': true,
         'youngster': true
-
     }
     if (data.sprite == 'random'){
         var arr = []
