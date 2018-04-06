@@ -20,9 +20,11 @@ var GameEngine = function() {
     //database objects
     this.mapids = [];
     this.mapCount = 0; //for checking if all maps have loaded before ready
-
     this.zones = {};
     this.zoneUpdateList = {}; //a list of zones with active players
+
+    this.pokemon = {};
+    this.attacks = {};
 
     //variables for ID's
     this.idIterator = 0;
@@ -102,6 +104,20 @@ GameEngine.prototype.loadMaps = function(arr) {
         });
     }
     console.log('loaded ' + arr.length + ' Maps from db');
+}
+
+GameEngine.prototype.loadPokemon = function(arr) {
+    for (var i = 0; i < arr.length;i++){
+        self.pokemon[arr[i].number] = arr[i];
+    }
+    console.log('loaded ' + arr.length + ' Pokemon from db');
+}
+
+GameEngine.prototype.loadAttacks = function(arr) {
+    for (var i = 0; i < arr.length;i++){
+        self.attacks[arr[i].attackid] = arr[i];
+    }
+    console.log('loaded ' + arr.length + ' Attacks from db');
 }
 
 //Player functions

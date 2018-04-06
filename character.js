@@ -1,4 +1,8 @@
+var Pokemon = require('./pokemon.js').Pokemon;
+
 var Character = function(){
+    this.MAX_POKEMON = 6;
+
     this.id = null;
     this.owner = null;
     this.name = null;
@@ -36,6 +40,7 @@ Character.prototype.init = function(data) {
     this.rival = data.rival;
     this.slot = data.slot;
     this.owner = data.owner;
+    this.gameEngine = data.owner.gameEngine
     this.id = data.id;
     this.money = data.money;
 
@@ -80,7 +85,26 @@ Character.prototype.init = function(data) {
         'sabrina': true,
         'sailor': true,
         'scientist': true,
-        'youngster': true
+        'youngster': true,
+
+        'oldlady': true,
+        'koga': true,
+        'erika2': true,
+        'surge': true,
+        'whitney': true,
+        'brock': true,
+        'clair': true,
+        'pryce': true,
+        'chuck': true,
+        'janine': true,
+        'rival2': true,
+        'rocket2': true,
+        'ethan': true,
+        'bugsy': true,
+        'sailor2': true,
+        'glasses': true,
+        'glasses2': true
+
     }
     if (data.sprite == 'random'){
         var arr = []
@@ -97,8 +121,31 @@ Character.prototype.init = function(data) {
     //init badges
     //initpokedex
     //init pokemon
+    this.party = [];
+    var pkmn = [1,4,7];
+    for (var i = 0; i < pkmn.length;i++){
+        var newPoke = new Pokemon();
+        newPoke.init(this.owner.gameEngine.pokemon[pkmn[i]],{
+            character: this,
+            nickname: '',
+            id: this.owner.gameEngine.getId()
+        })
+        this.addPokemon(newPoke);
+        this.owner.gameEngine.queuePlayer(this.owner,'pokemonInfo',{
+            'pokemon': newPoke.getClientData()
+        });
+    }
     //init pc stuff
     //init inventory
+};
+
+Character.prototype.addPokemon = function(p){
+    if (this.party.length < this.MAX_POKEMON){
+        this.party.push(p);
+        //do stuff
+    }else{
+        //add to pc?
+    }
 };
 
 Character.prototype.getDBObj = function(){
@@ -106,7 +153,8 @@ Character.prototype.getDBObj = function(){
     dbObj.name = this.name;
    
     return dbObj;
-}
+};
+
 Character.prototype.getClientData = function(){
     //create object to send to the client
     var data = {}

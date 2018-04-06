@@ -31,7 +31,7 @@ function init() {
     // ----------------------------------------------------------
 
     rc.ready();
-    rc.require('dbMaps','dbUsers');
+    rc.require('dbMaps','dbUsers','dbPokemon','dbAttacks');
 
     // ---- Load Maps ----
     fs.readdir( './mapTool/maps', function( err, files ) {
@@ -42,6 +42,26 @@ function init() {
         ge.mapCount = files.length;
         ge.loadMaps(files);
         rc.ready('dbMaps');
+    });
+
+    // ---- Load Pokemon ----
+    docClient.scan({TableName: 'blaine_pkmn'}, function(err, data) {
+        if (err) {
+            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            ge.loadPokemon(data.Items);
+            rc.ready('dbPokemon');
+        }
+    });
+
+    // ---- Load Attacks ----
+    docClient.scan({TableName: 'blaine_attacks'}, function(err, data) {
+        if (err) {
+            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            ge.loadAttacks(data.Items);
+            rc.ready('dbAttacks');
+        }
     });
 
     // ---- Load Userbase ----

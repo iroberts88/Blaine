@@ -200,6 +200,7 @@
             var newSound = {};
             newSound.url = sound.url;
             newSound.id = sound.id;
+
             //Set optional property multi
             if (typeof sound.multi == 'undefined'){
                 newSound.multi = false;
@@ -211,6 +212,8 @@
                 newSound._sound.push(new Audio(newSound.url));
             } else {
                 newSound._sound = new Audio(newSound.url);
+                newSound._sound.preload = true;
+                newSound._sound.load();
             }
             //set optional property volume
             if (typeof sound.volume == 'undefined'){

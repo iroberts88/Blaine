@@ -112,6 +112,10 @@
                 MainMenu.showCharacterSelection(data);
             });
 
+            Acorn.Net.on('pokemonInfo', function (data) {
+                console.log(data);
+            });
+
             Acorn.Net.on('logout', function (data) {
                 console.log(data);
                 Player.userData = null;

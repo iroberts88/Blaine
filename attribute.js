@@ -2,7 +2,7 @@
     
 
 var Attribute = function(){
-    this.owner = null;
+    this.pokemon = null;
     this.id = null;
     this.value = null; 
     this.base = null; 
@@ -16,7 +16,7 @@ var Attribute = function(){
 }
         
 Attribute.prototype.init = function(data){
-	this.owner = data.owner; //the unit that owns this stat
+	this.pokemon = data.pokemon; //the unit that owns this stat
 	this.id = data.id;
 	this.value = data.value; //this stat's actual value
 	this.base = data.value; //this stat's base value before buff/item mods etc.
@@ -67,8 +67,8 @@ Attribute.prototype.set = function(updateClient){
     try{this.next()}catch(e){}
     try{
         if (updateClient){
-            this.owner.owner.gameEngine.queuePlayer(this.owner.owner,'setUnitStat',{
-                'unit': this.owner.id,
+            this.pokemon.character.owner.gameEngine.queuePlayer(this.pokemon.character.owner,'setUnitStat',{
+                'id': this.pokemon.id,
                 'stat': this.id,
                 'amt': this.value
             });
