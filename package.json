@@ -1,23 +1,15 @@
 {
-  "name": "blaine",
-  "version": "1.0.0",
-  "description": "???",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/iroberts88/Blaine.git"
-  },
-  "author": "Ian Roberts",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/iroberts88/Blaine/issues"
-  },
-  "homepage": "https://github.com/iroberts88/Blaine#readme",
+  "name": "Blaine",
+  "version": "0.0.1",
+  "private": true,
   "dependencies": {
+    "ejs": "latest",
     "aws-sdk": "latest",
+    "express": "latest",
+    "body-parser": "latest",
     "socket.io": "latest"
+  },
+  "scripts": {
+    "start": "node app.js"
   }
 }
