@@ -264,35 +264,30 @@
         },
         play: function(id) {
             var vMod = 1.0;
-            for(var i = 0; i < this._sounds.length; i++) {
-                if(this._sounds[i].id == id) {
-                    var snd = this._sounds[i];
-                    if(snd.multi) {
-                        var addSound = true;
-                        for(var j = 0; j < snd._sound.length; j++) {
-                            if(snd._sound[j].paused) {
-                                snd._sound[j].volume = snd.volume*vMod;
-                                snd._sound[j].play();
-                                addSound = false;
-                                break;
-                            }
-                        }
-                        if(addSound) {
-                            snd._sound.push(new Audio(snd.url));
-                            snd._sound[snd._sound.length - 1].volume = snd.volume*vMod;
-                            snd._sound[snd._sound.length - 1].play();
-                        }
-                    } else {
-                        if (snd.type == 'music'){
-                            Acorn.Sound.next = id;
-                        }else if (snd._sound.paused) {
-                            snd._sound.volume = snd.volume*vMod;
-                            snd._sound.play();
-                        } else {
-                            snd._sound.currentTime = 0;
-                        }
+            var snd = this.getSound(id);
+            if(snd.multi) {
+                var addSound = true;
+                for(var j = 0; j < snd._sound.length; j++) {
+                    if(snd._sound[j].paused) {
+                        snd._sound[j].volume = snd.volume*vMod;
+                        snd._sound[j].play();
+                        addSound = false;
+                        break;
                     }
-                    break;
+                }
+                if(addSound) {
+                    snd._sound.push(new Audio(snd.url));
+                    snd._sound[snd._sound.length - 1].volume = snd.volume*vMod;
+                    snd._sound[snd._sound.length - 1].play();
+                }
+            } else {
+                if (snd.type == 'music'){
+                    Acorn.Sound.next = id;
+                }else if (snd._sound.paused) {
+                    snd._sound.volume = snd.volume*vMod;
+                    snd._sound.play();
+                } else {
+                    snd._sound.currentTime = 0;
                 }
             }
         },
@@ -319,7 +314,7 @@
                     current._sound.volume = val;
                 }
             }catch(e){
-                console.log('wtf');
+                alert(e);
             }
         }
     };

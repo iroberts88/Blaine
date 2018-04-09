@@ -68,16 +68,13 @@ $(function() {
     });
     $(document).keydown(function(e) {
         var key = e.which;
-        /*
-        if (Settings.credentialsOn && key == 13){
-            if (Settings.credentials.getType() == 'login'){
-                Acorn.Net.socket_.emit('loginAttempt',{sn: document.getElementById('usrInput').value,pw:document.getElementById('pwInput').value});
-            }else if (Settings.credentials.getType() == 'new'){
-                Acorn.Net.socket_.emit('createUser',{sn: document.getElementById('usrInput').value,pw:document.getElementById('pwInput').value});
-            }
-        }else{
-            ChatConsole.keyDown(key);
-        }*/
+
+        if (key == 13){
+            var tmp = document.createElement("input");
+            document.body.appendChild(tmp);
+            tmp.focus();
+            document.body.removeChild(tmp);
+        }
 
         Acorn.Input.keyDown(key);
 

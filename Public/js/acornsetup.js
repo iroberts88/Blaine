@@ -77,6 +77,8 @@
                 console.log('Game Started!');
                 console.log(data);
                 Acorn.changeState('ingame');
+                document.body.removeChild(NewChar.characterNameInput);
+                document.body.removeChild(NewChar.okButton);
                 var myObj = data.zoneData;
                 Game.map = new GameMap();
                 Game.map.init(myObj.mapData);

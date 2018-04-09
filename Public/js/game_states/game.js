@@ -19,14 +19,14 @@
         call: null,
         mapsCache: {},
 
+        pokedexUI: new PIXI.Container(),
+        pokemonUI: new PIXI.Container(),
+        characterUI: new PIXI.Container(),
+        settingsUI: new PIXI.Container(),
+
+
         init: function() {
-            /*Graphics.uiPrimitives.lineStyle(1,0xFFFFFF,1);
-            Graphics.uiPrimitives.beginFill(0xFFFFFF,1)
-            Graphics.uiPrimitives.drawRect(0,0,Graphics.width/2-336,Graphics.height);
-            Graphics.uiPrimitives.drawRect(0,0,Graphics.width,Graphics.height/2-336);
-            Graphics.uiPrimitives.drawRect(Graphics.width/2+336,0,Graphics.width/2-336,Graphics.height);
-            Graphics.uiPrimitives.drawRect(0,Graphics.height/2+336,Graphics.width,Graphics.height/2-336);
-            Graphics.uiPrimitives.endFill()*/
+            
         },
         
         resetPos: function(){
@@ -92,81 +92,7 @@
                         //function here?
                         this.setNewMap(this.newMapData.map);
                     }
-
-                    /*
-                    $.ajax({
-                        url: './maps/' + this.newMapData.map + '.json',
-                        cache: false,
-                        timeout: 4.0,
-                        dataType: 'json',
-                        done: function(data){
-                            try{
-                                var myObj = JSON.parse(data);
-                                Graphics.worldContainer.removeChildren();
-                                Graphics.uiPrimitives2.clear();
-                                Game.map = new GameMap();
-                                Game.map.init(myObj.mapData);
-                                Player.character.tile = Game.newMapData.tile;
-                                Player.character.sector = Game.newMapData.sector;
-                                Player.character.map = Game.newMapData.map;
-                                Game.resetPos();
-                                Game.screenChange = false;
-                                Game.screenTicker = 0;
-                                Graphics.uiPrimitives2.clear();
-                                for (var i = 0; i < Game.newMapData.players.length;i++){
-                                    if (Game.newMapData.players[i].id != mainObj.id){
-                                        var pc = new PlayerCharacter();
-                                        pc.init(Game.newMapData.players[i]);
-                                        Game.pcs[Game.newMapData.players[i].id] = pc;
-                                    }
-                                }
-                                Game.newMapData = null;
-                                Game.requestMade = false;
-                            }catch(e){
-                                console.log(e);
-                            }
-                        },
-                        fail: function(data){
-                            console.log('ERROR');
-                            console.log(data);
-                            if (confirm("Error loading map. Retry?")){
-                                this.requestMade = false;
-                            }
-                        } 
-                    });*/
-                    /*var xmlhttp = new XMLHttpRequest();
-                    xmlhttp.onreadystatechange = function() {
-                        console.log('state change')
-                        if (xmlhttp.readyState == 4 && xmlhttp.status == 200 && Game.newMapData != null) {
-                            try{
-                                var myObj = JSON.parse(xmlhttp.responseText);
-                                Graphics.worldContainer.removeChildren();
-                                Graphics.uiPrimitives2.clear();
-                                Game.map = new GameMap();
-                                Game.map.init(myObj.mapData);
-                                Player.character.tile = Game.newMapData.tile;
-                                Player.character.sector = Game.newMapData.sector;
-                                Player.character.map = Game.newMapData.map;
-                                Game.resetPos();
-                                Game.screenChange = false;
-                                Game.screenTicker = 0;
-                                Graphics.uiPrimitives2.clear();
-                                for (var i = 0; i < Game.newMapData.players.length;i++){
-                                    if (Game.newMapData.players[i].id != mainObj.id){
-                                        var pc = new PlayerCharacter();
-                                        pc.init(Game.newMapData.players[i]);
-                                        Game.pcs[Game.newMapData.players[i].id] = pc;
-                                    }
-                                }
-                                Game.newMapData = null;
-                                Game.requestMade = false;
-                            }catch(e){
-                                console.log(e);
-                            }
-                        }
-                    };
-                    xmlhttp.open("GET",'./maps/' + this.newMapData.map + '.json', true);
-                    xmlhttp.send();*/
+                    Graphics.uiPrimitives2.clear();
                 }else{
                     Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.25);
                     Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.25)
@@ -175,7 +101,6 @@
                 }
                 return;
             }else{
-                Graphics.uiPrimitives2.clear();
                 if (Acorn.Input.isPressed(Acorn.Input.Key.UP)){
                 	Player.move(0,-1);
                 }else if (Acorn.Input.isPressed(Acorn.Input.Key.DOWN)){

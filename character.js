@@ -6,7 +6,6 @@ var Character = function(){
     this.id = null;
     this.owner = null;
     this.name = null;
-    this.rival = null;
     this.sex = null;
 
     //game stats (games won etc)
@@ -37,7 +36,6 @@ var Character = function(){
 Character.prototype.init = function(data) {
     //Set up all stats and attributes
     this.name = data.name;
-    this.rival = data.rival;
     this.slot = data.slot;
     this.owner = data.owner;
     this.gameEngine = data.owner.gameEngine
@@ -50,70 +48,71 @@ Character.prototype.init = function(data) {
 
     this.currentMusic = data.music;
 
-    var owSpriteOptions = {
-        'agatha': true,
-        'ash': true,
-        'rival':true,
-        'beauty': true,
-        'bruno': true,
-        'chef': true,
-        'channeler': true,
-        'coolt': true,
-        'erika': true,
-        'fatty': true,
-        'gent': true,
-        'gio': true,
-        'hatguy': true,
-        'headband': true,
-        'hiker': true,
-        'james': true,
-        'jessie': true,
-        'jenny': true,
-        'kid': true,
-        'lad': true,
-        'lady': true,
-        'lady2': true,
-        'lance': true,
-        'lass': true,
-        'lorelei': true,
-        'misty': true,
-        'monk': true,
-        'oak': true,
-        'oldguy': true,
-        'punk': true,
-        'rocket': true,
-        'sabrina': true,
-        'sailor': true,
-        'scientist': true,
-        'youngster': true,
+    var spriteOptions = {
+        'ash2': 'ash',
+        'agatha': 'agatha',
+        'beauty': 'beauty',
+        'beauty2': 'beauty',
+        'birdcatcher2': 'lad',
+        'bugcatcher2': 'youngster',
+        'burglar2': 'glasses',
+        'channeler': 'channeler',
+        'blaine2': 'blaine',
+        'brock2': 'brock',
+        'bruno2': 'bruno',
+        'bugsy': 'bugsy',
+        'chuck': 'chuck',
+        'clair': 'clair',
+        'cooltrainer2_f': 'erika',
+        'cooltrainer2_m': 'coolt',
+        'crazylady': 'oldlady',
+        'cueball': 'fatty',
+        'engineer': 'hatguy',
+        'erika2': 'erika2',
+        'ethan': 'ethan',
+        'fighter2': 'headband',
+        'firebreather': 'chef',
+        'fisherman2': 'sailor',
+        'gambler': 'punk',
+        'gary': 'rival',
+        'gentleman': 'gent',
+        'giovanni': 'gio',
+        'hiker2': 'hiker',
+        'james': 'james',
+        'jessie': 'jessie',
+        'janine': 'janine',
+        'jrtrainer_f': 'lass',
+        'jrtrainer_m': 'lad',
+        'juggler': 'punk',
+        'kid': 'kid',
+        'koga2': 'koga',
+        'lance2': 'lance',
+        'lass': 'lass',
+        'lorelei': 'lorelei',
+        'maniac': 'glasses2',
+        'misty2': 'misty',
+        'monk': 'monk',
+        'psychic': 'lad',
+        'pokefan_f': 'lady2',
+        'pokefan_m': 'fatty',
+        'pryce': 'pryce',
+        'rocker2': 'punk',
+        'rocket2': 'rocket',
+        'rival4': 'rival2',
+        'rocketf': 'rocketf',
+        'sabrina2': 'sabrina',
+        'sailor2': 'sailor2',
+        'schoolboy': 'youngster',
+        'scientist2': 'scientist',
+        'supernerd': 'scientist',
+        'surge2': 'surge',
+        'teacher': 'lady',
+        'whitney': 'whitney',
+        'youngster2': 'youngster'
+    };
 
-        'oldlady': true,
-        'koga': true,
-        'erika2': true,
-        'surge': true,
-        'whitney': true,
-        'brock': true,
-        'clair': true,
-        'pryce': true,
-        'chuck': true,
-        'janine': true,
-        'rival2': true,
-        'rocketf': true,
-        'ethan': true,
-        'bugsy': true,
-        'sailor2': true,
-        'glasses': true,
-        'glasses2': true
-
-    }
-    if (data.sprite == 'random'){
-        var arr = []
-        for (var i in owSpriteOptions){
-            arr.push(i);
-        }
-        this.owSprite = arr[Math.floor(Math.random()*arr.length)];
-    }else if (owSpriteOptions[data.sprite]){
-        this.owSprite = data.sprite;
+    if (spriteOptions[data.sprite]){
+        this.owSprite = spriteOptions[data.sprite];
     }else{
         this.owSprite = 'ash';
     }
@@ -160,7 +159,6 @@ Character.prototype.getClientData = function(){
     var data = {}
     data.owner = this.owner.id;
     data.name = this.name;
-    data.rival = this.rival
     data.id = this.id
     data.money = this.money;
     data.sector = this.currentSector;
