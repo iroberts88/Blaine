@@ -212,8 +212,6 @@
                 newSound._sound.push(new Audio(newSound.url));
             } else {
                 newSound._sound = new Audio(newSound.url);
-                newSound._sound.preload = true;
-                newSound._sound.load();
             }
             //set optional property volume
             if (typeof sound.volume == 'undefined'){
@@ -238,7 +236,7 @@
                 newSound._sound.onended = sound.onEnd;
             }
             if (sound.preload && !newSound.multi){
-                newSound._sound.oncanplaythrough = Acorn.Sound.isReady;
+                //newSound._sound.oncanplaythrough = Acorn.Sound.isReady;
             }
             this._sounds.push(newSound);
         },

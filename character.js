@@ -98,7 +98,7 @@ Character.prototype.init = function(data) {
         'chuck': true,
         'janine': true,
         'rival2': true,
-        'rocket2': true,
+        'rocketf': true,
         'ethan': true,
         'bugsy': true,
         'sailor2': true,
