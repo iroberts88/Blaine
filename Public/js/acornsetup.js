@@ -76,6 +76,7 @@
             Acorn.Net.on('startGame', function (data) {
                 console.log('Game Started!');
                 console.log(data);
+                Game.char = data.character.owSprite;
                 Acorn.changeState('ingame');
                 document.body.removeChild(NewChar.characterNameInput);
                 document.body.removeChild(NewChar.okButton);

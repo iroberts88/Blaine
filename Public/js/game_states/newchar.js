@@ -36,8 +36,9 @@
             this.characterNameInput.name = 'charname';
             this.characterNameInput.placeholder = 'name';
             this.characterNameInput.maxlength = 16;
-            this.characterNameInput.style.cssText = 'border-width:1px;border-style:solid;width:200px;height:40px;top:45px;left:' + (this.nameText.position.x -100) + 'px;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
+            this.characterNameInput.style.cssText = 'border-width:1px;border-style:solid;width:200px;height:40px;top:10%;left:75%;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';
             this.characterNameInput.style.display = 'inline-block';
+            Graphics.elements.push('charname');
 
             this.spriteText = new PIXI.Text('Choose your new character\'s appearance ',AcornSetup.style2);
             this.spriteText.position.x = Graphics.width*0.5;
@@ -97,7 +98,7 @@
         },
         
         update: function(dt){
-            if (Acorn.Sound.currentMusic == 'newChar' && !this.prompted && Acorn.Sound.getSound('newChar')._sound.currentTime != 0){
+            if (Acorn.Sound.currentMusic == 'newChar' && !this.prompted && soundManager.sounds['newChar'].playState == 1){
                 Graphics.uiPrimitives2.clear();
                 document.body.appendChild(this.characterNameInput);
                 document.body.appendChild(this.okButton);

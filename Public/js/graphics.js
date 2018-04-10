@@ -165,13 +165,14 @@
             }
             this.app.renderer.view.style.width = w + 'px';
             this.app.renderer.view.style.height = h + 'px';
+            var previous = [this.actualRatio[0],this.actualRatio[1]];
             this.actualRatio = [w/this.baseWidth,h/this.baseHeight];
+            var change = [this.actualRatio[0] - previous[0],this.actualRatio[1] - previous[1]];
             for (var e = 0; e < this.elements.length;e++){
                 try{
                     var element = document.getElementById(this.elements[e]);
-                    element.style.transform = 'scale(' + this.actualRatio[0] + ',' + this.actualRatio[1] + ')';
-                    element.style.left = w/2-(200*this.actualRatio[0]);
-                    element.style.top = h/2-(200*this.actualRatio[1]);
+                    element.style.transform = 'scale(' + this.actualRatio[0] + ',' + this.actualRatio[1] + ') translate(-50%,-50%)';
+                    
                 }catch(e){
                     console.log("error resizing html elements");
                     console.log(e);

@@ -49,8 +49,8 @@
 
             this.mainPanel = document.createElement('div');
             this.mainPanel.id = 'mainPanel'
-            this.mainPanel.style.cssText = 'width:400px;height:225px;top:' + (window.innerHeight/2-200) + 'px;left:' + (window.innerWidth/2-200) + 'px;background-color:#fff;position:absolute;border-radius:12px;margin:2px;padding:5px 15px 5px 15px;vertical-align:top;'
-            this.mainPanel.style.display = 'block';
+            this.mainPanel.style.cssText = 'width:400px;height:225px;top:50%;left:50%;background-color:#fff;position:absolute;border-radius:12px;padding:5px 15px 5px 15px;'
+            this.mainPanel.style.display = 'inline-block';
             document.body.appendChild( this.mainPanel );
             Graphics.elements.push('mainPanel');
 

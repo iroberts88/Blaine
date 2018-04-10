@@ -186,6 +186,28 @@
             this.requiredCurrent = 0;
             this.fadeOver = 2.2;
             this.fadeTicker = 0;
+            soundManager.setup({
+              url: '/path/to/swf-files/',
+              flashVersion: 9, // optional: shiny features (default = 8)
+              // optional: ignore Flash where possible, use 100% HTML5 mode
+              // preferFlash: false,
+              onready: function() {
+                // Ready to use; soundManager.createSound() etc. can now be called.//Music
+                Acorn.Sound.addSound({url: 'sounds/music/1_opening.mp3', id: 'opening', volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/3_newChar.mp3', id: 'newChar', volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/4_pallet.mp3', id: 'pallet', volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/5_road_to_veridian.mp3', id: 'roadToVeridian', volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/6_pewter.mp3', id: 'pewter', volume: 0.7, volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/7_pcenter.mp3', id: 'pcenter', volume: 0.7, volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/8_oaklab.mp3', id: 'oaklab', volume: 0.7, volume: 70,type: 'music'});
+                //sfx
+                Acorn.Sound.addSound({url: 'sounds/sfx/select.mp3', id: 'select', volume: 100});
+                Acorn.Sound.addSound({url: 'sounds/sfx/bump.mp3', id: 'bump', volume: 100});
+                Acorn.Sound.addSound({url: 'sounds/sfx/exit.mp3', id: 'exit', volume: 100});
+                Acorn.Sound.addSound({url: 'sounds/sfx/enter.mp3', id: 'enter', volume: 100});
+                Acorn.Sound.ready = true;
+              }
+            });
         },
         getSound: function(id) {
             for(var i = 0; i < this._sounds.length; i++) {
@@ -200,95 +222,44 @@
             var newSound = {};
             newSound.url = sound.url;
             newSound.id = sound.id;
-
-            //Set optional property multi
-            if (typeof sound.multi == 'undefined'){
-                newSound.multi = false;
-            }else{
-                newSound.multi = sound.multi;
-            }
-            if(newSound.multi) {
-                newSound._sound = [];
-                newSound._sound.push(new Audio(newSound.url));
-            } else {
-                newSound._sound = new Audio(newSound.url);
-            }
-            //set optional property volume
-            if (typeof sound.volume == 'undefined'){
-                newSound.volumeBase = 1.0;
-                newSound.volume = 1.0;
-            }else{
-                newSound.volume = sound.volume;
-                newSound.volumeBase = sound.volume;
-            }
+            newSound.volume = sound.volume;
             //set optional property type
             if (typeof sound.type == 'undefined'){
                 newSound.type = 'sfx';
             }else{
                 newSound.type = sound.type;
                 if (sound.type == 'music'){
-                    newSound._sound.loop = true;
                 }
-            }
-
-            //set optional property onEnd
-            if (typeof sound.onEnd !== 'undefined'){
-                newSound._sound.onended = sound.onEnd;
-            }
-            if (sound.preload && !newSound.multi){
-                //newSound._sound.oncanplaythrough = Acorn.Sound.isReady;
             }
             this._sounds.push(newSound);
+
+            soundManager.createSound({
+                id: newSound.id,
+                url: newSound.url,
+                volume: newSound.volume,
+                onerror: function(code,description){
+                    console.log(this.id + ' failed?', code, description);
+                    if (this.loaded) {
+                      // HTML5 case: network error, or client aborted download etc.?
+                      this.stop(); // Reset sound state, to be safe
+                      // Show play / retry button to user in UI?
+                    } else {
+                      // Load failed entirely. 404, bad sound format, etc.
+                    }
+                }
+            });
         },
         stop: function(id){
-            for(var i = 0; i < this._sounds.length; i++) {
-                if(this._sounds[i].id == id) {
-                    var snd = this._sounds[i];
-                    if(snd.multi) {
-                        //TODO
-                    } else {
-                        snd._sound.pause();
-                        snd._sound.currentTime = 0;
-                    }
-                    break;
-                }
-            }
-        },
-        isReady: function(){
-            Acorn.Sound.requiredCurrent += 1;
-            if (Acorn.Sound.requiredCurrent == Acorn.Sound.required){
-                Acorn.Sound.ready = true;
-                console.log("Sound ready!");
-                mainObj.checkReady();
-            }
+            soundManager.pause(id);
         },
         play: function(id) {
-            var vMod = 1.0;
             var snd = this.getSound(id);
-            if(snd.multi) {
-                var addSound = true;
-                for(var j = 0; j < snd._sound.length; j++) {
-                    if(snd._sound[j].paused) {
-                        snd._sound[j].volume = snd.volume*vMod;
-                        snd._sound[j].play();
-                        addSound = false;
-                        break;
-                    }
-                }
-                if(addSound) {
-                    snd._sound.push(new Audio(snd.url));
-                    snd._sound[snd._sound.length - 1].volume = snd.volume*vMod;
-                    snd._sound[snd._sound.length - 1].play();
-                }
+            if (snd.type == 'music'){
+                Acorn.Sound.next = id;
+            }else if (soundManager.sounds[id].playState == 0) {
+                soundManager.play(id);
             } else {
-                if (snd.type == 'music'){
-                    Acorn.Sound.next = id;
-                }else if (snd._sound.paused) {
-                    snd._sound.volume = snd.volume*vMod;
-                    snd._sound.play();
-                } else {
-                    snd._sound.currentTime = 0;
-                }
+                soundManager.sounds[id].setPosition(0);
             }
         },
         update: function(dt){
@@ -304,19 +275,34 @@
                         //play new music
                         Acorn.Sound.stop(Acorn.Sound.currentMusic);
                         var newMusic = Acorn.Sound.getSound(Acorn.Sound.next);
-                        newMusic._sound.volume = newMusic.volume;
-                        newMusic._sound.play();
+                        soundManager.sounds[newMusic.id].setPosition(0);
+                        Acorn.Sound.loopSound(soundManager.sounds[newMusic.id]);
+                        soundManager.sounds[newMusic.id].volume = newMusic.volume;
                         Acorn.Sound.currentMusic = Acorn.Sound.next;
                         Acorn.Sound.next = null;
                         Acorn.Sound.fadeTicker = 0;
                     }
                     var val = current.volume*((Acorn.Sound.fadeOver-Acorn.Sound.fadeTicker)/Acorn.Sound.fadeOver);
-                    current._sound.volume = val;
+                    soundManager.setVolume(current.id,val);
                 }
             }catch(e){
                 alert(e);
             }
+        },
+        loopSound: function(sound){
+            sound.play({
+                onfinish: function() {
+                    Acorn.Sound.loopSound(sound);
+                }
+            });
+            setTimeout(function() {
+                if (sound.readyState == 1) {
+                    // this object is probably stalled
+                    console.log('stalled!!!')
+                }
+            },5500);
         }
+
     };
 
     // -------------------------------------------

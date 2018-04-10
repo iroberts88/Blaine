@@ -102,19 +102,7 @@ $(function() {
 
     // Load Sounds
     Acorn.Sound.init();
-    //Music
-    Acorn.Sound.addSound({url: 'sounds/music/1_opening.mp3', id: 'opening', volume: 0.7, preload: true,type:'music'});
-    Acorn.Sound.addSound({url: 'sounds/music/3_newChar.mp3', id: 'newChar', volume: 0.7, preload: true,type:'music'});
-    Acorn.Sound.addSound({url: 'sounds/music/4_pallet.mp3', id: 'pallet', volume: 0.7, preload: true,type:'music'});
-    Acorn.Sound.addSound({url: 'sounds/music/5_road_to_veridian.mp3', id: 'roadToVeridian', volume: 0.7, preload: true,type:'music'});
-    Acorn.Sound.addSound({url: 'sounds/music/6_pewter.mp3', id: 'pewter', volume: 0.7, preload: true,type:'music'});
-    Acorn.Sound.addSound({url: 'sounds/music/7_pcenter.mp3', id: 'pcenter', volume: 0.7, preload: true,type:'music'});
-    Acorn.Sound.addSound({url: 'sounds/music/8_oaklab.mp3', id: 'oaklab', volume: 0.7, preload: true,type:'music'});
-    //sfx
-    Acorn.Sound.addSound({url: 'sounds/sfx/select.mp3', id: 'select', volume: 1.0, preload: true});
-    Acorn.Sound.addSound({url: 'sounds/sfx/bump.mp3', id: 'bump', volume: 1.0, preload: true});
-    Acorn.Sound.addSound({url: 'sounds/sfx/exit.mp3', id: 'exit', volume: 1.0, preload: true});
-    Acorn.Sound.addSound({url: 'sounds/sfx/enter.mp3', id: 'enter', volume: 1.0, preload: true});
+    
 });
 
 function setupSocket() {
@@ -124,7 +112,7 @@ function setupSocket() {
 }
 
 function checkReady() {
-    if(Graphics.resourcesReady && Acorn.Net.ready) {
+    if(Graphics.resourcesReady && Acorn.Net.ready && Acorn.Sound.ready) {
         console.log('Graphics/Net/Sound READY');
         init();
     } else {
@@ -135,7 +123,7 @@ function checkReady() {
 function init() {
     //do some stuff after Graphics and network are initialized
     lastTime = Date.now();
-
+    Settings.init();
     Player.init();
     //Init Touch Events
     Graphics.app.stage.on('touchstart', Acorn.Input.handleTouchEvent).on('touchmove', Acorn.Input.handleTouchEvent);
