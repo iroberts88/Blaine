@@ -17,7 +17,7 @@
             this.oak.position.x = 25;
             this.oak.position.y = 25;
             Graphics.uiContainer.addChild(this.oak);
-            this.oakText = new PIXI.Text('Hello there! Welcome to the world of POKEMON!',AcornSetup.style2);
+            this.oakText = new PIXI.Text('Hello there! Welcome to the world of POK|MON!',AcornSetup.style2);
             this.oakText.position.x = this.oak.position.x + 50 + this.oak.width;
             this.oakText.position.y = this.oak.position.y + this.oak.height/2;
             this.oakText.anchor.y = 0.5;
@@ -88,10 +88,11 @@
             this.okButton.id = 'okButton';
             this.okButton.type = 'button';     
             this.okButton.innerHTML = 'OK';
-            this.okButton.style.cssText = 'top:' + (Graphics.height*0.8) + 'px;left:' + (Graphics.width/2 - NewChar.okButton.clientWidth/2) + 'px;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:Pokemon;font-weight:bold;line-height:15px';
+            this.okButton.style.cssText = 'top:80%;left:50%;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:Pokemon;font-weight:bold;line-height:15px';
             this.okButton.onpointerup = function(){
                 Acorn.Net.socket_.emit('playerUpdate',{command: 'newChar',sprite: NewChar.currentSprite,name:NewChar.characterNameInput.value,slot: NewChar.slot});
             }
+            Graphics.elements.push('okButton');
 
             this.outLineFilter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF00000, 0.5);
             NewChar[NewChar.currentSprite + 'Button'].filters = [NewChar.outLineFilter];

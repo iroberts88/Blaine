@@ -171,7 +171,7 @@
             for (var e = 0; e < this.elements.length;e++){
                 try{
                     var element = document.getElementById(this.elements[e]);
-                    element.style.transform = 'scale(' + this.actualRatio[0] + ',' + this.actualRatio[1] + ') translate(-50%,-50%)';
+                    element.style.transform = ' translate(-50%,-50%)';
                     
                 }catch(e){
                     console.log("error resizing html elements");

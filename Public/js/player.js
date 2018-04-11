@@ -23,7 +23,6 @@
             this.owTexture = data.owSprite;
         	this.character = {
         		name: data.name,
-        		rival: data.rival,
         		money: data.money,
         		sector: data.sector,
         		tile: data.tile,

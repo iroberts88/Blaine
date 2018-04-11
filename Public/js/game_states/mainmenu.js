@@ -58,8 +58,8 @@
             this.logoText = document.createElement( 'div' );
             this.logoText.id = 'logoText';
             this.logoText.type = 'text';
-            this.logoText.style.cssText = 'position:absolute;background-color: #FFF;text-align: center;display: inline-block;font-size: 24px;top:35px;left:90px;color:#484848;font-family:Pokemon,Lato;font-weight:bold;line-height:15px';
-            this.logoText.innerHTML = 'PROJECT PKMN';
+            this.logoText.style.cssText = 'position:absolute;background-color: #FFF;text-align: center;display: inline-block;font-size: 24px;top:35px;left:50px;color:#484848;font-family:Pokemon,Lato;font-weight:bold;line-height:15px';
+            this.logoText.innerHTML = 'PROJECT POK|MON';
             this.mainPanel.appendChild( this.logoText );
             //Logo Text
             this.errorText = document.createElement( 'div' );

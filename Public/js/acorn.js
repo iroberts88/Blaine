@@ -51,15 +51,11 @@
             RIGHT: 3,
             INVENTORY: 4,
             CHARSHEET: 5,
-            ROTATE1: 6,
-            ROTATE2: 7,
-            YSCALE1: 8,
-            YSCALE2: 9,
-            TOGGLEMAP: 10,
-            TOGGLESTATS: 11,
-            BACKSPACE: 12,
-            SCROLLUP: 13,
-            SCROLLDOWN: 14
+            POKEDEX: 6,
+            POKEMON: 7,
+            INTERACT: 8,
+            CANCEL: 9
+
         },
         keysPressed: [],
         keyBindings: [],
@@ -89,22 +85,22 @@
             window.onwheel = Acorn.Input.handleScroll;
         },
         bind: function() {
-            this.keyBindings[83] = Acorn.Input.Key.DOWN; //default S
-            this.keyBindings[87] = Acorn.Input.Key.UP; //default W
-            this.keyBindings[68] = Acorn.Input.Key.RIGHT; //default D
-            this.keyBindings[65] = Acorn.Input.Key.LEFT; //default A
-            this.keyBindings[32] = Acorn.Input.Key.TOGGLESTATS; //default Space
-            this.keyBindings[67] = Acorn.Input.Key.CHARSHEET; //default C
-            this.keyBindings[69] = Acorn.Input.Key.INTERACT; //default E
-            this.keyBindings[77] = Acorn.Input.Key.TOGGLEMAP; //default M
-            this.keyBindings[8] = Acorn.Input.Key.BACKSPACE; //default M
-            this.keyBindings[38] = Acorn.Input.Key.SCROLLUP; //default M
-            this.keyBindings[40] = Acorn.Input.Key.SCROLLDOWN; //default M
+            this.keyBindings[87] = Acorn.Input.Key.UP; //W
+            this.keyBindings[83] = Acorn.Input.Key.DOWN; //S
+            this.keyBindings[65] = Acorn.Input.Key.LEFT; //A
+            this.keyBindings[68] = Acorn.Input.Key.RIGHT; //D
+            this.keyBindings[73] = Acorn.Input.Key.INVENTORY; //I
+            this.keyBindings[67] = Acorn.Input.Key.CHARSHEET; //C
+            this.keyBindings[80] = Acorn.Input.Key.POKEDEX; //P
+            this.keyBindings[81] = Acorn.Input.Key.POKEMON; //Q
+            this.keyBindings[69] = Acorn.Input.Key.INTERACT; //E
+            this.keyBindings[27] = Acorn.Input.Key.CANCEL; //ESC
         },
         getBinding: function(keyCode) {
             return this.keyBindings[keyCode];
         },
         keyDown: function(keyCode) {
+            console.log(keyCode);
             this.keysPressed[this.getBinding(keyCode)] = true;
         },
         keyUp: function(keyCode) {
@@ -205,6 +201,7 @@
                 Acorn.Sound.addSound({url: 'sounds/sfx/bump.mp3', id: 'bump', volume: 100});
                 Acorn.Sound.addSound({url: 'sounds/sfx/exit.mp3', id: 'exit', volume: 100});
                 Acorn.Sound.addSound({url: 'sounds/sfx/enter.mp3', id: 'enter', volume: 100});
+                Acorn.Sound.addSound({url: 'sounds/sfx/menu.mp3', id: 'menu', volume: 100});
                 Acorn.Sound.ready = true;
               }
             });

@@ -35,6 +35,11 @@ var Pokemon = function(){
 
     this.critChance = null;
 
+    //this.nature = null;
+
+    //this.ability = null;
+
+    //this.sex = null;
 }
 
 Pokemon.prototype.reset = function(){
