@@ -31,10 +31,12 @@
 
         pokedexButton: null,
         pokemonButton: null,
+        pokemonUIButtons: null,
         characterButton: null,
         settingsButton: null,
 
         activeUI: null,
+
 
         init: function() {
             this.initUIButtons();
@@ -75,14 +77,8 @@
         
         updateScreenChange: function(deltaTime){
             this.screenTicker += deltaTime;
-            if (this.screenTicker > this.SCREEN_CHANGE_TIME && this.newMapData && !this.requestMade){
-                if (typeof this.mapsCache[this.newMapData.map] == 'undefined'){
-                    Acorn.Net.socket_.emit('playerUpdate',{command: 'requestMapData',name: this.newMapData.map});
-                    Game.requestMade = true;
-                }else{
-                    //function here?
-                    this.setNewMap(this.newMapData.map);
-                }
+            if (this.screenTicker > this.SCREEN_CHANGE_TIME && this.newMapData && typeof this.mapsCache[this.newMapData.map] != 'undefined'){
+                this.setNewMap(this.newMapData.map);
                 Graphics.uiPrimitives2.clear();
             }else{
                 Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.25);
@@ -185,7 +181,6 @@
             var pkmnTex = PIXI.RenderTexture.create(bSize,bSize);
             var charTex = PIXI.RenderTexture.create(bSize,bSize);
             var setTex = PIXI.RenderTexture.create(bSize,bSize);
-            var renderer = new PIXI.CanvasRenderer();
             var g1 = new PIXI.Graphics();
             var c1 = new PIXI.Container();
             var c2 = new PIXI.Container();
@@ -326,13 +321,39 @@
             });
             x.style.fontSize = 64;
             this.pokemonUI.addChild(x);
+
+            this.pokemonUIButtons = [];
+            var x = Graphics.width/4;
+            var y = Graphics.height/4;
+            for (var i = 0; i < 6;i++){
+                //make buttons;
+                var button = Graphics.makeUiElement({
+                    texture: Graphics.blankTexture,
+                    interactive: true,buttonMode: true,
+                    position: [x,y],
+                    anchor: [0.5,0.5],
+                    clickFunc: function onClick(e){
+                        
+                    }
+                });
+                if (x == Graphics.width/4){
+                    x = Graphics.width*0.75;
+                }else{
+                    x = Graphics.width/4;
+                    y += Graphics.height/4;
+                }
+                this.pokemonUIButtons.push(button);
+                this.pokemonUI.addChild(button);
+            }
             
             this.pokemonUI.scale.x = this.UI_OFFSETSCALE;
             this.pokemonUI.scale.y = this.UI_OFFSETSCALE;
             this.pokemonUI.position.x = Graphics.width*((1-this.UI_OFFSETSCALE)/2);
             this.pokemonUI.position.y = Graphics.height*((1-this.UI_OFFSETSCALE)/2);
         },
+        resetPokemon: function(slot){
 
+        },
         initCharUI: function(){
             this.characterUI.removeChildren();
 
@@ -474,9 +495,6 @@
 
             cont.addChild(gfx);
             cont.addChild(borders);
-
-            gfx.alpha = 0.8
-            borders.alpha = 0.5;
 
             var texture = PIXI.RenderTexture.create(Graphics.width,Graphics.height);
             var renderer = new PIXI.CanvasRenderer();

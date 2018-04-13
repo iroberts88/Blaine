@@ -3,7 +3,8 @@
 //----------------------------------------------------------------
 var User = require('./user.js').User,
     Character = require('./character.js').Character,
-    Zone = require('./zone.js').Zone;
+    Zone = require('./zone.js').Zone,
+    Triggers = require('./triggers.js').Triggers;
 
 const crypto = require('crypto');
 
@@ -13,6 +14,13 @@ AWS.config.update({
   endpoint: "https://dynamodb.us-east-1.amazonaws.com"
 });
 
+var directions = {
+    '-1,0': 'left',
+    '0,-1': 'up',
+    '0,1': 'down',
+    '1,0': 'right'
+}
+
 var Player = function(){
     this.gameEngine = null;
     this.user = null;
@@ -20,6 +28,8 @@ var Player = function(){
     this.ready = null;
     this.character = null;
 };
+
+
 
 Player.prototype.init = function (data) {
     //init player specific variables
@@ -94,6 +104,7 @@ Player.prototype.setupSocket = function() {
                             data.owner = that;
                             data.id = that.gameEngine.getId();
                             data.money = 0;
+                            data.pokedex = {};
                             //data.currentSector = '0x-3';
                             //data.currentTile = [16,19];
                             //data.currentMap = 'pallet';
@@ -117,6 +128,18 @@ Player.prototype.setupSocket = function() {
                             x: that.character.currentTile[0],
                             y: that.character.currentTile[1]
                         }
+                        // !TRIGGER! try to do directional triggers
+                        var t = zone.map[that.character.currentSector].tiles[that.character.currentTile[0]][that.character.currentTile[1]];
+                        var end = false;
+                        for (var i = 0; i < t.triggers.length;i++){
+                            var trigger = t.triggers[i];
+                            if (trigger.on == directions[data.x+','+data.y]){
+                                if (Triggers.doTrigger(that.character,trigger)){
+                                    end = true;
+                                }
+                            }
+                        }
+                        if (end){return;}
                         tile.x += data.x;
                         tile.y += data.y;
                         var moveSector = [0,0];
@@ -164,46 +187,21 @@ Player.prototype.setupSocket = function() {
                             //change the sector/tile variables
                             that.character.currentSector = coords.x + 'x' + coords.y;
                             that.character.currentTile = [tile.x, tile.y];
+                            // !TRIGGER! Try to do arrival triggers
+                            var t = zone.map[that.character.currentSector].tiles[that.character.currentTile[0]][that.character.currentTile[1]];
+                            for (var i = 0; i < t.triggers.length;i++){
+                                var trigger = t.triggers[i];
+                                if (trigger.on == 'arrival'){
+                                    Triggers.doTrigger(that.character,trigger);
+                                }
+                            }
                         }
                     }catch(e){
                         that.gameEngine.debug(that,{id: 'moveAttempt', error: e.stack});
                     }
                     break;
-                case 'changeMap':
-                    try{
-                        console.log(data);
-                        //check current Tile
-                        var zone = that.gameEngine.zones[that.character.currentMap]
-                        var tile = zone.map[that.character.currentSector].tiles[that.character.currentTile[0]][that.character.currentTile[1]];
-                        for (var i = 0; i < tile.triggers.length;i++){
-                            var trigger = tile.triggers[i];
-                            console.log(trigger);
-                            if (trigger.do == 'changeMap' && trigger.data.map == data.map && trigger.data.sector == data.sector && trigger.data.tile == data.tile){
-                                that.gameEngine.removePlayerFromZone(that,that.character.currentMap);
-                                that.character.currentSector = data.sector;
-                                var c = zone.getSectorXY(trigger.data.tile);
-                                that.character.currentTile = [c.x,c.y];
-                                that.character.currentMap = data.map;
-                                that.gameEngine.addPlayerToZone(that,data.map);
-                                var newZone = that.gameEngine.zones[that.character.currentMap];
-                                var newSector = newZone.map[that.character.currentSector];
-                                var players = newZone.getPlayers(newSector);
-                                that.gameEngine.queuePlayer(that,'changeMap',{
-                                    map: that.character.currentMap,
-                                    sector: that.character.currentSector,
-                                    tile: that.character.currentTile,
-                                    players: players
-                                });
-                            }
-                        }
-                    }catch(e){
-                        console.log("error changing map...reset pos?");
-                        that.gameEngine.debug(that,{id: 'changeMapError', error: e.stack});
-                    }
-                    break;
                 case 'requestMapData':
                     try{
-                        console.log(data);
                         var zoneData = that.gameEngine.zones[data.name].zoneData;
                         that.gameEngine.queuePlayer(that,'mapData',{
                             zoneData: zoneData,

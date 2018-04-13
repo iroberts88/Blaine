@@ -20,6 +20,8 @@
             color7: 0x232C2D
         },
 
+        blankTexture: null,
+
         init: function(w,h) {
             PIXI.settings.SCALE_MODE = 1;
             this.width = w;
@@ -92,6 +94,11 @@
             this.resources = {};
             this.resourcesReady = false;
             this.animationSpeeds = {};
+
+            //make blank texture;
+            this.blankTexture = PIXI.RenderTexture.create(8,8);
+            var g = new PIXI.Graphics();
+            Graphics.app.renderer.render(g,this.blankTexture);
 
         },
 

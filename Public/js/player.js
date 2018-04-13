@@ -30,6 +30,7 @@
                 sprite2: Graphics.getSprite('ow_' + this.owTexture + '_d1'),
                 map: data.map
         	};
+            Party.init(data);
             this.character.sprite.scale.x = mainObj.GAME_SCALE;
             this.character.sprite.scale.y = mainObj.GAME_SCALE;
             this.character.sprite.anchor.x = 0.5;
@@ -78,6 +79,9 @@
                 this.animateInfo.direction = 'd';
                 if (doTriggers){
                     var r = false;
+                    if (currentTile.triggers.length > 0){
+                        Acorn.Net.socket_.emit('playerUpdate',{command:'moveAttempt',x:x,y:y});
+                    }
                     for (var i = 0; i < currentTile.triggers.length;i++){
                         var trigger = currentTile.triggers[i];
                         if (trigger.on == 'down'){
@@ -92,8 +96,11 @@
             }
             if (x == 0 && y == -1){
                 this.animateInfo.direction = 'u';
-                var r = false;
                 if (doTriggers){
+                    var r = false;
+                    if (currentTile.triggers.length > 0){
+                        Acorn.Net.socket_.emit('playerUpdate',{command:'moveAttempt',x:x,y:y});
+                    }
                     for (var i = 0; i < currentTile.triggers.length;i++){
                         var trigger = currentTile.triggers[i];
                         if (trigger.on == 'up'){
@@ -110,6 +117,9 @@
                 this.animateInfo.direction = 'r';
                 if (doTriggers){
                     var r = false;
+                    if (currentTile.triggers.length > 0){
+                        Acorn.Net.socket_.emit('playerUpdate',{command:'moveAttempt',x:x,y:y});
+                    }
                     for (var i = 0; i < currentTile.triggers.length;i++){
                         var trigger = currentTile.triggers[i];
                         if (trigger.on == 'right'){
@@ -126,6 +136,9 @@
                 this.animateInfo.direction = 'l';
                 if (doTriggers){
                     var r = false;
+                    if (currentTile.triggers.length > 0){
+                        Acorn.Net.socket_.emit('playerUpdate',{command:'moveAttempt',x:x,y:y});
+                    }
                     for (var i = 0; i < currentTile.triggers.length;i++){
                         var trigger = currentTile.triggers[i];
                         if (trigger.on == 'left'){
@@ -140,6 +153,7 @@
             }
             if (tile.open && (tile.resource != 'deep_water' && tile.resource != 'water')){
                 //check for grass
+                Acorn.Net.socket_.emit('playerUpdate',{command:'moveAttempt',x:x,y:y});
                 Game.map.changeVisibleSectors();
                 if (tile.resource == '1x1' && Graphics.worldContainer.getChildIndex(tile.sprite) < Graphics.worldContainer.getChildIndex(this.character.sprite)){
                     Graphics.worldContainer.removeChild(tile.sprite);
@@ -147,7 +161,6 @@
                     Graphics.worldContainer.addChild(tile.sprite);
                     Graphics.worldContainer.addChild(this.character.sprite2);
                 }
-                Acorn.Net.socket_.emit('playerUpdate',{command:'moveAttempt',x:x,y:y});
                 this.character.tile[0] = tile.x;
                 this.character.tile[1] = tile.y;
                 this.character.sector = tile.sectorid;

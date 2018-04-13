@@ -6,19 +6,18 @@ var Character = function(){
     this.id = null;
     this.owner = null;
     this.name = null;
-    this.sex = null;
 
     //game stats (games won etc)
     this.gameStats = null;
     //inventory
     this.inventory = null;
     //badges obtained
-    this.badges = null
+    this.badges = null;
     //pokedex completion
     this.pokedex = null;
     //active party of pokemon
     this.party = null;
-    //items and pokemon stored in PC
+    //pokemon stored in PC
     this.pc = null
 
     //Map stuff
@@ -119,6 +118,7 @@ Character.prototype.init = function(data) {
 
     //init badges
     //initpokedex
+    this.pokedex = data.pokedex;
     //init pokemon
     this.party = [];
     var pkmn = [1,4,7];
@@ -130,9 +130,6 @@ Character.prototype.init = function(data) {
             id: this.owner.gameEngine.getId()
         })
         this.addPokemon(newPoke);
-        this.owner.gameEngine.queuePlayer(this.owner,'pokemonInfo',{
-            'pokemon': newPoke.getClientData()
-        });
     }
     //init pc stuff
     //init inventory
@@ -141,7 +138,15 @@ Character.prototype.init = function(data) {
 Character.prototype.addPokemon = function(p){
     if (this.party.length < this.MAX_POKEMON){
         this.party.push(p);
-        //do stuff
+        p.slot = this.party.length;
+        //this.owner.gameEngine.queuePlayer(this.owner,'pokemonInfo',{
+        //    'pokemon': p.getClientData(),
+        //    'slot': this.party.length
+        //});
+        //do pokedex stuff
+        if (!this.pokedex[p.number]){
+            this.pokedex[p.number] = true;
+        }
     }else{
         //add to pc?
     }
@@ -168,6 +173,10 @@ Character.prototype.getClientData = function(){
     //data.inventory = {};
     //badges
     //pokemon
+    data.pokemon = [];
+    for (var i = 0;i< this.party.length;i++){
+        data.pokemon.push(this.party[i].getClientData());
+    }
     //pokedex ETCCCC
     return data;
 }

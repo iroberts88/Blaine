@@ -9,6 +9,7 @@ var Pokemon = function(){
     this.character = null;
     this.nickname = null;
     this.attributeIndex = {};
+    this.slot = null;
 
     this.hp = null;
     this.attack = null;
@@ -217,6 +218,7 @@ Pokemon.prototype.getClientData = function(){
     data.id = this.id;
     data.exp = this.exp;
 
+    data.slot = this.slot;
     /*data.hpIV = this.hpIV;
     data.speedIV = this.speedIV;
     data.attackIV = this.attackIV;

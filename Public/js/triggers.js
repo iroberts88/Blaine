@@ -14,10 +14,13 @@ TriggerEnums = {
 
 		changeMap: function(data){
 			Game.screenChange = true;
-            Acorn.Net.socket_.emit('playerUpdate',{command:'changeMap',map:data.map,sector:data.sector,tile:data.tile});
 			for (var i in Game.pcs){
 				Game.removePC(i);
 			}
+			if (!Game.requestMade && typeof Game.mapsCache[data.map] == 'undefined'){
+                Acorn.Net.socket_.emit('playerUpdate',{command: 'requestMapData',name: data.map});
+                Game.requestMade = true;
+            }
 			return true;
 		},
 

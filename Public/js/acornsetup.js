@@ -106,7 +106,6 @@
                 console.log('received map data');
                 console.log(data);
                 Game.mapsCache[data.name] = data.zoneData;
-                Game.setNewMap(data.name);
             });
 
             Acorn.Net.on('loggedIn', function (data) {
@@ -117,6 +116,7 @@
 
             Acorn.Net.on('pokemonInfo', function (data) {
                 console.log(data);
+                Game.addPokemon(data);
             });
 
             Acorn.Net.on('logout', function (data) {
