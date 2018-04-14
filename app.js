@@ -128,7 +128,7 @@ function webResponse(req, res) {
 }
 
 function onReady() {
-    console.log('All require items loaded. Starting Game Engine');
+    console.log('All require items loaded. Starting Game Engine!');
     ge.init();
 }
 
