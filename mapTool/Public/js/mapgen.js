@@ -505,6 +505,8 @@
                 'changeMap',
                 'blockMovement',
                 'downwardHop',
+                'leftHop',
+                'rightHop',
                 'jumpToTile',
                 'playSound',
                 'playMusic'

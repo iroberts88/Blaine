@@ -7,7 +7,9 @@ var Triggers = function(){
 		PlaySound: 'playSound',
 		PlayMusic: 'playMusic',
 		BlocksMovement: 'blocksMovement',
-		DownwardHop: 'downwardHop'
+		DownwardHop: 'downwardHop',
+		LeftHop: 'leftHop',
+		RightHop: 'rightHop'
 	}
 };
 
@@ -59,6 +61,14 @@ Triggers.prototype.downwardHop = function(character,data){
 	return true;
 };
 
+Triggers.prototype.leftHop = function(character,data){
+	return true;
+};
+
+Triggers.prototype.rightHop = function(character,data){
+	return true;
+};
+
 Triggers.prototype.doTrigger = function(character,trigger){
 	console.log(trigger);
 	try{
@@ -77,6 +87,12 @@ Triggers.prototype.doTrigger = function(character,trigger){
 				break;
 			case this.TriggerEnums.DownwardHop:
 				return this.downwardHop(character,trigger.data);
+				break;
+			case this.TriggerEnums.LeftHop:
+				return this.leftHop(character,trigger.data);
+				break;
+			case this.TriggerEnums.RightHop:
+				return this.rightHop(character,trigger.data);
 				break;
 		}
 	}catch(e){

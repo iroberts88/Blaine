@@ -10,7 +10,6 @@
         ready: false,
 
         pcs: {},
-
         npcs: {},
 
         screenChange: false,
@@ -81,8 +80,8 @@
                 this.setNewMap(this.newMapData.map);
                 Graphics.uiPrimitives2.clear();
             }else{
-                Graphics.uiPrimitives2.lineStyle(1,0xFFFFFF,0.25);
-                Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.25);
+                Graphics.uiPrimitives2.lineStyle(1,0xDCDCDC,0.25);
+                Graphics.uiPrimitives2.beginFill(0xDCDCDC,0.25);
                 Graphics.uiPrimitives2.drawRect(0,0,Graphics.width,Graphics.height);
                 Graphics.uiPrimitives2.endFill();
             }
@@ -111,6 +110,19 @@
 
             Player.resetPos();
         },
+
+        resetTopSprites: function(){
+            //make sure top layer of sprites is on top
+            for (var i = 0; i < this.pcs.length;i++){
+                Graphics.worldContainer.removeChild(this.pcs[i].nameTag);
+                Graphics.worldContainer.addChild(this.pcs[i].nameTag);
+                Graphics.worldContainer.removeChild(this.pcs[i].sprite2);
+                Graphics.worldContainer.addChild(this.pcs[i].sprite2);
+            }
+            Graphics.worldContainer.removeChild(Player.character.sprite2);
+            Graphics.worldContainer.addChild(Player.character.sprite2);
+        },
+
         setNewMap: function(name){
             console.log(name);
             try{

@@ -122,6 +122,9 @@ Player.prototype.setupSocket = function() {
                 case 'moveAttempt':
                     //get tile at x/y
                     try{
+                        if (data.cTile[0] != that.character.currentTile[0] || data.cTile[1] != that.character.currentTile[1] || data.cSector != that.character.currentSector){
+                            return;
+                        }
                         var zone = that.gameEngine.zones[that.character.currentMap];
                         var coords = zone.getSectorXY(that.character.currentSector);
                         var tile = {

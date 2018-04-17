@@ -72,13 +72,10 @@
         if (this.moving){return;}
         var tile = Game.map.getTileAtPC(this,x,y);
         if (tile.open && (tile.resource != 'deep_water' && tile.resource != 'water')){
-            if (tile.resource == '1x1' && Graphics.worldContainer.getChildIndex(tile.sprite) < Graphics.worldContainer.getChildIndex(this.sprite)){
+            if (tile.resource == '1x1' && Graphics.worldContainer.getChildIndex(tile.sprite) < Graphics.worldContainer.getChildIndex(this.sprite2)){
                 Graphics.worldContainer.removeChild(tile.sprite);
-                Graphics.worldContainer.removeChild(this.sprite2);
-                Graphics.worldContainer.removeChild(this.nameTag);
                 Graphics.worldContainer.addChild(tile.sprite);
-                Graphics.worldContainer.addChild(this.sprite2);
-                Graphics.worldContainer.addChild(this.nameTag);
+                Game.resetTopSprites()
             }
             this.tile[0] = tile.x;
             this.tile[1] = tile.y;

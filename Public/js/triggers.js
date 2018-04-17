@@ -5,7 +5,9 @@ TriggerEnums = {
 	PlaySound: 'playSound',
 	PlayMusic: 'playMusic',
 	BlocksMovement: 'blocksMovement',
-	DownwardHop: 'downwardHop'
+	DownwardHop: 'downwardHop',
+	LeftHop: 'leftHop',
+	RightHop: 'RightHop'
 };
 
 (function(window) {
@@ -47,6 +49,16 @@ TriggerEnums = {
 			return true;
 		},
 
+		leftHop: function(data){
+			Player.move(-2,0);
+			return true;
+		},
+
+		rightHop: function(data){
+			Player.move(2,0);
+			return true;
+		},
+
 		doTrigger: function(trigger){
 			try{
 				switch(trigger.do){
@@ -64,6 +76,12 @@ TriggerEnums = {
 						break;
 					case TriggerEnums.DownwardHop:
 						return this.downwardHop(trigger.data);
+						break;
+					case TriggerEnums.LeftHop:
+						return this.leftHop(trigger.data);
+						break;
+					case TriggerEnums.RightHop:
+						return this.rightHop(trigger.data);
 						break;
 				}
 			}catch(e){
