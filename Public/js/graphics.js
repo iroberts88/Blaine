@@ -30,7 +30,7 @@
 
             this.buttonCD = 0;
             //create the PIXI stage
-            this.app = new PIXI.Application(this.width, this.height, {backgroundColor: 0xDCDCDC});
+            this.app = new PIXI.Application(this.width, this.height, {backgroundColor: 0xFFFFFF});
             this.filtersToApply = [];
 
             this.resourceList = [];
