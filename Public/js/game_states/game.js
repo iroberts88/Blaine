@@ -48,6 +48,7 @@
         },
 
         update: function(deltaTime){
+            Graphics.app.renderer.backgroundColor = 0xFFFFFF;
             if (!this.ready){return;}
             if (this.screenChange){
                 this.updateScreenChange(deltaTime);
@@ -80,8 +81,8 @@
                 this.setNewMap(this.newMapData.map);
                 Graphics.uiPrimitives2.clear();
             }else{
-                Graphics.uiPrimitives2.lineStyle(1,0xDCDCDC,0.25);
-                Graphics.uiPrimitives2.beginFill(0xDCDCDC,0.25);
+                Graphics.uiPrimitives2.lineStyle(1,0x000000,0.25);
+                Graphics.uiPrimitives2.beginFill(0x000000,0.25);
                 Graphics.uiPrimitives2.drawRect(0,0,Graphics.width,Graphics.height);
                 Graphics.uiPrimitives2.endFill();
             }
@@ -468,7 +469,7 @@
 
             var sp1 = Graphics.getSprite('border_tl');
             var sp2 = Graphics.getSprite('border_tr');
-            var sp3 = Graphics.getSprite('ow_border_br');
+            var sp3 = Graphics.getSprite('border_br');
             var sp4 = Graphics.getSprite('border_bl');
             sp1.position.x = 0;
             sp1.position.y = 0;

@@ -105,11 +105,11 @@ Player.prototype.setupSocket = function() {
                             data.id = that.gameEngine.getId();
                             data.money = 0;
                             data.pokedex = {};
-                            //data.currentSector = '0x-3';
-                            //data.currentTile = [16,19];
+                            //data.currentSector = '0x0';
+                            //data.currentTile = [5,5];
                             //data.currentMap = 'pallet';
-                            data.currentSector = '0x0';
-                            data.currentTile = [9,12];
+                            data.currentSector = '0x-3';
+                            data.currentTile = [14,9];
                             data.currentMap = 'pallet';
                             data.music = 'pallet';
                             char.init(data);

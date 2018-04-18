@@ -147,19 +147,18 @@ Zone.prototype.getPlayers = function(sector){
     var players = [];
     for (var i = -1;i < 2;i++){
         for (var j = -1;j < 2;j++){
-            try{
-                for (var pl in this.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players){
-                    var player = this.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players[pl];
-                    players.push({
-                        id: player.id,
-                        name: player.user.userData.username,
-                        owSprite: player.character.owSprite,
-                        tile: player.character.currentTile,
-                        sector: player.character.currentSector
-                    })
-                }
-            }catch(e){
-                console.log(e);
+            if (typeof this.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)] == 'undefined'){
+                continue;
+            }
+            for (var pl in this.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players){
+                var player = this.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players[pl];
+                players.push({
+                    id: player.id,
+                    name: player.user.userData.username,
+                    owSprite: player.character.owSprite,
+                    tile: player.character.currentTile,
+                    sector: player.character.currentSector
+                })
             }
         }
     }
@@ -170,9 +169,12 @@ Zone.prototype.addPlayer = function(p){
     //TODO add player to all players in the zone within 1 sector
     this.map[p.character.currentSector].addPlayer(p);
     this.playerCount += 1;
+    var coords = this.getSectorXY(p.character.currentSector);
     for (var i = -1;i < 2;i++){
         for (var j = -1;j < 2;j++){
-            var coords = this.getSectorXY(p.character.currentSector);
+            if (typeof this.map[(coords.x+i) + 'x' + (coords.y+j)] == 'undefined'){
+                continue;
+            }
             for (var pl in this.map[(coords.x+i) + 'x' + (coords.y+j)].players){
                 var player = this.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
                 this.gameEngine.queuePlayer(player,'addPC',{
@@ -194,6 +196,9 @@ Zone.prototype.removePlayer = function(p){
     for (var i = -1;i < 2;i++){
         for (var j = -1;j < 2;j++){
             var coords = this.getSectorXY(p.character.currentSector);
+            if (typeof this.map[(coords.x+i) + 'x' + (coords.y+j)] == 'undefined'){
+                continue;
+            }
             for (var pl in this.map[(coords.x+i) + 'x' + (coords.y+j)].players){
                 var player = this.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
                 this.gameEngine.queuePlayer(player,'removePC',{id: p.id})
@@ -232,6 +237,17 @@ var Sector = function(id,data) {
     this.sectorX = parseInt(x);
     this.sectorY = parseInt(y);
     this.tiles = data.tiles;
+    for (var i = 0; i < this.tiles.length;i++){
+        for (var j = 0; j < this.tiles[i].length;j++){
+            var tile = this.tiles[i][j];
+            if (typeof tile.triggers == 'undefined'){
+                tile.triggers = [];
+            }
+            if (typeof tile.open == 'undefined'){
+                tile.open = false;
+            }
+        }
+    }
 };
 
 Sector.prototype.addPlayer = function(p){

@@ -87,6 +87,7 @@ GameEngine.prototype.getId = function() {
 GameEngine.prototype.loadMaps = function(arr) {
     for (var i = 0; i < arr.length;i++){
         var d;
+        console.log(arr[i]);
         fs.readFile('./mapTool/maps/' + arr[i], "utf8",function read(err, data) {
             if (err) {
                 throw err;

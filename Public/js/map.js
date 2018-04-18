@@ -20,9 +20,6 @@
         try{
             this[sString].setVisible(visible)
         }catch(e){
-            console.log(e);
-            console.log(sString);
-            console.log(visible)
         }
     };
     GameMap.prototype.changeVisibleSectors = function(){
@@ -209,9 +206,8 @@ var getSectorXY = function(string){
             this.sprite = Graphics.getSprite(data.resource); //tile sprite
             this.sprite.scale.x = mainObj.GAME_SCALE;
             this.sprite.scale.y = mainObj.GAME_SCALE;
-            this.open = data.open
-
-            this.overlayResource = data.overlayResource;
+            this.open = (typeof data.open == 'undefined')  ? null : data.open;
+            this.overlayResource = (typeof data.overlayResource == 'undefined')  ? null : data.overlayResource;
             this.overlaySprite = null; //2nd layer sprite
             if (this.overlayResource){
                 this.overlaySprite = Graphics.getSprite(data.overlayResource); //tile sprite
@@ -219,7 +215,7 @@ var getSectorXY = function(string){
                 this.overlaySprite.scale.y = mainObj.GAME_SCALE;
                 this.overlaySprite.visible = false;
             }
-            this.triggers = data.triggers;
+            this.triggers = (typeof data.triggers == 'undefined')  ? [] : data.triggers;
             this.sprite.visible = false;
         }catch(e){
             console.log("failed to init Tile");

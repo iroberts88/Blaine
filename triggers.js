@@ -38,7 +38,7 @@ Triggers.prototype.changeMap = function(character,data){
 
     }catch(e){
         console.log("error changing map...reset pos?");
-        character.gameEngine.debug(character.woner,{id: 'changeMapError', error: e.stack});
+        character.gameEngine.debug(character.owner,{id: 'changeMapError', error: e.stack});
     }
 	return true;
 };

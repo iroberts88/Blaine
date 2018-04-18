@@ -319,12 +319,7 @@
                                 var arr = [];
                                 for (var k = 0; k < MapGen.map.sectors[i].tiles[j].length;k++){
                                     var tile = MapGen.map.sectors[i].tiles[j][k];
-                                    arr.push({
-                                        resource: tile.resource,
-                                        open: tile.open,
-                                        overlayResource: tile.overlayResource,
-                                        triggers: tile.triggers
-                                    })
+                                    arr.push(tile.getTileData());
                                 }
                                 mapData[i].tiles.push(arr);
                             }

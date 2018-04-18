@@ -94,15 +94,15 @@
             for (var j = 0; j < this.SECTOR_TILES; j++){
                 var newTile = new Tile();
                 if (data){
-                    newTile.init({
-                        sectorId: x + 'x' + y,
-                        x: i,
-                        y: j,
-                        resource: data.tiles[i][j].resource,
-                        open: data.tiles[i][j].open,
-                        triggers: data.tiles[i][j].triggers,
-                        overlayResource: data.tiles[i][j].overlayResource
-                    });
+                    var d = {}
+                    d.x = i;
+                    d.y = j;
+                    d.sectorId = x + 'x' + y;
+                    d.resource = data.tiles[i][j].resource;
+                    d.open = (typeof data.tiles[i][j].open == 'undefined') ? 0 : data.tiles[i][j].open;
+                    d.triggers = (typeof data.tiles[i][j].triggers == 'undefined') ? [] : data.tiles[i][j].triggers;
+                    d.overlayResource = (typeof data.tiles[i][j].overlayResource == 'undefined') ? null : data.tiles[i][j].overlayResource;
+                    newTile.init(d);
                 }else{
                     newTile.init({
                         sectorId: x + 'x' + y,
@@ -260,6 +260,19 @@
         Graphics.worldContainer.addChild(this.overlaySprite);
         this.overlayResource = resource;
     };
-
+    Tile.prototype.getTileData = function(){
+        var data = {}
+        data.resource = this.resource;
+        if (this.open){
+            data.open =  true;
+        }
+        if (this.overlayResource){
+            data.overlayResource = this.overlayResource;
+        }
+        if (this.triggers.length > 0){
+            data.triggers = this.triggers;
+        }
+        return data;
+    }
     window.Tile = Tile;
 })(window);
