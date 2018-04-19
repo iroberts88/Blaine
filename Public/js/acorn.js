@@ -188,14 +188,17 @@
               // optional: ignore Flash where possible, use 100% HTML5 mode
               // preferFlash: false,
               onready: function() {
-                // Ready to use; soundManager.createSound() etc. can now be called.//Music
+                // Ready to use; soundManager.createSound() etc. can now be called.
+                //Music
                 Acorn.Sound.addSound({url: 'sounds/music/1_opening.mp3', id: 'opening', volume: 70,type: 'music'});
                 Acorn.Sound.addSound({url: 'sounds/music/3_newChar.mp3', id: 'newChar', volume: 70,type: 'music'});
                 Acorn.Sound.addSound({url: 'sounds/music/4_pallet.mp3', id: 'pallet', volume: 70,type: 'music'});
                 Acorn.Sound.addSound({url: 'sounds/music/5_road_to_veridian.mp3', id: 'roadToVeridian', volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/6_pewter.mp3', id: 'pewter', volume: 0.7, volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/7_pcenter.mp3', id: 'pcenter', volume: 0.7, volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/8_oaklab.mp3', id: 'oaklab', volume: 0.7, volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/6_pewter.mp3', id: 'pewter', volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/7_pcenter.mp3', id: 'pcenter', volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/8_oaklab.mp3', id: 'oaklab', volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/9_gym.mp3', id: 'gym', volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/10_road1.mp3', id: 'road1', volume: 70,type: 'music'});
                 //sfx
                 Acorn.Sound.addSound({url: 'sounds/sfx/select.mp3', id: 'select', volume: 100});
                 Acorn.Sound.addSound({url: 'sounds/sfx/bump.mp3', id: 'bump', volume: 100});

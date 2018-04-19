@@ -2944,19 +2944,55 @@
           },
           {
             "resource": "0x1",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "right",
+                "do": "playMusic",
+                "data": {
+                  "sound": "pewter"
+                }
+              }
+            ]
           },
           {
             "resource": "0x1",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "right",
+                "do": "playMusic",
+                "data": {
+                  "sound": "pewter"
+                }
+              }
+            ]
           },
           {
             "resource": "4x3",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "right",
+                "do": "playMusic",
+                "data": {
+                  "sound": "pewter"
+                }
+              }
+            ]
           },
           {
             "resource": "1x0",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "right",
+                "do": "playMusic",
+                "data": {
+                  "sound": "pewter"
+                }
+              }
+            ]
           },
           {
             "resource": "1x2"
@@ -3013,19 +3049,55 @@
           },
           {
             "resource": "0x1",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "left",
+                "do": "playMusic",
+                "data": {
+                  "sound": "road1"
+                }
+              }
+            ]
           },
           {
             "resource": "0x1",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "left",
+                "do": "playMusic",
+                "data": {
+                  "sound": "road1"
+                }
+              }
+            ]
           },
           {
             "resource": "2x0",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "left",
+                "do": "playMusic",
+                "data": {
+                  "sound": "road1"
+                }
+              }
+            ]
           },
           {
             "resource": "2x0",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "left",
+                "do": "playMusic",
+                "data": {
+                  "sound": "road1"
+                }
+              }
+            ]
           },
           {
             "resource": "1x2"
@@ -9162,6 +9234,13 @@
                 "data": {
                   "sound": "enter"
                 }
+              },
+              {
+                "on": "arrival",
+                "do": "playMusic",
+                "data": {
+                  "sound": "pcenter"
+                }
               }
             ]
           },
@@ -9407,6 +9486,13 @@
                   "map": "veridian_gym",
                   "sector": "0x0",
                   "tile": "17x20"
+                }
+              },
+              {
+                "on": "arrival",
+                "do": "playMusic",
+                "data": {
+                  "sound": "gym"
                 }
               }
             ]
@@ -21947,11 +22033,29 @@
           },
           {
             "resource": "4x3",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "down",
+                "do": "playMusic",
+                "data": {
+                  "sound": "pewter"
+                }
+              }
+            ]
           },
           {
             "resource": "4x3",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "up",
+                "do": "playMusic",
+                "data": {
+                  "sound": "roadToVeridian"
+                }
+              }
+            ]
           },
           {
             "resource": "4x3",
@@ -22039,11 +22143,29 @@
           },
           {
             "resource": "4x3",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "down",
+                "do": "playMusic",
+                "data": {
+                  "sound": "pewter"
+                }
+              }
+            ]
           },
           {
             "resource": "2x0",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "up",
+                "do": "playMusic",
+                "data": {
+                  "sound": "roadToVeridian"
+                }
+              }
+            ]
           },
           {
             "resource": "2x0",
@@ -22131,11 +22253,29 @@
           },
           {
             "resource": "1x0",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "down",
+                "do": "playMusic",
+                "data": {
+                  "sound": "pewter"
+                }
+              }
+            ]
           },
           {
             "resource": "2x0",
-            "open": true
+            "open": true,
+            "triggers": [
+              {
+                "on": "up",
+                "do": "playMusic",
+                "data": {
+                  "sound": "roadToVeridian"
+                }
+              }
+            ]
           },
           {
             "resource": "4x0"

@@ -41,11 +41,12 @@ var Pokemon = function(){
     //this.ability = null;
 
     //this.sex = null;
+
+    this.currentHP = null;
 }
 
 Pokemon.prototype.reset = function(){
-    //things that reset with each new battle
-
+    //things that reset with each new battle?
 }
 
 Pokemon.prototype.getMoves = function(options){
@@ -191,6 +192,7 @@ Pokemon.prototype.init = function(base,data) {
         }
     }
 
+    this.currentHP = this.hp.value;
     this.reset();
 };
 
@@ -217,7 +219,7 @@ Pokemon.prototype.getClientData = function(){
     data.moves = this.moves;
     data.id = this.id;
     data.exp = this.exp;
-
+    data.currentHP = this.currentHP;
     data.slot = this.slot;
     /*data.hpIV = this.hpIV;
     data.speedIV = this.speedIV;
