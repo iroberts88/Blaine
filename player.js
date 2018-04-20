@@ -92,6 +92,9 @@ Player.prototype.setupSocket = function() {
                         that.gameEngine.debug(that,{id: 'logoutError', error: e.stack});
                     }
                     break;
+                case 'swapPkmn':
+                    that.character.swapPkmn(data);
+                    break;
                 case 'newChar':
                     try{
                         console.log(data);

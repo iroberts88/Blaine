@@ -15,6 +15,11 @@
         screenChange: false,
         screenTicker: 0,
 
+        pkmnSwapChange: false,
+        pkmnSwapTicker: 0,
+        pkmnSwapData: null,
+        pkmnSwapSpeed: 0.15,
+
         newMapData: null,
 
         requestMade: false,
@@ -36,6 +41,32 @@
 
         activeUI: null,
 
+        pkmnBoxSize: [800,300],
+        pkmnSelected: null,
+        pkmnCurrentlyMousedOver: null,
+
+        typeList: [
+            '',
+            'NORMAL',
+            'FIRE',
+            'WATER',
+            'ELECTRIC',
+            'GRASS',
+            'ICE',
+            'FIGHT',
+            'POISON',
+            'GOUND',
+            'FLYING',
+            'PSYCHIC',
+            'BUG',
+            'ROCK',
+            'GHOST',
+            'DRAGON',
+            'DARK',
+            'STEEL',
+            'FAIRY'
+        ],
+
 
         init: function() {
             this.initUIButtons();
@@ -53,21 +84,25 @@
                 this.updateScreenChange(deltaTime);
                 return;
             }
-
-            if (Acorn.Input.isPressed(Acorn.Input.Key.UP)){
-                Player.move(0,-1);
-            }else if (Acorn.Input.isPressed(Acorn.Input.Key.DOWN)){
-                Player.move(0,1);
-            }else if (Acorn.Input.isPressed(Acorn.Input.Key.LEFT)){
-                Player.move(-1,0);
-            }else if (Acorn.Input.isPressed(Acorn.Input.Key.RIGHT)){
-                Player.move(1,0);
+            if (this.pkmnSwapChange){
+                this.updatePkmnSwapChange(deltaTime);
+            }
+            if (!this.activeUI){
+                if (Acorn.Input.isPressed(Acorn.Input.Key.UP)){
+                    Player.move(0,-1);
+                }else if (Acorn.Input.isPressed(Acorn.Input.Key.DOWN)){
+                    Player.move(0,1);
+                }else if (Acorn.Input.isPressed(Acorn.Input.Key.LEFT)){
+                    Player.move(-1,0);
+                }else if (Acorn.Input.isPressed(Acorn.Input.Key.RIGHT)){
+                    Player.move(1,0);
+                }
+                //update the player
+                Player.update(deltaTime);
             }
             if (Acorn.Input.isPressed(Acorn.Input.Key.CANCEL)){
                 this.clearUI();
             }
-            //update the player
-            Player.update(deltaTime);
             //update each PC
             for (var i in this.pcs){
                 this.pcs[i].update(deltaTime);
@@ -84,6 +119,45 @@
                 Graphics.uiPrimitives2.beginFill(0x000000,0.25);
                 Graphics.uiPrimitives2.drawRect(0,0,Graphics.width,Graphics.height);
                 Graphics.uiPrimitives2.endFill();
+            }
+        },
+
+        updatePkmnSwapChange: function(deltaTime){
+            this.pkmnSwapTicker += deltaTime;
+            var first = this.pokemonUIContainers[this.pkmnSwapData.first];
+            var second = this.pokemonUIContainers[this.pkmnSwapData.second];
+            var dx1 = this.pkmnSwapData.secondStart.x - this.pkmnSwapData.firstStart.x;
+            var dy1 = this.pkmnSwapData.secondStart.y - this.pkmnSwapData.firstStart.y;
+            var dx2 = this.pkmnSwapData.firstStart.x - this.pkmnSwapData.secondStart.x;
+            var dy2 = this.pkmnSwapData.firstStart.y - this.pkmnSwapData.secondStart.y;
+            first.position.x = this.pkmnSwapData.firstStart.x + (dx1*(this.pkmnSwapTicker/this.pkmnSwapSpeed));
+            first.position.y = this.pkmnSwapData.firstStart.y + (dy1*(this.pkmnSwapTicker/this.pkmnSwapSpeed));
+            second.position.x = this.pkmnSwapData.secondStart.x + (dx2*(this.pkmnSwapTicker/this.pkmnSwapSpeed));
+            second.position.y = this.pkmnSwapData.secondStart.y + (dy2*(this.pkmnSwapTicker/this.pkmnSwapSpeed));
+            //Perform the swap
+            if (this.pkmnSwapTicker >= this.pkmnSwapSpeed){
+                //send swap info to server
+                Acorn.Net.socket_.emit('playerUpdate',{command: 'swapPkmn',first:first.pokemonNumber,second:second.pokemonNumber});
+
+                first.position.x = this.pkmnSwapData.secondStart.x;
+                first.position.y = this.pkmnSwapData.secondStart.y;
+                second.position.x = this.pkmnSwapData.firstStart.x;
+                second.position.y = this.pkmnSwapData.firstStart.y;
+                //swap ui containers
+                this.pokemonUIContainers[this.pkmnSwapData.second] = first;
+                this.pokemonUIContainers[this.pkmnSwapData.first] = second;
+                //swap reference numbers in containers
+                var num = first.pokemonNumber;
+                first.pokemonNumber = second.pokemonNumber;
+                second.pokemonNumber = num;
+                //swap party pokemon
+                var tempPoke = Party.pokemon[first.pokemonNumber];
+                Party.pokemon[first.pokemonNumber] = Party.pokemon[second.pokemonNumber];
+                Party.pokemon[second.pokemonNumber] = tempPoke;
+                //reset data
+                this.pkmnSwapChange = false;
+                this.pkmnSwapData = null;
+                this.pkmnSwapTicker = 0;
             }
         },
 
@@ -124,7 +198,6 @@
         },
 
         setNewMap: function(name){
-            console.log(name);
             try{
                 var myObj = this.mapsCache[name];
                 Graphics.worldContainer.removeChildren();
@@ -336,19 +409,67 @@
             this.pokemonUI.addChild(x);
 
             this.pokemonUIContainers = {};
-            var x = Graphics.width/4;
-            var y = Graphics.height/4;
+            var x = Graphics.width/2 - this.pkmnBoxSize[0] - 15;
+            var y = Graphics.height/4 - 50;
             for (var i = 0; i < 6;i++){
                 //make buttons;
                 var container = new PIXI.Container();
-                container.position.x = x-400;
-                container.position.y = y-125;
+                container.position.x = x;
+                container.position.y = y - this.pkmnBoxSize[1]/2;
+                container.interactive = true;
+                container.buttonMode = true;
+                container.hitArea = new PIXI.Rectangle(0, 0, this.pkmnBoxSize[0], this.pkmnBoxSize[1]);
+                container.pokemonNumber = i+1;
 
-                if (x == Graphics.width/4){
-                    x = Graphics.width*0.75;
+                var mDownFunc = function(e){
+                    if (Game.pkmnSwapChange){return;}
+                    Game.pkmnSelected = e.currentTarget;
+                }
+                container.on('pointerdown', mDownFunc);
+
+                var mOverFunc = function(e){
+                    if (Game.pkmnSwapChange){return;}
+                    Game.pkmnCurrentlyMousedOver = e.currentTarget;
+                }
+                container.on('pointerover', mOverFunc);
+                container.on('pointermove', mOverFunc);
+
+
+                var mOutFunc = function(e){
+                    Game.pkmnCurrentlyMousedOver = null;
+                }
+                container.on('pointerout', mOutFunc);
+
+                var mUpFunc = function(e){
+                    if (Game.pkmnSwapChange || !Game.pkmnSelected || !Game.pkmnCurrentlyMousedOver){return;}
+                    Acorn.Sound.play('menu');
+                    Game.pokemonUI.removeChild(Game.pkmnSelected);
+                    Game.pokemonUI.removeChild(Game.pkmnCurrentlyMousedOver);
+                    Game.pokemonUI.addChild(Game.pkmnSelected);
+                    Game.pokemonUI.addChild(Game.pkmnCurrentlyMousedOver);
+                    Game.pkmnSwapData = {
+                        first: Game.pkmnSelected.pokemonNumber,
+                        second: Game.pkmnCurrentlyMousedOver.pokemonNumber,
+                        firstStart: {
+                            x: Game.pkmnSelected.position.x,
+                            y: Game.pkmnSelected.position.y,
+                        },
+                        secondStart: {
+                            x: Game.pkmnCurrentlyMousedOver.position.x,
+                            y: Game.pkmnCurrentlyMousedOver.position.y,
+                        }
+                    };
+                    Game.pkmnSwapChange = true;
+                    Game.pkmnSwapTicker = 0;
+                }
+                container.on('pointerupoutside', mUpFunc);
+                container.on('touchendoutside', mUpFunc);
+
+                if (x == Graphics.width/2 - this.pkmnBoxSize[0] - 15){
+                    x = Graphics.width/2 + 15;
                 }else{
-                    x = Graphics.width/4;
-                    y += Graphics.height/4;
+                    x = Graphics.width/2 - this.pkmnBoxSize[0] - 15;
+                    y += (Graphics.height/4 + 50);
                 }
                 this.pokemonUIContainers[i+1] = container;
                 this.pokemonUI.addChild(container);
@@ -359,8 +480,8 @@
             this.pokemonUI.position.y = Graphics.height*((1-this.UI_OFFSETSCALE)/2);
         },
         resetPokemon: function(slot){
-            var xSize = 800;
-            var ySize = 250;
+            var xSize = this.pkmnBoxSize[0];
+            var ySize = this.pkmnBoxSize[1];
             if (typeof Party.pokemon[slot] == 'undefined'){
                 return;
             }
@@ -406,12 +527,23 @@
             sprites.addChild(c.lvlText);
             //EXP Display
 
+            //Types Display
+            c.type1Text = new PIXI.Text(this.typeList[pokemon.types[0]],AcornSetup.style2);
+            c.type1Text.position.x = c.pokeSprite.position.x + c.pokeSprite.width + 10;
+            c.type1Text.position.y = c.pokeSprite.position.y;
+            sprites.addChild(c.type1Text);
+            if (pokemon.types.length > 1){
+                c.type2Text = new PIXI.Text(this.typeList[pokemon.types[1]],AcornSetup.style2);
+                c.type2Text.position.x = c.pokeSprite.position.x + c.pokeSprite.width + 10;
+                c.type2Text.position.y = c.pokeSprite.position.y + c.type1Text.height + 5;
+                sprites.addChild(c.type2Text);
+            }
             //HP Display
             c.hpText = new PIXI.Text("HP: " + pokemon.currentHP + '/' + pokemon.hp,AcornSetup.style2);
             c.hpText.anchor.x = 0.0;
-            c.hpText.anchor.y = 0.5;
+            c.hpText.anchor.y = 1;
             c.hpText.position.x = c.pokeSprite.position.x + c.pokeSprite.width + 10;
-            c.hpText.position.y = c.lvlText.position.y;
+            c.hpText.position.y = c.pokeSprite.position.y + c.pokeSprite.height - 5;
             sprites.addChild(c.hpText);
             //set HP bar prims
             if (pokemon.currentHP != pokemon.hp){
@@ -433,6 +565,96 @@
                 gfx.endFill();
             }
             //Other Stats
+            var atk = new PIXI.Text("ATTACK: ", AcornSetup.style2);
+            atk.position.x = c.pokeSprite.position.x;
+            atk.position.y = c.pokeSprite.position.y +  c.pokeSprite.height + 30;
+            sprites.addChild(atk);
+            c.attack = new PIXI.Text(pokemon.attack, AcornSetup.style2);
+            c.attack.anchor.x = 1.0;
+            c.attack.position.x = c.pokeSprite.position.x + xSize/3;
+            c.attack.position.y = c.pokeSprite.position.y +  c.pokeSprite.height + 30;
+            sprites.addChild(c.attack);
+
+            var def = new PIXI.Text("DEFENSE: ", AcornSetup.style2);
+            def.position.x = c.pokeSprite.position.x;
+            def.position.y = atk.position.y + atk.height + 5;
+            sprites.addChild(def);
+            c.defense = new PIXI.Text(pokemon.defense, AcornSetup.style2);
+            c.defense.anchor.x = 1.0;
+            c.defense.position.x = c.pokeSprite.position.x + xSize/3;
+            c.defense.position.y = atk.position.y + atk.height + 5;
+            sprites.addChild(c.defense);
+
+            var spatk = new PIXI.Text("SP. ATTACK: ", AcornSetup.style2);
+            spatk.position.x = c.pokeSprite.position.x;
+            spatk.position.y = def.position.y + def.height + 5;
+            sprites.addChild(spatk);
+            c.spattack = new PIXI.Text(pokemon.spattack, AcornSetup.style2);
+            c.spattack.anchor.x = 1.0;
+            c.spattack.position.x = c.pokeSprite.position.x + xSize/3;
+            c.spattack.position.y = def.position.y + def.height + 5;
+            sprites.addChild(c.spattack);
+
+            var spdef = new PIXI.Text("SP. DEFENSE: ", AcornSetup.style2);
+            spdef.position.x = c.pokeSprite.position.x;
+            spdef.position.y = spatk.position.y + spatk.height + 5;
+            sprites.addChild(spdef);
+            c.spdefense = new PIXI.Text(pokemon.spdefense, AcornSetup.style2);
+            c.spdefense.anchor.x = 1.0;
+            c.spdefense.position.x = c.pokeSprite.position.x + xSize/3;
+            c.spdefense.position.y = spatk.position.y + spatk.height + 5;
+            sprites.addChild(c.spdefense);
+
+            var spd = new PIXI.Text("SPEED: ", AcornSetup.style2);
+            spd.position.x = c.pokeSprite.position.x;
+            spd.position.y = spdef.position.y + spdef.height + 5;
+            sprites.addChild(spd);
+            c.speed = new PIXI.Text(pokemon.speed, AcornSetup.style2);
+            c.speed.anchor.x = 1.0;
+            c.speed.position.x = c.pokeSprite.position.x + xSize/3;
+            c.speed.position.y = spdef.position.y + spdef.height + 5;
+            sprites.addChild(c.speed);
+
+
+            var startX = c.pokeSprite.position.x + xSize/3 + 10;
+            var startY = c.pokeSprite.position.y + c.pokeSprite.height + 5;
+            var mSizeX = xSize/3.3;
+            var mSizeY = ySize/4;
+
+            for (var i = 0; i < pokemon.moves.length;i++){
+                var move = pokemon.moves[i];
+                gfx.lineStyle(3,0x000000,1);
+                gfx.beginFill(0xFFFFFF,1);
+                var x = startX;
+                var y = startY;
+                if (i > 1){
+                    y = startY + mSizeY + 5;
+                }
+                if (i%2 == 1){
+                    x = (startX + mSizeX + 5);
+                }
+                gfx.drawRoundedRect(x,y,mSizeX,mSizeY,5);
+                gfx.endFill();
+
+                var name = new PIXI.Text(move.name,AcornSetup.style2);
+                var pp = new PIXI.Text('PP: ' + pokemon.currentPP[i] + '/' + move.pp,AcornSetup.style2);
+                var type = new PIXI.Text(this.typeList[move.type],AcornSetup.style2);
+                name.anchor.x = 0.5;
+                pp.anchor.x = 0.5;
+                type.anchor.x = 0.5;
+
+                name.position.x = x + mSizeX/2;
+                pp.position.x = x + mSizeX/2;
+                type.position.x = x + mSizeX/2;
+
+                name.position.y = y + 5;
+                pp.position.y = y + name.height + 5;
+                type.position.y = y + name.height + 5 + pp.height + 5;
+
+                sprites.addChild(name);
+                sprites.addChild(pp);
+                sprites.addChild(type);
+            }
 
         },
         initCharUI: function(){

@@ -121,7 +121,7 @@ Character.prototype.init = function(data) {
     this.pokedex = data.pokedex;
     //init pokemon
     this.party = [];
-    var pkmn = [1,4,7];
+    var pkmn = [1,4,7,3,6,9];
     for (var i = 0; i < pkmn.length;i++){
         var newPoke = new Pokemon();
         newPoke.init(this.owner.gameEngine.pokemon[pkmn[i]],{
@@ -134,7 +134,24 @@ Character.prototype.init = function(data) {
     //init pc stuff
     //init inventory
 };
-
+Character.prototype.swapPkmn = function(data){
+    if (typeof data.first == 'number' && typeof data.second == 'number'){
+        if (data.first < 1 || data.second < 1){
+            //TODO THROW ERROR
+            console.log("error - cant be less than 1");
+            return;
+        }
+        if (data.first > this.party.length || data.second > this.party.length){
+            //TODO THROW ERROR
+            console.log("error - cant be > party length");
+            return;
+        }
+        var temp = this.party[data.first];
+        this.party[data.first] = this.party[data.second];
+        this.party[data.second] = temp;
+        console.log("swapped")
+    }
+};
 Character.prototype.addPokemon = function(p){
     if (this.party.length < this.MAX_POKEMON){
         this.party.push(p);

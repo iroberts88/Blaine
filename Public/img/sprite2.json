@@ -4218,11 +4218,11 @@
 },
 "ow_ethan_u1.png":
 {
-	"frame": {"x":78,"y":1812,"w":16,"h":17},
+	"frame": {"x":78,"y":1812,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":17},
-	"sourceSize": {"w":16,"h":17}
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
 },
 "ow_ethan_u2.png":
 {

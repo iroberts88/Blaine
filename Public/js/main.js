@@ -13,7 +13,6 @@ var requestAnimFrame = (function(){
         };
 })();
 
-
 var mainObj = this;
 mainObj.playerId = 'none';
 

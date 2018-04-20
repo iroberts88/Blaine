@@ -11,6 +11,8 @@ var Pokemon = function(){
     this.attributeIndex = {};
     this.slot = null;
 
+    this.moves = null;
+
     this.hp = null;
     this.attack = null;
     this.spattack = null;
@@ -43,6 +45,13 @@ var Pokemon = function(){
     //this.sex = null;
 
     this.currentHP = null;
+
+    this.currentPP = {
+        '0': 0,
+        '1': 0,
+        '2': 0,
+        '3': 0
+    }
 }
 
 Pokemon.prototype.reset = function(){
@@ -57,7 +66,13 @@ Pokemon.prototype.getMoves = function(options){
             //add them
             for (var j = 0; j < this.gameEngine.pokemon[this.number].moveList[i].length;j++){
                 if (this.moves.length < this.MAX_ATTACKS){
-                    this.moves.push(this.gameEngine.pokemon[this.number].moveList[i][j].moveid);
+                    if (typeof this.gameEngine.attacks[this.gameEngine.pokemon[this.number].moveList[i][j].moveid] == 'undefined'){
+                        //MOVE DOESNT EXIST
+                        console.log('Move with id "'+ this.gameEngine.pokemon[this.number].moveList[i][j].moveid + '" doesn\'t exist');
+                    }else{
+                        this.moves.push(this.gameEngine.attacks[this.gameEngine.pokemon[this.number].moveList[i][j].moveid]);
+                        this.currentPP[this.moves.length-1] = this.gameEngine.attacks[this.gameEngine.pokemon[this.number].moveList[i][j].moveid].pp
+                    }
                 }else{
                     return;
                 }
@@ -76,7 +91,7 @@ Pokemon.prototype.init = function(base,data) {
 
     this.number = base.number;
     this.name = base.name;
-    this.type = base.type; //list of types
+    this.types = base.types; //list of types
 
     this.affection = (typeof data.affection == 'undefined') ? 0 : data.affection;
     this.critChance = (typeof data.critChance == 'undefined') ? 0 : data.critChance;
@@ -86,7 +101,9 @@ Pokemon.prototype.init = function(base,data) {
     if (typeof data.moves == 'undefined'){
         this.getMoves();
     }else{
-        this.moves = data.moves;
+        for (var j = 0; j < data.moves.length;j++){
+            this.moves.push(this.gameEngine.attacks[data.moves[j]]);
+        }
     }
 
     this.hpIV = (typeof data.hpIV == 'undefined') ? Math.ceil(Math.random()*this.MAX_IV_VALUE) : data.hpIV;
@@ -113,7 +130,7 @@ Pokemon.prototype.init = function(base,data) {
         'min': 0,
         'max': 9999,
         formula: function(){
-            var val = (((((this.base + this.pokemon.hpIV) * 2) + Math.sqrt(this.pokemon.hpEV)/4)*this.pokemon.level)/100) + this.pokemon.level + 10;
+            var val = (((this.base * 2 + this.pokemon.hpIV + Math.sqrt(this.pokemon.hpEV)/4))*this.pokemon.level)/100 + this.pokemon.level + 10;
             return Math.ceil((val*this.pMod)+this.nMod);
         }
     });
@@ -126,7 +143,7 @@ Pokemon.prototype.init = function(base,data) {
         'min': 0,
         'max': 9999,
         formula: function(){
-            var val = (((((this.base + this.pokemon.speedIV) * 2) + Math.sqrt(this.pokemon.speedEV)/4)*this.pokemon.level)/100) + 5;
+            var val = (((this.base * 2 + this.pokemon.speedIV + Math.sqrt(this.pokemon.speedEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
         }
     });
@@ -139,7 +156,7 @@ Pokemon.prototype.init = function(base,data) {
         'min': 0,
         'max': 9999,
         formula: function(){
-            var val = (((((this.base + this.pokemon.attackIV) * 2) + Math.sqrt(this.pokemon.attackEV)/4)*this.pokemon.level)/100) + 5;
+            var val = (((this.base * 2 + this.pokemon.attackIV + Math.sqrt(this.pokemon.attackEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
         }
     });
@@ -152,7 +169,7 @@ Pokemon.prototype.init = function(base,data) {
         'min': 0,
         'max': 9999,
         formula: function(){
-            var val = (((((this.base + this.pokemon.spattackIV) * 2) + Math.sqrt(this.pokemon.spattackEV)/4)*this.pokemon.level)/100) + 5;
+            var val = (((this.base * 2 + this.pokemon.spattackIV + Math.sqrt(this.pokemon.spattackEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
         }
     });
@@ -165,7 +182,7 @@ Pokemon.prototype.init = function(base,data) {
         'min': 0,
         'max': 9999,
         formula: function(){
-            var val = (((((this.base + this.pokemon.defenseIV) * 2) + Math.sqrt(this.pokemon.defenseEV)/4)*this.pokemon.level)/100) + 5;
+            var val = (((this.base * 2 + this.pokemon.defenseIV + Math.sqrt(this.pokemon.defenseEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
         }
     });
@@ -178,7 +195,7 @@ Pokemon.prototype.init = function(base,data) {
         'min': 0,
         'max': 9999,
         formula: function(){
-            var val = (((((this.base + this.pokemon.spdefenseIV) * 2) + Math.sqrt(this.pokemon.spdefenseEV)/4)*this.pokemon.level)/100) + 5;
+            var val = (((this.base * 2 + this.pokemon.spdefenseIV + Math.sqrt(this.pokemon.spdefenseEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
         }
     });
@@ -215,18 +232,19 @@ Pokemon.prototype.getClientData = function(){
     data.nickname = this.nickname;
     data.number = this.number;
     data.level = this.level;
-    data.type = this.type;
+    data.types = this.types;
     data.moves = this.moves;
     data.id = this.id;
     data.exp = this.exp;
     data.currentHP = this.currentHP;
+    data.currentPP = this.currentPP;
     data.slot = this.slot;
-    /*data.hpIV = this.hpIV;
+    data.hpIV = this.hpIV;
     data.speedIV = this.speedIV;
     data.attackIV = this.attackIV;
     data.defenseIV = this.defenseIV;
     data.spattackIV = this.spattackIV;
-    data.spdefenseIV = this.spdefenseIV;*/
+    data.spdefenseIV = this.spdefenseIV;
     return data;
 }
 

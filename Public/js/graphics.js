@@ -31,6 +31,7 @@
             this.buttonCD = 0;
             //create the PIXI stage
             this.app = new PIXI.Application(this.width, this.height, {backgroundColor: 0xD2D2D2});
+            this.app.renderer.plugins.interaction.moveWhenInside = true;
             this.filtersToApply = [];
 
             this.resourceList = [];
