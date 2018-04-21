@@ -54,8 +54,11 @@
             POKEDEX: 6,
             POKEMON: 7,
             INTERACT: 8,
-            CANCEL: 9
-
+            CANCEL: 9,
+            ENTER: 10,
+            COMMAND: 11,
+            SPACE: 12,
+            TALK: 13
         },
         keysPressed: [],
         keyBindings: [],
@@ -95,12 +98,16 @@
             this.keyBindings[81] = Acorn.Input.Key.POKEMON; //Q
             this.keyBindings[69] = Acorn.Input.Key.INTERACT; //E
             this.keyBindings[27] = Acorn.Input.Key.CANCEL; //ESC
+            this.keyBindings[13] = Acorn.Input.Key.ENTER; //RETURN
+            this.keyBindings[191] = Acorn.Input.Key.COMMAND; //F SLASH
+            this.keyBindings[32] = Acorn.Input.Key.SPACE; //SPACE
+            this.keyBindings[84] = Acorn.Input.Key.TALK; //T
         },
         getBinding: function(keyCode) {
             return this.keyBindings[keyCode];
         },
         keyDown: function(keyCode) {
-            //console.log(keyCode);
+            console.log(keyCode);
             this.keysPressed[this.getBinding(keyCode)] = true;
         },
         keyUp: function(keyCode) {

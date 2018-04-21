@@ -67,6 +67,7 @@
             'FAIRY'
         ],
 
+        chatActive: false,
 
         init: function() {
             this.initUIButtons();
@@ -76,6 +77,48 @@
             this.initPkmnUI();
             this.initCharUI();
             this.initSetUI();
+
+            //init chat UI
+
+            this.chat = document.createElement( 'input' );
+            this.chat.id = 'chat';
+            this.chat.type = 'text';
+            this.chat.placeholder = 'chat';
+            this.chat.maxlength = 64;
+            this.chat.style.cssText = 'border-width:1px;border-style:solid;width:400px;height:48px;top:100%;left:0px;background-color:#DCDCDC;font-weight:bold;font-size: 18px;font-family:Pokemon;position:absolute';
+            this.chat.style.display = 'inline-block';
+            this.chat.style.transform = ' translate(2%,-105%)';
+
+            var text = new PIXI.Text('T',AcornSetup.style2);
+            text.position.x = 5;
+            text.position.y = 5;
+            text.style.fontSize = 48;
+            var gfx = new PIXI.Graphics()
+            var cont = new PIXI.Container();
+
+            gfx.lineStyle(2,0xDCDCDC,0.8);
+            gfx.beginFill(0xDCDCDC,0.8);
+            gfx.drawRoundedRect(0,0,5+text.width,5+text.height,10);
+            gfx.endFill();
+            cont.addChild(gfx);
+            cont.addChild(text);
+            var texture = PIXI.RenderTexture.create(5+text.width,5+text.height);
+            var renderer = new PIXI.CanvasRenderer();
+            Graphics.app.renderer.render(cont,texture);
+
+            this.chatButton = Graphics.makeUiElement({
+                texture: texture,
+                anchor: [0,1],
+                position: [5,Graphics.height-5],
+                interactive: true,buttonMode: true,
+                clickFunc: function onClick(e){
+                    Graphics.uiContainer.removeChild(Game.chatButton);
+                    document.body.appendChild( Game.chat );
+                    Game.chat.focus();
+                    Game.chatActive = true;
+                }
+            })
+            Graphics.uiContainer.addChild(this.chatButton);
         },
 
         update: function(deltaTime){
@@ -87,7 +130,7 @@
             if (this.pkmnSwapChange){
                 this.updatePkmnSwapChange(deltaTime);
             }
-            if (!this.activeUI){
+            if (!this.activeUI && !this.chatActive){
                 if (Acorn.Input.isPressed(Acorn.Input.Key.UP)){
                     Player.move(0,-1);
                 }else if (Acorn.Input.isPressed(Acorn.Input.Key.DOWN)){
@@ -99,6 +142,34 @@
                 }
                 //update the player
                 Player.update(deltaTime);
+                if (Acorn.Input.isPressed(Acorn.Input.Key.COMMAND)){
+                    this.chat.value = '/';
+                    Graphics.uiContainer.removeChild(Game.chatButton);
+                    document.body.appendChild( Game.chat );
+                    Game.chat.focus();
+                    Game.chatActive = true;
+                }
+                if (Acorn.Input.isPressed(Acorn.Input.Key.TALK)){
+                    this.chat.value = '';
+                    Graphics.uiContainer.removeChild(Game.chatButton);
+                    document.body.appendChild( Game.chat );
+                    Game.chat.focus();
+                    Game.chatActive = true;
+                }
+            }
+            if (this.chatActive){
+                if (Acorn.Input.isPressed(Acorn.Input.Key.ENTER)){
+                    Acorn.Net.socket_.emit('clientCommand',{cString: this.chat.value})
+                    this.chat.value = '';
+                    this.clearUI();
+                }
+                if (Acorn.Input.isPressed(Acorn.Input.Key.SPACE)){
+                    this.chat.value += ' ';
+                    Acorn.Input.setValue(Acorn.Input.Key.SPACE,false)
+                }
+                if (document.activeElement != this.chat){
+                    this.clearUI();
+                }
             }
             if (Acorn.Input.isPressed(Acorn.Input.Key.CANCEL)){
                 this.clearUI();
@@ -228,13 +299,22 @@
         removePC: function(data){
             try{
                 var pc = Game.pcs[data.id];
+                pc.remove = true;
+            }catch(e){
+                //TODO remove trycatch
+            }
+        },
+
+        _removePC: function(data){
+            try{
+                var pc = Game.pcs[data.id];
                 Graphics.worldContainer.removeChild(pc.sprite);
                 Graphics.worldContainer.removeChild(pc.sprite2);
                 Graphics.worldContainer.removeChild(pc.nameTag);
                 Graphics.worldContainer.removeChild(pc.playerMask);
                 delete Game.pcs[data.id];
             }catch(e){
-
+                //TODO remove trycatch
             }
         },
 
@@ -710,6 +790,12 @@
         clearUI: function(){
             if (this.activeUI){
                 Graphics.ui.removeChild(this.activeUI);
+            }
+            if (this.chatActive){
+                document.body.removeChild(this.chat);
+                Graphics.uiContainer.addChild(this.chatButton);
+                this.chatActive = false;
+                this.chat.value = '';
             }
             this.activeUI = null;
         },

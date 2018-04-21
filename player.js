@@ -23,13 +23,12 @@ var directions = {
 
 var Player = function(){
     this.gameEngine = null;
+    this.battle = null;
     this.user = null;
     this.id = null;
     this.ready = null;
     this.character = null;
 };
-
-
 
 Player.prototype.init = function (data) {
     //init player specific variables
@@ -111,9 +110,9 @@ Player.prototype.setupSocket = function() {
                             //data.currentSector = '0x0';
                             //data.currentTile = [5,5];
                             //data.currentMap = 'pallet';
-                            data.currentSector = '0x-3';
-                            data.currentTile = [14,9];
-                            data.currentMap = 'pallet';
+                            data.currentSector = '0x0';
+                            data.currentTile = [9,12];
+                            data.currentMap = 'pallet_house1_floor2';
                             data.music = 'pallet';
                             char.init(data);
                             that.startGame(char);
@@ -226,12 +225,39 @@ Player.prototype.setupSocket = function() {
 
 
     this.socket.on('clientCommand', function(data) {
-        // this needs to be parsed: data.command
+        // this needs to be parsed: data.cString
         // format: >COMMAND ID AMOUNT
         //commands:
+        if (data.cString.length > 64){
+            return;
+        }
         try{
+            if (data.cString.charAt(0) != '/'){
+                //its a SAY command
+                //TODO implement that shit
+                console.log('Say: ' + data.cString);
+                var players = [];
+                //send a move command to all players in adjacent sectors
+                var zone = that.gameEngine.zones[that.character.currentMap];
+                var coords = zone.getSectorXY(that.character.currentSector);
+                for (var i = -1;i < 2;i++){
+                    for (var j = -1;j < 2;j++){
+                        try{
+                            for (var pl in zone.map[(coords.x+i) + 'x' + (coords.y+j)].players){
+                                var player = zone.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
+                                if (player.id != that.id){
+                                    that.gameEngine.queuePlayer(player,"say", {id: that.id,text: data.cString});
+                                }
+                            }
+                        }catch(e){
+                            that.gameEngine.debug(that,{id: 'chatAttempt', error: e.stack});
+                        }
+                    }
+                }
+                return;
+            }
             var commandBool = false;
-            var c = data.command;
+            var c = data.cString.substring(1,data.cString.length);
             var commands = [];
             var from = 0;
             for (var i = 0; i < c.length; i++){
@@ -241,8 +267,11 @@ Player.prototype.setupSocket = function() {
                 }
             }
             commands.push(c.substring(from,c.length));
+            console.log(commands);
             switch (commands[0]){
-               
+                case 'battle':
+                    console.log("Start BAttle");
+                    break;
             }
         }catch(e){
             console.log(e);

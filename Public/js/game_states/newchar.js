@@ -25,7 +25,7 @@
 
             this.nameText = new PIXI.Text('Please tell me your name: ',AcornSetup.style2);
             this.nameText.position.x = Graphics.width*0.75;
-            this.nameText.position.y = 25;
+            this.nameText.position.y = this.oak.position.y + this.oak.height/2;
             this.nameText.anchor.y = 0.5;
             this.nameText.anchor.x = 0.5;
             Graphics.uiContainer.addChild(this.nameText);

@@ -125,6 +125,10 @@
                 Acorn.changeState('mainmenu');
             });
 
+            Acorn.Net.on('say', function (data) {
+                Game.pcs[data.id].setSayBubble(data.text);
+            });
+
             //Player Character Functions
 
             Acorn.Net.on('addPC', function (data) {

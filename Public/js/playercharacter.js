@@ -15,6 +15,12 @@
         this.moveQueue = [];
 
         this.nameDistance = mainObj.TILE_SIZE-2;
+
+        this.remove = false;
+
+        this.sayBubble = null;
+        this.sayBubbleTicker = 0;
+        this.sayBubbleDuration = 5.0;
     }
 
     PlayerCharacter.prototype.init = function(data){
@@ -108,6 +114,10 @@
 
     PlayerCharacter.prototype.update = function(dt){
         this.animate(dt);
+
+        if (this.remove && this.moveQueue.length == 0){
+            Game._removePC({id:this.id});
+        }
         if (this.moving){
             this.moveTicker += dt;
             if (this.moveTicker >= this.SPEED){
@@ -151,8 +161,52 @@
                 this.move(this.moveQueue[0].x,this.moveQueue[0].y);
             }
         }
-    };
 
+        if (this.sayBubble){
+            this.sayBubble.position.x = this.sprite.position.x;
+            this.sayBubble.position.y = this.nameTag.position.y - 15;
+            this.sayBubbleTicker += dt;
+            if (this.sayBubbleTicker >= this.sayBubbleDuration){
+                Graphics.worldContainer.removeChild(this.sayBubble);
+                this.sayBubble = null;
+            }
+        }
+    };
+    PlayerCharacter.prototype.setSayBubble = function(text){
+        if (this.sayBubble){
+            Graphics.worldContainer.removeChild(this.sayBubble);
+            this.sayBubble = null;
+        }
+        var t = new PIXI.Text(this.name + ': ' + text,{
+            font: '16px Pokemon',
+            fill: 'black',
+            align: 'left',
+            wordWrap: true,
+            wordWrapWidth: 300
+        });
+        var padding = 10;
+        t.position.x = padding;
+        t.position.y = padding;
+        var gfx = new PIXI.Graphics();
+        gfx.lineStyle(4,0x000000,1);
+        gfx.beginFill(0xDCDCDC,1)
+        gfx.drawRoundedRect(0,0,t.width + padding*2,t.height + padding*2,10);
+        gfx.endFill();
+        var cont = new PIXI.Container();
+        cont.addChild(gfx);
+        cont.addChild(t);
+        var texture = PIXI.RenderTexture.create(t.width + padding*2,5+t.height + padding*2);
+        var renderer = new PIXI.CanvasRenderer();
+        Graphics.app.renderer.render(cont,texture);
+
+        this.sayBubble = Graphics.makeUiElement({
+            texture: texture,
+            anchor: [0.5,1],
+            position: [this.sprite.position.x,this.nameTag.position.y - 15]
+        })
+        Graphics.worldContainer.addChild(this.sayBubble);
+        this.sayBubbleTicker = 0;
+    };
     PlayerCharacter.prototype.animate = function(dt){
         var aI = this.animateInfo;
         if (this.moving){
