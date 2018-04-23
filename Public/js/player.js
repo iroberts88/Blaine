@@ -14,6 +14,9 @@
 
         bumpcd: 0.35,
         bumpTicker: 0,
+        sayBubble: null,
+        sayBubbleTicker: 0,
+        sayBubbleDuration: 5.0,
 
         init: function(data){
         	userData = data;
@@ -225,6 +228,15 @@
                     this.playerMask.position.y = this.character.sprite.position.y - mainObj.TILE_SIZE/2;
                 }
             }
+            if (this.sayBubble){
+                this.sayBubble.position.x = this.character.sprite.position.x;
+                this.sayBubble.position.y = this.character.sprite.position.y - 25;
+                this.sayBubbleTicker += dt;
+                if (this.sayBubbleTicker >= this.sayBubbleDuration){
+                    Graphics.worldContainer.removeChild(this.sayBubble);
+                    this.sayBubble = null;
+                }
+            }
         },
         animate: function(dt){
             var dir = 'none'
@@ -305,6 +317,41 @@
                     }
                 }
             }
+        },
+        setSayBubble: function(text){
+            if (this.sayBubble){
+                Graphics.worldContainer.removeChild(this.sayBubble);
+                this.sayBubble = null;
+            }
+            var t = new PIXI.Text(text,{
+                font: '16px Pokemon',
+                fill: 'black',
+                align: 'left',
+                wordWrap: true,
+                wordWrapWidth: 300
+            });
+            var padding = 10;
+            t.position.x = padding;
+            t.position.y = padding;
+            var gfx = new PIXI.Graphics();
+            gfx.lineStyle(4,0x000000,1);
+            gfx.beginFill(0xDCDCDC,1)
+            gfx.drawRoundedRect(0,0,t.width + padding*2,t.height + padding*2,10);
+            gfx.endFill();
+            var cont = new PIXI.Container();
+            cont.addChild(gfx);
+            cont.addChild(t);
+            var texture = PIXI.RenderTexture.create(t.width + padding*2,5+t.height + padding*2);
+            var renderer = new PIXI.CanvasRenderer();
+            Graphics.app.renderer.render(cont,texture);
+
+            this.sayBubble = Graphics.makeUiElement({
+                texture: texture,
+                anchor: [0.5,1],
+                position: [this.character.sprite.position.x,this.character.sprite.position.y - 25]
+            })
+            Graphics.worldContainer.addChild(this.sayBubble);
+            this.sayBubbleTicker = 0;
         }
        
     }

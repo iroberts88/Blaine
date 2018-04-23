@@ -126,7 +126,11 @@
             });
 
             Acorn.Net.on('say', function (data) {
-                Game.pcs[data.id].setSayBubble(data.text);
+                if (data.id == mainObj.id){
+                    Player.setSayBubble(data.text);
+                }else{
+                    Game.pcs[data.id].setSayBubble(data.text);
+                }
             });
 
             //Player Character Functions

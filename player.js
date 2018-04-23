@@ -245,9 +245,7 @@ Player.prototype.setupSocket = function() {
                         try{
                             for (var pl in zone.map[(coords.x+i) + 'x' + (coords.y+j)].players){
                                 var player = zone.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
-                                if (player.id != that.id){
-                                    that.gameEngine.queuePlayer(player,"say", {id: that.id,text: data.cString});
-                                }
+                                that.gameEngine.queuePlayer(player,"say", {id: that.id,text: data.cString});
                             }
                         }catch(e){
                             that.gameEngine.debug(that,{id: 'chatAttempt', error: e.stack});
