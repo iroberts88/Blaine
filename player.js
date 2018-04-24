@@ -4,6 +4,8 @@
 var User = require('./user.js').User,
     Character = require('./character.js').Character,
     Zone = require('./zone.js').Zone,
+    Battle = require('./battle.js').Battle,
+    Trainer = require('./trainer.js').Trainer,
     Triggers = require('./triggers.js').Triggers;
 
 const crypto = require('crypto');
@@ -28,6 +30,8 @@ var Player = function(){
     this.id = null;
     this.ready = null;
     this.character = null;
+
+    this.battle = null;
 };
 
 Player.prototype.init = function (data) {
@@ -74,7 +78,6 @@ Player.prototype.setGameEngine = function(ge){
     this.gameEngine = ge;
     this.id = ge.getId();
 };
-
 Player.prototype.setupSocket = function() {
 
     // On playerUpdate event
@@ -82,43 +85,38 @@ Player.prototype.setupSocket = function() {
 
     this.socket.on('playerUpdate', function (data) {
         try{
+            if (that.battle != null){
+                //player updates during an active battle are ignored
+                return;
+            }
             switch(data.command){
                 case 'logout':
-                    try{
-                        that.gameEngine.playerLogout(that);
-                        that.gameEngine.queuePlayer(that,'logout', {});
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'logoutError', error: e.stack});
-                    }
+                    that.gameEngine.playerLogout(that);
+                    that.gameEngine.queuePlayer(that,'logout', {});
                     break;
                 case 'swapPkmn':
                     that.character.swapPkmn(data);
                     break;
                 case 'newChar':
-                    try{
-                        console.log(data);
-                        if (data.slot < 1 || data.slot > 3){
-                            //TODO deal with bad char info
-                            break;
-                        }else{
-                            //create new character
-                            var char = new Character();
-                            data.owner = that;
-                            data.id = that.gameEngine.getId();
-                            data.money = 0;
-                            data.pokedex = {};
-                            //data.currentSector = '0x0';
-                            //data.currentTile = [5,5];
-                            //data.currentMap = 'pallet';
-                            data.currentSector = '0x0';
-                            data.currentTile = [9,12];
-                            data.currentMap = 'pallet_house1_floor2';
-                            data.music = 'pallet';
-                            char.init(data);
-                            that.startGame(char);
-                        }
-                    }catch(e){
-                        that.gameEngine.debug(that,{id: 'newCharError', error: e.stack});
+                    if (data.slot < 1 || data.slot > 3){
+                        //TODO deal with bad char info
+                        break;
+                    }else{
+                        //create new character
+                        var char = new Character();
+                        data.owner = that;
+                        data.id = that.gameEngine.getId();
+                        data.money = 0;
+                        data.pokedex = {};
+                        //data.currentSector = '0x0';
+                        //data.currentTile = [5,5];
+                        //data.currentMap = 'pallet';
+                        data.currentSector = '0x0';
+                        data.currentTile = [9,12];
+                        data.currentMap = 'pallet_house1_floor2';
+                        data.music = 'pallet';
+                        char.init(data);
+                        that.startGame(char);
                     }
                     break;
                 case 'moveAttempt':
@@ -174,7 +172,7 @@ Player.prototype.setupSocket = function() {
                             var coords2 = zone.getSectorXY(that.character.currentSector);
                             for (var i = -1;i < 2;i++){
                                 for (var j = -1;j < 2;j++){
-                                    try{
+                                    if (zone.map.hasOwnProperty((coords2.x+i) + 'x' + (coords2.y+j))){
                                         for (var pl in zone.map[(coords2.x+i) + 'x' + (coords2.y+j)].players){
                                             var player = zone.map[(coords2.x+i) + 'x' + (coords2.y+j)].players[pl];
                                             that.gameEngine.queuePlayer(player,'movePC',{
@@ -184,8 +182,6 @@ Player.prototype.setupSocket = function() {
                                                 start: [that.character.currentTile[0],that.character.currentTile[1]]
                                             })
                                         }
-                                    }catch(e){
-                                        that.gameEngine.debug(that,{id: 'moveAttempt', error: e.stack});
                                     }
                                 }
                             }
@@ -228,7 +224,7 @@ Player.prototype.setupSocket = function() {
         // this needs to be parsed: data.cString
         // format: >COMMAND ID AMOUNT
         //commands:
-        if (data.cString.length > 64){
+        if (data.cString.length > 128){
             return;
         }
         try{
@@ -268,7 +264,20 @@ Player.prototype.setupSocket = function() {
             console.log(commands);
             switch (commands[0]){
                 case 'battle':
-                    console.log("Start BAttle");
+                    console.log("Start Battle");
+                    var pokemon = [1];
+                    var levels = [Math.ceil(Math.random()*4)];
+
+                    var battle = new Battle(that.gameEngine);
+                    var pkmn = new Trainer(that.gameEngine);
+                    pkmn.init({wild: true,pokemon:pokemon,levels:levels});
+                    if (battle.init({team1: [that.character],team2: [pkmn],type: '1v1'})){
+                        console.log("Battle successfully initialized!!");
+                        that.battle = battle;
+                        that.gameEngine.activeBattles[battle.id] = battle;
+                        that.gameEngine.queuePlayer(that,"startBattle", {});
+
+                    }
                     break;
             }
         }catch(e){
@@ -293,6 +302,7 @@ Player.prototype.setupSocket = function() {
 
     
     this.socket.on('loginAttempt', function (d) {
+        if (that.user){return;}
         try{
             if (d.sn && d.pw){
                 d.sn = d.sn.toLowerCase();
@@ -338,6 +348,7 @@ Player.prototype.setupSocket = function() {
     });
     this.socket.on('guestLogin', function (d) {
         console.log(d);
+        if (that.user){return;}
         try{
             d.sn = d.sn.toLowerCase();
             var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
@@ -376,6 +387,7 @@ Player.prototype.setupSocket = function() {
     });
     this.socket.on('createUser', function (d) {
         console.log(d);
+        if (that.user){return;}
         try{
             d.sn = d.sn.toLowerCase();
             if (typeof that.gameEngine.users[d.sn] == 'undefined'){

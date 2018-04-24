@@ -56,6 +56,7 @@ var Pokemon = function(){
 
 Pokemon.prototype.reset = function(){
     //things that reset with each new battle?
+    //EACH STAT MOD???
 }
 
 Pokemon.prototype.getMoves = function(options){

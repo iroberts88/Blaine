@@ -30,6 +30,8 @@ var Character = function(){
     this.slot = null;
 
     this.currentMusic = null;
+
+    this.activePokemon = []; //a list of the currently active pokemon for use in a battle
 }
 
 Character.prototype.init = function(data) {
@@ -134,6 +136,14 @@ Character.prototype.init = function(data) {
     //init pc stuff
     //init inventory
 };
+
+Character.prototype.initBattle = function(n){
+    this.activePokemon = [];
+    for (var i = 0; i < n;i++){
+        this.activePokemon.push(this.party[i]);
+    }
+};
+
 Character.prototype.swapPkmn = function(data){
     if (typeof data.first == 'number' && typeof data.second == 'number'){
         if (data.first < 1 || data.second < 1){

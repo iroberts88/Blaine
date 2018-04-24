@@ -108,6 +108,11 @@
                 Game.mapsCache[data.name] = data.zoneData;
             });
 
+            Acorn.Net.on('startBattle', function (data) {
+                console.log('received battle data');
+                console.log(data);
+            });
+
             Acorn.Net.on('loggedIn', function (data) {
                 Player.init(data);
                 document.body.removeChild(MainMenu.mainPanel);

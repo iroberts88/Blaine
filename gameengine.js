@@ -20,11 +20,13 @@ var GameEngine = function() {
     //database objects
     this.mapids = [];
     this.mapCount = 0; //for checking if all maps have loaded before ready
+    this.pokemon = {};
+    this.attacks = {};
+
     this.zones = {};
     this.zoneUpdateList = {}; //a list of zones with active players
 
-    this.pokemon = {};
-    this.attacks = {};
+    this.activeBattles = {}; //active battles
 
     //variables for ID's
     this.idIterator = 0;
