@@ -36,7 +36,13 @@ var Battle = function(ge) {
     this.turn = 1;
     this.team1 = [];
     this.team2 = [];
-    this.spectators = {} //players watching this battle??
+    this.players = {}; //keep track of players the receive the data of each round
+
+    this.roundTime = 30.0; //round time in seconds
+    this.roundActive = false;
+    this.roundTicker = 0;
+
+    this.wild = null;
 }
 
 Battle.prototype.init = function (data) {
@@ -44,6 +50,8 @@ Battle.prototype.init = function (data) {
 
     //type defaults to 1v1
     this.type = (typeof data.type == 'undefined') ? '1v1' : data.type;
+
+    this.wild = (typeof data.wild == 'undefined') ? true : data.wild;
     //team 1 and 2 must be the same length AND of the player.character or trainer type
     if (!(data.team1.length == this.TeamLengths[data.type] && data.team2.length == this.TeamLengths[data.type])){
         console.log('Battle type "' + this.type + '" must have a team length of ' + this.TeamLengths[data.type] + '.');
@@ -55,16 +63,48 @@ Battle.prototype.init = function (data) {
             data.team2[i].initBattle(this.TeamLengths[data.type]);
             this.team1.push(data.team1[i]);
             this.team2.push(data.team2[i]);
+            if (data.team1[i] instanceof Character){
+                this.players[data.team1[i].owner.id] = data.team1[i].owner;
+            }
+            if (data.team2[i] instanceof Character){
+                this.players[data.team2[i].owner.id] = data.team2[i].owner;
+            }
         }else{
             console.log("Teams must consist of Characters or Trainers");
             return false;
         }
     }
     //Battle successfully initialized
+    //send down battle info to each player
+    var t1 = [];
+    var t2 = [];
+    for (var i = 0; i < this.team1.length;i++){
+        for (var j = 0; j < this.team1[i].activePokemon.length;j++){
+            t1.push(this.team1[i].activePokemon[j].getLessClientData());
+        }
+    }
+    for (var i = 0; i < this.team2.length;i++){
+        for (var j = 0; j < this.team2[i].activePokemon.length;j++){
+            t2.push(this.team2[i].activePokemon[j].getLessClientData());
+        }
+    }
+    for (var i in this.players){
+        this.gameEngine.queuePlayer(this.players[i],"startBattle", {wild: this.wild,type: this.type,team1: t1,team2: t2});
+    }
     return true;
 };
 
+Battle.prototype.tick = function(deltaTime){
+    if (this.roundActive){
+        this.roundTicker += deltaTime;
+    }
+};
+
 Battle.prototype.addSpectator = function(p){
+
+};
+
+Battle.prototype.removeSpectator = function(p){
 
 };
 

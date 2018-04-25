@@ -11,6 +11,7 @@ var Trainer = function(ge){
 
     this.id = null;
     this.name = null;
+    this.portrait = null;
 
     this.wild = false;
 

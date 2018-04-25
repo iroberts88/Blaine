@@ -275,8 +275,6 @@ Player.prototype.setupSocket = function() {
                         console.log("Battle successfully initialized!!");
                         that.battle = battle;
                         that.gameEngine.activeBattles[battle.id] = battle;
-                        that.gameEngine.queuePlayer(that,"startBattle", {});
-
                     }
                     break;
             }

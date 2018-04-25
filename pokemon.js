@@ -251,9 +251,12 @@ Pokemon.prototype.getClientData = function(){
 
 Pokemon.prototype.getLessClientData = function(){
     var data = {}
-
+    data.nickname = this.nickname;
+    data.number = this.number;
+    data.level = this.level;
+    data.id = this.id;
+    data.hpPercent = this.currentHP/this.hp.value;
     return data;
-
 }
 
 
