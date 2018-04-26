@@ -110,7 +110,20 @@
 
             Acorn.Net.on('startBattle', function (data) {
                 console.log('received battle data');
-                console.log(data);
+                Battle.battleData = data;
+                Game.battleChange = true;
+                Game.battleTicker = 0;
+                if (data.wild){
+                    Acorn.Sound.play('battle1');
+                }else{
+                    Acorn.Sound.play('battle2');
+                }
+                Acorn.Sound.fadeTicker = Acorn.Sound.fadeOver;
+                Graphics.uiPrimitives2.lineStyle(1,0xDCDCDC,1);
+                Graphics.uiPrimitives2.beginFill(0xDCDCDC,1);
+                Graphics.uiPrimitives2.drawRect(0,0,Graphics.width,Graphics.height);
+                Graphics.uiPrimitives2.endFill();
+                Graphics.uiPrimitives2.alpha = 0;
             });
 
             Acorn.Net.on('loggedIn', function (data) {
@@ -234,6 +247,17 @@
                 },
                 update: function(dt){
                     Game.update(dt);
+                }
+            });
+
+            Acorn.addState({
+                stateId: 'battle',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    Battle.init();
+                },
+                update: function(dt){
+                    Battle.update(dt);
                 }
             });
             

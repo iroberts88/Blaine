@@ -206,6 +206,8 @@
                 Acorn.Sound.addSound({url: 'sounds/music/8_oaklab.mp3', id: 'oaklab', volume: 70,type: 'music'});
                 Acorn.Sound.addSound({url: 'sounds/music/9_gym.mp3', id: 'gym', volume: 70,type: 'music'});
                 Acorn.Sound.addSound({url: 'sounds/music/10_road1.mp3', id: 'road1', volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/11_wild_battle.mp3', id: 'battle1', volume: 70,type: 'music'});
+                Acorn.Sound.addSound({url: 'sounds/music/12_trainer_battle.mp3', id: 'battle2', volume: 70,type: 'music'});
                 //sfx
                 Acorn.Sound.addSound({url: 'sounds/sfx/select.mp3', id: 'select', volume: 100});
                 Acorn.Sound.addSound({url: 'sounds/sfx/bump.mp3', id: 'bump', volume: 100});

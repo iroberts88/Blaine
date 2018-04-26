@@ -39,8 +39,6 @@
         characterButton: null,
         settingsButton: null,
 
-        activeUI: null,
-
         pkmnBoxSize: [800,300],
         pkmnSelected: null,
         pkmnCurrentlyMousedOver: null,
@@ -68,6 +66,10 @@
         ],
 
         chatActive: false,
+        uiActive: null,
+
+        battleChange: false,
+        battleTicker: 0,
 
         init: function() {
             this.initUIButtons();
@@ -127,10 +129,14 @@
                 this.updateScreenChange(deltaTime);
                 return;
             }
+            if (this.battleChange){
+                this.updateBattleChange(deltaTime);
+                return;
+            }
             if (this.pkmnSwapChange){
                 this.updatePkmnSwapChange(deltaTime);
             }
-            if (!this.activeUI && !this.chatActive){
+            if (!this.uiActive && !this.chatActive && !this.battleActive){
                 if (Acorn.Input.isPressed(Acorn.Input.Key.UP)){
                     Player.move(0,-1);
                 }else if (Acorn.Input.isPressed(Acorn.Input.Key.DOWN)){
@@ -179,7 +185,28 @@
                 this.pcs[i].update(deltaTime);
             }
         },
-        
+
+        updateBattleChange: function(deltaTime){
+            this.battleTicker += deltaTime;
+            if (this.battleTicker >= 2.6){
+                Graphics.uiPrimitives2.clear();
+                Graphics.uiPrimitives2.alpha = 1.0;
+                Acorn.changeState('battle');
+            }else{
+                var sChange = 0.1625;
+                var a;
+                var n = Math.floor(this.battleTicker/sChange) % 2;
+                console.log(n);
+                if (n){
+                    a = (sChange-(this.battleTicker % sChange)) / sChange;
+                }else{
+                    a = (this.battleTicker % sChange) / sChange;
+                }
+                console.log(a);
+                Graphics.uiPrimitives2.alpha = a;
+            }
+        },
+
         updateScreenChange: function(deltaTime){
             this.screenTicker += deltaTime;
             if (this.screenTicker > this.SCREEN_CHANGE_TIME && this.newMapData && typeof this.mapsCache[this.newMapData.map] != 'undefined'){
@@ -380,14 +407,14 @@
                 position: [(Graphics.width/2 - (padding*1.5) - bSize*1.5),bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
-                    if (Game.activeUI){
-                        Graphics.ui.removeChild(Game.activeUI);
+                    if (Game.uiActive){
+                        Graphics.ui.removeChild(Game.uiActive);
                         Acorn.Sound.play('select');
                     }else{
                         Acorn.Sound.play('menu');
                     }
                     Graphics.ui.addChild(Game.pokedexUI);
-                    Game.activeUI = Game.pokedexUI;
+                    Game.uiActive = Game.pokedexUI;
                 }
             });
             Graphics.uiContainer.addChild(this.pokedexButton);
@@ -397,14 +424,14 @@
                 position: [(Graphics.width/2 - padding/2 - bSize/2),bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
-                    if (Game.activeUI){
-                        Graphics.ui.removeChild(Game.activeUI);
+                    if (Game.uiActive){
+                        Graphics.ui.removeChild(Game.uiActive);
                         Acorn.Sound.play('select');
                     }else{
                         Acorn.Sound.play('menu');
                     }
                     Graphics.ui.addChild(Game.pokemonUI);
-                    Game.activeUI = Game.pokemonUI;
+                    Game.uiActive = Game.pokemonUI;
                 }
             });
             Graphics.uiContainer.addChild(this.pokemonButton);
@@ -414,14 +441,14 @@
                 position: [(Graphics.width/2 + padding/2 + bSize/2),bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
-                    if (Game.activeUI){
-                        Graphics.ui.removeChild(Game.activeUI);
+                    if (Game.uiActive){
+                        Graphics.ui.removeChild(Game.uiActive);
                         Acorn.Sound.play('select');
                     }else{
                         Acorn.Sound.play('menu');
                     }
                     Graphics.ui.addChild(Game.characterUI);
-                    Game.activeUI = Game.characterUI;
+                    Game.uiActive = Game.characterUI;
                 }
             });
             Graphics.uiContainer.addChild(this.characterButton);
@@ -431,14 +458,14 @@
                 position: [(Graphics.width/2 + (padding*1.5) + bSize*1.5),bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
-                    if (Game.activeUI){
-                        Graphics.ui.removeChild(Game.activeUI);
+                    if (Game.uiActive){
+                        Graphics.ui.removeChild(Game.uiActive);
                         Acorn.Sound.play('select');
                     }else{
                         Acorn.Sound.play('menu');
                     }
                     Graphics.ui.addChild(Game.settingsUI);
-                    Game.activeUI = Game.settingsUI;
+                    Game.uiActive = Game.settingsUI;
                 }
             });
             Graphics.uiContainer.addChild(this.settingsButton);
@@ -788,8 +815,8 @@
         },
 
         clearUI: function(){
-            if (this.activeUI){
-                Graphics.ui.removeChild(this.activeUI);
+            if (this.uiActive){
+                Graphics.ui.removeChild(this.uiActive);
             }
             if (this.chatActive){
                 document.body.removeChild(this.chat);
@@ -797,7 +824,7 @@
                 this.chatActive = false;
                 this.chat.value = '';
             }
-            this.activeUI = null;
+            this.uiActive = null;
         },
 
         getBoxTexture: function(){
