@@ -99,7 +99,7 @@
         },
         
         update: function(dt){
-            if (Acorn.Sound.currentMusic == 'newChar' && !this.prompted && soundManager.sounds['newChar'].playState == 1){
+            if (Acorn.Sound.currentMusic == 'newChar' && !this.prompted && Acorn.Sound.getSound('newChar')._sound.currentTime != 0){
                 Graphics.uiPrimitives2.clear();
                 document.body.appendChild(this.characterNameInput);
                 document.body.appendChild(this.okButton);

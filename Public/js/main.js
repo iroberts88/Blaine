@@ -101,7 +101,23 @@ $(function() {
 
     // Load Sounds
     Acorn.Sound.init();
-    
+    Acorn.Sound.addSound({url: 'sounds/music/1_opening.mp3', id: 'opening', volume: 0.7,type: 'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/3_newChar.mp3', id: 'newChar', volume: 0.7,type: 'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/4_pallet.mp3', id: 'pallet', volume: 0.7,type: 'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/5_road_to_veridian.mp3', id: 'roadToVeridian', volume: 0.7,type: 'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/6_pewter.mp3', id: 'pewter', volume: 0.7,type: 'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/7_pcenter.mp3', id: 'pcenter', volume: 0.7,type: 'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/8_oaklab.mp3', id: 'oaklab', volume: 0.7,type: 'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/9_gym.mp3', id: 'gym', volume: 0.7,type: 'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/10_road1.mp3', id: 'road1', volume: 0.7,type: 'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/11_wild_battle.mp3', id: 'battle1', volume: 0.7,type: 'music'});
+    Acorn.Sound.addSound({url: 'sounds/music/12_trainer_battle.mp3', id: 'battle2', volume: 0.7,type: 'music'});
+    //sfx
+    Acorn.Sound.addSound({url: 'sounds/sfx/select.mp3', id: 'select', volume: 1.0});
+    Acorn.Sound.addSound({url: 'sounds/sfx/bump.mp3', id: 'bump', volume: 1.0});
+    Acorn.Sound.addSound({url: 'sounds/sfx/exit.mp3', id: 'exit', volume: 1.0});
+    Acorn.Sound.addSound({url: 'sounds/sfx/enter.mp3', id: 'enter', volume: 1.0});
+    Acorn.Sound.addSound({url: 'sounds/sfx/menu.mp3', id: 'menu', volume: 1.0});
 });
 
 function setupSocket() {
@@ -111,7 +127,7 @@ function setupSocket() {
 }
 
 function checkReady() {
-    if(Graphics.resourcesReady && Acorn.Net.ready && Acorn.Sound.ready) {
+    if(Graphics.resourcesReady && Acorn.Net.ready) {
         console.log('Graphics/Net/Sound READY');
         init();
     } else {

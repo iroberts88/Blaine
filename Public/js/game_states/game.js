@@ -67,9 +67,13 @@
 
         chatActive: false,
         uiActive: null,
+        battleActive: false,
 
         battleChange: false,
         battleTicker: 0,
+
+        cMusic: null,
+        cMap: null,
 
         init: function() {
             this.initUIButtons();
@@ -114,17 +118,35 @@
                 position: [5,Graphics.height-5],
                 interactive: true,buttonMode: true,
                 clickFunc: function onClick(e){
-                    Graphics.uiContainer.removeChild(Game.chatButton);
+                    Graphics.uiContainer2.removeChild(Game.chatButton);
                     document.body.appendChild( Game.chat );
                     Game.chat.focus();
                     Game.chatActive = true;
                 }
             })
-            Graphics.uiContainer.addChild(this.chatButton);
+            Graphics.uiContainer2.addChild(this.chatButton);
         },
 
         update: function(deltaTime){
             if (!this.ready){return;}
+            if (this.chatActive){
+                if (Acorn.Input.isPressed(Acorn.Input.Key.ENTER)){
+                    Acorn.Net.socket_.emit('clientCommand',{cString: this.chat.value})
+                    this.chat.value = '';
+                    this.clearUI();
+                }
+                if (Acorn.Input.isPressed(Acorn.Input.Key.SPACE)){
+                    this.chat.value += ' ';
+                    Acorn.Input.setValue(Acorn.Input.Key.SPACE,false)
+                }
+                if (document.activeElement != this.chat){
+                    this.clearUI();
+                }
+            }
+            if (this.battleActive){
+                Battle.update(deltaTime);
+                return;
+            }
             if (this.screenChange){
                 this.updateScreenChange(deltaTime);
                 return;
@@ -150,31 +172,17 @@
                 Player.update(deltaTime);
                 if (Acorn.Input.isPressed(Acorn.Input.Key.COMMAND)){
                     this.chat.value = '/';
-                    Graphics.uiContainer.removeChild(Game.chatButton);
+                    Graphics.uiContainer2.removeChild(Game.chatButton);
                     document.body.appendChild( Game.chat );
                     Game.chat.focus();
                     Game.chatActive = true;
                 }
                 if (Acorn.Input.isPressed(Acorn.Input.Key.TALK)){
                     this.chat.value = '';
-                    Graphics.uiContainer.removeChild(Game.chatButton);
+                    Graphics.uiContainer2.removeChild(Game.chatButton);
                     document.body.appendChild( Game.chat );
                     Game.chat.focus();
                     Game.chatActive = true;
-                }
-            }
-            if (this.chatActive){
-                if (Acorn.Input.isPressed(Acorn.Input.Key.ENTER)){
-                    Acorn.Net.socket_.emit('clientCommand',{cString: this.chat.value})
-                    this.chat.value = '';
-                    this.clearUI();
-                }
-                if (Acorn.Input.isPressed(Acorn.Input.Key.SPACE)){
-                    this.chat.value += ' ';
-                    Acorn.Input.setValue(Acorn.Input.Key.SPACE,false)
-                }
-                if (document.activeElement != this.chat){
-                    this.clearUI();
                 }
             }
             if (Acorn.Input.isPressed(Acorn.Input.Key.CANCEL)){
@@ -191,18 +199,21 @@
             if (this.battleTicker >= 2.6){
                 Graphics.uiPrimitives2.clear();
                 Graphics.uiPrimitives2.alpha = 1.0;
-                Acorn.changeState('battle');
+                this.battleActive = true;
+                Battle.init();
+                Graphics.uiContainer.removeChild(this.pokedexButton);
+                Graphics.uiContainer.removeChild(this.pokemonButton);
+                Graphics.uiContainer.removeChild(this.characterButton);
+                Graphics.uiContainer.removeChild(this.settingsButton);
             }else{
                 var sChange = 0.1625;
                 var a;
                 var n = Math.floor(this.battleTicker/sChange) % 2;
-                console.log(n);
                 if (n){
                     a = (sChange-(this.battleTicker % sChange)) / sChange;
                 }else{
                     a = (this.battleTicker % sChange) / sChange;
                 }
-                console.log(a);
                 Graphics.uiPrimitives2.alpha = a;
             }
         },
@@ -820,7 +831,7 @@
             }
             if (this.chatActive){
                 document.body.removeChild(this.chat);
-                Graphics.uiContainer.addChild(this.chatButton);
+                Graphics.uiContainer2.addChild(this.chatButton);
                 this.chatActive = false;
                 this.chat.value = '';
             }

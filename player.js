@@ -265,7 +265,7 @@ Player.prototype.setupSocket = function() {
             switch (commands[0]){
                 case 'battle':
                     console.log("Start Battle");
-                    var pokemon = [1];
+                    var pokemon = [Math.ceil(Math.random()*15)];
                     var levels = [Math.ceil(Math.random()*4)];
 
                     var battle = new Battle(that.gameEngine);

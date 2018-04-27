@@ -189,34 +189,6 @@
             this.requiredCurrent = 0;
             this.fadeOver = 2.2;
             this.fadeTicker = 0;
-            soundManager.setup({
-              url: '/path/to/swf-files/',
-              flashVersion: 9, // optional: shiny features (default = 8)
-              // optional: ignore Flash where possible, use 100% HTML5 mode
-              // preferFlash: false,
-              onready: function() {
-                // Ready to use; soundManager.createSound() etc. can now be called.
-                //Music
-                Acorn.Sound.addSound({url: 'sounds/music/1_opening.mp3', id: 'opening', volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/3_newChar.mp3', id: 'newChar', volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/4_pallet.mp3', id: 'pallet', volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/5_road_to_veridian.mp3', id: 'roadToVeridian', volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/6_pewter.mp3', id: 'pewter', volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/7_pcenter.mp3', id: 'pcenter', volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/8_oaklab.mp3', id: 'oaklab', volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/9_gym.mp3', id: 'gym', volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/10_road1.mp3', id: 'road1', volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/11_wild_battle.mp3', id: 'battle1', volume: 70,type: 'music'});
-                Acorn.Sound.addSound({url: 'sounds/music/12_trainer_battle.mp3', id: 'battle2', volume: 70,type: 'music'});
-                //sfx
-                Acorn.Sound.addSound({url: 'sounds/sfx/select.mp3', id: 'select', volume: 100});
-                Acorn.Sound.addSound({url: 'sounds/sfx/bump.mp3', id: 'bump', volume: 100});
-                Acorn.Sound.addSound({url: 'sounds/sfx/exit.mp3', id: 'exit', volume: 100});
-                Acorn.Sound.addSound({url: 'sounds/sfx/enter.mp3', id: 'enter', volume: 100});
-                Acorn.Sound.addSound({url: 'sounds/sfx/menu.mp3', id: 'menu', volume: 100});
-                Acorn.Sound.ready = true;
-              }
-            });
         },
         getSound: function(id) {
             for(var i = 0; i < this._sounds.length; i++) {
@@ -232,6 +204,27 @@
             newSound.url = sound.url;
             newSound.id = sound.id;
             newSound.volume = sound.volume;
+            //Set optional property multi
+            //will create an array of sounds to play more than 1 at the same time
+            if (typeof sound.multi == 'undefined'){
+                newSound.multi = false;
+            }else{
+                newSound.multi = sound.multi;
+            }
+            if(newSound.multi) {
+                newSound._sound = [];
+                newSound._sound.push(new Audio(newSound.url));
+            } else {
+                newSound._sound = new Audio(newSound.url);
+            }
+            //set optional property volume
+            if (typeof sound.volume == 'undefined'){
+                newSound.volumeBase = 1.0;
+                newSound.volume = 1.0;
+            }else{
+                newSound.volume = sound.volume;
+                newSound.volumeBase = sound.volume;
+            }
             //set optional property type
             if (typeof sound.type == 'undefined'){
                 newSound.type = 'sfx';
@@ -242,33 +235,43 @@
             }
             this._sounds.push(newSound);
 
-            soundManager.createSound({
-                id: newSound.id,
-                url: newSound.url,
-                volume: newSound.volume,
-                onerror: function(code,description){
-                    console.log(this.id + ' failed?', code, description);
-                    if (this.loaded) {
-                      // HTML5 case: network error, or client aborted download etc.?
-                      this.stop(); // Reset sound state, to be safe
-                      // Show play / retry button to user in UI?
-                    } else {
-                      // Load failed entirely. 404, bad sound format, etc.
-                    }
-                }
-            });
         },
         stop: function(id){
-            soundManager.pause(id);
+            var snd = this.getSound(id);
+            if(snd.multi) {
+                //TODO
+            } else {
+                snd._sound.pause();
+                snd._sound.currentTime = 0;
+            }
         },
         play: function(id) {
             var snd = this.getSound(id);
+
             if (snd.type == 'music'){
                 Acorn.Sound.next = id;
-            }else if (soundManager.sounds[id].playState == 0) {
-                soundManager.play(id);
+            }else if(snd.multi) {
+                var addSound = true;
+                for(var j = 0; j < snd._sound.length; j++) {
+                    if(snd._sound[j].paused) {
+                        snd._sound[j].volume = snd.volume*vMod;
+                        snd._sound[j].play();
+                        addSound = false;
+                        break;
+                    }
+                }
+                if(addSound) {
+                    snd._sound.push(new Audio(snd.url));
+                    snd._sound[snd._sound.length - 1].volume = snd.volume*vMod;
+                    snd._sound[snd._sound.length - 1].play();
+                }
             } else {
-                soundManager.sounds[id].setPosition(0);
+                if (snd._sound.paused) {
+                    snd._sound.volume = snd.volume;
+                    snd._sound.play();
+                } else {
+                    snd._sound.currentTime = 0;
+                }
             }
         },
         update: function(dt){
@@ -284,32 +287,26 @@
                         //play new music
                         Acorn.Sound.stop(Acorn.Sound.currentMusic);
                         var newMusic = Acorn.Sound.getSound(Acorn.Sound.next);
-                        soundManager.sounds[newMusic.id].setPosition(0);
-                        Acorn.Sound.loopSound(soundManager.sounds[newMusic.id]);
-                        soundManager.sounds[newMusic.id].volume = newMusic.volume;
+                        newMusic._sound.currentTime = 0;
+                        Acorn.Sound.loopSound(newMusic._sound);
+                        newMusic._sound.volume = newMusic.volume;
                         Acorn.Sound.currentMusic = Acorn.Sound.next;
                         Acorn.Sound.next = null;
                         Acorn.Sound.fadeTicker = 0;
                     }
                     var val = current.volume*((Acorn.Sound.fadeOver-Acorn.Sound.fadeTicker)/Acorn.Sound.fadeOver);
-                    soundManager.setVolume(current.id,val);
+                    current._sound.volume = val;
                 }
             }catch(e){
                 alert(e);
             }
         },
         loopSound: function(sound){
-            sound.play({
-                onfinish: function() {
-                    Acorn.Sound.loopSound(sound);
-                }
-            });
-            setTimeout(function() {
-                if (sound.readyState == 1) {
-                    // this object is probably stalled
-                    console.log('stalled!!!')
-                }
-            },5500);
+            sound.onended = function(s) {
+                //TODO this needs to loop at the corrent time for each song....
+                s.currentTarget.play()
+            };
+            sound.play();
         }
 
     };

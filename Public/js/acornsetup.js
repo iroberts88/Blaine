@@ -7,7 +7,7 @@
             fill: Graphics.pallette.color1,
             align: 'left'
         },
-
+        
         style2: {
             font: '18px Pokemon',
             fill: 'black',
@@ -113,6 +113,7 @@
                 Battle.battleData = data;
                 Game.battleChange = true;
                 Game.battleTicker = 0;
+                Game.cMusic = Acorn.Sound.currentMusic;
                 if (data.wild){
                     Acorn.Sound.play('battle1');
                 }else{

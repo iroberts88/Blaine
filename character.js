@@ -156,10 +156,15 @@ Character.prototype.swapPkmn = function(data){
             console.log("error - cant be > party length");
             return;
         }
-        var temp = this.party[data.first];
-        this.party[data.first] = this.party[data.second];
-        this.party[data.second] = temp;
-        console.log("swapped")
+        var temp = this.party[data.first-1];
+        this.party[data.first-1] = this.party[data.second-1];
+        this.party[data.second-1] = temp;
+        console.log("swapped");
+        console.log(data);
+        for (var i in this.party){
+            console.log(i);
+            console.log(this.party[i].nickname)
+        }
     }
 };
 Character.prototype.addPokemon = function(p){
