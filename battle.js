@@ -108,4 +108,10 @@ Battle.prototype.removeSpectator = function(p){
 
 };
 
+Battle.prototype.sendChat = function(text){
+    for (var i in this.players){
+        this.gameEngine.queuePlayer(this.players[i],"battleChat", {text: text});
+    }
+}
+
 exports.Battle = Battle;

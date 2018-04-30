@@ -205,7 +205,7 @@ GameEngine.prototype.clearQueue = function() {
     }
 }
 
-//Queue data to all players in the session
+//Queue data to all players
 GameEngine.prototype.queueData = function(c, d) {
     var data = { call: c, data: d};
     for(var i in this.players) {

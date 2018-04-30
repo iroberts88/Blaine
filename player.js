@@ -230,7 +230,14 @@ Player.prototype.setupSocket = function() {
         try{
             if (data.cString.charAt(0) != '/'){
                 //its a SAY command
-                //TODO implement that shit
+                if (data.cString == ''){
+                    return;
+                }
+                if (that.battle){
+                    var u = that.user.userData.username
+                    that.battle.sendChat(u.toUpperCase() + ': ' + data.cString);
+                    return
+                }
                 console.log('Say: ' + data.cString);
                 var players = [];
                 //send a move command to all players in adjacent sectors

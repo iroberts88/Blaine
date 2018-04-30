@@ -7,7 +7,7 @@
             fill: Graphics.pallette.color1,
             align: 'left'
         },
-        
+
         style2: {
             font: '18px Pokemon',
             fill: 'black',
@@ -150,6 +150,10 @@
                 }else{
                     Game.pcs[data.id].setSayBubble(data.text);
                 }
+            });
+
+            Acorn.Net.on('battleChat', function (data) {
+                Battle.addChat(data.text);
             });
 
             //Player Character Functions

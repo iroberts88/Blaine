@@ -26,6 +26,7 @@
     PlayerCharacter.prototype.init = function(data){
         this.id = data.id;
 		this.name = data.name;
+        this.user = data.user;
 		this.sector = data.sector;
 		this.tile = data.tile;
         this.owTexture = data.owSprite;
@@ -54,7 +55,7 @@
         this.playerMask.position.y = this.sprite.position.y - mainObj.TILE_SIZE/2;
         this.sprite2.mask = this.playerMask;
 
-        this.nameTag = new PIXI.Text(data.name.toUpperCase(),AcornSetup.nameStyle);
+        this.nameTag = new PIXI.Text(data.user.toUpperCase(),AcornSetup.nameStyle);
         this.nameTag.anchor.x = 0.5;
         this.nameTag.anchor.y = 0.5;
         this.nameTag.position.x = (mainObj.TILE_SIZE/2)+Game.map[this.sector].fullSectorSize*coords.x + mainObj.TILE_SIZE*this.tile[0];
@@ -177,12 +178,13 @@
             Graphics.worldContainer.removeChild(this.sayBubble);
             this.sayBubble = null;
         }
-        var t = new PIXI.Text(this.name + ': ' + text,{
+        var t = new PIXI.Text(this.user + ': ' + text,{
             font: '16px Pokemon',
             fill: 'black',
             align: 'left',
             wordWrap: true,
-            wordWrapWidth: 300
+            wordWrapWidth: 300,
+            breakWords: true
         });
         var padding = 10;
         t.position.x = padding;

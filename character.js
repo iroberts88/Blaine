@@ -196,6 +196,7 @@ Character.prototype.getClientData = function(){
     var data = {}
     data.owner = this.owner.id;
     data.name = this.name;
+    data.user = this.owner.user.userData.username;
     data.id = this.id
     data.money = this.money;
     data.sector = this.currentSector;
