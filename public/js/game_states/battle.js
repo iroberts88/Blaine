@@ -1,6 +1,8 @@
 
 (function(window) {
     Battle = {
+        BUTTON_BUFFER: 10,
+
         battleData: null,
         wild: null,
         myTeam: null,
@@ -16,6 +18,19 @@
         pokemonContainer: {},
 
         myActivePokemon: {},
+        activePokemonIndex: [],
+        currentPokemonIndex: 0,
+
+        pokemonButton: null,
+        itemButton: null,
+        fightButton: null,
+        runButton: null,
+
+        pokemonUI: null,
+        itemUI: null,
+        fightUI: null,
+
+        turnData: {},
 
         init: function() {
             Graphics.uiPrimitives1.clear();
@@ -27,6 +42,53 @@
             Graphics.uiPrimitives1.endFill();
             console.log("init!");
             console.log(this.battleData);
+
+            this.fightButton = Graphics.makeUiElement({
+                texture: this.getButtonTexture('FIGHT!'),
+                anchor: [0,0],
+                position: [Graphics.width/4 + this.BUTTON_BUFFER,Graphics.height*0.75 + this.BUTTON_BUFFER],
+                interactive: true,buttonMode: true,
+                clickFunc: function onClick(e){
+                    console.log("fight menu");
+                    //SHOW Fight Menu
+                    this.showFightUI();
+                }
+            });
+
+            this.pokemonButton = Graphics.makeUiElement({
+                texture: this.getButtonTexture('POK|MON'),
+                anchor: [0,0],
+                position: [Graphics.width/4 + (Graphics.width*0.75/2) + this.BUTTON_BUFFER,Graphics.height*0.75 + this.BUTTON_BUFFER],
+                interactive: true,buttonMode: true,
+                clickFunc: function onClick(e){
+                    console.log("pokemon menu");
+                    //SHOW Pokemon Menu
+                    this.showPokemonUI();
+                }
+            });
+
+            this.itemButton = Graphics.makeUiElement({
+                texture: this.getButtonTexture('ITEM'),
+                anchor: [0,0],
+                position: [Graphics.width/4 + this.BUTTON_BUFFER,Graphics.height*0.75 + Graphics.height/8 + this.BUTTON_BUFFER],
+                interactive: true,buttonMode: true,
+                clickFunc: function onClick(e){
+                    console.log("item menu");
+                    //SHOW Item Menu
+                    this.showItemUI();
+                }
+            });
+
+            this.runButton = Graphics.makeUiElement({
+                texture: this.getButtonTexture('RUN'),
+                anchor: [0,0],
+                position: [Graphics.width/4 + (Graphics.width*0.75/2) + this.BUTTON_BUFFER,Graphics.height*0.75 + Graphics.height/8 + this.BUTTON_BUFFER],
+                interactive: true,buttonMode: true,
+                clickFunc: function onClick(e){
+                    Acorn.Net.socket_.emit('playerUpdate',{command: 'run'});
+                }
+            });
+
             //get which team you're on
             for (var i = 0; i < this.battleData.team1.length;i++){
                 for (var j in Party.pokemon){
@@ -34,6 +96,7 @@
                         this.myTeam = 1;
                         this.otherTeam = 2;
                         this.myActivePokemon[Party.pokemon[j].id] = Party.pokemon[j];
+                        this.activePokemonIndex.push(Party.pokemon[j].id);
                     }
                 }
             }
@@ -43,6 +106,7 @@
                         this.myTeam = 2;
                         this.otherTeam = 1;
                         this.myActivePokemon[Party.pokemon[j].id] = Party.pokemon[j];
+                        this.activePokemonIndex.push(Party.pokemon[j].id);
                     }
                 }
             }
@@ -71,9 +135,11 @@
         
         update: function(dt){ 
             if (this.wildStart){
+                //wild pokemon start battle cutscene
                 this.updateWildStart(dt);
             }
             if (this.gopkmnStart){
+                //sending out your pokemon cutscene
                 this.updateGopkmnStart(dt);
             }
             if (!Game.chatActive){
@@ -156,18 +222,18 @@
                 gfx.lineStyle(2,0x707070,1);
                 gfx.beginFill(0x707070,1);
                 var size = xSize * percent;
-                gfx.drawRoundedRect(0,0,size,20,6);
-                gfx.drawRect(0,0,size-10,20);
+                gfx.drawRoundedRect(0,0,size,20,10);
+                gfx.drawRect(10,0,size-10,20);
                 gfx.endFill();
 
                 gfx.lineStyle(2,0x000000,1);
                 gfx.beginFill(0x707070,0);
-                gfx.drawRoundedRect(0,0,xSize,20,6);
+                gfx.drawRoundedRect(0,0,xSize,20,10);
                 gfx.endFill();
             }else{
                 gfx.lineStyle(2,0x000000,1);
                 gfx.beginFill(0x707070,1);
-                gfx.drawRoundedRect(0,0,xSize,20,6);
+                gfx.drawRoundedRect(0,0,xSize,20,10);
                 gfx.endFill();
             }
         },
@@ -179,7 +245,7 @@
                 this.pokemonContainer[i].sprite.position.x = Graphics.width/4 + this.pokemonContainer[i].sprite.width/2 + (this.pokemonContainer[i].mDistance* (this.pokemonContainer[i].ticker/time));
                 if (this.pokemonContainer[i].ticker >= 2.0){
                     //next phase!
-                    this.addChat("A wild " + this.battleData['team' + this.otherTeam][0].nickname.toUpperCase() + ' appeared!');
+                    this.addChat("& A wild " + this.battleData['team' + this.otherTeam][0].nickname.toUpperCase() + ' appeared!');
                     this.pokemonContainer[i].sprite.position.x = this.pokemonContainer[i].tPos;
                     this.pokemonContainer[i].sprite.tint = 0xFFFFFF;
                     Graphics.uiContainer2.addChild(this.pokemonContainer[i].nameDisplay);
@@ -199,7 +265,7 @@
             var time = 1.5;
             this.gopkmnTicker += dt;
             if (this.gopkmnTicker >= time && this.gopkmnTicker < time*2){
-                this.addChat("Go, " + this.battleData['team' + this.myTeam][0].nickname + '!');
+                this.addChat("& Go, " + this.battleData['team' + this.myTeam][0].nickname + '!');
                 this.gopkmnTicker = time*2;
             }
             if (this.gopkmnTicker >= time*3){
@@ -214,11 +280,41 @@
                     this.pokemonContainer[this.myActivePokemon[i].id] = data;
                 }
                 this.gopkmnStart = false;
+                this.toggleTurnOptions(true);
             }
         },
 
+        toggleTurnOptions: function(bool){
+            if (bool){
+                Graphics.uiContainer2.addChild(this.fightButton);
+                Graphics.uiContainer2.addChild(this.pokemonButton);
+                Graphics.uiContainer2.addChild(this.itemButton);
+                Graphics.uiContainer2.addChild(this.runButton);
+            }else{
+                Graphics.uiContainer2.removeChild(this.fightButton);
+                Graphics.uiContainer2.removeChild(this.pokemonButton);
+                Graphics.uiContainer2.removeChild(this.itemButton);
+                Graphics.uiContainer2.removeChild(this.runButton);
+            }
+        },
+
+        showFightUI: function(){
+            this.toggleTurnOptions(false);
+            this.currentPokemonIndex = 0;
+            var moves = this.myActivePokemon[this.activePokemonIndex[this.currentPokemonIndex]].moves;
+            //display moves
+        },
+
+        showPokemonUI: function(){
+            this.toggleTurnOptions(false);
+        },
+
+        showItemUI: function(){
+            this.toggleTurnOptions(false);
+        },
+
         addChat: function(text){
-            var newChat = new PIXI.Text('& ' + text,{
+            var newChat = new PIXI.Text(text,{
                 font: '18px Pokemon',
                 fill: 'black',
                 align: 'left',
@@ -235,7 +331,36 @@
                 this.chatLog[i].position.y -= (newChat.height+10);
             }
             this.chatLog.push(newChat);
+        },
+        getButtonTexture: function(text){
+            var c = new PIXI.Container();
+            var g = new PIXI.Graphics();
+            var t = new PIXI.Container();
+
+            var xSize = (Graphics.width*0.75)/2 - (this.BUTTON_BUFFER*2);
+            var ySize = (Graphics.height/8) - (this.BUTTON_BUFFER*2);
+            g.lineStyle(1,0xFFFFFF,1);
+            g.beginFill(0xDCDCDC,1);
+            g.drawRoundedRect(0,0,xSize,ySize,20);
+            g.endFill();
+
+            var text = new PIXI.Text(text,AcornSetup.style2);
+            text.style.fontSize = 64
+            text.anchor.x = 0.5;
+            text.anchor.y = 0.5;
+            text.position.x = xSize/2;
+            text.position.y = ySize/2;
+            t.addChild(text);
+
+            c.addChild(g);
+            c.addChild(t);
+
+            var texture = PIXI.RenderTexture.create(Graphics.width,Graphics.height);
+            var renderer = new PIXI.CanvasRenderer();
+            Graphics.app.renderer.render(c,texture);
+            return texture;
         }
+
     }
     window.Battle = Battle;
 })(window);

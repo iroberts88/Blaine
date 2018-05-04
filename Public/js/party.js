@@ -21,6 +21,15 @@
         setPokemon: function(slot,pokemon){
             this.pokemon[slot] = pokemon;
             Game.resetPokemon(slot);
+        },
+
+        getPokemon: function(id){
+            for (var i = 1;i < 7;i++){
+                if (this.pokemon[i].id == id){
+                    return this.pokemon[i];
+                }
+            }
+            return null;
         }
     }
 

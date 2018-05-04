@@ -123,7 +123,7 @@
                     Game.chat.focus();
                     Game.chatActive = true;
                 }
-            })
+            });
             Graphics.uiContainer2.addChild(this.chatButton);
         },
 
@@ -131,7 +131,7 @@
             if (!this.ready){return;}
             if (this.chatActive){
                 if (Acorn.Input.isPressed(Acorn.Input.Key.ENTER)){
-                    Acorn.Net.socket_.emit('clientCommand',{cString: this.chat.value})
+                    Acorn.Net.socket_.emit('clientCommand',{cString: this.chat.value});
                     this.chat.value = '';
                     this.clearUI();
                 }
