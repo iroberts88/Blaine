@@ -17,6 +17,8 @@ var GameEngine = function() {
     this.players = {};
     this.playerCount = 0;
 
+    this.items = {};
+
     //database objects
     this.mapids = [];
     this.mapCount = 0; //for checking if all maps have loaded before ready
@@ -106,7 +108,15 @@ GameEngine.prototype.loadMaps = function(arr) {
             }
         });
     }
-    console.log('loaded ' + arr.length + ' Maps from db');
+    console.log('loaded ' + arr.length + ' Maps from file');
+}
+
+GameEngine.prototype.loadItems = function(arr){
+    for (var i = 0; i < arr.length;i++){
+        self.items[arr[i].itemid] = arr[i];
+    }
+    console.log('loaded ' + arr.length + ' Items from file');
+    console.log(self.items);
 }
 
 GameEngine.prototype.loadPokemon = function(arr) {

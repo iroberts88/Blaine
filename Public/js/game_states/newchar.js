@@ -90,7 +90,9 @@
             this.okButton.innerHTML = 'OK';
             this.okButton.style.cssText = 'top:80%;left:50%;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:Pokemon;font-weight:bold;line-height:15px';
             this.okButton.onpointerup = function(){
-                Acorn.Net.socket_.emit('playerUpdate',{command: 'newChar',sprite: NewChar.currentSprite,name:NewChar.characterNameInput.value,slot: NewChar.slot});
+                if (NewChar.characterNameInput.value.length > 3){
+                    Acorn.Net.socket_.emit('playerUpdate',{command: 'newChar',sprite: NewChar.currentSprite,name:NewChar.characterNameInput.value,slot: NewChar.slot});
+                }
             }
             Graphics.elements.push('okButton');
 

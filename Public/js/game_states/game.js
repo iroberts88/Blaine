@@ -30,12 +30,14 @@
 
         pokedexUI: new PIXI.Container(),
         pokemonUI: new PIXI.Container(),
+        inventoryUI: new PIXI.Container(),
         characterUI: new PIXI.Container(),
         settingsUI: new PIXI.Container(),
 
         pokedexButton: null,
         pokemonButton: null,
         pokemonUIContainers: null,
+        inventoryButton: null,
         characterButton: null,
         settingsButton: null,
 
@@ -81,6 +83,7 @@
             this.uiBoxTexture = this.getBoxTexture();
             this.initDexUI();
             this.initPkmnUI();
+            this.initInventoryUI();
             this.initCharUI();
             this.initSetUI();
 
@@ -194,6 +197,15 @@
             }
         },
 
+        setBattleChange: function(){
+            this.battleChange = true;
+            Graphics.uiContainer.removeChild(this.pokedexButton);
+            Graphics.uiContainer.removeChild(this.inventoryButton);
+            Graphics.uiContainer.removeChild(this.pokemonButton);
+            Graphics.uiContainer.removeChild(this.characterButton);
+            Graphics.uiContainer.removeChild(this.settingsButton);
+        },
+        
         updateBattleChange: function(deltaTime){
             this.battleTicker += deltaTime;
             if (this.battleTicker >= 2.6){
@@ -201,10 +213,6 @@
                 Graphics.uiPrimitives2.alpha = 1.0;
                 this.battleActive = true;
                 Battle.init();
-                Graphics.uiContainer.removeChild(this.pokedexButton);
-                Graphics.uiContainer.removeChild(this.pokemonButton);
-                Graphics.uiContainer.removeChild(this.characterButton);
-                Graphics.uiContainer.removeChild(this.settingsButton);
             }else{
                 var sChange = 0.1625;
                 var a;
@@ -383,6 +391,7 @@
             var bSize = 75;
             var dexTex = PIXI.RenderTexture.create(bSize,bSize);
             var pkmnTex = PIXI.RenderTexture.create(bSize,bSize);
+            var invTex = PIXI.RenderTexture.create(bSize,bSize);
             var charTex = PIXI.RenderTexture.create(bSize,bSize);
             var setTex = PIXI.RenderTexture.create(bSize,bSize);
             var g1 = new PIXI.Graphics();
@@ -404,8 +413,10 @@
 
             Graphics.app.renderer.render(c1,dexTex);
             sprite.position.x += 3;
-            sprite.texture = Graphics.getResource('ow_pokeball');
+            sprite.texture = Graphics.getResource('ow_pkmn_d1');
             Graphics.app.renderer.render(c1,pkmnTex);
+            sprite.texture = Graphics.getResource('ow_pokeball');
+            Graphics.app.renderer.render(c1,invTex);
             sprite.texture = Graphics.getResource('ow_' + Game.char + '_d1');
             Graphics.app.renderer.render(c1,charTex);
             sprite.texture = Graphics.getResource('ow_clipboard');
@@ -415,7 +426,7 @@
             this.pokedexButton = Graphics.makeUiElement({
                 texture: dexTex,
                 interactive: true,buttonMode: true,
-                position: [(Graphics.width/2 - (padding*1.5) - bSize*1.5),bSize/2 + 10],
+                position: [(Graphics.width/2 - padding - bSize*2),bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
                     if (Game.uiActive){
@@ -432,7 +443,7 @@
             this.pokemonButton = Graphics.makeUiElement({
                 texture: pkmnTex,
                 interactive: true,buttonMode: true,
-                position: [(Graphics.width/2 - padding/2 - bSize/2),bSize/2 + 10],
+                position: [(Graphics.width/2 - padding/2 - bSize),bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
                     if (Game.uiActive){
@@ -446,10 +457,29 @@
                 }
             });
             Graphics.uiContainer.addChild(this.pokemonButton);
+
+            this.inventoryButton = Graphics.makeUiElement({
+                texture: invTex,
+                interactive: true,buttonMode: true,
+                position: [Graphics.width/2,bSize/2 + 10],
+                anchor: [0.5,0.5],
+                clickFunc: function onClick(e){
+                    if (Game.uiActive){
+                        Graphics.ui.removeChild(Game.uiActive);
+                        Acorn.Sound.play('select');
+                    }else{
+                        Acorn.Sound.play('menu');
+                    }
+                    Graphics.ui.addChild(Game.inventoryUI);
+                    Game.uiActive = Game.inventoryUI;
+                }
+            });
+            Graphics.uiContainer.addChild(this.inventoryButton);
+
             this.characterButton = Graphics.makeUiElement({
                 texture: charTex,
                 interactive: true,buttonMode: true,
-                position: [(Graphics.width/2 + padding/2 + bSize/2),bSize/2 + 10],
+                position: [(Graphics.width/2 + padding/2 + bSize),bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
                     if (Game.uiActive){
@@ -466,7 +496,7 @@
             this.settingsButton = Graphics.makeUiElement({
                 texture: setTex,
                 interactive: true,buttonMode: true,
-                position: [(Graphics.width/2 + (padding*1.5) + bSize*1.5),bSize/2 + 10],
+                position: [(Graphics.width/2 + padding + bSize*2),bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
                     if (Game.uiActive){
@@ -507,6 +537,31 @@
             this.pokedexUI.position.y = Graphics.height*((1-this.UI_OFFSETSCALE)/2);
         },
 
+        initInventoryUI: function(){
+            this.inventoryUI.removeChildren();
+
+            var bg = new PIXI.Sprite(this.uiBoxTexture);
+            this.inventoryUI.addChild(bg);
+
+            var x = Graphics.makeUiElement({
+                text: "X",
+                style: AcornSetup.style2,
+                interactive: true,buttonMode: true,
+                position: [Graphics.width-24,24],
+                anchor: [1,0],
+                clickFunc: function onClick(e){
+                    Game.clearUI();
+                }
+            });
+            x.style.fontSize = 64;
+            this.inventoryUI.addChild(x);
+
+            this.inventoryUI.scale.x = this.UI_OFFSETSCALE;
+            this.inventoryUI.scale.y = this.UI_OFFSETSCALE;
+            this.inventoryUI.position.x = Graphics.width*((1-this.UI_OFFSETSCALE)/2);
+            this.inventoryUI.position.y = Graphics.height*((1-this.UI_OFFSETSCALE)/2);
+        },
+
         initPkmnUI: function(){
             this.pokemonUI.removeChildren();
 
@@ -539,49 +594,45 @@
                 container.hitArea = new PIXI.Rectangle(0, 0, this.pkmnBoxSize[0], this.pkmnBoxSize[1]);
                 container.pokemonNumber = i+1;
 
-                var mDownFunc = function(e){
-                    if (Game.pkmnSwapChange){return;}
-                    Game.pkmnSelected = e.currentTarget;
-                }
-                container.on('pointerdown', mDownFunc);
-
-                var mOverFunc = function(e){
-                    if (Game.pkmnSwapChange){return;}
-                    Game.pkmnCurrentlyMousedOver = e.currentTarget;
-                }
-                container.on('pointerover', mOverFunc);
-                container.on('pointermove', mOverFunc);
-
-
-                var mOutFunc = function(e){
-                    Game.pkmnCurrentlyMousedOver = null;
-                }
-                container.on('pointerout', mOutFunc);
-
                 var mUpFunc = function(e){
-                    if (Game.pkmnSwapChange || !Game.pkmnSelected || !Game.pkmnCurrentlyMousedOver){return;}
-                    Acorn.Sound.play('menu');
-                    Game.pokemonUI.removeChild(Game.pkmnSelected);
-                    Game.pokemonUI.removeChild(Game.pkmnCurrentlyMousedOver);
-                    Game.pokemonUI.addChild(Game.pkmnSelected);
-                    Game.pokemonUI.addChild(Game.pkmnCurrentlyMousedOver);
-                    Game.pkmnSwapData = {
-                        first: Game.pkmnSelected.pokemonNumber,
-                        second: Game.pkmnCurrentlyMousedOver.pokemonNumber,
-                        firstStart: {
-                            x: Game.pkmnSelected.position.x,
-                            y: Game.pkmnSelected.position.y,
-                        },
-                        secondStart: {
-                            x: Game.pkmnCurrentlyMousedOver.position.x,
-                            y: Game.pkmnCurrentlyMousedOver.position.y,
+                    if (Game.pkmnSwapChange){return;}
+                    if (!Game.pkmnSelected){
+                        Game.pkmnSelected = e.currentTarget;
+                        var outLineFilter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF0000, 0.5);
+                        e.currentTarget.filters = [outLineFilter];
+                        return;
+                    }else{
+                        if (Game.pkmnSelected == e.currentTarget){
+                            Game.pkmnSelected.filters = [];
+                            Game.pkmnSelected = null;
+                            return;
                         }
-                    };
-                    Game.pkmnSwapChange = true;
-                    Game.pkmnSwapTicker = 0;
+                        Acorn.Sound.play('menu');
+                        Game.pokemonUI.removeChild(Game.pkmnSelected);
+                        Game.pokemonUI.removeChild(e.currentTarget);
+                        Game.pokemonUI.addChild(Game.pkmnSelected);
+                        Game.pokemonUI.addChild(e.currentTarget);
+                        Game.pkmnSwapData = {
+                            first: Game.pkmnSelected.pokemonNumber,
+                            second: e.currentTarget.pokemonNumber,
+                            firstStart: {
+                                x: Game.pkmnSelected.position.x,
+                                y: Game.pkmnSelected.position.y,
+                            },
+                            secondStart: {
+                                x: e.currentTarget.position.x,
+                                y: e.currentTarget.position.y,
+                            }
+                        };
+                        Game.pkmnSwapChange = true;
+                        Game.pkmnSwapTicker = 0;
+                        e.currentTarget.filters = [];
+                        Game.pkmnSelected.filters = [];
+                        Game.pkmnSelected =  null;
+                    }
                 }
-                container.on('pointerupoutside', mUpFunc);
-                container.on('touchendoutside', mUpFunc);
+                container.on('pointerup', mUpFunc);
+                container.on('touchend', mUpFunc);
 
                 if (x == Graphics.width/2 - this.pkmnBoxSize[0] - 15){
                     x = Graphics.width/2 + 15;

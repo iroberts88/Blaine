@@ -32,6 +32,8 @@
 
         turnData: {},
 
+        moveButtons: [],
+
         init: function() {
             Graphics.uiPrimitives1.clear();
             Graphics.uiPrimitives1.lineStyle(3,0x000000,1);
@@ -51,7 +53,7 @@
                 clickFunc: function onClick(e){
                     console.log("fight menu");
                     //SHOW Fight Menu
-                    this.showFightUI();
+                    Battle.showFightUI();
                 }
             });
 
@@ -63,7 +65,7 @@
                 clickFunc: function onClick(e){
                     console.log("pokemon menu");
                     //SHOW Pokemon Menu
-                    this.showPokemonUI();
+                    Battle.showPokemonUI();
                 }
             });
 
@@ -75,7 +77,7 @@
                 clickFunc: function onClick(e){
                     console.log("item menu");
                     //SHOW Item Menu
-                    this.showItemUI();
+                    Battle.showItemUI();
                 }
             });
 
@@ -301,8 +303,9 @@
         showFightUI: function(){
             this.toggleTurnOptions(false);
             this.currentPokemonIndex = 0;
-            var moves = this.myActivePokemon[this.activePokemonIndex[this.currentPokemonIndex]].moves;
+            var activePokemon = this.myActivePokemon[this.activePokemonIndex[this.currentPokemonIndex]];
             //display moves
+            this.displayMoves(activePokemon);
         },
 
         showPokemonUI: function(){
@@ -311,6 +314,74 @@
 
         showItemUI: function(){
             this.toggleTurnOptions(false);
+        },
+
+        //Display the move buttons for a given pokemon
+        displayMoves: function(pkmn){
+            //Remove any existing move buttons from UI container and reset
+            for (var i = 0; i < this.moveButtons.length;i++){
+                Graphics.uiContainer2.removeChild(this.moveButtons[i]);
+            }
+            this.moveButtons = [];
+
+            for (var i = 0; i < pkmn.moves.length;i++){
+                var move = pkmn.moves[i];
+                var outLineFilter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF00000, 0.5);
+                this.pokemonContainer[pkmn.id].sprite.filters = [outLineFilter];
+
+                var button = Graphics.makeUiElement({
+                    texture: this.getMoveTexture(move,pkmn.currentPP[i]),
+                    anchor: [0,0],
+                    position: [Graphics.width/4 + this.BUTTON_BUFFER,Graphics.height*0.75 + this.BUTTON_BUFFER],
+                    interactive: true,buttonMode: true,
+                    clickFunc: function onClick(e){
+                        //set turn data
+                        Battle.turnData[e.currentTarget.pkmnID] = {
+                            command: 'fight',
+                            moveIndex: e.currentTarget.moveIndex
+                        };
+                        //check if all active pokemon have Turn data
+                        var ready = true;
+                        for (var i = 0; i < Battle.activePokemonIndex.length;i++){
+                            if (typeof Battle.turnData[Battle.activePokemonIndex[i]] == 'undefined'){
+                                ready = false;
+                                Battle.currentPokemonIndex = i;
+                                Battle.displayMoves(Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]]);
+                                break;
+                            }
+                        }
+                        //otherwise send turn data
+                        if (ready){
+                            Battle.sendTurnData();
+                        }
+                        Battle.pokemonContainer[e.currentTarget.pkmnID].sprite.filters = [];
+                    }
+                });
+
+                button.pkmnID = pkmn.id;
+                button.moveIndex = i;
+
+                if (i == 1){
+                    button.position.x = Graphics.width/4 + (Graphics.width*0.75/2) + this.BUTTON_BUFFER;
+                }else if (i == 2){
+                    button.position.y = Graphics.height*0.75 + Graphics.height/8 + this.BUTTON_BUFFER;
+                }else if (i == 3){
+                    button.position.x = Graphics.width/4 + (Graphics.width*0.75/2) + this.BUTTON_BUFFER;
+                    button.position.y = Graphics.height*0.75 + Graphics.height/8 + this.BUTTON_BUFFER;
+                }
+
+                this.moveButtons.push(button);
+                Graphics.uiContainer2.addChild(button);
+            }
+        },
+
+        sendTurnData: function(){
+            console.log("Sending Turn Data!!!!!");
+            //clear any ui buttons
+            for (var i = 0; i < this.moveButtons.length;i++){
+                Graphics.uiContainer2.removeChild(this.moveButtons[i]);
+            }
+            this.moveButtons = [];
         },
 
         addChat: function(text){
@@ -345,12 +416,56 @@
             g.endFill();
 
             var text = new PIXI.Text(text,AcornSetup.style2);
-            text.style.fontSize = 64
+            text.style.fontSize = 64;
             text.anchor.x = 0.5;
             text.anchor.y = 0.5;
             text.position.x = xSize/2;
             text.position.y = ySize/2;
             t.addChild(text);
+
+            c.addChild(g);
+            c.addChild(t);
+
+            var texture = PIXI.RenderTexture.create(Graphics.width,Graphics.height);
+            var renderer = new PIXI.CanvasRenderer();
+            Graphics.app.renderer.render(c,texture);
+            return texture;
+        },
+        getMoveTexture: function(move,pp){
+            var c = new PIXI.Container();
+            var g = new PIXI.Graphics();
+            var t = new PIXI.Container();
+
+            var xSize = (Graphics.width*0.75)/2 - (this.BUTTON_BUFFER*2);
+            var ySize = (Graphics.height/8) - (this.BUTTON_BUFFER*2);
+            g.lineStyle(1,0xFFFFFF,1);
+            g.beginFill(0xDCDCDC,1);
+            g.drawRoundedRect(0,0,xSize,ySize,20);
+            g.endFill();
+
+            var nameText = new PIXI.Text(move.name,AcornSetup.style2);
+            nameText.style.fontSize = 48;
+            nameText.anchor.x = 0.5;
+            nameText.anchor.y = 0.5;
+            nameText.position.x = xSize/2;
+            nameText.position.y = ySize/3;
+            t.addChild(nameText);
+
+            var typeText = new PIXI.Text(Game.typeList[move.type],AcornSetup.style2);
+            typeText.style.fontSize = 24;
+            typeText.anchor.x = 0.5;
+            typeText.anchor.y = 0.5;
+            typeText.position.x = xSize/3;
+            typeText.position.y = ySize*0.75;
+            t.addChild(typeText);
+
+            var ppText = new PIXI.Text(pp+ ' / ' + move.pp,AcornSetup.style2);
+            ppText.style.fontSize = 24;
+            ppText.anchor.x = 0.5;
+            ppText.anchor.y = 0.5;
+            ppText.position.x = xSize*0.66;
+            ppText.position.y = ySize*0.75;
+            t.addChild(ppText);
 
             c.addChild(g);
             c.addChild(t);

@@ -111,7 +111,7 @@
             Acorn.Net.on('startBattle', function (data) {
                 console.log('received battle data');
                 Battle.battleData = data;
-                Game.battleChange = true;
+                Game.setBattleChange();
                 Game.battleTicker = 0;
                 Game.cMusic = Acorn.Sound.currentMusic;
                 if (data.wild){

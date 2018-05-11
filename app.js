@@ -31,7 +31,7 @@ function init() {
     // ----------------------------------------------------------
 
     rc.ready();
-    rc.require('dbMaps','dbUsers','dbPokemon','dbAttacks');
+    rc.require('dbMaps','dbUsers','dbPokemon','dbAttacks','dbItems');
 
     // ---- Load Maps ----
     fs.readdir( './mapTool/maps', function( err, files ) {
@@ -44,6 +44,15 @@ function init() {
         rc.ready('dbMaps');
     });
 
+    fs.readFile('./db/items.json', "utf8",function read(err, data) {
+        if (err) {
+            throw err;
+        }
+        var obj = JSON.parse(data);
+
+        ge.loadItems(obj.items);
+        rc.ready('dbItems');
+    });
     // ---- Load Pokemon ----
     docClient.scan({TableName: 'blaine_pkmn'}, function(err, data) {
         if (err) {

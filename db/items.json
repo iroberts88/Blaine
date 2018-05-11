@@ -1,0 +1,128 @@
+{
+  "items": [
+    {
+      "itemid": "antidote",
+      "name": "Antidote",
+      "type": "main",
+      "price": 100,
+      "description": "Cures poison status",
+      "use": {
+        "all": [
+          {
+            "effectid": "curepoison"
+          }
+        ]
+      }
+    },
+    {
+      "itemid": "awakening",
+      "name": "Awakening",
+      "type": "main",
+      "price": 250,
+      "description": "Cures sleep status",
+      "use": {
+        "all": [
+          {
+            "effectid": "curesleep"
+          }
+        ]
+      }
+    },
+    {
+      "itemid": "burnheal",
+      "name": "Burn Heal",
+      "type": "main",
+      "price": 100,
+      "description": "Cures poison status",
+      "use": {
+        "all": [
+          {
+            "effectid": "curepoison"
+          }
+        ]
+      }
+    },
+    {
+      "itemid": "calcium",
+      "name": "Calcium",
+      "type": "main",
+      "price": 10000,
+      "description": "Raises Special Attack",
+      "use": {
+        "field": [
+          {
+            "effectid": "raiseStat",
+            "stat": "spatk"
+          }
+        ]
+      }
+    },
+
+
+
+
+    {
+      "itemid": "pokeball",
+      "name": "Pok|ball",
+      "type": "ball",
+      "price": 200,
+      "description": "Catches Pokemon",
+      "use": {
+        "battle": [
+          {
+            "effectid": "catch",
+            "power": 1
+          }
+        ]
+      }
+    },
+    {
+      "itemid": "greatball",
+      "name": "Great Ball",
+      "type": "ball",
+      "price": 600,
+      "description": "Catches Pokemon. More effective than a pokeball",
+      "use": {
+        "battle": [
+          {
+            "effectid": "catch",
+            "power": 2
+          }
+        ]
+      }
+    },
+    {
+      "itemid": "ultraball",
+      "name": "Ultra Ball",
+      "type": "ball",
+      "price": 1200,
+      "description": "Catches Pokemon. More effective than a great ball",
+      "use": {
+        "battle": [
+          {
+            "effectid": "catch",
+            "power": 4
+          }
+        ]
+      }
+    },
+
+
+
+
+    {
+      "itemid": "coincase",
+      "name": "Coin Case",
+      "type": "key",
+      "price": null,
+      "description": "Hold coins from Celadon Casino",
+      "use": {
+        "field": [
+          {
+            "effectid": "showCoinAmount"
+          }
+        ]
+      }
+    }
+  ]
+}
