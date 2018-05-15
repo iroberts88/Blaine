@@ -126,7 +126,7 @@ function webResponse(req, res) {
 
     //console.log('HTTP Request: ' + filename);
 
-    fs.readFile(__dirname + '/public' + filename, function(err, data) {
+    fs.readFile(__dirname + '/public_data' + filename, function(err, data) {
         if (err) {
             console.log('Couldn\'t find file: ' + req.url);
             res.writeHead(500);
