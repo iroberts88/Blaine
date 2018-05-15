@@ -116,21 +116,20 @@ GameEngine.prototype.loadItems = function(arr){
         self.items[arr[i].itemid] = arr[i];
     }
     console.log('loaded ' + arr.length + ' Items from file');
-    console.log(self.items);
 }
 
 GameEngine.prototype.loadPokemon = function(arr) {
     for (var i = 0; i < arr.length;i++){
         self.pokemon[arr[i].number] = arr[i];
     }
-    console.log('loaded ' + arr.length + ' Pokemon from db');
+    console.log('loaded ' + arr.length + ' Pokemon from file');
 }
 
 GameEngine.prototype.loadAttacks = function(arr) {
     for (var i = 0; i < arr.length;i++){
         self.attacks[arr[i].attackid] = arr[i];
     }
-    console.log('loaded ' + arr.length + ' Attacks from db');
+    console.log('loaded ' + arr.length + ' Attacks from file');
 }
 
 //Player functions

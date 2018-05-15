@@ -44,7 +44,7 @@ function init() {
         rc.ready('dbMaps');
     });
 
-    fs.readFile('./db/items.json', "utf8",function read(err, data) {
+    fs.readFile('./db/blaine_items.json', "utf8",function read(err, data) {
         if (err) {
             throw err;
         }
@@ -54,23 +54,25 @@ function init() {
         rc.ready('dbItems');
     });
     // ---- Load Pokemon ----
-    docClient.scan({TableName: 'blaine_pkmn'}, function(err, data) {
+    fs.readFile('./db/blaine_pkmn.json', "utf8",function read(err, data) {
         if (err) {
-            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-        } else {
-            ge.loadPokemon(data.Items);
-            rc.ready('dbPokemon');
+            throw err;
         }
+        var obj = JSON.parse(data);
+
+        ge.loadPokemon(obj.items);
+        rc.ready('dbPokemon');
     });
 
     // ---- Load Attacks ----
-    docClient.scan({TableName: 'blaine_attacks'}, function(err, data) {
+    fs.readFile('./db/blaine_attacks.json', "utf8",function read(err, data) {
         if (err) {
-            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-        } else {
-            ge.loadAttacks(data.Items);
-            rc.ready('dbAttacks');
+            throw err;
         }
+        var obj = JSON.parse(data);
+
+        ge.loadAttacks(obj.items);
+        rc.ready('dbPokemon');
     });
 
     // ---- Load Userbase ----

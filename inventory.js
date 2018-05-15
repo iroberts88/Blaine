@@ -1,20 +1,23 @@
 var Pokemon = require('./pokemon.js').Pokemon;
 
 var Inventory = function(){
-   items: {}
+    MAX_ACTIVE_ITEMS: 5,
+    active: [],
+    main: {},
+    pokeballs: {},
+    keyItems: []
 }
 
 Inventory.prototype.init = function(data) {
-   
+
 };
 
-
 Inventory.prototype.addItem = function(item){
-  
+    
 };
 
 Inventory.prototype.removeItem = function(item){
-  
+    
 };
 
 Inventory.prototype.getDBObj = function(){

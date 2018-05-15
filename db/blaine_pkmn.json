@@ -1,0 +1,976 @@
+{
+  "items": [
+    {
+      "evolution": {
+        "into": 14,
+        "level": 7
+      },
+      "captureRate": 255,
+      "dexInfo": {
+        "weight": 7.1,
+        "text": "Often found in forests, eating leaves. It has a sharp venomous stinger on its head.",
+        "classification": "Hairy",
+        "height": "1'00\""
+      },
+      "number": 13,
+      "baseStats": {
+        "hp": 40,
+        "spdefense": 20,
+        "defense": 30,
+        "spattack": 20,
+        "attack": 35,
+        "speed": 50
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "poisonsting"
+          },
+          {
+            "moveid": "stringshot"
+          }
+        ]
+      },
+      "types": [
+        8,
+        12
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Weedle"
+    },
+    {
+      "evolution": {
+        "none": true
+      },
+      "captureRate": 45,
+      "dexInfo": {
+        "weight": 188.5,
+        "text": "A brutal Pok|mon with pressurized water jets on its shell. They are used for high speed tackles.",
+        "classification": "Shellfish",
+        "height": "5'03\""
+      },
+      "number": 9,
+      "baseStats": {
+        "hp": 79,
+        "spdefense": 105,
+        "defense": 100,
+        "spattack": 85,
+        "attack": 83,
+        "speed": 78
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "tackle"
+          },
+          {
+            "moveid": "tailwhip"
+          },
+          {
+            "moveid": "bubble"
+          },
+          {
+            "moveid": "watergun"
+          }
+        ],
+        "8": [
+          {
+            "moveid": "bubble"
+          }
+        ],
+        "15": [
+          {
+            "moveid": "watergun"
+          }
+        ],
+        "24": [
+          {
+            "moveid": "bite"
+          }
+        ],
+        "31": [
+          {
+            "moveid": "withdraw"
+          }
+        ],
+        "42": [
+          {
+            "moveid": "skullbash"
+          }
+        ],
+        "52": [
+          {
+            "moveid": "hydropump"
+          }
+        ]
+      },
+      "types": [
+        3
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Blastoise"
+    },
+    {
+      "evolution": {
+        "into": 8,
+        "level": 16
+      },
+      "captureRate": 45,
+      "dexInfo": {
+        "weight": 19.8,
+        "text": "After birth, its back swells and hardens into a shell. Powerfully sprays foam from its mouth.",
+        "classification": "Tiny Turtle",
+        "height": "1'08\""
+      },
+      "number": 7,
+      "baseStats": {
+        "hp": 44,
+        "spdefense": 64,
+        "defense": 65,
+        "spattack": 50,
+        "attack": 48,
+        "speed": 43
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "tackle"
+          },
+          {
+            "moveid": "tailwhip"
+          }
+        ],
+        "9": [
+          {
+            "moveid": "bubble"
+          }
+        ],
+        "15": [
+          {
+            "moveid": "watergun"
+          }
+        ],
+        "22": [
+          {
+            "moveid": "bite"
+          }
+        ],
+        "28": [
+          {
+            "moveid": "withdraw"
+          }
+        ],
+        "35": [
+          {
+            "moveid": "skullbash"
+          }
+        ],
+        "42": [
+          {
+            "moveid": "hydropump"
+          }
+        ]
+      },
+      "types": [
+        3
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Squirtle"
+    },
+    {
+      "evolution": {
+        "none": true
+      },
+      "captureRate": 45,
+      "dexInfo": {
+        "weight": 220.5,
+        "text": "The plant blooms when it is absorbing solar energy. It stays on the move to seek sunlight.",
+        "classification": "Seed",
+        "height": "6'07\""
+      },
+      "number": 3,
+      "baseStats": {
+        "hp": 80,
+        "spdefense": 100,
+        "defense": 83,
+        "spattack": 100,
+        "attack": 82,
+        "speed": 80
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "tackle"
+          },
+          {
+            "moveid": "growl"
+          },
+          {
+            "moveid": "leechseed"
+          },
+          {
+            "moveid": "vinewhip"
+          }
+        ],
+        "7": [
+          {
+            "moveid": "leechseed"
+          }
+        ],
+        "13": [
+          {
+            "moveid": "vinewhip"
+          }
+        ],
+        "22": [
+          {
+            "moveid": "poisonpowder"
+          }
+        ],
+        "30": [
+          {
+            "moveid": "razorleaf"
+          }
+        ],
+        "43": [
+          {
+            "moveid": "growth"
+          }
+        ],
+        "55": [
+          {
+            "moveid": "sleeppowder"
+          }
+        ],
+        "65": [
+          {
+            "moveid": "solarbeam"
+          }
+        ]
+      },
+      "types": [
+        5,
+        8
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Venusaur"
+    },
+    {
+      "evolution": {
+        "into": 5,
+        "level": 16
+      },
+      "captureRate": 45,
+      "dexInfo": {
+        "weight": 18.7,
+        "text": "Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail.",
+        "classification": "Lizard",
+        "height": "2'00\""
+      },
+      "number": 4,
+      "baseStats": {
+        "hp": 39,
+        "spdefense": 50,
+        "defense": 43,
+        "spattack": 60,
+        "attack": 52,
+        "speed": 65
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "scratch"
+          },
+          {
+            "moveid": "growl"
+          }
+        ],
+        "9": [
+          {
+            "moveid": "ember"
+          }
+        ],
+        "15": [
+          {
+            "moveid": "leer"
+          }
+        ],
+        "22": [
+          {
+            "moveid": "rage"
+          }
+        ],
+        "30": [
+          {
+            "moveid": "slash"
+          }
+        ],
+        "38": [
+          {
+            "moveid": "flamethrower"
+          }
+        ],
+        "46": [
+          {
+            "moveid": "firespin"
+          }
+        ]
+      },
+      "types": [
+        2
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Charmander"
+    },
+    {
+      "evolution": {
+        "into": 11,
+        "level": 7
+      },
+      "captureRate": 255,
+      "dexInfo": {
+        "weight": 6.4,
+        "text": "Its short feet are tipped with suction pads that enable it to tirelessly climb slopes and walls.",
+        "classification": "Worm",
+        "height": "1'00\""
+      },
+      "number": 10,
+      "baseStats": {
+        "hp": 45,
+        "spdefense": 20,
+        "defense": 35,
+        "spattack": 20,
+        "attack": 30,
+        "speed": 45
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "tackle"
+          },
+          {
+            "moveid": "stringshot"
+          }
+        ]
+      },
+      "types": [
+        12
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Caterpie"
+    },
+    {
+      "evolution": {
+        "into": 3,
+        "level": 32
+      },
+      "captureRate": 45,
+      "dexInfo": {
+        "weight": 28.7,
+        "text": "When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.",
+        "classification": "Seed",
+        "height": "3'03\""
+      },
+      "number": 2,
+      "baseStats": {
+        "hp": 60,
+        "spdefense": 80,
+        "defense": 63,
+        "spattack": 80,
+        "attack": 62,
+        "speed": 60
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "tackle"
+          },
+          {
+            "moveid": "growl"
+          },
+          {
+            "moveid": "leechseed"
+          }
+        ],
+        "7": [
+          {
+            "moveid": "leechseed"
+          }
+        ],
+        "13": [
+          {
+            "moveid": "vinewhip"
+          }
+        ],
+        "22": [
+          {
+            "moveid": "poisonpowder"
+          }
+        ],
+        "30": [
+          {
+            "moveid": "razorleaf"
+          }
+        ],
+        "38": [
+          {
+            "moveid": "growth"
+          }
+        ],
+        "46": [
+          {
+            "moveid": "sleeppowder"
+          }
+        ],
+        "54": [
+          {
+            "moveid": "solarbeam"
+          }
+        ]
+      },
+      "types": [
+        5,
+        8
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Ivysaur"
+    },
+    {
+      "evolution": {
+        "into": 9,
+        "level": 36
+      },
+      "captureRate": 45,
+      "dexInfo": {
+        "weight": 49.6,
+        "text": "Often hides in water to stalk unwary prey. For swimming fast, it moves its ears to maintain balance.",
+        "classification": "Turtle",
+        "height": "3'03\""
+      },
+      "number": 8,
+      "baseStats": {
+        "hp": 59,
+        "spdefense": 80,
+        "defense": 80,
+        "spattack": 65,
+        "attack": 63,
+        "speed": 58
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "tackle"
+          },
+          {
+            "moveid": "tailwhip"
+          },
+          {
+            "moveid": "bubble"
+          }
+        ],
+        "8": [
+          {
+            "moveid": "bubble"
+          }
+        ],
+        "15": [
+          {
+            "moveid": "watergun"
+          }
+        ],
+        "24": [
+          {
+            "moveid": "bite"
+          }
+        ],
+        "31": [
+          {
+            "moveid": "withdraw"
+          }
+        ],
+        "39": [
+          {
+            "moveid": "skullbash"
+          }
+        ],
+        "47": [
+          {
+            "moveid": "hydropump"
+          }
+        ]
+      },
+      "types": [
+        3
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Wartortle"
+    },
+    {
+      "evolution": {
+        "into": 2,
+        "level": 16
+      },
+      "captureRate": 45,
+      "dexInfo": {
+        "weight": 15.2,
+        "text": "A strange seed was planted on its back at birth. The plant sprouts and grows with this Pok|mon.",
+        "classification": "Seed",
+        "height": "2'04\""
+      },
+      "number": 1,
+      "baseStats": {
+        "hp": 45,
+        "spdefense": 65,
+        "defense": 49,
+        "spattack": 65,
+        "attack": 49,
+        "speed": 45
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "tackle"
+          },
+          {
+            "moveid": "growl"
+          }
+        ],
+        "7": [
+          {
+            "moveid": "leechseed"
+          }
+        ],
+        "13": [
+          {
+            "moveid": "vinewhip"
+          }
+        ],
+        "20": [
+          {
+            "moveid": "poisonpowder"
+          }
+        ],
+        "27": [
+          {
+            "moveid": "razorleaf"
+          }
+        ],
+        "34": [
+          {
+            "moveid": "growth"
+          }
+        ],
+        "41": [
+          {
+            "moveid": "sleeppowder"
+          }
+        ],
+        "48": [
+          {
+            "moveid": "solarbeam"
+          }
+        ]
+      },
+      "types": [
+        5,
+        8
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Bulbasaur"
+    },
+    {
+      "evolution": {
+        "none": true
+      },
+      "captureRate": 45,
+      "dexInfo": {
+        "weight": 199.5,
+        "text": "Spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally.",
+        "classification": "Flame",
+        "height": "5'07\""
+      },
+      "number": 6,
+      "baseStats": {
+        "hp": 78,
+        "spdefense": 85,
+        "defense": 78,
+        "spattack": 109,
+        "attack": 84,
+        "speed": 100
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "scratch"
+          },
+          {
+            "moveid": "growl"
+          },
+          {
+            "moveid": "ember"
+          },
+          {
+            "moveid": "leer"
+          }
+        ],
+        "9": [
+          {
+            "moveid": "ember"
+          }
+        ],
+        "15": [
+          {
+            "moveid": "leer"
+          }
+        ],
+        "24": [
+          {
+            "moveid": "rage"
+          }
+        ],
+        "33": [
+          {
+            "moveid": "slash"
+          }
+        ],
+        "46": [
+          {
+            "moveid": "flamethrower"
+          }
+        ],
+        "60": [
+          {
+            "moveid": "firespin"
+          }
+        ]
+      },
+      "types": [
+        2,
+        10
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Charizard"
+    },
+    {
+      "evolution": {
+        "into": 6,
+        "level": 36
+      },
+      "captureRate": 45,
+      "dexInfo": {
+        "weight": 41.9,
+        "text": "When it swings its burning tail, it elevates the temperature to unbearably high levels.",
+        "classification": "Flame",
+        "height": "3'07\""
+      },
+      "number": 5,
+      "baseStats": {
+        "hp": 58,
+        "spdefense": 65,
+        "defense": 58,
+        "spattack": 80,
+        "attack": 64,
+        "speed": 80
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "scratch"
+          },
+          {
+            "moveid": "growl"
+          },
+          {
+            "moveid": "ember"
+          }
+        ],
+        "9": [
+          {
+            "moveid": "ember"
+          }
+        ],
+        "15": [
+          {
+            "moveid": "leer"
+          }
+        ],
+        "24": [
+          {
+            "moveid": "rage"
+          }
+        ],
+        "33": [
+          {
+            "moveid": "slash"
+          }
+        ],
+        "42": [
+          {
+            "moveid": "flamethrower"
+          }
+        ],
+        "56": [
+          {
+            "moveid": "firespin"
+          }
+        ]
+      },
+      "types": [
+        2
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Charmeleon"
+    },
+    {
+      "evolution": {
+        "none": true
+      },
+      "captureRate": 45,
+      "dexInfo": {
+        "weight": 65,
+        "text": "Almost incapable of moving, this Pokémon can only harden its shell to protect itself from predators.",
+        "classification": "Poison Bee",
+        "height": "3'03\""
+      },
+      "number": 15,
+      "baseStats": {
+        "hp": 65,
+        "spdefense": 80,
+        "defense": 40,
+        "spattack": 45,
+        "attack": 90,
+        "speed": 75
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "furyattack"
+          }
+        ],
+        "12": [
+          {
+            "moveid": "furyattack"
+          }
+        ],
+        "16": [
+          {
+            "moveid": "focusenergy"
+          }
+        ],
+        "20": [
+          {
+            "moveid": "twineedle"
+          }
+        ],
+        "25": [
+          {
+            "moveid": "rage"
+          }
+        ],
+        "30": [
+          {
+            "moveid": "pinmissile"
+          }
+        ],
+        "35": [
+          {
+            "moveid": "agility"
+          }
+        ]
+      },
+      "types": [
+        8,
+        12
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Beedrill"
+    },
+    {
+      "evolution": {
+        "into": 12,
+        "level": 10
+      },
+      "captureRate": 120,
+      "dexInfo": {
+        "weight": 21.8,
+        "text": "This Pokémon is vulnerable to attack while its shell is soft, exposing its weak and tender body.",
+        "classification": "Cocoon",
+        "height": "2'04\""
+      },
+      "number": 11,
+      "baseStats": {
+        "hp": 50,
+        "spdefense": 25,
+        "defense": 55,
+        "spattack": 25,
+        "attack": 20,
+        "speed": 30
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "harden"
+          }
+        ],
+        "7": [
+          {
+            "moveid": "harden"
+          }
+        ]
+      },
+      "types": [
+        12
+      ],
+      "tmCompatability": {},
+      "name": "Metapod"
+    },
+    {
+      "evolution": {
+        "into": 15,
+        "level": 10
+      },
+      "captureRate": 120,
+      "dexInfo": {
+        "weight": 22,
+        "text": "Almost incapable of moving, this Pokémon can only harden its shell to protect itself from predators.",
+        "classification": "Cocoon",
+        "height": "2'00\""
+      },
+      "number": 14,
+      "baseStats": {
+        "hp": 45,
+        "spdefense": 25,
+        "defense": 50,
+        "spattack": 25,
+        "attack": 25,
+        "speed": 35
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "harden"
+          }
+        ],
+        "7": [
+          {
+            "moveid": "harden"
+          }
+        ]
+      },
+      "types": [
+        8,
+        12
+      ],
+      "tmCompatability": {
+        "1": true,
+        "2": true
+      },
+      "name": "Kakuna"
+    },
+    {
+      "evolution": {
+        "none": true
+      },
+      "captureRate": 45,
+      "dexInfo": {
+        "weight": 70.5,
+        "text": "In battle, it flaps its wings at high speed to release highly toxic dust into the air.",
+        "classification": "BUtterfly",
+        "height": "3'07\""
+      },
+      "number": 12,
+      "baseStats": {
+        "hp": 60,
+        "spdefense": 80,
+        "defense": 50,
+        "spattack": 90,
+        "attack": 45,
+        "speed": 70
+      },
+      "moveList": {
+        "1": [
+          {
+            "moveid": "confusion"
+          }
+        ],
+        "12": [
+          {
+            "moveid": "confusion"
+          }
+        ],
+        "15": [
+          {
+            "moveid": "poisonpowder"
+          }
+        ],
+        "16": [
+          {
+            "moveid": "stunspore"
+          }
+        ],
+        "17": [
+          {
+            "moveid": "sleeppowder"
+          }
+        ],
+        "21": [
+          {
+            "moveid": "supersonic"
+          }
+        ],
+        "26": [
+          {
+            "moveid": "whirlwind"
+          }
+        ],
+        "32": [
+          {
+            "moveid": "psybeam"
+          }
+        ]
+      },
+      "types": [
+        12,
+        10
+      ],
+      "tmCompatability": {},
+      "name": "Butterfree"
+    }
+  ]
+}
