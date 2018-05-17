@@ -1,4 +1,5 @@
 var Pokemon = require('./pokemon.js').Pokemon;
+var Inventory = require('./inventory.js').Inventory;
 
 var Character = function(){
     this.MAX_POKEMON = 6;
@@ -135,6 +136,13 @@ Character.prototype.init = function(data) {
     }
     //init pc stuff
     //init inventory
+    this.inventory = new Inventory();
+    this.inventory.init();
+    for (var i in this.gameEngine.items){
+        var item = this.gameEngine.items[i];
+        var add = this.inventory.addItem(item,5);
+    }
+    console.log(this.inventory)
 };
 
 Character.prototype.initBattle = function(n){
@@ -159,12 +167,6 @@ Character.prototype.swapPkmn = function(data){
         var temp = this.party[data.first-1];
         this.party[data.first-1] = this.party[data.second-1];
         this.party[data.second-1] = temp;
-        console.log("swapped");
-        console.log(data);
-        for (var i in this.party){
-            console.log(i);
-            console.log(this.party[i].nickname)
-        }
     }
 };
 Character.prototype.addPokemon = function(p){
