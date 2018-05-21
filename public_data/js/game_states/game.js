@@ -20,6 +20,8 @@
         pkmnSwapData: null,
         pkmnSwapSpeed: 0.15,
 
+        currentItemView: 'main',
+
         newMapData: null,
 
         requestMade: false,
@@ -28,18 +30,23 @@
 
         uiBoxTexture: null,
 
+        //containers for the various UI screens
         pokedexUI: new PIXI.Container(),
         pokemonUI: new PIXI.Container(),
         inventoryUI: new PIXI.Container(),
         characterUI: new PIXI.Container(),
         settingsUI: new PIXI.Container(),
 
+        //UI toggle buttons
         pokedexButton: null,
         pokemonButton: null,
-        pokemonUIContainers: null,
         inventoryButton: null,
         characterButton: null,
         settingsButton: null,
+
+        //UI element references
+        pokemonUIElements: null,
+        inventoryUIElements: null,
 
         pkmnBoxSize: [800,300],
         pkmnSelected: null,
@@ -98,22 +105,7 @@
             this.chat.style.display = 'inline-block';
             this.chat.style.transform = ' translate(2%,-105%)';
 
-            var text = new PIXI.Text('T',AcornSetup.style2);
-            text.position.x = 5;
-            text.position.y = 5;
-            text.style.fontSize = 48;
-            var gfx = new PIXI.Graphics()
-            var cont = new PIXI.Container();
-
-            gfx.lineStyle(2,0xDCDCDC,0.8);
-            gfx.beginFill(0xDCDCDC,0.8);
-            gfx.drawRoundedRect(0,0,5+text.width,5+text.height,10);
-            gfx.endFill();
-            cont.addChild(gfx);
-            cont.addChild(text);
-            var texture = PIXI.RenderTexture.create(5+text.width,5+text.height);
-            var renderer = new PIXI.CanvasRenderer();
-            Graphics.app.renderer.render(cont,texture);
+           var texture = this.getTextButton('T',48);
 
             this.chatButton = Graphics.makeUiElement({
                 texture: texture,
@@ -241,8 +233,8 @@
 
         updatePkmnSwapChange: function(deltaTime){
             this.pkmnSwapTicker += deltaTime;
-            var first = this.pokemonUIContainers[this.pkmnSwapData.first];
-            var second = this.pokemonUIContainers[this.pkmnSwapData.second];
+            var first = this.pokemonUIElements[this.pkmnSwapData.first];
+            var second = this.pokemonUIElements[this.pkmnSwapData.second];
             var dx1 = this.pkmnSwapData.secondStart.x - this.pkmnSwapData.firstStart.x;
             var dy1 = this.pkmnSwapData.secondStart.y - this.pkmnSwapData.firstStart.y;
             var dx2 = this.pkmnSwapData.firstStart.x - this.pkmnSwapData.secondStart.x;
@@ -261,8 +253,8 @@
                 second.position.x = this.pkmnSwapData.firstStart.x;
                 second.position.y = this.pkmnSwapData.firstStart.y;
                 //swap ui containers
-                this.pokemonUIContainers[this.pkmnSwapData.second] = first;
-                this.pokemonUIContainers[this.pkmnSwapData.first] = second;
+                this.pokemonUIElements[this.pkmnSwapData.second] = first;
+                this.pokemonUIElements[this.pkmnSwapData.first] = second;
                 //swap reference numbers in containers
                 var num = first.pokemonNumber;
                 first.pokemonNumber = second.pokemonNumber;
@@ -417,7 +409,7 @@
             Graphics.app.renderer.render(c1,pkmnTex);
             sprite.texture = Graphics.getResource('ow_pokeball');
             Graphics.app.renderer.render(c1,invTex);
-            sprite.texture = Graphics.getResource('ow_' + Game.char + '_d1');
+            sprite.texture = Graphics.getResource('ow_' + Game.char.owSprite + '_d1');
             Graphics.app.renderer.render(c1,charTex);
             sprite.texture = Graphics.getResource('ow_clipboard');
             Graphics.app.renderer.render(c1,setTex);
@@ -439,6 +431,16 @@
                     Game.uiActive = Game.pokedexUI;
                 }
             });
+            this.pokedexButton.tooltip = new Tooltip();
+            this.pokedexButton.tooltip.set({
+                owner: this.pokedexButton,
+                ttArray: [
+                    {
+                        text: "POK|DEX"
+                    }
+                ],
+                alpha: 0.5
+            });
             Graphics.uiContainer.addChild(this.pokedexButton);
             this.pokemonButton = Graphics.makeUiElement({
                 texture: pkmnTex,
@@ -455,6 +457,16 @@
                     Graphics.ui.addChild(Game.pokemonUI);
                     Game.uiActive = Game.pokemonUI;
                 }
+            });
+            this.pokemonButton.tooltip = new Tooltip();
+            this.pokemonButton.tooltip.set({
+                owner: this.pokemonButton,
+                ttArray: [
+                    {
+                        text: "POK|MON"
+                    }
+                ],
+                alpha: 0.5
             });
             Graphics.uiContainer.addChild(this.pokemonButton);
 
@@ -473,6 +485,16 @@
                     Graphics.ui.addChild(Game.inventoryUI);
                     Game.uiActive = Game.inventoryUI;
                 }
+            });
+            this.inventoryButton.tooltip = new Tooltip();
+            this.inventoryButton.tooltip.set({
+                owner: this.inventoryButton,
+                ttArray: [
+                    {
+                        text: "BACKPACK"
+                    }
+                ],
+                alpha: 0.5
             });
             Graphics.uiContainer.addChild(this.inventoryButton);
 
@@ -508,6 +530,16 @@
                     Graphics.ui.addChild(Game.settingsUI);
                     Game.uiActive = Game.settingsUI;
                 }
+            });
+            this.settingsButton.tooltip = new Tooltip();
+            this.settingsButton.tooltip.set({
+                owner: this.settingsButton,
+                ttArray: [
+                    {
+                        text: "SETTINGS"
+                    }
+                ],
+                alpha: 0.5
             });
             Graphics.uiContainer.addChild(this.settingsButton);
         },
@@ -556,6 +588,44 @@
             x.style.fontSize = 64;
             this.inventoryUI.addChild(x);
 
+            var fSize = 36;
+            var yLoc = 120;
+            var options = {
+                buffer: 15,
+                roundedness: 20
+            }
+            //active items button
+            this.inventoryUI.addChild(Graphics.makeUiElement({
+                text: 'ACTIVE',
+                style: AcornSetup.style3,
+                position: [Graphics.width*0.1,yLoc],
+            }));
+            //Main items button
+            this.inventoryUI.addChild(Graphics.makeUiElement({
+                text: 'ITEMS',
+                style: AcornSetup.style3,
+                position: [Graphics.width*0.3,yLoc],
+            }));
+            //pokeballs button
+            this.inventoryUI.addChild(Graphics.makeUiElement({
+                text: 'POK|BALLS',
+                style: AcornSetup.style3,
+                position: [Graphics.width*0.5,yLoc],
+            }));
+            //tms button
+            this.inventoryUI.addChild(Graphics.makeUiElement({
+                text: 'TMs',
+                style: AcornSetup.style3,
+                position: [Graphics.width*0.7,yLoc],
+            }));
+            //key items button
+            this.inventoryUI.addChild(Graphics.makeUiElement({
+                text: 'KEY ITEMS',
+                style: AcornSetup.style3,
+                position: [Graphics.width*0.9,yLoc],
+            }));
+
+            this.inventoryUIElements = [];
             this.inventoryUI.scale.x = this.UI_OFFSETSCALE;
             this.inventoryUI.scale.y = this.UI_OFFSETSCALE;
             this.inventoryUI.position.x = Graphics.width*((1-this.UI_OFFSETSCALE)/2);
@@ -581,7 +651,7 @@
             x.style.fontSize = 64;
             this.pokemonUI.addChild(x);
 
-            this.pokemonUIContainers = {};
+            this.pokemonUIElements = {};
             var x = Graphics.width/2 - this.pkmnBoxSize[0] - 15;
             var y = Graphics.height/4 - 50;
             for (var i = 0; i < 6;i++){
@@ -640,7 +710,7 @@
                     x = Graphics.width/2 - this.pkmnBoxSize[0] - 15;
                     y += (Graphics.height/4 + 50);
                 }
-                this.pokemonUIContainers[i+1] = container;
+                this.pokemonUIElements[i+1] = container;
                 this.pokemonUI.addChild(container);
             }
             this.pokemonUI.scale.x = this.UI_OFFSETSCALE;
@@ -648,6 +718,16 @@
             this.pokemonUI.position.x = Graphics.width*((1-this.UI_OFFSETSCALE)/2);
             this.pokemonUI.position.y = Graphics.height*((1-this.UI_OFFSETSCALE)/2);
         },
+
+        resetItems: function(){
+            for (var i = 0; i < this.inventoryUIElements.length;i++){
+                this.inventoryUI.removeChild(this.inventoryUIElements[i]);
+            }
+            this.inventoryUIElements = [];
+
+            var itemArr = Player.character.inventory.order[this.currentItemView];
+        },
+
         resetPokemon: function(slot){
             var xSize = this.pkmnBoxSize[0];
             var ySize = this.pkmnBoxSize[1];
@@ -655,7 +735,7 @@
                 return;
             }
             var pokemon = Party.pokemon[slot];
-            var c = this.pokemonUIContainers[slot];
+            var c = this.pokemonUIElements[slot];
             c.removeChildren();
 
             //get texture for button, set to interactive etc.
@@ -887,6 +967,33 @@
                 this.chat.value = '';
             }
             this.uiActive = null;
+        },
+
+        getTextButton: function(text,size,options){
+            if (typeof options == 'undefined'){
+                options = {};
+            }
+            var buffer = (typeof options.buffer == 'undefined') ? 0 : options.buffer;
+            var roundedness = (typeof options.roundedness == 'undefined') ? 0 : options.roundedness;
+
+            var text = new PIXI.Text(text,AcornSetup.style2);
+            text.position.x = 5 + buffer;
+            text.position.y = 5 + buffer;
+            text.style.fontSize = size;
+            var gfx = new PIXI.Graphics()
+            var cont = new PIXI.Container();
+
+            gfx.lineStyle(2,0xDCDCDC,0.8);
+            gfx.beginFill(0xDCDCDC,0.8);
+            gfx.drawRoundedRect(0,0,5 + buffer*2 + text.width,5 + buffer*2 + text.height,roundedness);
+            gfx.endFill();
+            cont.addChild(gfx);
+            cont.addChild(text);
+            var texture = PIXI.RenderTexture.create(5 + buffer*2 + text.width,5 + buffer*2 + text.height);
+            var renderer = new PIXI.CanvasRenderer();
+            Graphics.app.renderer.render(cont,texture);
+
+            return texture;
         },
 
         getBoxTexture: function(){

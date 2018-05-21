@@ -14,6 +14,12 @@
             align: 'left'
         },
 
+        style3: {
+            font: '32px Pokemon',
+            fill: 'black',
+            align: 'left'
+        },
+
         nameStyle: {
             font: '18px Pokemon',
             fill: 'orange',
@@ -76,7 +82,7 @@
             Acorn.Net.on('startGame', function (data) {
                 console.log('Game Started!');
                 console.log(data);
-                Game.char = data.character.owSprite;
+                Game.char = data.character;
                 Acorn.changeState('ingame');
                 document.body.removeChild(NewChar.characterNameInput);
                 document.body.removeChild(NewChar.okButton);

@@ -142,7 +142,6 @@ Character.prototype.init = function(data) {
         var item = this.gameEngine.items[i];
         var add = this.inventory.addItem(item,5);
     }
-    console.log(this.inventory)
 };
 
 Character.prototype.initBattle = function(n){
@@ -205,7 +204,7 @@ Character.prototype.getClientData = function(){
     data.tile = this.currentTile;
     data.owSprite = this.owSprite;
     
-    //data.inventory = {};
+    data.inventory = this.inventory.getClientData();
     //badges
     //pokemon
     data.pokemon = [];

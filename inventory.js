@@ -7,7 +7,8 @@ var Inventory = function(){
         'main', //main items that can be placed in active items
         //ONLY ACTIVE ITEMS can be used during battles
         'ball', //pokeballs
-        'key' //key items
+        'key',  //key items
+        'tm'
         //hold items?
     ];
 
@@ -35,7 +36,7 @@ Inventory.prototype.addItem = function(baseItem,amount){
     if (item){
         //item exists
         //if key item, return
-        if (!item.type == 'key'){
+        if (item.type == 'key'){
             return {
                 amountAdded: 0,
                 amountNotAdded: amount,
@@ -58,6 +59,8 @@ Inventory.prototype.addItem = function(baseItem,amount){
             newItem.amount = amount;
         }
         this.items[newItem.id] = newItem;
+        //add item to correct order
+        this.order[newItem.type].push(newItem.id);
     }
 
     return {
@@ -80,7 +83,13 @@ Inventory.prototype.removeItem = function(id,amount){
     }
     var item = this.items[id];
     if (item.amount <= amount){
-        //remove the item
+        //remove the item!
+        for (var i = 0; i < this.order[item.type].length;i++){
+            if (this.order[item.type][i] == item.id){
+                this.order[item.type].splice(i,0);
+                break;
+            }
+        }
         delete this.items[id];
     }else{
         item.amount -= amount;
@@ -98,7 +107,15 @@ Inventory.prototype.getDBObj = function(){
 Inventory.prototype.getClientData = function(){
     //create object to send to the client
     var data = {}
-    
+    data.items = {};
+    for (var i in this.items){
+        data.items[i] = this.items[i].getClientData();
+    }
+    data.activeItems = [];
+    for (var i = 0; i < this.activeItems.length;i++){
+        data.activeItems.push(this.activeItems.getClientData());
+    }
+    data.order = this.order;
     return data;
 }
 
@@ -117,6 +134,16 @@ Item.prototype.init = function(data) {
     this.use = data.use;
 
     this.amount = 1;
+};
+
+Item.prototype.getClientData = function() {
+    var data = {};
+    data.name = this.name;
+    data.type = this.type;
+    data.price = this.price;
+    data.description = this.description;
+    data.amount = this.amount;
+    return data;
 };
 
 exports.Item = Item;
