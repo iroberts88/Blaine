@@ -309,10 +309,13 @@
         },
 
         showPokemonUI: function(){
+            Game.switchUI(Game.pokemonUI);
             this.toggleTurnOptions(false);
         },
 
         showItemUI: function(){
+            Game.switchUI(Game.inventoryUI);
+            Game.resetItems();
             this.toggleTurnOptions(false);
         },
 

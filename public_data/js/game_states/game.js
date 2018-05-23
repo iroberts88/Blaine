@@ -46,9 +46,14 @@
 
         //UI element references
         pokemonUIElements: null,
+
         inventoryUIButtons: [],
         inventoryUIElements: null,
+        inventoryUseButton: null,
+        currentSelectedItem: null,
+        currentSelectedItemIndex: null,
         selectedItem: null,
+        itemUITooltip: null,
 
         pkmnBoxSize: [800,300],
         pkmnSelected: null,
@@ -107,7 +112,7 @@
             this.chat.style.display = 'inline-block';
             this.chat.style.transform = ' translate(2%,-105%)';
 
-           var texture = this.getTextButton('T',48);
+            var texture = this.getTextButton('T',48);
 
             this.chatButton = Graphics.makeUiElement({
                 texture: texture,
@@ -170,14 +175,14 @@
                 if (Acorn.Input.isPressed(Acorn.Input.Key.COMMAND)){
                     this.chat.value = '/';
                     Graphics.uiContainer2.removeChild(Game.chatButton);
-                    document.body.appendChild( Game.chat );
+                    document.body.appendChild(Game.chat);
                     Game.chat.focus();
                     Game.chatActive = true;
                 }
                 if (Acorn.Input.isPressed(Acorn.Input.Key.TALK)){
                     this.chat.value = '';
                     Graphics.uiContainer2.removeChild(Game.chatButton);
-                    document.body.appendChild( Game.chat );
+                    document.body.appendChild(Game.chat);
                     Game.chat.focus();
                     Game.chatActive = true;
                 }
@@ -188,6 +193,33 @@
             //update each PC
             for (var i in this.pcs){
                 this.pcs[i].update(deltaTime);
+            }
+            if (this.currentSelectedItem && this.itemUITooltip == null){
+               /* //INIT itemUITooltip
+                this.itemUITooltip = new Tooltip();
+                var arr = [
+                    {
+                        text: "<" + this.currentSelectedItem.itemInfo.name + '>',
+                        align: 'center'
+                    },
+                    {
+                        text: this.currentSelectedItem.itemInfo.description
+                    },
+                    {
+                        text: ''
+                    }
+                ]
+                this.itemUITooltip.set({
+                    owner: this,
+                    noInputEvents: true,
+                    ttArray: arr,
+                    alpha: 0.5
+                });
+                this.itemUITooltip.sprite.anchor.x = 1.0;
+                this.itemUITooltip.sprite.anchor.y = 1.0;
+                this.itemUITooltip.sprite.position.x = Graphics.width - 5;
+                this.itemUITooltip.sprite.position.y = Graphics.height - 5;
+                Graphics.ui.addChild(this.itemUITooltip.sprite);*/
             }
         },
 
@@ -423,25 +455,8 @@
                 position: [(Graphics.width/2 - padding - bSize*2),bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
-                    if (Game.uiActive){
-                        Graphics.ui.removeChild(Game.uiActive);
-                        Acorn.Sound.play('select');
-                    }else{
-                        Acorn.Sound.play('menu');
-                    }
-                    Graphics.ui.addChild(Game.pokedexUI);
-                    Game.uiActive = Game.pokedexUI;
+                    Game.switchUI(Game.pokedexUI);
                 }
-            });
-            this.pokedexButton.tooltip = new Tooltip();
-            this.pokedexButton.tooltip.set({
-                owner: this.pokedexButton,
-                ttArray: [
-                    {
-                        text: "POK|DEX"
-                    }
-                ],
-                alpha: 0.5
             });
             Graphics.uiContainer.addChild(this.pokedexButton);
             this.pokemonButton = Graphics.makeUiElement({
@@ -450,25 +465,8 @@
                 position: [(Graphics.width/2 - padding/2 - bSize),bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
-                    if (Game.uiActive){
-                        Graphics.ui.removeChild(Game.uiActive);
-                        Acorn.Sound.play('select');
-                    }else{
-                        Acorn.Sound.play('menu');
-                    }
-                    Graphics.ui.addChild(Game.pokemonUI);
-                    Game.uiActive = Game.pokemonUI;
+                   Game.switchUI(Game.pokemonUI);
                 }
-            });
-            this.pokemonButton.tooltip = new Tooltip();
-            this.pokemonButton.tooltip.set({
-                owner: this.pokemonButton,
-                ttArray: [
-                    {
-                        text: "POK|MON"
-                    }
-                ],
-                alpha: 0.5
             });
             Graphics.uiContainer.addChild(this.pokemonButton);
 
@@ -478,44 +476,19 @@
                 position: [Graphics.width/2,bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
-                    if (Game.uiActive){
-                        Graphics.ui.removeChild(Game.uiActive);
-                        Acorn.Sound.play('select');
-                    }else{
-                        Acorn.Sound.play('menu');
-                    }
-                    Graphics.ui.addChild(Game.inventoryUI);
-                    Game.uiActive = Game.inventoryUI;
+                    Game.switchUI(Game.inventoryUI);
                     Game.currentItemView = 'main';
                     Game.resetItems();
                 }
             });
-            this.inventoryButton.tooltip = new Tooltip();
-            this.inventoryButton.tooltip.set({
-                owner: this.inventoryButton,
-                ttArray: [
-                    {
-                        text: "BACKPACK"
-                    }
-                ],
-                alpha: 0.5
-            });
             Graphics.uiContainer.addChild(this.inventoryButton);
-
             this.characterButton = Graphics.makeUiElement({
                 texture: charTex,
                 interactive: true,buttonMode: true,
                 position: [(Graphics.width/2 + padding/2 + bSize),bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
-                    if (Game.uiActive){
-                        Graphics.ui.removeChild(Game.uiActive);
-                        Acorn.Sound.play('select');
-                    }else{
-                        Acorn.Sound.play('menu');
-                    }
-                    Graphics.ui.addChild(Game.characterUI);
-                    Game.uiActive = Game.characterUI;
+                    Game.switchUI(Game.characterUI);
                 }
             });
             Graphics.uiContainer.addChild(this.characterButton);
@@ -525,25 +498,8 @@
                 position: [(Graphics.width/2 + padding + bSize*2),bSize/2 + 10],
                 anchor: [0.5,0.5],
                 clickFunc: function onClick(e){
-                    if (Game.uiActive){
-                        Graphics.ui.removeChild(Game.uiActive);
-                        Acorn.Sound.play('select');
-                    }else{
-                        Acorn.Sound.play('menu');
-                    }
-                    Graphics.ui.addChild(Game.settingsUI);
-                    Game.uiActive = Game.settingsUI;
+                    Game.switchUI(Game.settingsUI);
                 }
-            });
-            this.settingsButton.tooltip = new Tooltip();
-            this.settingsButton.tooltip.set({
-                owner: this.settingsButton,
-                ttArray: [
-                    {
-                        text: "SETTINGS"
-                    }
-                ],
-                alpha: 0.5
             });
             Graphics.uiContainer.addChild(this.settingsButton);
         },
@@ -598,36 +554,43 @@
                 buffer: 15,
                 roundedness: 20
             }
-            //active items button
-            this.inventoryUIButtons.push(this.inventoryUI.addChild(Graphics.makeUiElement({
-                text: 'ACTIVE',
-                style: AcornSetup.style3,
-                position: [Graphics.width*0.1,yLoc],
-            })));
             //Main items button
             this.inventoryUIButtons.push(this.inventoryUI.addChild(Graphics.makeUiElement({
                 text: 'ITEMS',
                 style: AcornSetup.style3,
-                position: [Graphics.width*0.3,yLoc],
+                position: [Graphics.width*0.2,yLoc],
             })));
             //pokeballs button
             this.inventoryUIButtons.push(this.inventoryUI.addChild(Graphics.makeUiElement({
                 text: 'POK|BALLS',
                 style: AcornSetup.style3,
-                position: [Graphics.width*0.5,yLoc],
+                position: [Graphics.width*0.4,yLoc],
             })));
             //tms button
             this.inventoryUIButtons.push(this.inventoryUI.addChild(Graphics.makeUiElement({
                 text: 'TMs',
                 style: AcornSetup.style3,
-                position: [Graphics.width*0.7,yLoc],
+                position: [Graphics.width*0.6,yLoc],
             })));
             //key items button
             this.inventoryUIButtons.push(this.inventoryUI.addChild(Graphics.makeUiElement({
                 text: 'KEY ITEMS',
                 style: AcornSetup.style3,
-                position: [Graphics.width*0.9,yLoc],
+                position: [Graphics.width*0.8,yLoc],
             })));
+
+            this.inventoryUseButton = this.inventoryUI.addChild(Graphics.makeUiElement({
+                texture: this.getTextButton("USE",48,options),
+                style: AcornSetup.style3,
+                anchor: [0.5,1],
+                position: [Graphics.width/2,Graphics.height - 25],
+                interactive: true,buttonMode: true,
+                clickFunc: function onClick(e){
+                    console.log('USeeeeee')
+                }
+            }));
+            this.inventoryUseButton.visible = false;
+            this.inventoryUIButtons.push(this.inventoryUseButton);
 
             this.inventoryUIElements = [];
             this.inventoryUI.scale.x = this.UI_OFFSETSCALE;
@@ -731,11 +694,11 @@
 
             var itemTypes = ['main', 'ball','tm','key'];
             var yStart = 250;
-            var xStart = Graphics.width*0.3;
+            var xStart = Graphics.width*0.2;
             var options = {
                 buffer: 15,
                 roundedness: 20
-            }
+            };
 
             for (var j = 0; j < itemTypes.length;j++){
                 var itemArr = Player.character.inventory.order[itemTypes[j]];
@@ -747,6 +710,14 @@
                         position: [xStart,yStart],
                         interactive: true,buttonMode: true,
                         clickFunc: function onClick(e){
+                            if (Game.currentSelectedItem){
+                                Game.currentSelectedItem.filters = []
+                                Game.itemUITooltip = null;
+                            }
+                            Game.currentSelectedItem = e.currentTarget;
+                            var filter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF00000, 0.5);
+                            Game.currentSelectedItem.filters = [filter];
+                            Game.inventoryUseButton.visible = true;
                         }
                     });
                     yStart += newButton.height + 5;
@@ -987,6 +958,18 @@
             this.settingsUI.position.y = Graphics.height*((1-this.UI_OFFSETSCALE)/2);
         },
 
+        switchUI: function(ui){
+            if (Game.uiActive){
+                Graphics.ui.removeChild(Game.uiActive);
+                Acorn.Sound.play('select');
+            }else{
+                Acorn.Sound.play('menu');
+            }
+            this.clearUI();
+            Graphics.ui.addChild(ui);
+            Game.uiActive = ui;
+        },
+
         clearUI: function(){
             if (this.uiActive){
                 Graphics.ui.removeChild(this.uiActive);
@@ -997,7 +980,13 @@
                 this.chatActive = false;
                 this.chat.value = '';
             }
+            if (this.battleActive){
+                Battle.toggleTurnOptions(true);
+            }
             this.uiActive = null;
+            this.currentSelectedItem = null;
+            this.currentSelectedItemIndex = null;
+            this.inventoryUseButton.visible = false;
         },
 
         getTextButton: function(text,size,options){

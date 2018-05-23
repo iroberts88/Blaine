@@ -44,14 +44,15 @@
         gfx.endFill();
         scene.addChild(gfx);
         scene.addChild(cont);
-        
-        var textObjects = [];
+
+        var words = {};
         var yStart = padding;
         for (var i = 0; i < this.ttInfo.ttArray.length;i++){
             //create the text object
             var start = 0;
             var text = this.ttInfo.ttArray[i].text;
             var xStart = padding;
+            words[i] = {arr: [],w: 0};
             for (var sI = 0; sI < text.length; sI++){
                 if (text.charAt(sI) == ' ' || sI == text.length-1){
                     //found word'
@@ -103,7 +104,11 @@
                     if (nextWord.position.x + nextWord.width/2 > w){
                         w = nextWord.position.x + nextWord.width/2 + padding;
                     }
-                    textObjects.push(nextWord);
+                    words[i].w += nextWord.width;
+                    if (words[i].w > this.maxWidth){
+                        words[i].w = this.maxWidth;
+                    }
+                    words[i].arr.push(nextWord);
                     cont.addChild(nextWord);
                     lastHeight = nextWord.height;
                 }
@@ -114,17 +119,21 @@
         }
         h = yStart + padding;
         //check alignment
-        /*for (var j = 0; j < textObjects.length; j++){
-            try{
-                if (this.ttInfo.ttArray[j].align == 'center'){
-                    textObjects[j].position.x = w/2;
-                }else if(this.ttInfo.ttArray[j].align == 'right'){
-                    textObjects[j].position.x = w-textObjects[j].width/2;
-                }
-            }catch(e){
-                console.log(e);
+        for (var i in words){
+            var move = 0;
+            if (typeof this.ttInfo.ttArray[i].align == 'undefined'){
+                continue;
             }
-        }*/
+            if (this.ttInfo.ttArray[i].align == 'center'){
+                move = (w-words[i].w)/2;
+            }else if(this.ttInfo.ttArray[i].align == 'right'){
+                 move = (w-words[i].w);
+            }
+            for (var j = 0; j < words[i].arr.length;j++){
+                words[i].arr[j].position.x += move;
+            }
+        }
+        console.log(words);
         //draw outline
         gfx.lineStyle(3,0xFFFFFF,1);
         gfx.moveTo(2,2);
@@ -142,6 +151,10 @@
 
         this.position.x = Graphics.width - this.sprite.width - 5;
         this.position.y = Graphics.height - this.sprite.height - 5;
+        //OPTIONAL: data.noInputEvents
+        if (data.noInputEvents){
+            return;
+        }
         var overFunc = function(e){
             if (!e.currentTarget.tooltipAdded){
                 Graphics.uiContainer2.addChild(e.currentTarget.tooltip.sprite);
