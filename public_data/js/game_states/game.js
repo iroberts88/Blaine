@@ -46,7 +46,9 @@
 
         //UI element references
         pokemonUIElements: null,
+        inventoryUIButtons: [],
         inventoryUIElements: null,
+        selectedItem: null,
 
         pkmnBoxSize: [800,300],
         pkmnSelected: null,
@@ -484,6 +486,8 @@
                     }
                     Graphics.ui.addChild(Game.inventoryUI);
                     Game.uiActive = Game.inventoryUI;
+                    Game.currentItemView = 'main';
+                    Game.resetItems();
                 }
             });
             this.inventoryButton.tooltip = new Tooltip();
@@ -588,42 +592,42 @@
             x.style.fontSize = 64;
             this.inventoryUI.addChild(x);
 
-            var fSize = 36;
+            var fSize = 24;
             var yLoc = 120;
             var options = {
                 buffer: 15,
                 roundedness: 20
             }
             //active items button
-            this.inventoryUI.addChild(Graphics.makeUiElement({
+            this.inventoryUIButtons.push(this.inventoryUI.addChild(Graphics.makeUiElement({
                 text: 'ACTIVE',
                 style: AcornSetup.style3,
                 position: [Graphics.width*0.1,yLoc],
-            }));
+            })));
             //Main items button
-            this.inventoryUI.addChild(Graphics.makeUiElement({
+            this.inventoryUIButtons.push(this.inventoryUI.addChild(Graphics.makeUiElement({
                 text: 'ITEMS',
                 style: AcornSetup.style3,
                 position: [Graphics.width*0.3,yLoc],
-            }));
+            })));
             //pokeballs button
-            this.inventoryUI.addChild(Graphics.makeUiElement({
+            this.inventoryUIButtons.push(this.inventoryUI.addChild(Graphics.makeUiElement({
                 text: 'POK|BALLS',
                 style: AcornSetup.style3,
                 position: [Graphics.width*0.5,yLoc],
-            }));
+            })));
             //tms button
-            this.inventoryUI.addChild(Graphics.makeUiElement({
+            this.inventoryUIButtons.push(this.inventoryUI.addChild(Graphics.makeUiElement({
                 text: 'TMs',
                 style: AcornSetup.style3,
                 position: [Graphics.width*0.7,yLoc],
-            }));
+            })));
             //key items button
-            this.inventoryUI.addChild(Graphics.makeUiElement({
+            this.inventoryUIButtons.push(this.inventoryUI.addChild(Graphics.makeUiElement({
                 text: 'KEY ITEMS',
                 style: AcornSetup.style3,
                 position: [Graphics.width*0.9,yLoc],
-            }));
+            })));
 
             this.inventoryUIElements = [];
             this.inventoryUI.scale.x = this.UI_OFFSETSCALE;
@@ -725,7 +729,34 @@
             }
             this.inventoryUIElements = [];
 
-            var itemArr = Player.character.inventory.order[this.currentItemView];
+            var itemTypes = ['main', 'ball','tm','key'];
+            var yStart = 250;
+            var xStart = Graphics.width*0.3;
+            var options = {
+                buffer: 15,
+                roundedness: 20
+            }
+
+            for (var j = 0; j < itemTypes.length;j++){
+                var itemArr = Player.character.inventory.order[itemTypes[j]];
+                for (var i = 0; i < itemArr.length;i++){
+                    var item = Player.character.inventory.items[itemArr[i]];
+                    var newButton = Graphics.makeUiElement({
+                        texture: this.getTextButton(item.name,24,options),
+                        style: AcornSetup.style3,
+                        position: [xStart,yStart],
+                        interactive: true,buttonMode: true,
+                        clickFunc: function onClick(e){
+                        }
+                    });
+                    yStart += newButton.height + 5;
+                    newButton.orderIndex = i;
+                    newButton.itemInfo = item;
+                    this.inventoryUIElements.push(this.inventoryUI.addChild(newButton));
+                }
+                yStart = 250;
+                xStart += Graphics.width*0.2;
+            }
         },
 
         resetPokemon: function(slot){
