@@ -30,7 +30,11 @@
         itemUI: null,
         fightUI: null,
 
+        confirmTurnWindow: null,
+
         turnData: {},
+
+        currentSelectedItem: null,
 
         moveButtons: [],
 
@@ -65,6 +69,7 @@
                 clickFunc: function onClick(e){
                     console.log("pokemon menu");
                     //SHOW Pokemon Menu
+                    this.currentlySelectedItem = null;
                     Battle.showPokemonUI();
                 }
             });
@@ -288,10 +293,17 @@
 
         toggleTurnOptions: function(bool){
             if (bool){
+                //remove previous highlights
+                for (var i in this.myActivePokemon){
+                    Battle.pokemonContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
+                }
                 Graphics.uiContainer2.addChild(this.fightButton);
                 Graphics.uiContainer2.addChild(this.pokemonButton);
                 Graphics.uiContainer2.addChild(this.itemButton);
                 Graphics.uiContainer2.addChild(this.runButton);
+                //highlight the active pokemon
+                var outLineFilter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF00000, 0.5);
+                this.pokemonContainer[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id].sprite.filters = [outLineFilter];
             }else{
                 Graphics.uiContainer2.removeChild(this.fightButton);
                 Graphics.uiContainer2.removeChild(this.pokemonButton);
@@ -305,6 +317,7 @@
             this.currentPokemonIndex = 0;
             var activePokemon = this.myActivePokemon[this.activePokemonIndex[this.currentPokemonIndex]];
             //display moves
+            //TODO ADD BACK BUTTON
             this.displayMoves(activePokemon);
         },
 
@@ -319,6 +332,24 @@
             this.toggleTurnOptions(false);
         },
 
+        checkTurnReady: function(){
+            //check if all active pokemon have Turn data
+            var ready = true;
+            for (var i = 0; i < Battle.activePokemonIndex.length;i++){
+                if (typeof Battle.turnData[Battle.activePokemonIndex[i]] == 'undefined'){
+                    ready = false;
+                    Battle.currentPokemonIndex = i;
+                    Battle.toggleTurnOptions(true);
+                    break;
+                }
+            }
+            //otherwise send turn data
+            if (ready){
+                Battle.toggleTurnOptions(false);
+                Battle.sendTurnData();
+            }
+        },
+
         //Display the move buttons for a given pokemon
         displayMoves: function(pkmn){
             //Remove any existing move buttons from UI container and reset
@@ -329,9 +360,6 @@
 
             for (var i = 0; i < pkmn.moves.length;i++){
                 var move = pkmn.moves[i];
-                var outLineFilter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF00000, 0.5);
-                this.pokemonContainer[pkmn.id].sprite.filters = [outLineFilter];
-
                 var button = Graphics.makeUiElement({
                     texture: this.getMoveTexture(move,pkmn.currentPP[i]),
                     anchor: [0,0],
@@ -343,21 +371,7 @@
                             command: 'fight',
                             moveIndex: e.currentTarget.moveIndex
                         };
-                        //check if all active pokemon have Turn data
-                        var ready = true;
-                        for (var i = 0; i < Battle.activePokemonIndex.length;i++){
-                            if (typeof Battle.turnData[Battle.activePokemonIndex[i]] == 'undefined'){
-                                ready = false;
-                                Battle.currentPokemonIndex = i;
-                                Battle.displayMoves(Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]]);
-                                break;
-                            }
-                        }
-                        //otherwise send turn data
-                        if (ready){
-                            Battle.sendTurnData();
-                        }
-                        Battle.pokemonContainer[e.currentTarget.pkmnID].sprite.filters = [];
+                        Battle.checkTurnReady();
                     }
                 });
 
@@ -381,6 +395,7 @@
         sendTurnData: function(){
             console.log("Sending Turn Data!!!!!");
             //clear any ui buttons
+            //show confirm dialogue box
             for (var i = 0; i < this.moveButtons.length;i++){
                 Graphics.uiContainer2.removeChild(this.moveButtons[i]);
             }

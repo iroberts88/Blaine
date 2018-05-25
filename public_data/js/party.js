@@ -30,6 +30,14 @@
                 }
             }
             return null;
+        },
+        getPokemonIndex: function(id){
+            for (var i = 1;i < 7;i++){
+                if (this.pokemon[i].id == id){
+                    return i;
+                }
+            }
+            return null;
         }
     }
 

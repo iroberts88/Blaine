@@ -34,16 +34,6 @@
                 map: data.map,
                 inventory: data.inventory
         	};
-            Game.characterButton.tooltip = new Tooltip();
-            Game.characterButton.tooltip.set({
-                owner: Game.characterButton,
-                ttArray: [
-                    {
-                        text: this.character.name
-                    }
-                ],
-                alpha: 0.5
-            });
             Party.init(data);
             this.character.sprite.scale.x = mainObj.GAME_SCALE;
             this.character.sprite.scale.y = mainObj.GAME_SCALE;

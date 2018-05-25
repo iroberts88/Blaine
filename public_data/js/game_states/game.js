@@ -586,7 +586,22 @@
                 position: [Graphics.width/2,Graphics.height - 25],
                 interactive: true,buttonMode: true,
                 clickFunc: function onClick(e){
-                    console.log('USeeeeee')
+                    if (Game.battleActive){
+                        var item = Game.currentSelectedItem;
+                        if (item.itemInfo.type == 'ball'){
+                            Battle.turnData[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id] = {
+                                command: 'item',
+                                type: item.itemInfo.type,
+                                oIndex: item.orderIndex
+                            };
+                            Battle.checkTurnReady();
+                        }else{
+                            Game.switchUI(Game.pokemonUI);
+                            Battle.currentSelectedItem = item;
+                        }
+                    }else{
+                        //normal use the item here..
+                    }
                 }
             }));
             this.inventoryUseButton.visible = false;
@@ -621,7 +636,7 @@
             this.pokemonUIElements = {};
             var x = Graphics.width/2 - this.pkmnBoxSize[0] - 15;
             var y = Graphics.height/4 - 50;
-            for (var i = 0; i < 6;i++){
+            for (var i = 1; i < 7;i++){
                 //make buttons;
                 var container = new PIXI.Container();
                 container.position.x = x;
@@ -629,10 +644,39 @@
                 container.interactive = true;
                 container.buttonMode = true;
                 container.hitArea = new PIXI.Rectangle(0, 0, this.pkmnBoxSize[0], this.pkmnBoxSize[1]);
-                container.pokemonNumber = i+1;
+                container.pokemonNumber = i;
 
                 var mUpFunc = function(e){
                     if (Game.pkmnSwapChange){return;}
+                    if (Game.battleActive){
+                        //swap pokemon here??
+                        //make sure it isnt active pokemon
+                        if (Battle.currentSelectedItem){
+                            Battle.turnData[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id] = {
+                                command: 'item',
+                                type: Battle.currentSelectedItem.itemInfo.type,
+                                oIndex: Battle.currentSelectedItem.orderIndex,
+                                pIndex: e.currentTarget.pokemonNumber
+                            };
+                            Battle.checkTurnReady();
+                            return;
+                        }
+                        for (var i = 0; i < Battle.activePokemonIndex.length;i++){
+                            console.log(e.currentTarget.pokemonID)
+                            console.log(Battle.activePokemonIndex[i]);
+                            if (Party.pokemon[e.currentTarget.pokemonNumber].id == Battle.activePokemonIndex[i]){
+                                Battle.addChat('& That pokemon is already in battle!');
+                                return;
+                            }
+                        }
+                        Battle.turnData[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id] = {
+                            command: 'swap',
+                            index: e.currentTarget.pokemonNumber
+                        };
+                        Game.clearUI();
+                        Battle.checkTurnReady();
+                        return;
+                    }
                     if (!Game.pkmnSelected){
                         Game.pkmnSelected = e.currentTarget;
                         var outLineFilter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF0000, 0.5);
@@ -677,7 +721,7 @@
                     x = Graphics.width/2 - this.pkmnBoxSize[0] - 15;
                     y += (Graphics.height/4 + 50);
                 }
-                this.pokemonUIElements[i+1] = container;
+                this.pokemonUIElements[i] = container;
                 this.pokemonUI.addChild(container);
             }
             this.pokemonUI.scale.x = this.UI_OFFSETSCALE;
@@ -967,6 +1011,9 @@
             }
             this.clearUI();
             Graphics.ui.addChild(ui);
+            if (this.battleActive){
+                Battle.toggleTurnOptions(false);
+            }
             Game.uiActive = ui;
         },
 
@@ -985,6 +1032,7 @@
             }
             this.uiActive = null;
             this.currentSelectedItem = null;
+            Battle.currentSelectedItem = null;
             this.currentSelectedItemIndex = null;
             this.inventoryUseButton.visible = false;
         },
