@@ -234,7 +234,10 @@ Pokemon.prototype.getClientData = function(){
     data.number = this.number;
     data.level = this.level;
     data.types = this.types;
-    data.moves = this.moves;
+    data.moves = [];
+    for (var i = 0; i < this.moves.length;i++){
+        data.moves.push(this.moves[i].getClientData());
+    }
     data.id = this.id;
     data.exp = this.exp;
     data.currentHP = this.currentHP;

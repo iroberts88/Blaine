@@ -31,12 +31,14 @@
         fightUI: null,
 
         confirmTurnWindow: null,
-
         turnData: {},
-
         currentSelectedItem: null,
-
+        currentSelectedAttack: null,
         moveButtons: [],
+
+        targetSelectMode: '',
+        targetSelectText: null,
+        waitingForData: false,
 
         init: function() {
             Graphics.uiPrimitives1.clear();
@@ -92,10 +94,19 @@
                 position: [Graphics.width/4 + (Graphics.width*0.75/2) + this.BUTTON_BUFFER,Graphics.height*0.75 + Graphics.height/8 + this.BUTTON_BUFFER],
                 interactive: true,buttonMode: true,
                 clickFunc: function onClick(e){
-                    Acorn.Net.socket_.emit('playerUpdate',{command: 'run'});
+                    if (Battle.wild){
+                        Battle.turnData['run'] = true;
+                        Battle.toggleTurnOptions(false);
+                        Battle.getConfirmTurnWindow();
+                    }
                 }
             });
 
+            this.targetSelectText = new PIXI.Text('',AcornSetup.style2);
+            this.targetSelectText.anchor.x = 0.5;
+            this.targetSelectText.anchor.y = 0.5;
+            this.targetSelectText.position.x = Graphics.width/4 + (Graphics.width*0.75/2);
+            this.targetSelectText.position.y = Graphics.height*0.75 + Graphics.height/8;
             //get which team you're on
             for (var i = 0; i < this.battleData.team1.length;i++){
                 for (var j in Party.pokemon){
@@ -182,6 +193,43 @@
             }
             d.sprite.anchor.x = 0.5;
             d.sprite.anchor.y = 0.5;
+            d.sprite.buttonMode = true;
+            d.sprite.interactive = true;
+            d.sprite.pkmninfo = pkmn;
+            var onClick = function(e){
+                switch(Battle.targetSelectMode){
+                    case 'item':
+                        if (Battle.wild == false || e.currentTarget.pkmninfo.id == Battle.activePokemonIndex[Battle.currentPokemonIndex].id){
+                            return;
+                        }
+                        Battle.turnData[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id] = {
+                            command: 'item',
+                            type: Battle.currentSelectedItem.itemInfo.type,
+                            oIndex: Battle.currentSelectedItem.orderIndex,
+                            pID: e.currentTarget.pkmninfo.id
+                        };
+                        Game.clearUI();
+                        Battle.checkTurnReady();
+                        break;
+                    case 'pkmn':
+                        //TODO make sure its not the active pokemon
+                        if (e.currentTarget.pkmninfo.id == Battle.activePokemonIndex[Battle.currentPokemonIndex].id){
+                            return;
+                        }
+                        Battle.turnData[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id] = {
+                            command: 'fight',
+                            moveIndex: Battle.currentSelectedAttack,
+                            pID: e.currentTarget.pkmninfo.id
+                        };
+                        Game.clearUI();
+                        Battle.checkTurnReady();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            d.sprite.on('tap', onClick);
+            d.sprite.on('click', onClick);
             var spritePositions = {
                 '1': [Graphics.width/4 + (Graphics.width*0.75 - (Graphics.width*0.75)/3),(Graphics.height*0.75)/6],
                 '2': [Graphics.width/4 + (Graphics.width*0.75 - (Graphics.width*0.75)/8),(Graphics.height*0.75)/6],
@@ -292,6 +340,11 @@
         },
 
         toggleTurnOptions: function(bool){
+            if (this.waitingForData){
+                this.targetSelectText.text = 'Waiting...'
+                Graphics.uiContainer2.addChild(this.targetSelectText);
+                return;
+            }
             if (bool){
                 //remove previous highlights
                 for (var i in this.myActivePokemon){
@@ -305,10 +358,45 @@
                 var outLineFilter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF00000, 0.5);
                 this.pokemonContainer[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id].sprite.filters = [outLineFilter];
             }else{
+                for (var i in this.myActivePokemon){
+                    Battle.pokemonContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
+                }
                 Graphics.uiContainer2.removeChild(this.fightButton);
                 Graphics.uiContainer2.removeChild(this.pokemonButton);
                 Graphics.uiContainer2.removeChild(this.itemButton);
                 Graphics.uiContainer2.removeChild(this.runButton);
+                for (var i = 0; i < this.moveButtons.length;i++){
+                    Graphics.uiContainer2.removeChild(this.moveButtons[i]);
+                }
+                this.moveButtons = [];
+            }
+        },
+
+        toggleTargetSelect: function(bool,type){
+            if (this.waitingForData){
+                this.targetSelectText.text = 'Waiting...'
+                Graphics.uiContainer2.addChild(this.targetSelectText);
+                return;
+            }
+            if (bool){
+                //remove previous highlights
+                for (var i in this.myActivePokemon){
+                    Battle.pokemonContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
+                }
+                type = (typeof type != 'undefined')? type : '';
+                if (type == 'item'){
+                    this.targetSelectText.text = "Pick a pokemon to use " + this.currentSelectedItem.itemInfo.name + ' on!';
+                    this.targetSelectMode = 'item';
+                }else if (type == 'pkmn'){
+                    this.targetSelectText.text = "Pick a pokemon to use " + Battle.myActivePokemon[i].moves[this.currentSelectedAttack].name + ' on!';
+                    this.targetSelectMode = 'pkmn';
+                }
+                Graphics.uiContainer2.addChild(this.targetSelectText);
+            }else{
+                for (var i in this.myActivePokemon){
+                    Battle.pokemonContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
+                }
+                Graphics.uiContainer2.removeChild(this.targetSelectText);
             }
         },
 
@@ -367,11 +455,9 @@
                     interactive: true,buttonMode: true,
                     clickFunc: function onClick(e){
                         //set turn data
-                        Battle.turnData[e.currentTarget.pkmnID] = {
-                            command: 'fight',
-                            moveIndex: e.currentTarget.moveIndex
-                        };
-                        Battle.checkTurnReady();
+                        Battle.currentSelectedAttack = e.currentTarget.moveIndex;
+                        Battle.toggleTurnOptions(false);
+                        Battle.toggleTargetSelect(true,'pkmn');
                     }
                 });
 
@@ -394,12 +480,117 @@
 
         sendTurnData: function(){
             console.log("Sending Turn Data!!!!!");
-            //clear any ui buttons
             //show confirm dialogue box
+            this.getConfirmTurnWindow();
+            //clear any ui buttons
             for (var i = 0; i < this.moveButtons.length;i++){
                 Graphics.uiContainer2.removeChild(this.moveButtons[i]);
             }
             this.moveButtons = [];
+        },
+
+        getConfirmTurnWindow: function(){
+
+            this.confirmTurnWindow = new PIXI.Container();
+
+            var c = new PIXI.Container();
+            var g = new PIXI.Graphics();
+            var t = new PIXI.Container();
+            var buttonSize = 35;
+            var h = 20;
+            var w = 20;
+            var minheight = 200
+            var minwidth = 550;
+            var num = 1;
+            textArr = [];
+            for (var i in this.turnData){
+                var pkmn = Party.getPokemon(i);
+                var text = ''
+                if (i == 'run'){
+                    textArr = ['Run away?']
+                    break;
+                }
+                if (this.turnData[i].command == 'fight'){
+                    text += (num + ': ' + pkmn.nickname + ' will use ' + pkmn.moves[this.turnData[i].moveIndex].name);  
+                }else if (this.turnData[i].command == 'swap'){
+                    text += (num + ': '+ pkmn.nickname + ' will swap with ' + Party.pokemon[this.turnData[i].index].nickname);  
+                }else if (this.turnData[i].command == 'item'){
+                    var item = Player.character.inventory.items[Player.character.inventory.order[this.turnData[i].type][this.turnData[i].oIndex]];
+                    if (this.turnData[i].type == 'ball'){
+                        textArr = ['Use ' + item.name + '?'];
+                        break;
+                    }else{
+                        text += (num + ': Use '+ item.name + ' on ' + Party.pokemon[this.turnData[i].pIndex].nickname);  
+                    }
+                }
+                textArr.push(text);
+                num += 1;
+            }
+            for (var j = 0; j < textArr.length;j++){
+                var newtext = new PIXI.Text(textArr[j],AcornSetup.style2);
+                newtext.anchor.x = 0.5;
+                newtext.anchor.y = 0;
+                newtext.position.y = h;
+                if (newtext.width + 40 > w){
+                    w = newtext.width + 40;
+                }
+                h += newtext.height;
+                h += 20;
+                t.addChild(newtext)
+            }
+            h += buttonSize;
+            if (h < minheight){h = minheight;}
+            if (w < minwidth){w = minwidth;}
+            for (var i = 0; i < t.children.length;i++){
+                t.children[i].position.x = w/2;
+            }
+            g.lineStyle(1,0xFFFFFF,1);
+            g.beginFill(0x999999,1);
+            g.drawRoundedRect(0,0,w,h,20);
+            g.endFill();
+            c.addChild(g);
+            c.addChild(t);
+            var texture = PIXI.RenderTexture.create(w,h);
+            var renderer = new PIXI.CanvasRenderer();
+            Graphics.app.renderer.render(c,texture);
+            this.confirmTurnWindow.addChild(Graphics.makeUiElement({
+                texture: texture,
+                anchor: [0.5,0.5],
+                position: [Graphics.width/2,Graphics.height/2],
+            }));
+            this.confirmTurnWindow.addChild(Graphics.makeUiElement({
+                texture: Game.getTextButton('CONFIRM',32,{buffer: 10,roundedness: 10}),
+                anchor: [1,1],
+                position: [Graphics.width/2-5,Graphics.height/2 + h/2-5], 
+                interactive: true,buttonMode: true,
+                clickFunc: function onClick(e){
+                    //CONFIRM turn, clear turn data and send it to server
+                    Acorn.Net.socket_.emit('battleUpdate',{command: 'turn',turnData: Battle.turnData});
+                    console.log(Battle.turnData);
+                    Battle.turnData = {};
+                    Game.clearUI();
+                    Battle.toggleTurnOptions(false);
+                    Battle.currentPokemonIndex = 0;
+                    Graphics.ui.removeChild(Battle.confirmTurnWindow);
+                    Battle.targetSelectText.text = "Waiting...";
+                    Battle.waitingForData = true;
+                    Battle.toggleTargetSelect(true);
+                }
+            }));
+            this.confirmTurnWindow.addChild(Graphics.makeUiElement({
+                texture: Game.getTextButton('CANCEL',32,{buffer: 10,roundedness: 10}),
+                anchor: [0,1],
+                position: [Graphics.width/2+5,Graphics.height/2 + h/2-5],
+                interactive: true,buttonMode: true,
+                clickFunc: function onClick(e){
+                    //CANCEL turn, clear turn data
+                    Battle.turnData = {};
+                    Game.clearUI();
+                    Battle.currentPokemonIndex = 0;
+                    Graphics.ui.removeChild(Battle.confirmTurnWindow);
+                }
+            }));
+            Graphics.ui.addChild(Battle.confirmTurnWindow);
         },
 
         addChat: function(text){

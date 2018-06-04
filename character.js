@@ -32,6 +32,7 @@ var Character = function(){
 
     this.currentMusic = null;
 
+    this.currentTeam = null;
     this.activePokemon = []; //a list of the currently active pokemon for use in a battle
 }
 
@@ -144,10 +145,19 @@ Character.prototype.init = function(data) {
     }
 };
 
-Character.prototype.initBattle = function(n){
+Character.prototype.initBattle = function(battle,n,team){
     this.activePokemon = [];
+    this.currentTeam = team;
     for (var i = 0; i < n;i++){
         this.activePokemon.push(this.party[i]);
+        battle.activePokemon[this.party[i].id] = this.party[i];
+        if (team == 1){
+            this.currentTeam = 1;
+            battle.team1Pokemon.push(this.party[i])
+        }else{
+            this.currentTeam = 2;
+            battle.team2Pokemon.push(this.party[i])
+        }
     }
 };
 

@@ -4,6 +4,7 @@
 
 var Player = require('./player.js').Player,
     Zone = require('./zone.js').Zone,
+    Attack = require('./attack.js').Attack,
     fs = require('fs'),
     AWS = require("aws-sdk");
 
@@ -36,6 +37,8 @@ var GameEngine = function() {
 
     this.debugList = {}; //used avoid multiple debug chains in tick()
     this.ready = false;
+
+    this.debugWriteStream = fs.createWriteStream('debug.txt');
 }
 
 GameEngine.prototype.init = function () {
@@ -127,7 +130,9 @@ GameEngine.prototype.loadPokemon = function(arr) {
 
 GameEngine.prototype.loadAttacks = function(arr) {
     for (var i = 0; i < arr.length;i++){
-        self.attacks[arr[i].attackid] = arr[i];
+        var atk = new Attack();
+        atk.init(arr[i])
+        self.attacks[arr[i].attackid] = atk;
     }
     console.log('loaded ' + arr.length + ' Attacks from file');
 }
@@ -230,6 +235,7 @@ GameEngine.prototype.queuePlayer = function(player, c, d) {
 //Queue DEBUG data to a specific player
 GameEngine.prototype.debug = function(player, d) {
     var data = { call: 'debug', data: d};
+    console.log(data);
     if (typeof this.debugList[d.id] == 'undefined'){
         //new debug error
         //add to debug list and send to client
@@ -238,13 +244,13 @@ GameEngine.prototype.debug = function(player, d) {
             n: 1,
             t: 1.0
         }
-        data.data.n = 1;
-        player.netQueue.push(data);
+        d.n = 1;
+        this.debugWriteStream.write(JSON.parse(d));
     }else{
         this.debugList[d.id].n += 1;
-        data.data.n = this.debugList[d.id].n
+        d.n = this.debugList[d.id].n
         if (this.debugList[d.id].t <= 0){
-            player.netQueue.push(data);
+            this.debugWriteStream.write(JSON.parse(d));
             this.debugList[d.id].t = 1.0;
         }
     }

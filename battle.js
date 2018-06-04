@@ -19,7 +19,7 @@ var Battle = function(ge) {
         '4v4': 4,
         'team4v4': 1
     };
-    this.TeamLengths = { //numbers of active pokemon per player
+    this.TeamLengths = {
         '1v1': 1,
         '2v2': 1,
         'team2v2': 2,
@@ -36,7 +36,13 @@ var Battle = function(ge) {
     this.turn = 1;
     this.team1 = [];
     this.team2 = [];
+    this.team1Pokemon = [];
+    this.team2Pokemon = [];
+    this.activePokemon = {};
     this.players = {}; //keep track of players the receive the data of each round
+    this.spectators = {};
+    //valid turn data added here...
+    this.turnData = {};
 
     this.roundTime = 30.0; //round time in seconds
     this.roundActive = false;
@@ -58,14 +64,21 @@ Battle.prototype.init = function (data) {
         return false;
     }
     for (var i = 0; i < data.team1.length;i++){
-        if ((data.team1[i] instanceof Character || data.team1[i] instanceof Trainer) && (data.team2[i] instanceof Character || data.team2[i] instanceof Trainer)){
-            data.team1[i].initBattle(this.TeamLengths[data.type]);
-            data.team2[i].initBattle(this.TeamLengths[data.type]);
+        if (data.team1[i] instanceof Character || data.team1[i] instanceof Trainer){
+            data.team1[i].initBattle(this,this.TeamLengths[data.type],1);
             this.team1.push(data.team1[i]);
-            this.team2.push(data.team2[i]);
             if (data.team1[i] instanceof Character){
                 this.players[data.team1[i].owner.id] = data.team1[i].owner;
             }
+        }else{
+            console.log("Teams must consist of Characters or Trainers");
+            return false;
+        }
+    }
+    for (var i = 0; i < data.team2.length;i++){
+        if (data.team2[i] instanceof Character || data.team2[i] instanceof Trainer){
+            data.team2[i].initBattle(this,this.TeamLengths[data.type],2);
+            this.team2.push(data.team2[i]);
             if (data.team2[i] instanceof Character){
                 this.players[data.team2[i].owner.id] = data.team2[i].owner;
             }
@@ -91,6 +104,7 @@ Battle.prototype.init = function (data) {
     for (var i in this.players){
         this.gameEngine.queuePlayer(this.players[i],"startBattle", {wild: this.wild,type: this.type,team1: t1,team2: t2});
     }
+    console.log(this.activePokemon);
     return true;
 };
 
@@ -107,6 +121,61 @@ Battle.prototype.addSpectator = function(p){
 Battle.prototype.removeSpectator = function(p){
 
 };
+
+Battle.prototype.addTurnData = function(pkmnID,data){
+    //Received turn data from a player
+    //check to see if all data has been received
+    //if it has, add AI turn data, parse all data and proceed with the turn
+
+    this.turnData[pkmnID] = data;
+    //check all pkmn data
+    var allTurnDataAcquired = true;
+    for (var i = 0; i < this.team1.length;i++){
+        if (this.team1[i] instanceof Character){
+            //see if all players have turnData for their pokemon
+            for (var j = 0; j < this.team1[i].activePokemon.length;j++){
+                if (typeof this.turnData[this.team1[i].activePokemon[j].id] == 'undefined'){
+                    allTurnDataAcquired = false;
+                }
+            }
+        }
+    }
+    for (var i = 0; i < this.team2.length;i++){
+        if (this.team2[i] instanceof Character){
+            //see if all players have turnData for their pokemon
+            for (var j = 0; j < this.team2[i].activePokemon.length;j++){
+                if (typeof this.turnData[this.team2[i].activePokemon[j].id] == 'undefined'){
+                    allTurnDataAcquired = false;
+                }
+            }
+        }
+    }
+
+    if (allTurnDataAcquired){
+        //Do the turn!!
+        for (var i in this.activePokemon){
+            if (this.activePokemon[i].character instanceof Character){
+                continue;
+            }
+            //get AI turn data
+            var mIndex,pID;
+            mIndex = Math.floor(Math.random()*this.activePokemon[i].moves.length);
+            var enemyTeam = this.team1Pokemon;
+            if (this.activePokemon[i].character.currentTeam == 1){
+                enemyTeam = this.team2Pokemon;
+            }
+            var index = Math.floor(Math.random()*enemyTeam.length);
+            this.turnData[this.activePokemon[i].id] = {
+                'command': 'fight',
+                'moveIndex': mIndex,
+                'pID': enemyTeam[index].id
+            }
+            console.log(this.turnData);
+        }
+
+        //execute turn and create the turn data for client
+    }
+}
 
 Battle.prototype.sendChat = function(text){
     for (var i in this.players){

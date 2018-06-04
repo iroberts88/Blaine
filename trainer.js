@@ -19,6 +19,7 @@ var Trainer = function(ge){
     this.inventory = null;
     //active party of pokemon
     this.party = null;
+    this.currentTeam = null;
     this.activePokemon = []; //a list of the currently active pokemon for use in a battle
 }
 
@@ -46,10 +47,19 @@ Trainer.prototype.init = function(data) {
     
 };
 
-Trainer.prototype.initBattle = function(n){
+Trainer.prototype.initBattle = function(battle,n,team){
     this.activePokemon = [];
+    this.currentTeam = team;
     for (var i = 0; i < n;i++){
         this.activePokemon.push(this.party[i]);
+        battle.activePokemon[this.party[i].id] = this.party[i];
+        if (team == 1){
+            this.currentTeam = 1;
+            battle.team1Pokemon.push(this.party[i])
+        }else{
+            this.currentTeam = 2;
+            battle.team2Pokemon.push(this.party[i])
+        }
     }
 };
 

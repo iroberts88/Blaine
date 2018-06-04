@@ -1,7 +1,6 @@
 var Pokemon = require('./pokemon.js').Pokemon;
 
 var Inventory = function(){
-    this.MAX_ACTIVE_ITEMS = 4;
     this.MAX_ITEM_STACK = 99;
     this.TYPES = [
         'main', //main items that can be placed in active items
@@ -13,8 +12,6 @@ var Inventory = function(){
     ];
 
     this.items = {};
-    this.activeItems = [];
-
     this.order = {
         key: [],
         main: [],
@@ -111,10 +108,6 @@ Inventory.prototype.getClientData = function(){
     for (var i in this.items){
         data.items[i] = this.items[i].getClientData();
     }
-    data.activeItems = [];
-    for (var i = 0; i < this.activeItems.length;i++){
-        data.activeItems.push(this.activeItems.getClientData());
-    }
     data.order = this.order;
     return data;
 }
@@ -132,8 +125,16 @@ Item.prototype.init = function(data) {
     this.stack = data.stack;
     this.description = data.description;
     this.use = data.use;
-
     this.amount = 1;
+
+    //Target types
+    //allpkmn
+    //fieldpkmn
+    //battlepkmn
+    //all
+    //field
+    //battle
+    //battleenemy
 };
 
 Item.prototype.getClientData = function() {
@@ -143,6 +144,7 @@ Item.prototype.getClientData = function() {
     data.price = this.price;
     data.description = this.description;
     data.amount = this.amount;
+    data.targetType = this.use.type;
     return data;
 };
 

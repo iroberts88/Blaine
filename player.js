@@ -83,6 +83,45 @@ Player.prototype.setupSocket = function() {
     // On playerUpdate event
     var that = this;
 
+    this.socket.on('battleUpdate', function (data) {
+        if (typeof data.command == 'undefined'){
+            //TODO Error no command
+            console.log("No Command")
+            console.log(data);
+            return;
+        }
+
+        switch(data.command){
+            case 'turn':
+                if (that.battle == null || typeof data.turnData == 'undefined'){
+                    return;
+                }
+                //Parse turn info as valid, add to battle
+                //TODO ALL OF THESE CHECKS
+                if (data.turnData.run){
+                    //check run
+                    console.log('Trying to run');
+                }else{
+                    for (var i in data.turnData){
+                        switch(data.turnData[i].command){
+                            case 'item':
+                                //make sure player HAS the item
+                                //if used on a pokemon, make sure the pokemon is valid and item type is valid
+                                break;
+                            case 'switch':
+                                //make sure the pokemon switch is valid
+                                break;
+                            case 'fight':
+                                //make sure the move has PP and is valid
+                                break;
+                        }
+                        that.battle.addTurnData(i,data.turnData[i]);
+                    }
+                }
+                break;
+        }
+    });
+
     this.socket.on('playerUpdate', function (data) {
         try{
             if (that.battle != null){

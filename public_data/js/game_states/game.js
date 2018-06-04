@@ -135,7 +135,9 @@
                 if (Acorn.Input.isPressed(Acorn.Input.Key.ENTER)){
                     Acorn.Net.socket_.emit('clientCommand',{cString: this.chat.value});
                     this.chat.value = '';
-                    this.clearUI();
+                    document.body.removeChild(this.chat);
+                    Graphics.uiContainer2.addChild(this.chatButton);
+                    this.chatActive = false;
                 }
                 if (Acorn.Input.isPressed(Acorn.Input.Key.SPACE)){
                     this.chat.value += ' ';
@@ -549,7 +551,7 @@
             this.inventoryUI.addChild(x);
 
             var fSize = 24;
-            var yLoc = 120;
+            var yLoc = 200;
             var options = {
                 buffer: 15,
                 roundedness: 20
@@ -588,19 +590,31 @@
                 clickFunc: function onClick(e){
                     if (Game.battleActive){
                         var item = Game.currentSelectedItem;
-                        if (item.itemInfo.type == 'ball'){
+                        //use item in battle
+                        if (item.itemInfo.targetType == 'all' || item.itemInfo.targetType == 'battle'){
                             Battle.turnData[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id] = {
                                 command: 'item',
                                 type: item.itemInfo.type,
                                 oIndex: item.orderIndex
                             };
-                            Battle.checkTurnReady();
-                        }else{
+                            Battle.toggleTurnOptions(false);
+                            Battle.getConfirmTurnWindow();
+                        }else if (item.itemInfo.targetType == 'allpkmn' || item.itemInfo.targetType == 'battlepkmn' ){
                             Game.switchUI(Game.pokemonUI);
                             Battle.currentSelectedItem = item;
+                        }else if (item.itemInfo.targetType == 'battleenemy' ){
+                            Game.clearUI();
+                            Battle.toggleTurnOptions(false);
+                            Battle.currentSelectedItem = item;
+                            Battle.toggleTargetSelect(true,'item');
                         }
                     }else{
                         //normal use the item here..
+                        if (item.itemInfo.targetType == 'all' || item.itemInfo.targetType == 'field'){
+                        }else if (item.itemInfo.targetType == 'allpkmn' || item.itemInfo.targetType == 'fieldpkmn' ){
+                            Game.switchUI(Game.pokemonUI);
+                            Game.currentSelectedItem = item;
+                        }
                     }
                 }
             }));
@@ -658,12 +672,11 @@
                                 oIndex: Battle.currentSelectedItem.orderIndex,
                                 pIndex: e.currentTarget.pokemonNumber
                             };
+                            Game.clearUI();
                             Battle.checkTurnReady();
                             return;
                         }
                         for (var i = 0; i < Battle.activePokemonIndex.length;i++){
-                            console.log(e.currentTarget.pokemonID)
-                            console.log(Battle.activePokemonIndex[i]);
                             if (Party.pokemon[e.currentTarget.pokemonNumber].id == Battle.activePokemonIndex[i]){
                                 Battle.addChat('& That pokemon is already in battle!');
                                 return;
@@ -737,7 +750,7 @@
             this.inventoryUIElements = [];
 
             var itemTypes = ['main', 'ball','tm','key'];
-            var yStart = 250;
+            var yStart = 275;
             var xStart = Graphics.width*0.2;
             var options = {
                 buffer: 15,
@@ -761,7 +774,21 @@
                             Game.currentSelectedItem = e.currentTarget;
                             var filter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF00000, 0.5);
                             Game.currentSelectedItem.filters = [filter];
-                            Game.inventoryUseButton.visible = true;
+                            if (Game.battleActive){
+                                var canuse = {'allpkmn':true,'battlepkmn':true,'all':true,'battle':true,'battleenemy':true}
+                                if (canuse[e.currentTarget.itemInfo.targetType]){
+                                    Game.inventoryUseButton.visible = true;
+                                }else{
+                                    Game.inventoryUseButton.visible = false;
+                                }
+                            }else{
+                                var canuse = {'allpkmn':true,'fieldpkmn':true,'all':true,'field':true,}
+                                if (canuse[e.currentTarget.itemInfo.targetType]){
+                                    Game.inventoryUseButton.visible = true;
+                                }else{
+                                    Game.inventoryUseButton.visible = false;
+                                }
+                            }
                         }
                     });
                     yStart += newButton.height + 5;
@@ -769,7 +796,7 @@
                     newButton.itemInfo = item;
                     this.inventoryUIElements.push(this.inventoryUI.addChild(newButton));
                 }
-                yStart = 250;
+                yStart = 275;
                 xStart += Graphics.width*0.2;
             }
         },
@@ -1029,6 +1056,10 @@
             }
             if (this.battleActive){
                 Battle.toggleTurnOptions(true);
+                Battle.toggleTargetSelect(false);
+                Battle.targetSelectMode = '';
+                Battle.currentSelectedItem = null;
+                Battle.currentSelectedAttack = null;
             }
             this.uiActive = null;
             this.currentSelectedItem = null;

@@ -8,7 +8,8 @@
       "stack": true,
       "description": "Cures poison status",
       "use": {
-        "all": [
+        "type": "allpkmn",
+        "effects": [
           {
             "effectid": "curepoison"
           }
@@ -23,7 +24,8 @@
       "stack": true,
       "description": "Cures sleep status",
       "use": {
-        "all": [
+        "type": "allpkmn",
+        "effects": [
           {
             "effectid": "curesleep"
           }
@@ -38,7 +40,8 @@
       "stack": true,
       "description": "Cures poison status",
       "use": {
-        "all": [
+        "type": "all",
+        "effects": [
           {
             "effectid": "curepoison"
           }
@@ -53,7 +56,8 @@
       "stack": true,
       "description": "Raises Special Attack",
       "use": {
-        "field": [
+        "type": "fieldpkmn",
+        "effects": [
           {
             "effectid": "raiseStat",
             "stat": "spatk"
@@ -73,7 +77,8 @@
       "stack": true,
       "description": "Catches Pokemon",
       "use": {
-        "battle": [
+        "type": "battleenemy",
+        "effects": [
           {
             "effectid": "catch",
             "power": 1
@@ -89,7 +94,8 @@
       "stack": true,
       "description": "Catches Pokemon. More effective than a pokeball",
       "use": {
-        "battle": [
+        "type": "battleenemy",
+        "effects": [
           {
             "effectid": "catch",
             "power": 2
@@ -105,7 +111,8 @@
       "stack": true,
       "description": "Catches Pokemon. More effective than a great ball",
       "use": {
-        "battle": [
+        "type": "battleenemy",
+        "effects": [
           {
             "effectid": "catch",
             "power": 4
@@ -125,7 +132,8 @@
       "stack": false,
       "description": "Hold coins from Celadon Casino",
       "use": {
-        "field": [
+        "type": "field",
+        "effects": [
           {
             "effectid": "showCoinAmount"
           }
