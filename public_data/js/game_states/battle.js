@@ -2,45 +2,50 @@
 (function(window) {
     Battle = {
         BUTTON_BUFFER: 10,
-
         battleData: null,
-        wild: null,
-        myTeam: null,
-        otherTeam: null,
-        chatLog: [],
 
-        wildStart: false,
-        trainerStart: false,
-        gopkmnStart: false,
-        gopkmnTicker: 0,
+        init: function() { 
+            this.wild = null;
+            this.myTeam = null;
+            this.otherTeam = null;
+            this.chatLog = [];
 
-        //container for sprites and healthbars of each team?
-        pokemonContainer: {},
+            this.roundActive = false;
+            this.wildStart = false;
+            this.trainerStart = false;
+            this.gopkmnStart = false;
+            this.gopkmnTicker = 0;
 
-        myActivePokemon: {},
-        activePokemonIndex: [],
-        currentPokemonIndex: 0,
+            //container for sprites and healthbars of each team
+            this.pokemonContainer = {};
 
-        pokemonButton: null,
-        itemButton: null,
-        fightButton: null,
-        runButton: null,
+            //The player's currently active pokemon
+            this.myActivePokemon = {};
+            this.activePokemonIndex = [];
+            this.currentPokemonIndex = 0;
 
-        pokemonUI: null,
-        itemUI: null,
-        fightUI: null,
+            this.pokemonButton = null;
+            this.itemButton = null;
+            this.fightButton = null;
+            this.runButton = null;
 
-        confirmTurnWindow: null,
-        turnData: {},
-        currentSelectedItem: null,
-        currentSelectedAttack: null,
-        moveButtons: [],
+            this.pokemonUI = null;
+            this.itemUI = null;
+            this.fightUI = null;
 
-        targetSelectMode: '',
-        targetSelectText: null,
-        waitingForData: false,
+            this.confirmTurnWindow = null;
+            this.turnData = {};
+            this.currentSelectedItem = null;
+            this.currentSelectedAttack = null;
+            this.moveButtons = [];
 
-        init: function() {
+            this.targetSelectMode = '';
+            this.targetSelectText = null;
+            this.waitingForData = false;
+
+            this.end = false;
+            this.endTicker = 0;
+
             Graphics.uiPrimitives1.clear();
             Graphics.uiPrimitives1.lineStyle(3,0x000000,1);
             Graphics.uiPrimitives1.beginFill(0xFFFFFF,1);
@@ -139,6 +144,7 @@
                     if (this.wild){
                         var pkmn = this.battleData['team' + this.otherTeam][0];
                         var data = this.getPokemonData(pkmn,2,1);
+                        data.sprite.pIndex = 0;
                         data.tPos = data.sprite.position.x;
                         data.sprite.position.x = Graphics.width/4 + data.sprite.width/2;
                         data.mDistance = data.tPos - data.sprite.position.x;
@@ -159,6 +165,13 @@
             if (this.gopkmnStart){
                 //sending out your pokemon cutscene
                 this.updateGopkmnStart(dt);
+            }
+            if (this.end){
+                this.endTicker += dt;
+                if (this.endTicker >= 3.0){
+                    Graphics.uiContainer2.removeChildren();
+                    Game.setBattleChange(false);
+                }
             }
             if (!Game.chatActive){
                 if (Acorn.Input.isPressed(Acorn.Input.Key.COMMAND)){
@@ -181,6 +194,19 @@
         getPokemonData: function(pkmn,sSlot,iSlot){
             //sSlot is the SPRITE position slot, from 1-8
             //iSlot is POKEMON INFO position slot, from 1-8
+            /*_____________________________________________
+            |   i1  i2                      s1      s2    |
+            |   i3  i4                      s3      s4    |
+            |                                             |
+            |                                             |
+            |                                             |
+            |                                             |
+            |                                             |
+            |                                             |
+            |  s5   s6                      i5      i6    |
+            |  s7   s8                      i7      i8    |
+            |_____________________________________________|*/
+
             var d = {}; 
             if (sSlot<5){
                 d.sprite = Graphics.getSprite(pkmn.number);
@@ -206,7 +232,8 @@
                             command: 'item',
                             type: Battle.currentSelectedItem.itemInfo.type,
                             oIndex: Battle.currentSelectedItem.orderIndex,
-                            pID: e.currentTarget.pkmninfo.id
+                            pID: e.currentTarget.pkmninfo.id,
+                            pIndex: e.currentTarget.pIndex
                         };
                         Game.clearUI();
                         Battle.checkTurnReady();
@@ -219,7 +246,8 @@
                         Battle.turnData[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id] = {
                             command: 'fight',
                             moveIndex: Battle.currentSelectedAttack,
-                            pID: e.currentTarget.pkmninfo.id
+                            pID: e.currentTarget.pkmninfo.id,
+                            pIndex: e.currentTarget.pIndex
                         };
                         Game.clearUI();
                         Battle.checkTurnReady();
@@ -335,7 +363,7 @@
                     this.pokemonContainer[this.myActivePokemon[i].id] = data;
                 }
                 this.gopkmnStart = false;
-                this.toggleTurnOptions(true);
+                Acorn.Net.socket_.emit('battleUpdate',{command: 'roundReady'});
             }
         },
 
@@ -345,7 +373,7 @@
                 Graphics.uiContainer2.addChild(this.targetSelectText);
                 return;
             }
-            if (bool){
+            if (bool && this.roundActive){
                 //remove previous highlights
                 for (var i in this.myActivePokemon){
                     Battle.pokemonContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
@@ -489,6 +517,14 @@
             this.moveButtons = [];
         },
 
+        executeTurn: function(data){
+            for (var i =0; i < data.turnData.length;i++){
+                console.log(data.turnData[i]);
+
+            }
+            Acorn.Net.socket_.emit('battleUpdate',{command: 'roundReady'});
+        },
+
         getConfirmTurnWindow: function(){
 
             this.confirmTurnWindow = new PIXI.Container();
@@ -516,11 +552,12 @@
                     text += (num + ': '+ pkmn.nickname + ' will swap with ' + Party.pokemon[this.turnData[i].index].nickname);  
                 }else if (this.turnData[i].command == 'item'){
                     var item = Player.character.inventory.items[Player.character.inventory.order[this.turnData[i].type][this.turnData[i].oIndex]];
-                    if (this.turnData[i].type == 'ball'){
-                        textArr = ['Use ' + item.name + '?'];
-                        break;
-                    }else{
+                    if (item.targetType == 'allpkmn' || item.targetType == 'battlepkmn' ){
                         text += (num + ': Use '+ item.name + ' on ' + Party.pokemon[this.turnData[i].pIndex].nickname);  
+                    }else if (item.targetType == 'all' || item.targetType == 'battle' ){
+                        text += (num + ': Use '+ item.name);
+                    }else if (item.targetType == 'battleenemy'){
+                        text += (num + ': Use '+ item.name);
                     }
                 }
                 textArr.push(text);
@@ -569,6 +606,7 @@
                     console.log(Battle.turnData);
                     Battle.turnData = {};
                     Game.clearUI();
+                    Battle.roundActive = false;
                     Battle.toggleTurnOptions(false);
                     Battle.currentPokemonIndex = 0;
                     Graphics.ui.removeChild(Battle.confirmTurnWindow);

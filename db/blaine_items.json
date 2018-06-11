@@ -11,7 +11,8 @@
         "type": "allpkmn",
         "effects": [
           {
-            "effectid": "curepoison"
+            "effectid": "removeStatus",
+            "statusid": "poison"
           }
         ]
       }
@@ -27,7 +28,8 @@
         "type": "allpkmn",
         "effects": [
           {
-            "effectid": "curesleep"
+            "effectid": "removeStatus",
+            "statusid": "sleep"
           }
         ]
       }
@@ -40,10 +42,11 @@
       "stack": true,
       "description": "Cures poison status",
       "use": {
-        "type": "all",
+        "type": "allpkmn",
         "effects": [
           {
-            "effectid": "curepoison"
+            "effectid": "removeStatus",
+            "statusid": "burn"
           }
         ]
       }
@@ -65,9 +68,6 @@
         ]
       }
     },
-
-
-
 
     {
       "itemid": "pokeball",
@@ -98,7 +98,7 @@
         "effects": [
           {
             "effectid": "catch",
-            "power": 2
+            "power": 1.5
           }
         ]
       }
@@ -115,12 +115,28 @@
         "effects": [
           {
             "effectid": "catch",
-            "power": 4
+            "power": 2
           }
         ]
       }
     },
-
+  {
+      "itemid": "masterball",
+      "name": "Master Ball",
+      "type": "ball",
+      "price": 100000,
+      "stack": true,
+      "description": "Catches Pokemon. The most effective ball ever made",
+      "use": {
+        "type": "battleenemy",
+        "effects": [
+          {
+            "effectid": "catch",
+            "power": 8
+          }
+        ]
+      }
+    },
 
 
 

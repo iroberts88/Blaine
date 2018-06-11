@@ -73,6 +73,10 @@ Inventory.prototype.getItem = function(id){
     return 0;
 }
 
+Inventory.prototype.getItemByOrder = function(type,index){
+    return this.items[this.order[type][index]];
+}
+
 Inventory.prototype.removeItem = function(id,amount){
     //check to see if item already exists
     if (typeof this.items[id] == 'undefined'){

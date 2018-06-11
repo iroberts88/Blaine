@@ -52,11 +52,11 @@ var Pokemon = function(){
         '2': 0,
         '3': 0
     }
+
+    this.status = [];
 }
 
 Pokemon.prototype.reset = function(){
-    //things that reset with each new battle?
-    //EACH STAT MOD???
 }
 
 Pokemon.prototype.getMoves = function(options){
@@ -93,6 +93,8 @@ Pokemon.prototype.init = function(base,data) {
     this.number = base.number;
     this.name = base.name;
     this.types = base.types; //list of types
+
+    this.captureRate = (typeof base.captureRate == 'undefined') ? 1 : base.captureRate;
 
     this.affection = (typeof data.affection == 'undefined') ? 0 : data.affection;
     this.critChance = (typeof data.critChance == 'undefined') ? 0 : data.critChance;

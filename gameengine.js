@@ -63,6 +63,10 @@ GameEngine.prototype.tick = function() {
         var zone = self.zones[z];
         zone.tick(deltaTime);
     }
+    //update all active battles
+    for (var b in self.activeBattles){
+        self.activeBattles[b].tick(deltaTime);
+    }
     //update debug list
     for (var k in self.debugList){
         self.debugList[k].t -= deltaTime;

@@ -101,6 +101,12 @@ Player.prototype.setupSocket = function() {
                 if (data.turnData.run){
                     //check run
                     console.log('Trying to run');
+                    if (that.battle.wild){
+                        //TODO run % chance?
+                        //exit battle
+                        that.battle = null;
+                        that.gameEngine.queuePlayer(that,'battleData', {run:true});
+                    }
                 }else{
                     for (var i in data.turnData){
                         switch(data.turnData[i].command){
@@ -118,6 +124,10 @@ Player.prototype.setupSocket = function() {
                         that.battle.addTurnData(i,data.turnData[i]);
                     }
                 }
+                break;
+            case 'roundReady':
+                that.battle.readyForNextRound[that.id] = true;
+                console.log(that.battle.readyForNextRound)
                 break;
         }
     });

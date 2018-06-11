@@ -117,7 +117,7 @@
             Acorn.Net.on('startBattle', function (data) {
                 console.log('received battle data');
                 Battle.battleData = data;
-                Game.setBattleChange();
+                Game.setBattleChange(true);
                 Game.battleTicker = 0;
                 Game.cMusic = Acorn.Sound.currentMusic;
                 if (data.wild){
@@ -131,6 +131,37 @@
                 Graphics.uiPrimitives2.drawRect(0,0,Graphics.width,Graphics.height);
                 Graphics.uiPrimitives2.endFill();
                 Graphics.uiPrimitives2.alpha = 0;
+            });
+
+            Acorn.Net.on('executeTurn', function (data) {
+                //A battle turn has been processed
+                console.log("do turn stuff");
+                console.log(data);
+                if (Game.battleActive){
+                    Battle.executeTurn(data);
+                }
+            });
+
+            Acorn.Net.on('roundReady', function (data) {
+                //A battle turn has been processed
+                console.log(data);
+                if (Game.battleActive){
+                    Battle.roundActive = true;
+                    Battle.waitingForData = false;
+                    Battle.toggleTargetSelect(false);
+                    Battle.toggleTurnOptions(true);
+                }
+            });
+
+            Acorn.Net.on('battleChat', function (data) {
+                Battle.addChat(data.text);
+            });
+
+            Acorn.Net.on('battleData', function (data) {
+                if (data.run){
+                    Battle.addChat("You got away!");
+                    Battle.end = true;
+                }
             });
 
             Acorn.Net.on('loggedIn', function (data) {
@@ -158,9 +189,7 @@
                 }
             });
 
-            Acorn.Net.on('battleChat', function (data) {
-                Battle.addChat(data.text);
-            });
+            
 
             //Player Character Functions
 

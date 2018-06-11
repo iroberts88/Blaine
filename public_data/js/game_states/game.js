@@ -225,13 +225,26 @@
             }
         },
 
-        setBattleChange: function(){
-            this.battleChange = true;
-            Graphics.uiContainer.removeChild(this.pokedexButton);
-            Graphics.uiContainer.removeChild(this.inventoryButton);
-            Graphics.uiContainer.removeChild(this.pokemonButton);
-            Graphics.uiContainer.removeChild(this.characterButton);
-            Graphics.uiContainer.removeChild(this.settingsButton);
+        setBattleChange: function(bool){
+            if (bool){
+                this.battleChange = true;
+                this.battleTicker = 0;
+                Graphics.uiContainer.removeChild(this.pokedexButton);
+                Graphics.uiContainer.removeChild(this.inventoryButton);
+                Graphics.uiContainer.removeChild(this.pokemonButton);
+                Graphics.uiContainer.removeChild(this.characterButton);
+                Graphics.uiContainer.removeChild(this.settingsButton);
+            }else{
+                this.battleChange = false;
+                this.battleActive = false;
+                Graphics.uiContainer.addChild(this.pokedexButton);
+                Graphics.uiContainer.addChild(this.inventoryButton);
+                Graphics.uiContainer.addChild(this.pokemonButton);
+                Graphics.uiContainer.addChild(this.characterButton);
+                Graphics.uiContainer.addChild(this.settingsButton);
+                Graphics.uiPrimitives2.clear();
+                Graphics.uiPrimitives1.clear();
+            }
         },
         
         updateBattleChange: function(deltaTime){
