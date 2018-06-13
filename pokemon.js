@@ -67,13 +67,25 @@ Pokemon.prototype.getMoves = function(options){
             //add them
             for (var j = 0; j < this.gameEngine.pokemon[this.number].moveList[i].length;j++){
                 if (this.moves.length < this.MAX_ATTACKS){
-                    if (typeof this.gameEngine.attacks[this.gameEngine.pokemon[this.number].moveList[i][j].moveid] == 'undefined'){
+                    var attackid = this.gameEngine.pokemon[this.number].moveList[i][j].attackid;
+                    if (typeof this.gameEngine.attacks[attackid] == 'undefined'){
                         //MOVE DOESNT EXIST
-                        console.log('Move with id "'+ this.gameEngine.pokemon[this.number].moveList[i][j].moveid + '" doesn\'t exist');
-                    }else{
-                        this.moves.push(this.gameEngine.attacks[this.gameEngine.pokemon[this.number].moveList[i][j].moveid]);
-                        this.currentPP[this.moves.length-1] = this.gameEngine.attacks[this.gameEngine.pokemon[this.number].moveList[i][j].moveid].pp
+                        console.log('Move with id "'+ attackid + '" doesn\'t exist');
+                        console.log('Defaulting to Tackle');
+                        attackid = 'tackle';
                     }
+                    var hasMove = false;
+                    for (var k = 0; k < this.moves.length;k++){
+                        if (this.moves[k].attackid == attackid){
+                            hasMove = true;
+                            break;
+                        }
+                    }
+                    if (hasMove){
+                        continue;
+                    }
+                    this.moves.push(this.gameEngine.attacks[attackid]);
+                    this.currentPP[this.moves.length-1] = this.gameEngine.attacks[attackid].pp
                 }else{
                     return;
                 }

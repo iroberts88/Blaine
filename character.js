@@ -1,5 +1,6 @@
 var Pokemon = require('./pokemon.js').Pokemon;
 var Inventory = require('./inventory.js').Inventory;
+var PokemonStorage = require('./pokemonstorage.js').PokemonStorage;
 
 var Character = function(){
     this.MAX_POKEMON = 6;
@@ -125,7 +126,7 @@ Character.prototype.init = function(data) {
     this.pokedex = data.pokedex;
     //init pokemon
     this.party = [];
-    var pkmn = [1,4,7,3,6,9];
+    var pkmn = [1,4,7];
     for (var i = 0; i < pkmn.length;i++){
         var newPoke = new Pokemon();
         newPoke.init(this.owner.gameEngine.pokemon[pkmn[i]],{
@@ -133,9 +134,11 @@ Character.prototype.init = function(data) {
             nickname: '',
             id: this.owner.gameEngine.getId()
         })
-        this.addPokemon(newPoke);
+        this.addPokemon(newPoke,true);
     }
     //init pc stuff
+    this.pokemonStorage = new PokemonStorage();
+    this.pokemonStorage.init();
     //init inventory
     this.inventory = new Inventory();
     this.inventory.init();
@@ -176,21 +179,33 @@ Character.prototype.swapPkmn = function(data){
         this.party[data.second-1] = temp;
     }
 };
-Character.prototype.addPokemon = function(p){
+Character.prototype.addPokemon = function(p,initBool){
+    var info = {
+        partySlot: null,
+        addedToPokedex: null,
+        pcBox: null
+    }
     if (this.party.length < this.MAX_POKEMON){
         this.party.push(p);
         p.slot = this.party.length;
-        //this.owner.gameEngine.queuePlayer(this.owner,'pokemonInfo',{
-        //    'pokemon': p.getClientData(),
-        //    'slot': this.party.length
-        //});
+        info.partySlot = p.slot;
+        if (typeof initBool == 'undefined'){
+            this.owner.gameEngine.queuePlayer(this.owner,'addPokemon',{
+                'pokemon': p.getClientData(),
+                'slot': this.party.length
+            });
+        }
         //do pokedex stuff
         if (!this.pokedex[p.number]){
             this.pokedex[p.number] = true;
+            info.addedToPokedex = true;
         }
     }else{
         //add to pc?
+        info.pcBox = this.pokemonStorage.addPokemon(p);
     }
+
+    return info;
 };
 
 Character.prototype.getDBObj = function(){

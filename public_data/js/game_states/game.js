@@ -748,7 +748,6 @@
                     y += (Graphics.height/4 + 50);
                 }
                 this.pokemonUIElements[i] = container;
-                this.pokemonUI.addChild(container);
             }
             this.pokemonUI.scale.x = this.UI_OFFSETSCALE;
             this.pokemonUI.scale.y = this.UI_OFFSETSCALE;
@@ -817,12 +816,14 @@
         resetPokemon: function(slot){
             var xSize = this.pkmnBoxSize[0];
             var ySize = this.pkmnBoxSize[1];
-            if (typeof Party.pokemon[slot] == 'undefined'){
-                return;
-            }
             var pokemon = Party.pokemon[slot];
             var c = this.pokemonUIElements[slot];
             c.removeChildren();
+
+            if (typeof Party.pokemon[slot] == 'undefined' || Party.pokemon[slot] == '' ){
+                this.pokemonUI.removeChild(c);
+                return;
+            }
 
             //get texture for button, set to interactive etc.
             var gfx = new PIXI.Graphics();
@@ -990,7 +991,7 @@
                 sprites.addChild(pp);
                 sprites.addChild(type);
             }
-
+            this.pokemonUI.addChild(c);
         },
         initCharUI: function(){
             this.characterUI.removeChildren();

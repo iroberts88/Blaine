@@ -6,6 +6,7 @@ var User = require('./user.js').User,
     Zone = require('./zone.js').Zone,
     Battle = require('./battle.js').Battle,
     Trainer = require('./trainer.js').Trainer,
+    Pokemon = require('./pokemon.js').Pokemon,
     Triggers = require('./triggers.js').Triggers;
 
 const crypto = require('crypto');
@@ -332,6 +333,20 @@ Player.prototype.setupSocket = function() {
                         that.battle = battle;
                         that.gameEngine.activeBattles[battle.id] = battle;
                     }
+                    break;
+                case 'arp':
+                    console.log("Adding Random Pokemon!");
+                    var pokemon = Math.ceil(Math.random()*15);
+                    var level = Math.ceil(Math.random()*100);
+
+                    var newPoke = new Pokemon();
+                    newPoke.init(that.gameEngine.pokemon[pokemon],{
+                        character: that.character,
+                        nickname: '',
+                        level: level,
+                        id: that.gameEngine.getId()
+                    })
+                    that.character.addPokemon(newPoke);
                     break;
             }
         }catch(e){

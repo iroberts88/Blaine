@@ -24,10 +24,10 @@
       "moveList": {
         "1": [
           {
-            "moveid": "poisonsting"
+            "attackid": "poisonsting"
           },
           {
-            "moveid": "stringshot"
+            "attackid": "stringshot"
           }
         ]
       },
@@ -64,46 +64,46 @@
       "moveList": {
         "1": [
           {
-            "moveid": "tackle"
+            "attackid": "tackle"
           },
           {
-            "moveid": "tailwhip"
+            "attackid": "tailwhip"
           },
           {
-            "moveid": "bubble"
+            "attackid": "bubble"
           },
           {
-            "moveid": "watergun"
+            "attackid": "watergun"
           }
         ],
         "8": [
           {
-            "moveid": "bubble"
+            "attackid": "bubble"
           }
         ],
         "15": [
           {
-            "moveid": "watergun"
+            "attackid": "watergun"
           }
         ],
         "24": [
           {
-            "moveid": "bite"
+            "attackid": "bite"
           }
         ],
         "31": [
           {
-            "moveid": "withdraw"
+            "attackid": "withdraw"
           }
         ],
         "42": [
           {
-            "moveid": "skullbash"
+            "attackid": "skullbash"
           }
         ],
         "52": [
           {
-            "moveid": "hydropump"
+            "attackid": "hydropump"
           }
         ]
       },
@@ -140,40 +140,40 @@
       "moveList": {
         "1": [
           {
-            "moveid": "tackle"
+            "attackid": "tackle"
           },
           {
-            "moveid": "tailwhip"
+            "attackid": "tailwhip"
           }
         ],
         "9": [
           {
-            "moveid": "bubble"
+            "attackid": "bubble"
           }
         ],
         "15": [
           {
-            "moveid": "watergun"
+            "attackid": "watergun"
           }
         ],
         "22": [
           {
-            "moveid": "bite"
+            "attackid": "bite"
           }
         ],
         "28": [
           {
-            "moveid": "withdraw"
+            "attackid": "withdraw"
           }
         ],
         "35": [
           {
-            "moveid": "skullbash"
+            "attackid": "skullbash"
           }
         ],
         "42": [
           {
-            "moveid": "hydropump"
+            "attackid": "hydropump"
           }
         ]
       },
@@ -209,51 +209,51 @@
       "moveList": {
         "1": [
           {
-            "moveid": "tackle"
+            "attackid": "tackle"
           },
           {
-            "moveid": "growl"
+            "attackid": "growl"
           },
           {
-            "moveid": "leechseed"
+            "attackid": "leechseed"
           },
           {
-            "moveid": "vinewhip"
+            "attackid": "vinewhip"
           }
         ],
         "7": [
           {
-            "moveid": "leechseed"
+            "attackid": "leechseed"
           }
         ],
         "13": [
           {
-            "moveid": "vinewhip"
+            "attackid": "vinewhip"
           }
         ],
         "22": [
           {
-            "moveid": "poisonpowder"
+            "attackid": "poisonpowder"
           }
         ],
         "30": [
           {
-            "moveid": "razorleaf"
+            "attackid": "razorleaf"
           }
         ],
         "43": [
           {
-            "moveid": "growth"
+            "attackid": "growth"
           }
         ],
         "55": [
           {
-            "moveid": "sleeppowder"
+            "attackid": "sleeppowder"
           }
         ],
         "65": [
           {
-            "moveid": "solarbeam"
+            "attackid": "solarbeam"
           }
         ]
       },
@@ -291,40 +291,40 @@
       "moveList": {
         "1": [
           {
-            "moveid": "scratch"
+            "attackid": "scratch"
           },
           {
-            "moveid": "growl"
+            "attackid": "growl"
           }
         ],
         "9": [
           {
-            "moveid": "ember"
+            "attackid": "ember"
           }
         ],
         "15": [
           {
-            "moveid": "leer"
+            "attackid": "leer"
           }
         ],
         "22": [
           {
-            "moveid": "rage"
+            "attackid": "rage"
           }
         ],
         "30": [
           {
-            "moveid": "slash"
+            "attackid": "slash"
           }
         ],
         "38": [
           {
-            "moveid": "flamethrower"
+            "attackid": "flamethrower"
           }
         ],
         "46": [
           {
-            "moveid": "firespin"
+            "attackid": "firespin"
           }
         ]
       },
@@ -361,10 +361,10 @@
       "moveList": {
         "1": [
           {
-            "moveid": "tackle"
+            "attackid": "tackle"
           },
           {
-            "moveid": "stringshot"
+            "attackid": "stringshot"
           }
         ]
       },
@@ -401,48 +401,48 @@
       "moveList": {
         "1": [
           {
-            "moveid": "tackle"
+            "attackid": "tackle"
           },
           {
-            "moveid": "growl"
+            "attackid": "growl"
           },
           {
-            "moveid": "leechseed"
+            "attackid": "leechseed"
           }
         ],
         "7": [
           {
-            "moveid": "leechseed"
+            "attackid": "leechseed"
           }
         ],
         "13": [
           {
-            "moveid": "vinewhip"
+            "attackid": "vinewhip"
           }
         ],
         "22": [
           {
-            "moveid": "poisonpowder"
+            "attackid": "poisonpowder"
           }
         ],
         "30": [
           {
-            "moveid": "razorleaf"
+            "attackid": "razorleaf"
           }
         ],
         "38": [
           {
-            "moveid": "growth"
+            "attackid": "growth"
           }
         ],
         "46": [
           {
-            "moveid": "sleeppowder"
+            "attackid": "sleeppowder"
           }
         ],
         "54": [
           {
-            "moveid": "solarbeam"
+            "attackid": "solarbeam"
           }
         ]
       },
@@ -480,43 +480,43 @@
       "moveList": {
         "1": [
           {
-            "moveid": "tackle"
+            "attackid": "tackle"
           },
           {
-            "moveid": "tailwhip"
+            "attackid": "tailwhip"
           },
           {
-            "moveid": "bubble"
+            "attackid": "bubble"
           }
         ],
         "8": [
           {
-            "moveid": "bubble"
+            "attackid": "bubble"
           }
         ],
         "15": [
           {
-            "moveid": "watergun"
+            "attackid": "watergun"
           }
         ],
         "24": [
           {
-            "moveid": "bite"
+            "attackid": "bite"
           }
         ],
         "31": [
           {
-            "moveid": "withdraw"
+            "attackid": "withdraw"
           }
         ],
         "39": [
           {
-            "moveid": "skullbash"
+            "attackid": "skullbash"
           }
         ],
         "47": [
           {
-            "moveid": "hydropump"
+            "attackid": "hydropump"
           }
         ]
       },
@@ -553,45 +553,45 @@
       "moveList": {
         "1": [
           {
-            "moveid": "tackle"
+            "attackid": "tackle"
           },
           {
-            "moveid": "growl"
+            "attackid": "growl"
           }
         ],
         "7": [
           {
-            "moveid": "leechseed"
+            "attackid": "leechseed"
           }
         ],
         "13": [
           {
-            "moveid": "vinewhip"
+            "attackid": "vinewhip"
           }
         ],
         "20": [
           {
-            "moveid": "poisonpowder"
+            "attackid": "poisonpowder"
           }
         ],
         "27": [
           {
-            "moveid": "razorleaf"
+            "attackid": "razorleaf"
           }
         ],
         "34": [
           {
-            "moveid": "growth"
+            "attackid": "growth"
           }
         ],
         "41": [
           {
-            "moveid": "sleeppowder"
+            "attackid": "sleeppowder"
           }
         ],
         "48": [
           {
-            "moveid": "solarbeam"
+            "attackid": "solarbeam"
           }
         ]
       },
@@ -628,46 +628,46 @@
       "moveList": {
         "1": [
           {
-            "moveid": "scratch"
+            "attackid": "scratch"
           },
           {
-            "moveid": "growl"
+            "attackid": "growl"
           },
           {
-            "moveid": "ember"
+            "attackid": "ember"
           },
           {
-            "moveid": "leer"
+            "attackid": "leer"
           }
         ],
         "9": [
           {
-            "moveid": "ember"
+            "attackid": "ember"
           }
         ],
         "15": [
           {
-            "moveid": "leer"
+            "attackid": "leer"
           }
         ],
         "24": [
           {
-            "moveid": "rage"
+            "attackid": "rage"
           }
         ],
         "33": [
           {
-            "moveid": "slash"
+            "attackid": "slash"
           }
         ],
         "46": [
           {
-            "moveid": "flamethrower"
+            "attackid": "flamethrower"
           }
         ],
         "60": [
           {
-            "moveid": "firespin"
+            "attackid": "firespin"
           }
         ]
       },
@@ -705,43 +705,43 @@
       "moveList": {
         "1": [
           {
-            "moveid": "scratch"
+            "attackid": "scratch"
           },
           {
-            "moveid": "growl"
+            "attackid": "growl"
           },
           {
-            "moveid": "ember"
+            "attackid": "ember"
           }
         ],
         "9": [
           {
-            "moveid": "ember"
+            "attackid": "ember"
           }
         ],
         "15": [
           {
-            "moveid": "leer"
+            "attackid": "leer"
           }
         ],
         "24": [
           {
-            "moveid": "rage"
+            "attackid": "rage"
           }
         ],
         "33": [
           {
-            "moveid": "slash"
+            "attackid": "slash"
           }
         ],
         "42": [
           {
-            "moveid": "flamethrower"
+            "attackid": "flamethrower"
           }
         ],
         "56": [
           {
-            "moveid": "firespin"
+            "attackid": "firespin"
           }
         ]
       },
@@ -777,37 +777,37 @@
       "moveList": {
         "1": [
           {
-            "moveid": "furyattack"
+            "attackid": "furyattack"
           }
         ],
         "12": [
           {
-            "moveid": "furyattack"
+            "attackid": "furyattack"
           }
         ],
         "16": [
           {
-            "moveid": "focusenergy"
+            "attackid": "focusenergy"
           }
         ],
         "20": [
           {
-            "moveid": "twineedle"
+            "attackid": "twineedle"
           }
         ],
         "25": [
           {
-            "moveid": "rage"
+            "attackid": "rage"
           }
         ],
         "30": [
           {
-            "moveid": "pinmissile"
+            "attackid": "pinmissile"
           }
         ],
         "35": [
           {
-            "moveid": "agility"
+            "attackid": "agility"
           }
         ]
       },
@@ -845,12 +845,12 @@
       "moveList": {
         "1": [
           {
-            "moveid": "harden"
+            "attackid": "harden"
           }
         ],
         "7": [
           {
-            "moveid": "harden"
+            "attackid": "harden"
           }
         ]
       },
@@ -884,12 +884,12 @@
       "moveList": {
         "1": [
           {
-            "moveid": "harden"
+            "attackid": "harden"
           }
         ],
         "7": [
           {
-            "moveid": "harden"
+            "attackid": "harden"
           }
         ]
       },
@@ -926,42 +926,42 @@
       "moveList": {
         "1": [
           {
-            "moveid": "confusion"
+            "attackid": "confusion"
           }
         ],
         "12": [
           {
-            "moveid": "confusion"
+            "attackid": "confusion"
           }
         ],
         "15": [
           {
-            "moveid": "poisonpowder"
+            "attackid": "poisonpowder"
           }
         ],
         "16": [
           {
-            "moveid": "stunspore"
+            "attackid": "stunspore"
           }
         ],
         "17": [
           {
-            "moveid": "sleeppowder"
+            "attackid": "sleeppowder"
           }
         ],
         "21": [
           {
-            "moveid": "supersonic"
+            "attackid": "supersonic"
           }
         ],
         "26": [
           {
-            "moveid": "whirlwind"
+            "attackid": "whirlwind"
           }
         ],
         "32": [
           {
-            "moveid": "psybeam"
+            "attackid": "psybeam"
           }
         ]
       },

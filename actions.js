@@ -22,7 +22,7 @@ Actions.prototype.testAction = function(data){
         text: 'Used ' + data.item.name + '!'
     });
     data.ctd.push({
-        text: 'It didn\'t do anything....'
+        text: 'It didn\'t do anything.... NOT IMPLEMENTED ZZZZZZ'
     });
     return data.ctd;
 }
@@ -48,9 +48,17 @@ Actions.prototype.catch = function(data){
             break;
         }else{
             console.log(rand + ' - Shake!!');
+            shakes += 1
         }
     }
-
+    var info = {
+        partySlot: null,
+        addedToPokedex: null,
+        pcBox: null
+    }
+    if (shakes == 4){
+        info = data.character.addPokemon(pokemon);
+    }
     data.ctd.push({
         text: 'Used ' + data.item.name + '!'
     });
@@ -58,6 +66,21 @@ Actions.prototype.catch = function(data){
         action: 'catchAttempt',
         shakes: shakes
     });
+    if (info.partySlot != null){
+        data.ctd.push({
+            text: pokemon.nickname + ' added to party!'
+        });
+    }
+    if (info.pcBox != null){
+        data.ctd.push({
+            text: pokemon.nickname + ' added to PC box #' + info.pcBox + '!'
+        });
+    }
+    if (info.addedToPokedex != null){
+        data.ctd.push({
+            text: pokemon.name + ' info added to pokedex!'
+        });
+    }
     return data.ctd;
 }
 

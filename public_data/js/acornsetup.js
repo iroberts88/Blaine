@@ -170,9 +170,9 @@
                 MainMenu.showCharacterSelection(data);
             });
 
-            Acorn.Net.on('pokemonInfo', function (data) {
-                console.log(data);
-                Game.addPokemon(data);
+            Acorn.Net.on('addPokemon', function (data) {
+                Party.setPokemon(data.slot,data.pokemon);
+                Game.resetPokemon(data.slot);
             });
 
             Acorn.Net.on('logout', function (data) {

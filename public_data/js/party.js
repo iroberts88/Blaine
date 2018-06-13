@@ -16,11 +16,13 @@
                     this.setPokemon(data.pokemon[i].slot,data.pokemon[i]);
                 }
             }
+            for (var i = 1; i < 7; i++){
+                Game.resetPokemon(i);
+            }
         },
 
         setPokemon: function(slot,pokemon){
             this.pokemon[slot] = pokemon;
-            Game.resetPokemon(slot);
         },
 
         getPokemon: function(id){

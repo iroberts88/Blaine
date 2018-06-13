@@ -123,7 +123,6 @@ Battle.prototype.init = function (data) {
     for (var i in this.players){
         this.gameEngine.queuePlayer(this.players[i],"startBattle", {wild: this.wild,type: this.type,team1: t1,team2: t2});
     }
-    console.log(this.activePokemon);
     return true;
 };
 
@@ -223,10 +222,12 @@ Battle.prototype.addTurnData = function(pkmnID,data){
                         item: item,
                         ctd: clientTurnData,
                         actionData: item.use.effects[j],
-                        turnData: tData
+                        turnData: tData,
+                        character: this.activePokemon[i].character
                     }
                     clientTurnData = A(data);
                 }
+                //remove item
             }
         }
         //then swap pokemon

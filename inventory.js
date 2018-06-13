@@ -1,4 +1,3 @@
-var Pokemon = require('./pokemon.js').Pokemon;
 
 var Inventory = function(){
     this.MAX_ITEM_STACK = 99;
