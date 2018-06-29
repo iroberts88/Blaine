@@ -155,9 +155,9 @@ Character.prototype.initBattle = function(battle,n,team){
         this.activePokemon.push(this.party[i]);
         battle.activePokemon[this.party[i].id] = this.party[i];
         if (team == 1){
-            battle.team1Pokemon.push(this.party[i])
+            battle.team1Pokemon.push(this.party[i]);
         }else{
-            battle.team2Pokemon.push(this.party[i])
+            battle.team2Pokemon.push(this.party[i]);
         }
     }
 };

@@ -11,12 +11,16 @@
             this.chatLog = [];
 
             this.roundActive = false;
+            this.turn = null; //turn animations/etc are playing
             this.wildStart = false;
             this.trainerStart = false;
             this.gopkmnStart = false;
             this.gopkmnTicker = 0;
 
             //container for sprites and healthbars of each team
+            this.pokemonSpriteContainer = {};
+
+            //container for all pokemon info
             this.pokemonContainer = {};
 
             //The player's currently active pokemon
@@ -114,6 +118,7 @@
             this.targetSelectText.position.y = Graphics.height*0.75 + Graphics.height/8;
             //get which team you're on
             for (var i = 0; i < this.battleData.team1.length;i++){
+                this.pokemonContainer[this.battleData.team1[i].id] = this.battleData.team1[i];
                 for (var j in Party.pokemon){
                     if (this.battleData.team1[i].id == Party.pokemon[j].id){
                         this.myTeam = 1;
@@ -124,6 +129,7 @@
                 }
             }
             for (var i = 0; i < this.battleData.team2.length;i++){
+                this.pokemonContainer[this.battleData.team2[i].id] = this.battleData.team2[i];
                 for (var j in Party.pokemon){
                     if (this.battleData.team2[i].id == Party.pokemon[j].id){
                         this.myTeam = 2;
@@ -151,7 +157,7 @@
                         data.ticker = 0;
                         data.sprite.tint = 0x000000;
                         Graphics.uiContainer2.addChild(data.sprite);
-                        this.pokemonContainer[pkmn.id] = data;
+                        this.pokemonSpriteContainer[pkmn.id] = data;
                     }
                     break;
             }
@@ -171,6 +177,13 @@
                 if (this.endTicker >= 3.0){
                     Graphics.uiContainer2.removeChildren();
                     Game.setBattleChange(false);
+                }
+            }
+            if (this.turn != null){
+                this.turn.update(dt);
+                if (this.turn.end){
+                    Acorn.Net.socket_.emit('battleUpdate',{command: 'roundReady'});
+                    this.turn = null;
                 }
             }
             if (!Game.chatActive){
@@ -323,17 +336,17 @@
         updateWildStart: function(dt){
             var time = 2.0;
             var stop = false;
-            for (var i in this.pokemonContainer){
-                this.pokemonContainer[i].ticker += dt;
-                this.pokemonContainer[i].sprite.position.x = Graphics.width/4 + this.pokemonContainer[i].sprite.width/2 + (this.pokemonContainer[i].mDistance* (this.pokemonContainer[i].ticker/time));
-                if (this.pokemonContainer[i].ticker >= 2.0){
+            for (var i in this.pokemonSpriteContainer){
+                this.pokemonSpriteContainer[i].ticker += dt;
+                this.pokemonSpriteContainer[i].sprite.position.x = Graphics.width/4 + this.pokemonSpriteContainer[i].sprite.width/2 + (this.pokemonSpriteContainer[i].mDistance* (this.pokemonSpriteContainer[i].ticker/time));
+                if (this.pokemonSpriteContainer[i].ticker >= 2.0){
                     //next phase!
                     this.addChat("& A wild " + this.battleData['team' + this.otherTeam][0].nickname.toUpperCase() + ' appeared!');
-                    this.pokemonContainer[i].sprite.position.x = this.pokemonContainer[i].tPos;
-                    this.pokemonContainer[i].sprite.tint = 0xFFFFFF;
-                    Graphics.uiContainer2.addChild(this.pokemonContainer[i].nameDisplay);
-                    Graphics.uiContainer2.addChild(this.pokemonContainer[i].levelDisplay);
-                    Graphics.uiContainer2.addChild(this.pokemonContainer[i].hpBar);
+                    this.pokemonSpriteContainer[i].sprite.position.x = this.pokemonSpriteContainer[i].tPos;
+                    this.pokemonSpriteContainer[i].sprite.tint = 0xFFFFFF;
+                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nameDisplay);
+                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].levelDisplay);
+                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].hpBar);
                     stop = true;
                 }
             }
@@ -360,7 +373,7 @@
                     Graphics.uiContainer2.addChild(data.hpBar);
                     Graphics.uiContainer2.addChild(data.nameDisplay);
                     Graphics.uiContainer2.addChild(data.levelDisplay);
-                    this.pokemonContainer[this.myActivePokemon[i].id] = data;
+                    this.pokemonSpriteContainer[this.myActivePokemon[i].id] = data;
                 }
                 this.gopkmnStart = false;
                 Acorn.Net.socket_.emit('battleUpdate',{command: 'roundReady'});
@@ -376,7 +389,7 @@
             if (bool && this.roundActive){
                 //remove previous highlights
                 for (var i in this.myActivePokemon){
-                    Battle.pokemonContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
+                    Battle.pokemonSpriteContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
                 }
                 Graphics.uiContainer2.addChild(this.fightButton);
                 Graphics.uiContainer2.addChild(this.pokemonButton);
@@ -384,10 +397,10 @@
                 Graphics.uiContainer2.addChild(this.runButton);
                 //highlight the active pokemon
                 var outLineFilter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF00000, 0.5);
-                this.pokemonContainer[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id].sprite.filters = [outLineFilter];
+                this.pokemonSpriteContainer[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id].sprite.filters = [outLineFilter];
             }else{
                 for (var i in this.myActivePokemon){
-                    Battle.pokemonContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
+                    Battle.pokemonSpriteContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
                 }
                 Graphics.uiContainer2.removeChild(this.fightButton);
                 Graphics.uiContainer2.removeChild(this.pokemonButton);
@@ -409,7 +422,7 @@
             if (bool){
                 //remove previous highlights
                 for (var i in this.myActivePokemon){
-                    Battle.pokemonContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
+                    Battle.pokemonSpriteContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
                 }
                 type = (typeof type != 'undefined')? type : '';
                 if (type == 'item'){
@@ -422,7 +435,7 @@
                 Graphics.uiContainer2.addChild(this.targetSelectText);
             }else{
                 for (var i in this.myActivePokemon){
-                    Battle.pokemonContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
+                    Battle.pokemonSpriteContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
                 }
                 Graphics.uiContainer2.removeChild(this.targetSelectText);
             }
@@ -518,11 +531,8 @@
         },
 
         executeTurn: function(data){
-            for (var i =0; i < data.turnData.length;i++){
-                console.log(data.turnData[i]);
-
-            }
-            Acorn.Net.socket_.emit('battleUpdate',{command: 'roundReady'});
+            this.turn = new Turn();
+            this.turn.init(data.turnData);
         },
 
         getConfirmTurnWindow: function(){

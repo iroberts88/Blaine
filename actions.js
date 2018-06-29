@@ -19,19 +19,19 @@ var ActionEnums = {
 Actions.prototype.testAction = function(data){
     console.log(data);
     data.ctd.push({
+        action: 'text',
         text: 'Used ' + data.item.name + '!'
     });
     data.ctd.push({
+        action: 'text',
         text: 'It didn\'t do anything.... NOT IMPLEMENTED ZZZZZZ'
     });
     return data.ctd;
 }
 
 Actions.prototype.catch = function(data){
-    console.log(data);
     //TODO ATTEMPT TO CATCH THE POKEMON
     var pokemon = data.battle.activePokemon[data.turnData.pID];
-    console.log(pokemon.nickname)
     var catchRate = ((3*pokemon.hp.value - 2*pokemon.currentHP) * pokemon.captureRate * data.actionData.power)/(3*pokemon.hp.value);
     //status bonuses?
     for (var i = 0; i < pokemon.status.length;i++){
@@ -56,30 +56,45 @@ Actions.prototype.catch = function(data){
         addedToPokedex: null,
         pcBox: null
     }
-    if (shakes == 4){
-        info = data.character.addPokemon(pokemon);
-    }
     data.ctd.push({
+            action: 'text',
         text: 'Used ' + data.item.name + '!'
     });
     data.ctd.push({
-        action: 'catchAttempt',
+        action: 'catchattempt',
+        pokemon: pokemon.id,
         shakes: shakes
     });
-    if (info.partySlot != null){
+
+    if (shakes == 4){
+        info = data.character.addPokemon(pokemon);
         data.ctd.push({
-            text: pokemon.nickname + ' added to party!'
+            action: 'getnickname',
+            pokemon: pokemon.id
         });
-    }
-    if (info.pcBox != null){
+
+        if (info.partySlot != null){
+            data.ctd.push({
+                action: 'text',
+                text: pokemon.nickname + ' added to party!'
+            });
+        }
+        if (info.pcBox != null){
+            data.ctd.push({
+                action: 'text',
+                text: pokemon.nickname + ' added to PC box #' + info.pcBox + '!'
+            });
+        }
+        if (info.addedToPokedex != null){
+            data.ctd.push({
+                action: 'text',
+                text: pokemon.name + ' info added to pokedex!'
+            });
+        }
         data.ctd.push({
-            text: pokemon.nickname + ' added to PC box #' + info.pcBox + '!'
+            action: 'endbattle'
         });
-    }
-    if (info.addedToPokedex != null){
-        data.ctd.push({
-            text: pokemon.name + ' info added to pokedex!'
-        });
+        data.battle.endAfterTurn = true;
     }
     return data.ctd;
 }

@@ -15,6 +15,8 @@
         currentRotation: null,
         charScrollSpeed: null,
 
+        nSpeed: null,
+
         init: function() {
         	//Working
             this.scaleToFit = true; //scale to fit screen size
@@ -22,6 +24,8 @@
             this.masterVolume = 1.0;
             this.musicVolume = 1.0;
             this.sfxVolume = 1.0;
+
+            this.nSpeed = 1.2; //Battle notification Speed
 
             this.charScrollSpeed = 100;
             this.autoFullScreen = false;

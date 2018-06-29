@@ -105,6 +105,7 @@ Player.prototype.setupSocket = function() {
                     if (that.battle.wild){
                         //TODO run % chance?
                         //exit battle
+                        that.battle.end = true;
                         that.battle = null;
                         that.gameEngine.queuePlayer(that,'battleData', {run:true});
                     }
@@ -321,6 +322,7 @@ Player.prototype.setupSocket = function() {
             console.log(commands);
             switch (commands[0]){
                 case 'battle':
+                    if (that.battle != null){console.log("Battle exists");return;}
                     console.log("Start Battle");
                     var pokemon = [Math.ceil(Math.random()*15)];
                     var levels = [Math.ceil(Math.random()*4)];

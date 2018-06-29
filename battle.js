@@ -11,7 +11,8 @@ var Player = require('./player.js').Player,
 var Battle = function(ge) {
     this.gameEngine = ge;
     this.id = ge.getId();
-
+    this.endAfterTurn = false;
+    this.end = false; //end the battle on next tick
     //ALL BATTLE TYPES
     // 1v1      -   2 players   1-6 pokemon each, 1 active at a time, 1 from each player 
     // 2v2      -   2 players   1-6 pokemon each, 2 active at a time, 2 from each player 
@@ -64,7 +65,6 @@ var Battle = function(ge) {
     this.roundActive = false;
     this.roundTicker = 0;
     this.readyForNextRound = {};
-
     this.wild = null;
 }
 
@@ -146,6 +146,13 @@ Battle.prototype.tick = function(deltaTime){
     }
 };
 
+Battle.prototype.cleanUp = function(){
+    //remove players etc?
+    for (var i in this.players){
+        this.players[i].battle = null;
+    }
+};
+
 Battle.prototype.addSpectator = function(p){
 
 };
@@ -207,8 +214,8 @@ Battle.prototype.addTurnData = function(pkmnID,data){
         }
 
         //execute turn and create the turn data for client
-        //Use items first
         var clientTurnData = [];
+        //Use items first
         for (var i in this.activePokemon){
             var tData = this.turnData[this.activePokemon[i].id]
             if (tData.command == 'item'){
@@ -227,10 +234,44 @@ Battle.prototype.addTurnData = function(pkmnID,data){
                     }
                     clientTurnData = A(data);
                 }
-                //remove item
+                //TODO remove item
             }
         }
         //then swap pokemon
+        var pkmnToAdd = [];
+        for (var i in this.activePokemon){
+            var tData = this.turnData[this.activePokemon[i].id]
+            if (tData.command == 'swap'){
+                var pkmnToSwapWith = this.activePokemon[i].character.party[tData.index-1];
+                pkmnToAdd.push(pkmnToSwapWith);
+                //update active pokemon of the character
+                for (var j = 0;j < this.activePokemon[i].character.activePokemon.length;j++){
+                    this.activePokemon[i].character.activePokemon[j] = pkmnToSwapWith;
+                }
+                //update team pokemon
+                for (var j = 0; j < this.team1Pokemon.length;j++){
+                    if (this.team1Pokemon[j].id == i){
+                        this.team1Pokemon[j] = pkmnToSwapWith;
+                    }
+                }
+                for (var j = 0; j < this.team2Pokemon.length;j++){
+                    if (this.team2Pokemon[j].id == i){
+                        this.team2Pokemon[j] = pkmnToSwapWith;
+                    }
+                }
+                //add client data
+                clientTurnData.push({
+                    action: 'swap',
+                    idToSwap: i,
+                    newPokemon: pkmnToSwapWith.getLessClientData()
+                });
+                delete this.activePokemon[i];
+            }
+        }
+        //update battle active pokemon
+        for (var i = 0; i < pkmnToAdd.length;i++){
+            this.activePokemon[pkmnToAdd[i].id] = pkmnToAdd[i];
+        }
 
         //then use moves
 
@@ -244,6 +285,10 @@ Battle.prototype.addTurnData = function(pkmnID,data){
         this.roundActive = false;
         this.round += 1;
         this.roundTicker = 0;
+
+        if (this.endAfterTurn){
+            this.end = true;
+        }
     }
 }
 

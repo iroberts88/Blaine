@@ -66,6 +66,11 @@ GameEngine.prototype.tick = function() {
     //update all active battles
     for (var b in self.activeBattles){
         self.activeBattles[b].tick(deltaTime);
+        if (self.activeBattles[b].end){
+            //battle has ended
+            self.activeBattles[b].cleanUp();
+            delete self.activeBattles[b];
+        }
     }
     //update debug list
     for (var k in self.debugList){
