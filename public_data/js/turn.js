@@ -107,16 +107,14 @@
         }
     };
 
-    clientTurnData.push({
-                    action: 'swap',
-                    idToSwap: i,
-                    newPokemon: pkmnToSwapWith.getLessClientData()
-                });
-
     Turn.prototype.swap = function(dt,turn,data){
         Battle.addChat('Swapped ' + Battle.pokemonContainer[data.idToSwap].nickname + ' for ' + newPokemon.nickname + '!');
         //TODO - do swap stuff
-
+    /*clientTurnData.push({
+                    action: 'swap',
+                    idToSwap: i,
+                    newPokemon: pkmnToSwapWith.getLessClientData()
+                });*/
         turn.endAction();
     };
 

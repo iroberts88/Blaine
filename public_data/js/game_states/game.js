@@ -643,7 +643,7 @@
 
         initPkmnUI: function(){
             this.pokemonUI.removeChildren();
-
+            this.pokemonUI.alpha = 0.8;
             var bg = new PIXI.Sprite(this.uiBoxTexture);
             this.pokemonUI.addChild(bg);
 

@@ -551,23 +551,23 @@
             textArr = [];
             for (var i in this.turnData){
                 var pkmn = Party.getPokemon(i);
-                var text = ''
+                var text = this.pokemonContainer[i].nickname + ' '
                 if (i == 'run'){
                     textArr = ['Run away?']
                     break;
                 }
                 if (this.turnData[i].command == 'fight'){
-                    text += (num + ': ' + pkmn.nickname + ' will use ' + pkmn.moves[this.turnData[i].moveIndex].name);  
+                    text += ('will use ' + pkmn.moves[this.turnData[i].moveIndex].name + ' on ' + this.pokemonContainer[this.turnData[i].pID].nickname);  
                 }else if (this.turnData[i].command == 'swap'){
-                    text += (num + ': '+ pkmn.nickname + ' will swap with ' + Party.pokemon[this.turnData[i].index].nickname);  
+                    text += ('will swap with ' + Party.pokemon[this.turnData[i].index].nickname);  
                 }else if (this.turnData[i].command == 'item'){
                     var item = Player.character.inventory.items[Player.character.inventory.order[this.turnData[i].type][this.turnData[i].oIndex]];
                     if (item.targetType == 'allpkmn' || item.targetType == 'battlepkmn' ){
-                        text += (num + ': Use '+ item.name + ' on ' + Party.pokemon[this.turnData[i].pIndex].nickname);  
+                        text += ('will forgo its turn so you can use '+ item.name + ' on ' + Party.pokemon[this.turnData[i].pIndex].nickname);  
                     }else if (item.targetType == 'all' || item.targetType == 'battle' ){
-                        text += (num + ': Use '+ item.name);
+                        text += ('will forgo its turn so you can use '+ item.name);
                     }else if (item.targetType == 'battleenemy'){
-                        text += (num + ': Use '+ item.name);
+                        text += ('will forgo its turn so you can use '+ item.name + ' on ' + this.pokemonContainer[this.turnData[i].pID].nickname);
                     }
                 }
                 textArr.push(text);
