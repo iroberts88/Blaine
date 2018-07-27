@@ -6,6 +6,7 @@ var Player = require('./player.js').Player,
     Character = require('./character.js').Character,
     Trainer = require('./trainer.js').Trainer,
     Actions = require('./actions.js').Actions,
+    Attacks = require('./attacks.js').Attacks,
     AWS = require("aws-sdk");
 
 var Battle = function(ge) {
@@ -215,6 +216,16 @@ Battle.prototype.addTurnData = function(pkmnID,data){
 
         //execute turn and create the turn data for client
         var clientTurnData = [];
+
+        //get fight order...
+        var fightOrder = [];
+        for (var i in this.activePokemon){
+            var tData = this.turnData[this.activePokemon[i].id];
+            if (tData.command == 'fight'){
+                fightOrder.push({id: this.activePokemon[i].id,speed: this.activePokemon[i].speed.value});
+            }
+        }
+
         //Use items first
         for (var i in this.activePokemon){
             var tData = this.turnData[this.activePokemon[i].id]
@@ -273,7 +284,22 @@ Battle.prototype.addTurnData = function(pkmnID,data){
             this.activePokemon[pkmnToAdd[i].id] = pkmnToAdd[i];
         }
 
-        //then use moves
+        //then use moves!!
+        //this.turnData[this.activePokemon[i].id] = {
+        //        'command': 'fight',
+        //        'moveIndex': mIndex,
+        //        'pID': enemyTeam[index].id,
+        //        'pIndex': index
+        //    }
+        //get each fight command
+        //the order them correctly...
+        this.mergeSort(fightOrder);
+        console.log(fightOrder);
+        //then execute the move action
+        for (var i = 0; i < fightOrder.length;i++){
+            var aAction = Attacks.getAttack(this.activePokemon[fightOrder[i].id].moves[this.turnData[fightOrder[i].id].moveIndex].attackid);
+            aAction(this,this.activePokemon[fightOrder[i].id].moves[this.turnData[fightOrder[i].id].moveIndex],this.turnData[fightOrder[i].id]);
+        }
 
         console.log("Client Turn Data:");
         console.log(clientTurnData);
@@ -289,6 +315,7 @@ Battle.prototype.addTurnData = function(pkmnID,data){
         if (this.endAfterTurn){
             this.end = true;
         }
+        this.turnData = {};
     }
 }
 
@@ -296,6 +323,38 @@ Battle.prototype.sendChat = function(text){
     for (var i in this.players){
         this.gameEngine.queuePlayer(this.players[i],"battleChat", {text: text});
     }
+}
+
+Battle.prototype.mergeSort = function(arr){
+    if (arr.length <= 1){
+        return arr;
+    }
+    var middle = parseInt(arr.length/2);
+    var left = arr.slice(0,middle);
+    var right = arr.slice(middle,arr.length);
+    return this.merge(this.mergeSort(left),this.mergeSort(right));
+}
+Battle.prototype.merge = function(left,right){
+    var result = [];
+    while (left.length && right.length) {
+        if (left[0].speed > right[0].speed) {
+            result.push(left.shift());
+        } else if (left[0].speed == right[0].speed) {
+            //if the same, sort randomly
+            if (Math.round(Math.random())){
+                result.push(left.shift());
+            }else{
+                result.push(right.shift());
+            }
+        }else{
+            result.push(right.shift());
+        }
+    }
+    while (left.length)
+        result.push(left.shift());
+    while (right.length)
+        result.push(right.shift());
+    return result;
 }
 
 exports.Battle = Battle;

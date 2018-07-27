@@ -35,6 +35,8 @@ var Character = function(){
 
     this.currentTeam = null;
     this.activePokemon = []; //a list of the currently active pokemon for use in a battle
+
+    this.speed = 0.25;
 }
 
 Character.prototype.init = function(data) {
@@ -211,7 +213,7 @@ Character.prototype.addPokemon = function(p,initBool){
 Character.prototype.getDBObj = function(){
     var dbObj = {};
     dbObj.name = this.name;
-   
+    
     return dbObj;
 };
 

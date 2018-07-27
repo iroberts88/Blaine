@@ -108,13 +108,36 @@
     };
 
     Turn.prototype.swap = function(dt,turn,data){
-        Battle.addChat('Swapped ' + Battle.pokemonContainer[data.idToSwap].nickname + ' for ' + newPokemon.nickname + '!');
+        Battle.addChat('Swapped ' + Battle.pokemonContainer[data.idToSwap].nickname + ' for ' + data.newPokemon.nickname + '!');
+        var newPokemon = data.newPokemon;
+        if (Party.getPokemon(newPokemon.id)){
+            //pokemon is yours...
+            newPokemon = Party.getPokemon(newPokemon.id);
+        }
         //TODO - do swap stuff
-    /*clientTurnData.push({
-                    action: 'swap',
-                    idToSwap: i,
-                    newPokemon: pkmnToSwapWith.getLessClientData()
-                });*/
+        //change active pokemon/index
+        delete  Battle.myActivePokemon[data.idToSwap];
+        Battle.myActivePokemon[newPokemon.id] = newPokemon;
+        delete  Battle.pokemonContainer[data.idToSwap];
+        Battle.pokemonContainer[newPokemon.id] = newPokemon;
+        for (var i = 0; i < Battle.activePokemonIndex.length;i++){
+            if (Battle.activePokemonIndex[i] == data.idToSwap){
+                Battle.activePokemonIndex[i] = newPokemon.id;
+            }
+        }
+        var oldPkmn = Battle.pokemonSpriteContainer[data.idToSwap];
+        //add new sprite
+        var newPkmn = Battle.getPokemonData(newPokemon,oldPkmn.sprite.sSlot,oldPkmn.sprite.iSlot);
+        Graphics.uiContainer2.addChild(newPkmn.sprite);
+        Graphics.uiContainer2.addChild(newPkmn.nameDisplay);
+        Graphics.uiContainer2.addChild(newPkmn.levelDisplay);
+        Graphics.uiContainer2.addChild(newPkmn.hpBar);
+        Battle.pokemonSpriteContainer[newPokemon.id] = newPkmn;
+        //remove old sprite;
+        Graphics.uiContainer2.removeChild(oldPkmn.sprite);
+        Graphics.uiContainer2.removeChild(oldPkmn.nameDisplay);
+        Graphics.uiContainer2.removeChild(oldPkmn.levelDisplay);
+        Graphics.uiContainer2.removeChild(oldPkmn.hpBar);
         turn.endAction();
     };
 

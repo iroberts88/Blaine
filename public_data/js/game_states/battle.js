@@ -175,6 +175,7 @@
             if (this.end){
                 this.endTicker += dt;
                 if (this.endTicker >= 3.0){
+                    Acorn.Sound.play(Game.cMusic);
                     Graphics.uiContainer2.removeChildren();
                     Game.setBattleChange(false);
                 }
@@ -235,6 +236,8 @@
             d.sprite.buttonMode = true;
             d.sprite.interactive = true;
             d.sprite.pkmninfo = pkmn;
+            d.sprite.sSlot = sSlot;
+            d.sprite.iSlot = iSlot;
             var onClick = function(e){
                 switch(Battle.targetSelectMode){
                     case 'item':
@@ -550,12 +553,12 @@
             var num = 1;
             textArr = [];
             for (var i in this.turnData){
-                var pkmn = Party.getPokemon(i);
-                var text = this.pokemonContainer[i].nickname + ' '
                 if (i == 'run'){
                     textArr = ['Run away?']
                     break;
                 }
+                var pkmn = Party.getPokemon(i);
+                var text = this.pokemonContainer[i].nickname + ' ';
                 if (this.turnData[i].command == 'fight'){
                     text += ('will use ' + pkmn.moves[this.turnData[i].moveIndex].name + ' on ' + this.pokemonContainer[this.turnData[i].pID].nickname);  
                 }else if (this.turnData[i].command == 'swap'){
