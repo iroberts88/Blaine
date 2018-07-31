@@ -325,7 +325,7 @@ Player.prototype.setupSocket = function() {
                     if (that.battle != null){console.log("Battle exists");return;}
                     console.log("Start Battle");
                     var pokemon = [Math.ceil(Math.random()*15)];
-                    var levels = [Math.ceil(Math.random()*4)];
+                    var levels = [Math.ceil(Math.random()*50)];
 
                     var battle = new Battle(that.gameEngine);
                     var pkmn = new Trainer(that.gameEngine);

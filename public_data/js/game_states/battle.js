@@ -499,6 +499,7 @@
                     interactive: true,buttonMode: true,
                     clickFunc: function onClick(e){
                         //set turn data
+                        //TODO for 'all' and 'self' type attacks, skip target selection
                         Battle.currentSelectedAttack = e.currentTarget.moveIndex;
                         Battle.toggleTurnOptions(false);
                         Battle.toggleTargetSelect(true,'pkmn');

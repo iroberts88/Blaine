@@ -26,7 +26,164 @@ var Battle = function(ge) {
 
     // duoteam4v4   4 players   1-6 pokemon each, 4 active at a time, 2 from each player
 
-
+    this.moveEffectiveness = {
+        1: { //normal
+            13: 0.5,
+            14: 0,
+            17: 0.5
+        },
+        2: { //fire
+            2: 0.5,
+            3: 0.5,
+            5: 2,
+            6: 2,
+            12:2,
+            13:0.5,
+            15:0.5
+        },
+        3: { //water
+            2:2,
+            3:0.5,
+            5:0.5,
+            9:2,
+            13:2,
+            15:0.5
+        },
+        4: { //electric
+            3:2,
+            4:0.5,
+            5:0.5,
+            9:0,
+            10:2,
+            15:0.5
+        },
+        5: { //grass
+            2:0.5,
+            3:2,
+            5:0.5,
+            8:0.5,
+            9:2,
+            10:0.5,
+            12:0.5,
+            13:2,
+            15:0.5,
+            17:0.5
+        },
+        6: { //ice
+            2:0.5,
+            3:0.5,
+            5:2,
+            6:0.5,
+            9:2,
+            10:2,
+            15:2,
+            17:0.5
+        },
+        7: { //fighting
+            1:2,
+            6:2,
+            8:0.5,
+            10:0.5,
+            11:0.5,
+            12:0.5,
+            13:2,
+            14:0,
+            16:2,
+            17:2,
+            18:0.5
+        },
+        8: { //poison
+            5:2,
+            8:0.5,
+            9:0.5,
+            13:0.5,
+            14:0.5,
+            17:0,
+            18:2
+        },
+        9: { //ground
+            2:2,
+            4:2,
+            5:0.5,
+            8:2,
+            9:0.5,
+            10:0,
+            12:0.5,
+            13:2,
+            17:0.5
+        },
+        10: { //flying
+            4:0.5,
+            5:2,
+            7:2,
+            12:2,
+            13:0.5,
+            17:2,
+        },
+        11: { //psychic
+            7:2,
+            8:2,
+            11:0.5,
+            16:0,
+            17:0.5
+        },
+        12: { //bug
+            2:0.5,
+            5:2,
+            7:0.5,
+            8:0.5,
+            10:0.5,
+            11:2,
+            14:0.5,
+            16:2,
+            17:0.5,
+            18:0.5
+        },
+        13: { //rock
+            2:2,
+            6:2,
+            7:0.5,
+            9:0.5,
+            10:2,
+            12:2,
+            17:0.5
+        },
+        14: { //ghost
+            1:0,
+            11:2,
+            14:2,
+            16:0.5
+        },
+        15: { //dragon
+            15:2,
+            15:0.5,
+            18:0
+        },
+        16: { //dark
+            7:0.5,
+            11:2,
+            14:2,
+            16:0.5,
+            18:0.5
+        },
+        17: { //steel
+            2:0.5,
+            3:0.5,
+            4:0.5,
+            6:2,
+            13:2,
+            17:0.5,
+            18:2
+        },
+        18: { //fairy
+            2:0.5,
+            7:2,
+            8:0.5,
+            15:2,
+            16:2,
+            17:0.5
+        },
+    }
     this.ActivePkmn = {
         '1v1': 1,
         '2v2': 2,
@@ -285,20 +442,15 @@ Battle.prototype.addTurnData = function(pkmnID,data){
         }
 
         //then use moves!!
-        //this.turnData[this.activePokemon[i].id] = {
-        //        'command': 'fight',
-        //        'moveIndex': mIndex,
-        //        'pID': enemyTeam[index].id,
-        //        'pIndex': index
-        //    }
         //get each fight command
         //the order them correctly...
         this.mergeSort(fightOrder);
-        console.log(fightOrder);
         //then execute the move action
+        console.log(fightOrder);
         for (var i = 0; i < fightOrder.length;i++){
-            var aAction = Attacks.getAttack(this.activePokemon[fightOrder[i].id].moves[this.turnData[fightOrder[i].id].moveIndex].attackid);
-            aAction(this,this.activePokemon[fightOrder[i].id].moves[this.turnData[fightOrder[i].id].moveIndex],this.turnData[fightOrder[i].id]);
+            this.turnData[fightOrder[i].id].ctd = clientTurnData;
+            this.turnData[fightOrder[i].id].pkmnDoingAttack = fightOrder[i].id;
+            Attacks.doAttack(this.activePokemon[fightOrder[i].id].moves[this.turnData[fightOrder[i].id].moveIndex],this,this.turnData[fightOrder[i].id])
         }
 
         console.log("Client Turn Data:");

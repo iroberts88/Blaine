@@ -3,9 +3,9 @@
     {
       "effects": [
         {
-          "val": -0.5,
+          "val": -1,
           "stat": "def",
-          "effectName": "alterStatPercent"
+          "effectName": "alterStatStage"
         }
       ],
       "acc": 100,
@@ -19,15 +19,16 @@
     {
       "effects": [
         {
-          "val": -0.5,
+          "val": -1,
           "stat": "spd",
           "chance": 0.3,
-          "effectName": "alterStatPercent"
+          "effectName": "alterStatStage"
         }
       ],
       "acc": 100,
       "pp": 30,
       "attackid": "bubble",
+      "physical": false,
       "power": 30,
       "targetType": "single",
       "name": "Bubble",
@@ -77,6 +78,7 @@
       "acc": 100,
       "pp": 25,
       "attackid": "ember",
+      "physical": false,
       "power": 40,
       "targetType": "single",
       "name": "Ember",
@@ -85,9 +87,9 @@
     {
       "effects": [
         {
-          "val": -0.5,
+          "val": -1,
           "stat": "def",
-          "effectName": "alterStatPercent"
+          "effectName": "alterStatStage"
         }
       ],
       "acc": 100,
@@ -101,9 +103,9 @@
     {
       "effects": [
         {
-          "val": -0.5,
+          "val": -1,
           "stat": "atk",
-          "effectName": "alterStatPercent"
+          "effectName": "alterStatStage"
         }
       ],
       "acc": 100,
@@ -129,6 +131,7 @@
       "acc": 100,
       "pp": 25,
       "attackid": "watergun",
+      "physical": false,
       "power": 40,
       "targetType": "single",
       "name": "Water Gun",

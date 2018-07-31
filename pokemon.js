@@ -110,7 +110,8 @@ Pokemon.prototype.init = function(base,data) {
 
     this.affection = (typeof data.affection == 'undefined') ? 0 : data.affection;
     this.critChance = (typeof data.critChance == 'undefined') ? 0 : data.critChance;
-    this.level = (typeof data.level == 'undefined') ? 5 : data.level;
+    this.critMod = 2;
+    this.level = (typeof data.level == 'undefined') ? 20 : data.level;
     this.exp = (typeof data.exp == 'undefined') ? 0 : data.exp;
 
     if (typeof data.moves == 'undefined'){
@@ -136,13 +137,20 @@ Pokemon.prototype.init = function(base,data) {
     this.spdefenseEV = (typeof data.spdefenseEV == 'undefined') ? 0 : data.spdefenseEV;
     this.speedEV = (typeof data.speedEV == 'undefined') ? 0 : data.speedEV;
 
+    this.evasion = 0;
+    this.accuracy = 0;
+
+    this.damageMod = 1;
+    this.defenseMod = 1;
+    this.stabBonus = 1.5;
 
     this.hp = new Attribute();
     this.hp.init({
         'id': 'hp',
         'pokemon': this,
         'value': base.baseStats.hp,
-        'min': 0,
+        'min': 1,
+        'name': 'Maximum HP',
         'max': 9999,
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.hpIV + Math.sqrt(this.pokemon.hpEV)/4))*this.pokemon.level)/100 + this.pokemon.level + 10;
@@ -155,7 +163,8 @@ Pokemon.prototype.init = function(base,data) {
         'id': 'spd',
         'pokemon': this,
         'value': base.baseStats.speed, 
-        'min': 0,
+        'min': 1,
+        'name': 'Speed',
         'max': 9999,
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.speedIV + Math.sqrt(this.pokemon.speedEV)/4))*this.pokemon.level)/100 + 5;
@@ -167,8 +176,9 @@ Pokemon.prototype.init = function(base,data) {
     this.attack.init({
         'id': 'atk',
         'pokemon': this,
+        'name': 'Attack',
         'value': base.baseStats.attack,
-        'min': 0,
+        'min': 1,
         'max': 9999,
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.attackIV + Math.sqrt(this.pokemon.attackEV)/4))*this.pokemon.level)/100 + 5;
@@ -181,8 +191,9 @@ Pokemon.prototype.init = function(base,data) {
         'id': 'spatk',
         'pokemon': this,
         'value': base.baseStats.spattack,
-        'min': 0,
+        'min': 1,
         'max': 9999,
+        'name': 'Special Attack',
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.spattackIV + Math.sqrt(this.pokemon.spattackEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
@@ -194,8 +205,9 @@ Pokemon.prototype.init = function(base,data) {
         'id': 'def',
         'pokemon': this,
         'value': base.baseStats.defense,
-        'min': 0,
+        'min': 1,
         'max': 9999,
+        'name': 'Defense',
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.defenseIV + Math.sqrt(this.pokemon.defenseEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
@@ -207,8 +219,9 @@ Pokemon.prototype.init = function(base,data) {
         'id': 'spdef',
         'pokemon': this,
         'value': base.baseStats.spdefense,
-        'min': 0,
+        'min': 1,
         'max': 9999,
+        'name': 'Special Defense',
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.spdefenseIV + Math.sqrt(this.pokemon.spdefenseEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);

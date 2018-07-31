@@ -4,6 +4,7 @@
 var Attribute = function(){
     this.pokemon = null;
     this.id = null;
+    this.name = null;
     this.value = null; 
     this.base = null; 
     this.nMod = null; 
@@ -18,10 +19,27 @@ var Attribute = function(){
 Attribute.prototype.init = function(data){
 	this.pokemon = data.pokemon; //the unit that owns this stat
 	this.id = data.id;
+    this.name = data.name;
 	this.value = data.value; //this stat's actual value
 	this.base = data.value; //this stat's base value before buff/item mods etc.
 	this.nMod = 0; //a numeric modifier added to the base value before usage
 	this.pMod = 1.0; //a percentile modifier added to the base value before usage
+    this.stage = 7;
+    this.statStageMods = {
+        1: 2/8,
+        2: 2/7,
+        3: 2/6,
+        4: 2/5,
+        5: 2/4,
+        6: 2/3,
+        7: 2/2,
+        8: 3/6,
+        9: 4/6,
+        10: 5/6,
+        11: 6/6,
+        12: 7/6,
+        13: 8/6,
+    }
 	this.min = data.min; //minimum value
 	this.max = data.max; //maximum value
 
@@ -40,9 +58,16 @@ Attribute.prototype.init = function(data){
     	this.next = data.next;
     }
 }
+Attribute.prototype.modStage = function(n){
+    this.stage += n;
+    if (this.stage < 1){this.stage = 1}
+    if (this.stage >13){this.stage = 13}
+    this.set();
+}
 Attribute.prototype.reset = function(updateClient){
     this.nMod = 0;
-    this.pMod = 0;
+    this.pMod = 1;
+    this.stage = 7;
     this.set(updateClient);
 }
 Attribute.prototype.set = function(updateClient){
@@ -52,6 +77,7 @@ Attribute.prototype.set = function(updateClient){
 	}else{
 		//normal set value
 		this.value = this.formula();
+        this.value = Math.ceil(this.value*this.statStageMods[this.stage]);
 		//check bounds
 		if (typeof this.min != 'undefined'){
     		if (this.value < this.min){

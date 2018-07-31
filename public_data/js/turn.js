@@ -17,7 +17,9 @@
         GetNickname: 'getnickname',
         CatchAttempt: 'catchattempt',
         EndBattle: 'endbattle',
-        Swap: 'swap'
+        Swap: 'swap',
+        Evade: 'evade',
+        Attack: 'attack',
     };
 
     Turn.prototype.update = function(dt){
@@ -54,6 +56,12 @@
                 break;
             case this.actionEnums.Swap:
                 return this.swap;
+                break;
+            case this.actionEnums.Evade:
+                return this.evade;
+                break;
+            case this.actionEnums.Attack:
+                return this.attack;
                 break;
             default:
                 return this.text;
@@ -140,7 +148,28 @@
         Graphics.uiContainer2.removeChild(oldPkmn.hpBar);
         turn.endAction();
     };
-
+    Turn.prototype.attack = function(dt,turn,data){
+        if (typeof data.textAdded == 'undefined'){
+            Battle.addChat("attack");
+            data.textAdded = true;
+        }
+        if (typeof data.endTime == 'undefined'){data.endTime = Settings.nSpeed}
+        data.ticker = (typeof data.ticker == 'undefined') ? 0 : data.ticker + dt;
+        if (data.ticker >= data.endTime){
+            turn.endAction();
+        }
+    };
+    Turn.prototype.evade = function(dt,turn,data){
+        if (typeof data.textAdded == 'undefined'){
+            Battle.addChat('evaded');
+            data.textAdded = true;
+        }
+        if (typeof data.endTime == 'undefined'){data.endTime = Settings.nSpeed}
+        data.ticker = (typeof data.ticker == 'undefined') ? 0 : data.ticker + dt;
+        if (data.ticker >= data.endTime){
+            turn.endAction();
+        }
+    };
     Turn.prototype.endbattle = function(dt,turn,data){
         Battle.end = true;
     };

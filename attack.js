@@ -1,6 +1,3 @@
-
-    
-
 var Attack = function(){}
         
 Attack.prototype.init = function(data){
@@ -10,10 +7,10 @@ Attack.prototype.init = function(data){
     this.acc = data.acc;
     this.pp = data.pp;
     this.power = data.power;
-
     //optional
     this.type = (typeof data.type == 'undefined') ? 1 : data.type;
     this.description = (typeof data.description == 'undefined') ? '' : data.description;
+    this.effects = (typeof data.effects == 'undefined') ? [] : data.effects;
 
     //target types
 
