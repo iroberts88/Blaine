@@ -321,8 +321,8 @@
 
         resetPos: function(){
             //set world position to sector 0,0 position
-            Graphics.worldContainer.position.x = Graphics.width/2-mainObj.TILE_SIZE/2;
-            Graphics.worldContainer.position.y = Graphics.height/2-mainObj.TILE_SIZE/2;
+            Graphics.world.position.x = Graphics.width/2-mainObj.TILE_SIZE/2;
+            Graphics.world.position.y = Graphics.height/2-mainObj.TILE_SIZE/2;
             //get sector
             var sector = this.map[Player.character.sector];
             for (var i = -1; i < 2;i++){
@@ -335,30 +335,23 @@
                     }
                 }
             }
-            Graphics.worldContainer.position.x -= sector.pos.x*sector.fullSectorSize;
-            Graphics.worldContainer.position.y -= sector.pos.y*sector.fullSectorSize;
-            Graphics.worldContainer.position.x -= Player.character.tile[0]*mainObj.TILE_SIZE;
-            Graphics.worldContainer.position.y -= Player.character.tile[1]*mainObj.TILE_SIZE;
+            Graphics.world.position.x -= sector.pos.x*sector.fullSectorSize;
+            Graphics.world.position.y -= sector.pos.y*sector.fullSectorSize;
+            Graphics.world.position.x -= Player.character.tile[0]*mainObj.TILE_SIZE;
+            Graphics.world.position.y -= Player.character.tile[1]*mainObj.TILE_SIZE;
 
             Player.resetPos();
         },
 
-        resetTopSprites: function(){
-            //make sure top layer of sprites is on top
-            for (var i = 0; i < this.pcs.length;i++){
-                Graphics.worldContainer.removeChild(this.pcs[i].nameTag);
-                Graphics.worldContainer.addChild(this.pcs[i].nameTag);
-                Graphics.worldContainer.removeChild(this.pcs[i].sprite2);
-                Graphics.worldContainer.addChild(this.pcs[i].sprite2);
-            }
-            Graphics.worldContainer.removeChild(Player.character.sprite2);
-            Graphics.worldContainer.addChild(Player.character.sprite2);
-        },
+        
 
         setNewMap: function(name){
             try{
                 var myObj = this.mapsCache[name];
                 Graphics.worldContainer.removeChildren();
+                Graphics.worldContainer2.removeChildren();
+                Graphics.charContainer1.removeChildren();
+                Graphics.charContainer2.removeChildren();
                 Graphics.uiPrimitives2.clear();
                 Game.map = new GameMap();
                 Game.map.init(myObj.mapData);
@@ -395,10 +388,10 @@
         _removePC: function(data){
             try{
                 var pc = Game.pcs[data.id];
-                Graphics.worldContainer.removeChild(pc.sprite);
-                Graphics.worldContainer.removeChild(pc.sprite2);
-                Graphics.worldContainer.removeChild(pc.nameTag);
-                Graphics.worldContainer.removeChild(pc.playerMask);
+                Graphics.charContainer1.removeChild(pc.sprite);
+                Graphics.charContainer2.removeChild(pc.sprite2);
+                Graphics.charContainer2.removeChild(pc.nameTag);
+                Graphics.charContainer2.removeChild(pc.playerMask);
                 delete Game.pcs[data.id];
             }catch(e){
                 //TODO remove trycatch

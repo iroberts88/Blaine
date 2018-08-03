@@ -168,11 +168,19 @@ var getSectorXY = function(string){
                 });
                 newTile.sprite.position.x = this.pos.x*this.fullSectorSize + i*this.TILE_SIZE;
                 newTile.sprite.position.y = this.pos.y*this.fullSectorSize + j*this.TILE_SIZE;
-                Graphics.worldContainer.addChild(newTile.sprite);
+                if (data.tiles[i][j].resource == '1x1'){
+                    Graphics.worldContainer2.addChild(newTile.sprite);
+                }else{
+                    Graphics.worldContainer.addChild(newTile.sprite);
+                }
                 if (newTile.overlaySprite){
                     newTile.overlaySprite.position.x = this.pos.x*this.fullSectorSize + i*this.TILE_SIZE;
                     newTile.overlaySprite.position.y = this.pos.y*this.fullSectorSize + j*this.TILE_SIZE;
-                    Graphics.worldContainer.addChild(newTile.overlaySprite);
+                    if (data.tiles[i][j].overlayResource == '1x1'){
+                        Graphics.worldContainer2.addChild(newTile.overlaySprite);
+                    }else{
+                        Graphics.worldContainer.addChild(newTile.overlaySprite);
+                    }
                 }
                 arr.push(newTile);
     		}

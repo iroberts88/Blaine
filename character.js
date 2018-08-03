@@ -240,6 +240,7 @@ Character.prototype.getClientData = function(){
     return data;
 }
 
+
 Character.prototype.setStat = function(id,amt){
     try{
         this.getStat(id).base = amt;

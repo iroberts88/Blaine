@@ -111,7 +111,7 @@ Pokemon.prototype.init = function(base,data) {
     this.affection = (typeof data.affection == 'undefined') ? 0 : data.affection;
     this.critChance = (typeof data.critChance == 'undefined') ? 0 : data.critChance;
     this.critMod = 2;
-    this.level = (typeof data.level == 'undefined') ? 20 : data.level;
+    this.level = (typeof data.level == 'undefined') ? 5 : data.level;
     this.exp = (typeof data.exp == 'undefined') ? 0 : data.exp;
 
     if (typeof data.moves == 'undefined'){

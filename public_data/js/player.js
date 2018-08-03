@@ -61,13 +61,13 @@
             var coords = Game.getSectorXY(this.character.sector);
             this.character.sprite.position.x = (mainObj.TILE_SIZE/2) + Game.map[this.character.sector].fullSectorSize*coords.x + mainObj.TILE_SIZE*this.character.tile[0];
             this.character.sprite.position.y = (mainObj.TILE_SIZE/2) - (mainObj.TILE_SIZE/4) + Game.map[this.character.sector].fullSectorSize*coords.y + mainObj.TILE_SIZE*this.character.tile[1];
-            Graphics.worldContainer.addChild(this.character.sprite);
+            Graphics.charContainer1.addChild(this.character.sprite);
             this.character.sprite2.position.x = this.character.sprite.position.x;
             this.character.sprite2.position.y = this.character.sprite.position.y;
-            Graphics.worldContainer.addChild(this.character.sprite2);
+            Graphics.charContainer2.addChild(this.character.sprite2);
             this.playerMask.position.x = this.character.sprite.position.x - mainObj.TILE_SIZE/2;
             this.playerMask.position.y = this.character.sprite.position.y - mainObj.TILE_SIZE/2;
-            Graphics.worldContainer.addChild(this.playerMask);
+            Graphics.charContainer2.addChild(this.playerMask);
         },
         move: function(x,y,doTriggers){
             //attempt to move in the target direction
@@ -159,24 +159,24 @@
                 //check for grass
                 Acorn.Net.socket_.emit('playerUpdate',{command:'moveAttempt',x:x,y:y,cTile:this.character.tile,cSector: this.character.sector});
                 Game.map.changeVisibleSectors();
-                if (tile.resource == '1x1' && Graphics.worldContainer.getChildIndex(tile.sprite) < Graphics.worldContainer.getChildIndex(this.character.sprite2)){
+                /*if (tile.resource == '1x1' && Graphics.worldContainer.getChildIndex(tile.sprite) < Graphics.worldContainer.getChildIndex(this.character.sprite2)){
                     Graphics.worldContainer.removeChild(tile.sprite);
                     Graphics.worldContainer.addChild(tile.sprite);
                     Game.resetTopSprites();
-                }
+                }*/
                 this.character.tile[0] = tile.x;
                 this.character.tile[1] = tile.y;
                 this.character.sector = tile.sectorid;
                 this.moving = true;
                 this.targetPosition = {
-                    x: Graphics.worldContainer.position.x + -mainObj.TILE_SIZE*x,
-                    y: Graphics.worldContainer.position.y + -mainObj.TILE_SIZE*y,
+                    x: Graphics.world.position.x + -mainObj.TILE_SIZE*x,
+                    y: Graphics.world.position.y + -mainObj.TILE_SIZE*y,
                     cX: this.character.sprite.position.x + mainObj.TILE_SIZE*x,
                     cY: this.character.sprite.position.y + mainObj.TILE_SIZE*y
                 };
                 this.startPosition = {
-                    x: Graphics.worldContainer.position.x,
-                    y: Graphics.worldContainer.position.y,
+                    x: Graphics.world.position.x,
+                    y: Graphics.world.position.y,
                     cX: this.character.sprite.position.x,
                     cY: this.character.sprite.position.y
                 };
@@ -198,8 +198,8 @@
             if (this.moving){
                 this.moveTicker += dt;
                 if (this.moveTicker >= this.speed){
-                    Graphics.worldContainer.position.x = this.targetPosition.x;
-                    Graphics.worldContainer.position.y = this.targetPosition.y;
+                    Graphics.world.position.x = this.targetPosition.x;
+                    Graphics.world.position.y = this.targetPosition.y;
                     this.character.sprite.position.x = this.targetPosition.cX;
                     this.character.sprite.position.y = this.targetPosition.cY;
                     this.character.sprite2.position.x = this.targetPosition.cX;
@@ -217,8 +217,8 @@
                 }else{
                     var dX = (this.targetPosition.x - this.startPosition.x)*(this.moveTicker/this.speed);
                     var dY = (this.targetPosition.y - this.startPosition.y)*(this.moveTicker/this.speed);
-                    Graphics.worldContainer.position.x = this.startPosition.x + dX;
-                    Graphics.worldContainer.position.y = this.startPosition.y + dY;
+                    Graphics.world.position.x = this.startPosition.x + dX;
+                    Graphics.world.position.y = this.startPosition.y + dY;
                     var dcX = (this.targetPosition.cX - this.startPosition.cX)*(this.moveTicker/this.speed);
                     var dcY = (this.targetPosition.cY - this.startPosition.cY)*(this.moveTicker/this.speed);
                     this.character.sprite.position.x = this.startPosition.cX + dcX;
@@ -234,7 +234,7 @@
                 this.sayBubble.position.y = this.character.sprite.position.y - 25;
                 this.sayBubbleTicker += dt;
                 if (this.sayBubbleTicker >= this.sayBubbleDuration){
-                    Graphics.worldContainer.removeChild(this.sayBubble);
+                    Graphics.charContainer2.removeChild(this.sayBubble);
                     this.sayBubble = null;
                 }
             }
@@ -321,7 +321,7 @@
         },
         setSayBubble: function(text){
             if (this.sayBubble){
-                Graphics.worldContainer.removeChild(this.sayBubble);
+                Graphics.charContainer2.removeChild(this.sayBubble);
                 this.sayBubble = null;
             }
             var t = new PIXI.Text(text,{
@@ -351,7 +351,7 @@
                 anchor: [0.5,1],
                 position: [this.character.sprite.position.x,this.character.sprite.position.y - 25]
             })
-            Graphics.worldContainer.addChild(this.sayBubble);
+            Graphics.charContainer2.addChild(this.sayBubble);
             this.sayBubbleTicker = 0;
         }
        

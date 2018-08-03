@@ -65,7 +65,7 @@ Effects.prototype.getEffect = function(effectStr){
             return Effects.alterStatStage;
             break;
         default:
-            console.log('Unable to find Effect: ' + EffectStr);
+            console.log('Unable to find Effect: ' + effectStr);
             return null;
             break;
     }

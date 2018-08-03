@@ -337,7 +337,7 @@
             }
         },
         updateWildStart: function(dt){
-            var time = 2.0;
+            var time = 1.0;
             var stop = false;
             for (var i in this.pokemonSpriteContainer){
                 this.pokemonSpriteContainer[i].ticker += dt;

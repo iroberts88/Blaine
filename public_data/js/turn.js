@@ -20,6 +20,8 @@
         Swap: 'swap',
         Evade: 'evade',
         Attack: 'attack',
+        Sethp: 'sethp',
+        Faint: 'faint'
     };
 
     Turn.prototype.update = function(dt){
@@ -62,6 +64,12 @@
                 break;
             case this.actionEnums.Attack:
                 return this.attack;
+                break;
+            case this.actionEnums.Sethp:
+                return this.sethp;
+                break;
+                case this.actionEnums.Faint:
+                return this.faint;
                 break;
             default:
                 return this.text;
@@ -116,7 +124,7 @@
     };
 
     Turn.prototype.swap = function(dt,turn,data){
-        Battle.addChat('Swapped ' + Battle.pokemonContainer[data.idToSwap].nickname + ' for ' + data.newPokemon.nickname + '!');
+        Battle.addChat('& ' + 'Swapped ' + Battle.pokemonContainer[data.idToSwap].nickname + ' for ' + data.newPokemon.nickname + '!');
         var newPokemon = data.newPokemon;
         if (Party.getPokemon(newPokemon.id)){
             //pokemon is yours...
@@ -149,10 +157,13 @@
         turn.endAction();
     };
     Turn.prototype.attack = function(dt,turn,data){
+        var pkmn1 = Battle.pokemonContainer[data.pokemon1];
+        var pkmn2 = Battle.pokemonContainer[data.pokemon2];
         if (typeof data.textAdded == 'undefined'){
-            Battle.addChat("attack");
+            Battle.addChat('& ' + pkmn1.nickname + ' used ' + data.attack + ' on ' + pkmn2.nickname + '!');
             data.textAdded = true;
         }
+        //Set HP!
         if (typeof data.endTime == 'undefined'){data.endTime = Settings.nSpeed}
         data.ticker = (typeof data.ticker == 'undefined') ? 0 : data.ticker + dt;
         if (data.ticker >= data.endTime){
@@ -161,13 +172,34 @@
     };
     Turn.prototype.evade = function(dt,turn,data){
         if (typeof data.textAdded == 'undefined'){
-            Battle.addChat('evaded');
+            Battle.addChat('& ' + 'evaded');
             data.textAdded = true;
         }
         if (typeof data.endTime == 'undefined'){data.endTime = Settings.nSpeed}
         data.ticker = (typeof data.ticker == 'undefined') ? 0 : data.ticker + dt;
         if (data.ticker >= data.endTime){
             turn.endAction();
+        }
+    };
+    Turn.prototype.sethp = function(dt,turn,data){
+        pkmn = Battle.pokemonContainer[data.pkmn];
+        pkmn.hpPercent = data.percent;
+        Battle.drawHPBar(Battle.pokemonSpriteContainer[data.pkmn].hpBar,pkmn.hpPercent);
+        turn.endAction();
+    };
+    Turn.prototype.faint = function(dt,turn,data){
+        if (typeof data.textAdded == 'undefined'){
+            pkmn = Battle.pokemonContainer[data.pkmn];
+            Battle.addChat('& ' + pkmn.nickname + ' fainted!');
+            pkmn.hpPercent = data.percent;
+            Battle.drawHPBar(Battle.pokemonSpriteContainer[data.pkmn].hpBar,pkmn.hpPercent);
+            data.textAdded = true;
+        }
+        if (typeof data.endTime == 'undefined'){data.endTime = Settings.nSpeed}
+        data.ticker = (typeof data.ticker == 'undefined') ? 0 : data.ticker + dt;
+        if (data.ticker >= data.endTime){
+            turn.endAction();
+            Battle.end = true;
         }
     };
     Turn.prototype.endbattle = function(dt,turn,data){

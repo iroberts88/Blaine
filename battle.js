@@ -444,7 +444,7 @@ Battle.prototype.addTurnData = function(pkmnID,data){
         //then use moves!!
         //get each fight command
         //the order them correctly...
-        this.mergeSort(fightOrder);
+        fightOrder = this.mergeSort(fightOrder);
         //then execute the move action
         console.log(fightOrder);
         for (var i = 0; i < fightOrder.length;i++){

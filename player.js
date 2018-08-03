@@ -92,6 +92,7 @@ Player.prototype.setupSocket = function() {
             return;
         }
 
+        if (!that.battle){return;}
         switch(data.command){
             case 'turn':
                 if (that.battle == null || typeof data.turnData == 'undefined'){
@@ -325,7 +326,7 @@ Player.prototype.setupSocket = function() {
                     if (that.battle != null){console.log("Battle exists");return;}
                     console.log("Start Battle");
                     var pokemon = [Math.ceil(Math.random()*15)];
-                    var levels = [Math.ceil(Math.random()*50)];
+                    var levels = [5];//[Math.ceil(Math.random()*20)];
 
                     var battle = new Battle(that.gameEngine);
                     var pkmn = new Trainer(that.gameEngine);

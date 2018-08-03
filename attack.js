@@ -9,6 +9,7 @@ Attack.prototype.init = function(data){
     this.power = data.power;
     //optional
     this.type = (typeof data.type == 'undefined') ? 1 : data.type;
+    this.physical = (typeof data.physical == 'undefined') ? false : data.physical;
     this.description = (typeof data.description == 'undefined') ? '' : data.description;
     this.effects = (typeof data.effects == 'undefined') ? [] : data.effects;
 

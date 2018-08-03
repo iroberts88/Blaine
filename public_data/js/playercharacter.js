@@ -61,10 +61,10 @@
         this.nameTag.position.x = (mainObj.TILE_SIZE/2)+Game.map[this.sector].fullSectorSize*coords.x + mainObj.TILE_SIZE*this.tile[0];
         this.nameTag.position.y = (mainObj.TILE_SIZE/4)+Game.map[this.sector].fullSectorSize*coords.y + mainObj.TILE_SIZE*this.tile[1] - this.nameDistance;
 
-        Graphics.worldContainer.addChild(this.sprite);
-        Graphics.worldContainer.addChild(this.sprite2);
-        Graphics.worldContainer.addChild(this.playerMask);
-        Graphics.worldContainer.addChild(this.nameTag);
+        Graphics.charContainer1.addChild(this.sprite);
+        Graphics.charContainer2.addChild(this.sprite2);
+        Graphics.charContainer2.addChild(this.playerMask);
+        Graphics.charContainer2.addChild(this.nameTag);
         this.animateInfo = {
             ticker: 0,
             swapEvery: 0.15,
@@ -79,11 +79,11 @@
         if (this.moving){return;}
         var tile = Game.map.getTileAtPC(this,x,y);
         if (tile.open && (tile.resource != 'deep_water' && tile.resource != 'water')){
-            if (tile.resource == '1x1' && Graphics.worldContainer.getChildIndex(tile.sprite) < Graphics.worldContainer.getChildIndex(this.sprite2)){
+            /*if (tile.resource == '1x1' && Graphics.worldContainer.getChildIndex(tile.sprite) < Graphics.worldContainer.getChildIndex(this.sprite2)){
                 Graphics.worldContainer.removeChild(tile.sprite);
                 Graphics.worldContainer.addChild(tile.sprite);
-                Game.resetTopSprites()
-            }
+                Game.resetTopSprites();
+            }*/
             this.tile[0] = tile.x;
             this.tile[1] = tile.y;
             this.sector = tile.sectorid;
@@ -168,14 +168,14 @@
             this.sayBubble.position.y = this.nameTag.position.y - 15;
             this.sayBubbleTicker += dt;
             if (this.sayBubbleTicker >= this.sayBubbleDuration){
-                Graphics.worldContainer.removeChild(this.sayBubble);
+                Graphics.charContainer2.removeChild(this.sayBubble);
                 this.sayBubble = null;
             }
         }
     };
     PlayerCharacter.prototype.setSayBubble = function(text){
         if (this.sayBubble){
-            Graphics.worldContainer.removeChild(this.sayBubble);
+            Graphics.charContainer2.removeChild(this.sayBubble);
             this.sayBubble = null;
         }
         var t = new PIXI.Text(this.user + ': ' + text,{
@@ -206,7 +206,7 @@
             anchor: [0.5,1],
             position: [this.sprite.position.x,this.nameTag.position.y - 15]
         })
-        Graphics.worldContainer.addChild(this.sayBubble);
+        Graphics.charContainer2.addChild(this.sayBubble);
         this.sayBubbleTicker = 0;
     };
     PlayerCharacter.prototype.animate = function(dt){

@@ -106,12 +106,14 @@ Zone.prototype.changeSector = function(p,arr,id,tile){
                 this.gameEngine.queuePlayer(player,'addPC',{
                     id: p.id,
                     name:p.user.userData.username,
+                    user: p.user.userData.username,
                     owSprite: p.character.owSprite,
                     tile: [tile.x,tile.y],
                     sector: id
                 });
                 this.gameEngine.queuePlayer(p,'addPC',{
                     id: player.id,
+                    user: player.user.userData.username,
                     name:player.user.userData.username,
                     owSprite: player.character.owSprite,
                     tile: player.character.currentTile,
@@ -154,7 +156,8 @@ Zone.prototype.getPlayers = function(sector){
                 var player = this.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players[pl];
                 players.push({
                     id: player.id,
-                    name: player.user.userData.username,
+                    user: player.user.userData.username,
+                    name:player.user.userData.username,
                     owSprite: player.character.owSprite,
                     tile: player.character.currentTile,
                     sector: player.character.currentSector
@@ -180,6 +183,7 @@ Zone.prototype.addPlayer = function(p){
                 this.gameEngine.queuePlayer(player,'addPC',{
                     id: p.id,
                     name:p.user.userData.username,
+                    user: p.user.userData.username,
                     owSprite: p.character.owSprite,
                     tile: p.character.currentTile,
                     sector: p.character.currentSector
