@@ -154,6 +154,9 @@ Character.prototype.initBattle = function(battle,n,team){
     this.activePokemon = [];
     this.currentTeam = team;
     for (var i = 0; i < n;i++){
+        if (this.party[i].currentHP <= 0){
+            continue;
+        }
         this.activePokemon.push(this.party[i]);
         battle.activePokemon[this.party[i].id] = this.party[i];
         if (team == 1){
