@@ -30,10 +30,10 @@
         },
 
         net: function() {
-            Acorn.Net.on('connInfo', function (data) {
+            Acorn.Net.on(CENUMS.CONNINFO, function (data) {
                 console.log('Connected to server: Info Received');
                 console.log(data);
-                mainObj.id = data.id;
+                mainObj.id = data[CENUMS.ID];
                 var xmlhttp = new XMLHttpRequest();
                 var map = 'pallet';
                 xmlhttp.onreadystatechange = function() {
@@ -79,27 +79,27 @@
                 xmlhttp.send();
             });
 
-            Acorn.Net.on('startGame', function (data) {
+            Acorn.Net.on(CENUMS.STARTGAME, function (data) {
                 console.log('Game Started!');
                 console.log(data);
-                Game.char = data.character;
+                Game.char = data[CENUMS.CHARACTER];
                 Acorn.changeState('ingame');
                 document.body.removeChild(NewChar.characterNameInput);
                 document.body.removeChild(NewChar.okButton);
-                var myObj = data.zoneData;
+                var myObj = data[CENUMS.ZONEDATA];
                 Game.map = new GameMap();
                 Game.map.init(myObj.mapData);
-                Player.initCharacter(data.character);
+                Player.initCharacter(data[CENUMS.CHARACTER]);
                 Game.resetPos();
-                for (var i = 0; i < data.players.length;i++){
-                    if (data.players[i].id != mainObj.id){
+                for (var i = 0; i < data[CENUMS.PLAYERS].length;i++){
+                    if (data[CENUMS.PLAYERS][i].id != mainObj.id){
                         var pc = new PlayerCharacter();
                         pc.init(data.players[i]);
                         Game.pcs[data.players[i].id] = pc;
                     }
                 }
                 Game.ready = true;
-                Acorn.Sound.play(data.music);
+                Acorn.Sound.play(data[CENUMS.MUSIC]);
             });
 
             Acorn.Net.on('changeMap', function (data) {

@@ -5,9 +5,12 @@ var User = require('./user.js').User,
     Character = require('./character.js').Character,
     Zone = require('./zone.js').Zone,
     Battle = require('./battle.js').Battle,
+    CENUMS = require('./enums.js').Enums, //init client enums
     Trainer = require('./trainer.js').Trainer,
     Pokemon = require('./pokemon.js').Pokemon,
     Triggers = require('./triggers.js').Triggers;
+
+    CENUMS.init();
 
 const crypto = require('crypto');
 
@@ -57,13 +60,14 @@ Player.prototype.startGame = function(char){
     var sector = zone.map[this.character.currentSector];
     var players = zone.getPlayers(sector);
     var zoneData = this.gameEngine.zones[this.character.currentMap].zoneData;
-    this.gameEngine.queuePlayer(this,'startGame',{
-        map: this.character.currentMap,
-        zoneData: zoneData,
-        music: this.character.currentMusic,
-        character: this.character.getClientData(),
-        players: players
-    });
+    var cData = {};
+    cData[CENUMS.MAP] = this.character.currentMap;
+    cData[CENUMS.ZONEDATA] = zoneData;
+    cData[CENUMS.MUSIC] = this.character.currentMusic;
+    cData[CENUMS.CHARACTER] = this.character.getClientData();
+    cData[CENUMS.PLAYERS] = players;
+    this.gameEngine.log(cData);
+    this.gameEngine.queuePlayer(this,CENUMS.STARTGAME,cData);
 };
 
 

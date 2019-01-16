@@ -5,8 +5,13 @@
 var Player = require('./player.js').Player,
     Zone = require('./zone.js').Zone,
     Attack = require('./attack.js').Attack,
+    CENUMS = require('./enums.js').Enums, //init client enums
+    utils = require('./utils.js').Utils,
+    Utils = new utils(),
     fs = require('fs'),
     AWS = require("aws-sdk");
+
+CENUMS.init();
 
 var self = null;
 
@@ -38,7 +43,10 @@ var GameEngine = function() {
     this.debugList = {}; //used avoid multiple debug chains in tick()
     this.ready = false;
 
-    this.debugWriteStream = fs.createWriteStream('debug.txt');
+    fs.truncate('debug.txt', 0, function(){console.log('debug.txt cleared')})
+    this.debugWriteStream = fs.createWriteStream('debug.txt', {AutoClose: true});
+    fs.truncate('log.txt', 0, function(){console.log('log.txt cleared')})
+    this.logWriteStream = fs.createWriteStream('log.txt', {AutoClose: true});
 }
 
 GameEngine.prototype.init = function () {
@@ -78,7 +86,7 @@ GameEngine.prototype.tick = function() {
         if (self.debugList[k].t <= -5.0){
             //debug hasnt been updated in 5 seconds
             //remove from debug list
-            console.log('deleting debug with id ' + self.debugList[k].id);
+            this.log('deleting debug with id ' + self.debugList[k].id);
             delete self.debugList[k];
         }
     }
@@ -103,7 +111,7 @@ GameEngine.prototype.getId = function() {
 GameEngine.prototype.loadMaps = function(arr) {
     for (var i = 0; i < arr.length;i++){
         var d;
-        console.log(arr[i]);
+        this.log(arr[i]);
         fs.readFile('./mapTool/maps/' + arr[i], "utf8",function read(err, data) {
             if (err) {
                 throw err;
@@ -202,7 +210,9 @@ GameEngine.prototype.newConnection = function(socket) {
         p.setGameEngine(self);
         console.log('Player ID: ' + p.id);
         p.init({socket:socket});
-        self.queuePlayer(p,'connInfo', {id:p.id});
+        var cData = {};
+        cData[CENUMS.ID] = p.id;
+        self.queuePlayer(p,CENUMS.CONNINFO,cData);
         self.addPlayer(p);
     }
 }
@@ -211,7 +221,7 @@ GameEngine.prototype.emit = function() {
     try{
         for(var i in this.players) {
             if (this.players[i].netQueue.length > 0){
-                this.players[i].socket.emit('serverUpdate', this.players[i].netQueue);
+                this.players[i].socket.emit(CENUMS.SERVERUPDATE, this.players[i].netQueue);
             }
         }
     }catch(e){
@@ -241,26 +251,40 @@ GameEngine.prototype.queuePlayer = function(player, c, d) {
     player.netQueue.push(data);
 }
 
-//Queue DEBUG data to a specific player
-GameEngine.prototype.debug = function(player, d) {
-    var data = { call: 'debug', data: d};
-    console.log(data);
-    if (typeof this.debugList[d.id] == 'undefined'){
+//write to debug
+GameEngine.prototype.debug = function(id,e,d) {
+    if (Utils._udCheck(this.debugList[id])){
         //new debug error
         //add to debug list and send to client
-        this.debugList[d.id] = {
-            id: d.id,
+        this.debugList[id] = {
+            id: id,
             n: 1,
-            t: 1.0
+            t: 5.0
         }
         d.n = 1;
-        this.debugWriteStream.write(JSON.parse(d));
+        console.log('debug.txt updated - ' + id);
+        this.debugWriteStream.write(new Date().toJSON() + ' - ' + id + ' \n ' + e.stack + ' \n ' + JSON.stringify(d) + '\n\n');
     }else{
-        this.debugList[d.id].n += 1;
-        d.n = this.debugList[d.id].n
-        if (this.debugList[d.id].t <= 0){
-            this.debugWriteStream.write(JSON.parse(d));
-            this.debugList[d.id].t = 1.0;
+        this.debugList[id].n += 1;
+        d.n = this.debugList[id].n
+        if (this.debugList[id].t <= 0){
+            console.log('debug.txt updated (duplicate error) - ' + id);
+            this.debugWriteStream.write(new Date().toJSON() + ' - ' + id + ' \n ' + e.stack + ' \n ' + JSON.stringify(d) + '\n\n');
+            this.debugList[id].t = 5.0;
+        }
+    }
+}
+
+//write to log
+GameEngine.prototype.log = function(string) {
+    if (typeof string == 'string'){
+        this.logWriteStream.write(string + '\n');
+    }else{
+        try{
+            this.logWriteStream.write(JSON.stringify(string));
+        }catch(e){
+            console.log('error writing log');
+            console.log(e);
         }
     }
 }

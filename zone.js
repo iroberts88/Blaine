@@ -3,7 +3,10 @@
 //----------------------------------------------------------------
 
 var Player = require('./player.js').Player,
+    CENUMS = require('./enums.js').Enums, //init client enums
     AWS = require("aws-sdk");
+
+    CENUMS.init();
 
 var Zone = function(ge) {
 
@@ -22,16 +25,28 @@ var Zone = function(ge) {
 
 Zone.prototype.init = function (data) {
     //basically just initialize the map here
-    this.zoneData = data;
-    this.mapid = data.mapid;
-    this.mapData = data.mapData;
-    this.sectorArray = data.sectorArray;
+    this.mapid = data['mapid'];
+    this.mapData = data['mapData'];
+    this.sectorArray = data['sectorArray'];
     for (var i = 0; i < this.sectorArray.length;i++){
         this.map[this.sectorArray[i]] = new Sector(this.sectorArray[i],data.mapData[this.sectorArray[i]]);
     }
+    this.getZoneData(data);
 };
 
 Zone.prototype.tick = function(deltaTime) {
+}
+
+Zone.prototype.getZoneData = function(data){
+    //set the zone data object to hand to clients
+    this.zoneData = {};
+    this.zoneData[CENUMS.MAPID] = data['mapid'];
+    this.zoneData[CENUMS.MAPNAME] = data['mapname'];
+    this.zoneData[CENUMS.MAPDATA] = {};
+
+    for (var i in this.map){
+        this.zoneData[CENUMS.MAPDATA][this.map[i].id] = this.map[i].getClientData();
+    }
 }
 
 Zone.prototype.getSectorXY = function(string){
@@ -180,6 +195,7 @@ Zone.prototype.addPlayer = function(p){
             }
             for (var pl in this.map[(coords.x+i) + 'x' + (coords.y+j)].players){
                 var player = this.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
+                if (player == p){continue;}
                 this.gameEngine.queuePlayer(player,'addPC',{
                     id: p.id,
                     name:p.user.userData.username,
@@ -240,16 +256,12 @@ var Sector = function(id,data) {
     }
     this.sectorX = parseInt(x);
     this.sectorY = parseInt(y);
-    this.tiles = data.tiles;
-    for (var i = 0; i < this.tiles.length;i++){
-        for (var j = 0; j < this.tiles[i].length;j++){
-            var tile = this.tiles[i][j];
-            if (typeof tile.triggers == 'undefined'){
-                tile.triggers = [];
-            }
-            if (typeof tile.open == 'undefined'){
-                tile.open = false;
-            }
+    this.tiles = [];
+    for (var i = 0; i < data['tiles'].length;i++){
+        this.tiles[i] = [];
+        for (var j = 0; j < data['tiles'][i].length;j++){
+            var tile = new Tile(data['tiles'][i][j]);//this.tiles[i][j];
+            this.tiles[i][j] = tile;
         }
     }
 };
@@ -264,4 +276,52 @@ Sector.prototype.removePlayer = function(p){
     this.playerCount -= 1;
 };
 
-exports.Sector = Sector;
+Sector.prototype.getClientData = function(){
+    var data = {};
+    data[CENUMS.X] = this.sectorX;
+    data[CENUMS.Y] = this.sectorY;
+    data[CENUMS.TILES] = [];
+
+    for (var i = 0; i < this.tiles.length;i++){
+        data[CENUMS.TILES][i] = [];
+        for (var j = 0; j < this.tiles[i].length;j++){
+            data[CENUMS.TILES][i].push(this.tiles[i][j].getClientData());
+        }
+    }
+    return data;
+}
+
+//Sector
+var Tile = function(data) {
+    if (typeof data['triggers'] == 'undefined'){
+        this.triggers = [];
+    }else{
+        this.triggers = data['triggers'];
+    }
+    if (typeof data['open'] == 'undefined'){
+        this.open = false;
+    }else{
+        this.open = data['open'];
+    }
+    if (typeof data['resource'] == 'undefined'){
+        this.resource = '0x0';
+    }else{
+        this.resource = data['resource'];
+    }
+    if (typeof data['overlayResource'] == 'undefined'){
+        this.overlayResource = null;
+    }else{
+        this.overlayResource = data['overlayResource'];
+    }
+};
+
+Tile.prototype.getClientData = function(){
+    var data = {};
+    data[CENUMS.RESOURCE] = this.resource;
+    data[CENUMS.OVERLAYRESOURCE] = this.overlayResource;
+    data[CENUMS.OPEN] = this.open;
+    data[CENUMS.TRIGGERS] = this.triggers;
+    return data;
+}
+
+exports.Tile = Tile;
