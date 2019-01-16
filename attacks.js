@@ -149,8 +149,7 @@ Attacks.prototype.doAttack = function(attack,battle,data){
             data.ctd.push({
                 action: 'sethp',
                 pkmn: target.id,
-                percent: target.currentHP/target.hp.value,
-                value: target.currentHP
+                percent: target.currentHP/target.hp.value
             });
         }else{
             target.currentHP = 0;
