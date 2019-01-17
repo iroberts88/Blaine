@@ -157,9 +157,9 @@
             //if the length is greater than 3-5ish just move to the tile??
 
             //check if on correct tile
-            if (this.tile[0] == this.moveQueue[0].start[0] && this.tile[1] == this.moveQueue[0].start[1]){
+            if (this.tile[0] == this.moveQueue[0][CENUMS.START][0] && this.tile[1] == this.moveQueue[0][CENUMS.START][1]){
                 //try to move
-                this.move(this.moveQueue[0].x,this.moveQueue[0].y);
+                this.move(this.moveQueue[0][CENUMS.X],this.moveQueue[0][CENUMS.Y]);
             }
         }
 

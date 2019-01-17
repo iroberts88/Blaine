@@ -88,30 +88,30 @@
                 document.body.removeChild(NewChar.okButton);
                 var myObj = data[CENUMS.ZONEDATA];
                 Game.map = new GameMap();
-                Game.map.init(myObj.mapData);
+                Game.map.init(myObj[CENUMS.MAPDATA]);
                 Player.initCharacter(data[CENUMS.CHARACTER]);
                 Game.resetPos();
                 for (var i = 0; i < data[CENUMS.PLAYERS].length;i++){
                     if (data[CENUMS.PLAYERS][i].id != mainObj.id){
                         var pc = new PlayerCharacter();
-                        pc.init(data.players[i]);
-                        Game.pcs[data.players[i].id] = pc;
+                        pc.init(data[CENUMS.PLAYERS][i]);
+                        Game.pcs[data[CENUMS.PLAYERS][i].id] = pc;
                     }
                 }
                 Game.ready = true;
                 Acorn.Sound.play(data[CENUMS.MUSIC]);
             });
 
-            Acorn.Net.on('changeMap', function (data) {
+            Acorn.Net.on(CENUMS.CHANGEMAP, function (data) {
                 console.log('newMap!!');
                 console.log(data);
                 Game.newMapData = data;
             });
 
-            Acorn.Net.on('mapData', function (data) {
+            Acorn.Net.on(CENUMS.MAPDATA, function (data) {
                 console.log('received map data');
                 console.log(data);
-                Game.mapsCache[data.name] = data.zoneData;
+                Game.mapsCache[data[CENUMS.NAME]] = data[CENUMS.ZONEDATA];
             });
 
             Acorn.Net.on('startBattle', function (data) {
@@ -120,7 +120,7 @@
                 Game.setBattleChange(true);
                 Game.battleTicker = 0;
                 Game.cMusic = Acorn.Sound.currentMusic;
-                if (data.wild){
+                if (data[CENUMS.WILD]){
                     Acorn.Sound.play('battle1');
                 }else{
                     Acorn.Sound.play('battle2');
@@ -211,10 +211,10 @@
                 }
             });
 
-            Acorn.Net.on('movePC', function (data) {
-                if (data.id == mainObj.id){return;}
+            Acorn.Net.on(CENUMS.MOVEPC, function (data) {
+                if (data[CENUMS.ID] == mainObj.id){return;}
                 try{
-                    Game.pcs[data.id].moveQueue.push(data);
+                    Game.pcs[data[CENUMS.ID]].moveQueue.push(data);
                 }catch(e){
                 }
             });

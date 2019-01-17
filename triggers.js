@@ -1,5 +1,7 @@
 //triggers.js
 
+var CENUMS = require('./enums.js').Enums; //init client enums
+CENUMS.init();
 
 var Triggers = function(){
 	this.TriggerEnums = {
@@ -17,28 +19,28 @@ Triggers.prototype.changeMap = function(character,data){
 	try{
         console.log(data);
         //check current Tile
-        var zone = character.gameEngine.zones[character.currentMap]
+        var zone = character.engine.zones[character.currentMap]
         var tile = zone.map[character.currentSector].tiles[character.currentTile[0]][character.currentTile[1]];
 
-        character.gameEngine.removePlayerFromZone(character.owner,character.currentMap);
+        character.engine.removePlayerFromZone(character.owner,character.currentMap);
         character.currentSector = data.sector;
         var c = zone.getSectorXY(data.tile);
         character.currentTile = [c.x,c.y];
         character.currentMap = data.map;
-        character.gameEngine.addPlayerToZone(character.owner,data.map);
-        var newZone = character.gameEngine.zones[character.currentMap];
+        character.engine.addPlayerToZone(character.owner,data.map);
+        var newZone = character.engine.zones[character.currentMap];
         var newSector = newZone.map[character.currentSector];
         var players = newZone.getPlayers(newSector);
-        character.gameEngine.queuePlayer(character.owner,'changeMap',{
-            map: character.currentMap,
-            sector: character.currentSector,
-            tile: character.currentTile,
-            players: players
-        });
+        var cData = {};
+        cData[CENUMS.MAP] = character.currentMap;
+        cData[CENUMS.SECTOR] = character.currentSector;
+        cData[CENUMS.TILE] = character.currentTile;
+        cData[CENUMS.PLAYERS] = players;
+        character.engine.queuePlayer(character.owner,CENUMS.CHANGEMAP,cData);
 
     }catch(e){
         console.log("error changing map...reset pos?");
-        character.gameEngine.debug(character.owner,{id: 'changeMapError', error: e.stack});
+        character.engine.debug(character.owner,{id: 'changeMapError', error: e.stack});
     }
 	return true;
 };

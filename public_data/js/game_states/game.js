@@ -269,8 +269,8 @@
 
         updateScreenChange: function(deltaTime){
             this.screenTicker += deltaTime;
-            if (this.screenTicker > this.SCREEN_CHANGE_TIME && this.newMapData && typeof this.mapsCache[this.newMapData.map] != 'undefined'){
-                this.setNewMap(this.newMapData.map);
+            if (this.screenTicker > this.SCREEN_CHANGE_TIME && this.newMapData && typeof this.mapsCache[this.newMapData[CENUMS.MAP]] != 'undefined'){
+                this.setNewMap(this.newMapData[CENUMS.MAP]);
                 Graphics.uiPrimitives2.clear();
             }else{
                 Graphics.uiPrimitives2.lineStyle(1,0x000000,0.25);
@@ -354,19 +354,19 @@
                 Graphics.charContainer2.removeChildren();
                 Graphics.uiPrimitives2.clear();
                 Game.map = new GameMap();
-                Game.map.init(myObj.mapData);
-                Player.character.tile = Game.newMapData.tile;
-                Player.character.sector = Game.newMapData.sector;
-                Player.character.map = Game.newMapData.map;
+                Game.map.init(myObj[CENUMS.MAPDATA]);
+                Player.character.tile = Game.newMapData[CENUMS.TILE];
+                Player.character.sector = Game.newMapData[CENUMS.SECTOR];
+                Player.character.map = Game.newMapData[CENUMS.MAP];
                 Game.resetPos();
                 Game.screenChange = false;
                 Game.screenTicker = 0;
                 Graphics.uiPrimitives2.clear();
-                for (var i = 0; i < Game.newMapData.players.length;i++){
-                    if (Game.newMapData.players[i].id != mainObj.id){
+                for (var i = 0; i < Game.newMapData[CENUMS.PLAYERS].length;i++){
+                    if (Game.newMapData[CENUMS.PLAYERS][i].id != mainObj.id){
                         var pc = new PlayerCharacter();
-                        pc.init(Game.newMapData.players[i]);
-                        Game.pcs[Game.newMapData.players[i].id] = pc;
+                        pc.init(Game.newMapData[CENUMS.PLAYERS][i]);
+                        Game.pcs[Game.newMapData[CENUMS.PLAYERS][i].id] = pc;
                     }
                 }
                 Game.newMapData = null;

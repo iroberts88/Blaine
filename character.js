@@ -44,7 +44,7 @@ Character.prototype.init = function(data) {
     this.name = data.name;
     this.slot = data.slot;
     this.owner = data.owner;
-    this.gameEngine = data.owner.gameEngine
+    this.engine = data.owner.engine
     this.id = data.id;
     this.money = data.money;
 
@@ -131,10 +131,10 @@ Character.prototype.init = function(data) {
     var pkmn = [1,4,7];
     for (var i = 0; i < pkmn.length;i++){
         var newPoke = new Pokemon();
-        newPoke.init(this.owner.gameEngine.pokemon[pkmn[i]],{
+        newPoke.init(this.owner.engine.pokemon[pkmn[i]],{
             character: this,
             nickname: '',
-            id: this.owner.gameEngine.getId()
+            id: this.owner.engine.getId()
         })
         this.addPokemon(newPoke,true);
     }
@@ -144,8 +144,8 @@ Character.prototype.init = function(data) {
     //init inventory
     this.inventory = new Inventory();
     this.inventory.init();
-    for (var i in this.gameEngine.items){
-        var item = this.gameEngine.items[i];
+    for (var i in this.engine.items){
+        var item = this.engine.items[i];
         var add = this.inventory.addItem(item,5);
     }
 };
@@ -195,7 +195,7 @@ Character.prototype.addPokemon = function(p,initBool){
         p.slot = this.party.length;
         info.partySlot = p.slot;
         if (typeof initBool == 'undefined'){
-            this.owner.gameEngine.queuePlayer(this.owner,'addPokemon',{
+            this.owner.engine.queuePlayer(this.owner,'addPokemon',{
                 'pokemon': p.getClientData(),
                 'slot': this.party.length
             });

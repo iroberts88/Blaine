@@ -10,7 +10,7 @@ var Player = require('./player.js').Player,
     AWS = require("aws-sdk");
 
 var Battle = function(ge) {
-    this.gameEngine = ge;
+    this.engine = ge;
     this.id = ge.getId();
     this.endAfterTurn = false;
     this.end = false; //end the battle on next tick
@@ -279,7 +279,7 @@ Battle.prototype.init = function (data) {
         }
     }
     for (var i in this.players){
-        this.gameEngine.queuePlayer(this.players[i],"startBattle", {wild: this.wild,type: this.type,team1: t1,team2: t2});
+        this.engine.queuePlayer(this.players[i],"startBattle", {wild: this.wild,type: this.type,team1: t1,team2: t2});
     }
     return true;
 };
@@ -298,7 +298,7 @@ Battle.prototype.tick = function(deltaTime){
         //all players are ready!!!
         console.log("players ready!");
         for (var i in this.players){
-            this.gameEngine.queuePlayer(this.players[i],"roundReady", {round: this.round,time: this.roundTime});
+            this.engine.queuePlayer(this.players[i],"roundReady", {round: this.round,time: this.roundTime});
         }
         this.roundActive = true;
     }
@@ -457,7 +457,7 @@ Battle.prototype.addTurnData = function(pkmnID,data){
         console.log(clientTurnData);
 
         for (var i in this.players){
-            this.gameEngine.queuePlayer(this.players[i],"executeTurn", {turnData: clientTurnData});
+            this.engine.queuePlayer(this.players[i],"executeTurn", {turnData: clientTurnData});
             this.readyForNextRound[this.players[i].id] = false;
         }
         this.roundActive = false;
@@ -473,7 +473,7 @@ Battle.prototype.addTurnData = function(pkmnID,data){
 
 Battle.prototype.sendChat = function(text){
     for (var i in this.players){
-        this.gameEngine.queuePlayer(this.players[i],"battleChat", {text: text});
+        this.engine.queuePlayer(this.players[i],"battleChat", {text: text});
     }
 }
 

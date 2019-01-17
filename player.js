@@ -28,7 +28,7 @@ var directions = {
 }
 
 var Player = function(){
-    this.gameEngine = null;
+    this.engine = null;
     this.battle = null;
     this.user = null;
     this.id = null;
@@ -54,20 +54,19 @@ Player.prototype.startGame = function(char){
     this.character = char;
 
     //add character to zone
-    this.gameEngine.addPlayerToZone(this,this.character.currentMap);
+    this.engine.addPlayerToZone(this,this.character.currentMap);
     //send down data to start new game
-    var zone = this.gameEngine.zones[this.character.currentMap];
+    var zone = this.engine.zones[this.character.currentMap];
     var sector = zone.map[this.character.currentSector];
     var players = zone.getPlayers(sector);
-    var zoneData = this.gameEngine.zones[this.character.currentMap].zoneData;
+    var zoneData = this.engine.zones[this.character.currentMap].zoneData;
     var cData = {};
     cData[CENUMS.MAP] = this.character.currentMap;
     cData[CENUMS.ZONEDATA] = zoneData;
     cData[CENUMS.MUSIC] = this.character.currentMusic;
     cData[CENUMS.CHARACTER] = this.character.getClientData();
     cData[CENUMS.PLAYERS] = players;
-    this.gameEngine.log(cData);
-    this.gameEngine.queuePlayer(this,CENUMS.STARTGAME,cData);
+    this.engine.queuePlayer(this,CENUMS.STARTGAME,cData);
 };
 
 
@@ -80,7 +79,7 @@ Player.prototype.onDisconnect = function(callback) {
 };
 
 Player.prototype.setGameEngine = function(ge){
-    this.gameEngine = ge;
+    this.engine = ge;
     this.id = ge.getId();
 };
 Player.prototype.setupSocket = function() {
@@ -91,8 +90,8 @@ Player.prototype.setupSocket = function() {
     this.socket.on('battleUpdate', function (data) {
         if (typeof data.command == 'undefined'){
             //TODO Error no command
-            console.log("No Command")
-            console.log(data);
+            that.engine.log("No Command")
+            that.engine.log(data);
             return;
         }
 
@@ -106,13 +105,13 @@ Player.prototype.setupSocket = function() {
                 //TODO ALL OF THESE CHECKS
                 if (data.turnData.run){
                     //check run
-                    console.log('Trying to run');
+                    that.engine.log('Trying to run');
                     if (that.battle.wild){
                         //TODO run % chance?
                         //exit battle
                         that.battle.end = true;
                         that.battle = null;
-                        that.gameEngine.queuePlayer(that,'battleData', {run:true});
+                        that.engine.queuePlayer(that,'battleData', {run:true});
                     }
                 }else{
                     for (var i in data.turnData){
@@ -134,7 +133,7 @@ Player.prototype.setupSocket = function() {
                 break;
             case 'roundReady':
                 that.battle.readyForNextRound[that.id] = true;
-                console.log(that.battle.readyForNextRound)
+                that.engine.log(that.battle.readyForNextRound)
                 break;
         }
     });
@@ -147,8 +146,8 @@ Player.prototype.setupSocket = function() {
             }
             switch(data.command){
                 case 'logout':
-                    that.gameEngine.playerLogout(that);
-                    that.gameEngine.queuePlayer(that,'logout', {});
+                    that.engine.playerLogout(that);
+                    that.engine.queuePlayer(that,'logout', {});
                     break;
                 case 'swapPkmn':
                     that.character.swapPkmn(data);
@@ -161,7 +160,7 @@ Player.prototype.setupSocket = function() {
                         //create new character
                         var char = new Character();
                         data.owner = that;
-                        data.id = that.gameEngine.getId();
+                        data.id = that.engine.getId();
                         data.money = 0;
                         data.pokedex = {};
                         //data.currentSector = '0x0';
@@ -181,7 +180,7 @@ Player.prototype.setupSocket = function() {
                         if (data.cTile[0] != that.character.currentTile[0] || data.cTile[1] != that.character.currentTile[1] || data.cSector != that.character.currentSector){
                             return;
                         }
-                        var zone = that.gameEngine.zones[that.character.currentMap];
+                        var zone = that.engine.zones[that.character.currentMap];
                         var coords = zone.getSectorXY(that.character.currentSector);
                         var tile = {
                             x: that.character.currentTile[0],
@@ -231,12 +230,12 @@ Player.prototype.setupSocket = function() {
                                     if (zone.map.hasOwnProperty((coords2.x+i) + 'x' + (coords2.y+j))){
                                         for (var pl in zone.map[(coords2.x+i) + 'x' + (coords2.y+j)].players){
                                             var player = zone.map[(coords2.x+i) + 'x' + (coords2.y+j)].players[pl];
-                                            that.gameEngine.queuePlayer(player,'movePC',{
-                                                id: that.id,
-                                                x:data.x,
-                                                y:data.y,
-                                                start: [that.character.currentTile[0],that.character.currentTile[1]]
-                                            })
+                                            var cData = {}
+                                            cData[CENUMS.ID] = that.id;
+                                            cData[CENUMS.X] = data.x;
+                                            cData[CENUMS.Y] = data.y;
+                                            cData[CENUMS.START] = [that.character.currentTile[0],that.character.currentTile[1]];
+                                            that.engine.queuePlayer(player,CENUMS.MOVEPC,cData)
                                         }
                                     }
                                 }
@@ -254,18 +253,18 @@ Player.prototype.setupSocket = function() {
                             }
                         }
                     }catch(e){
-                        that.gameEngine.debug(that,{id: 'moveAttempt', error: e.stack});
+                        that.engine.debug(that,e,{id: 'moveAttempt', error: e.stack});
                     }
                     break;
                 case 'requestMapData':
                     try{
-                        var zoneData = that.gameEngine.zones[data.name].zoneData;
-                        that.gameEngine.queuePlayer(that,'mapData',{
-                            zoneData: zoneData,
-                            name: data.name
-                        });
+                        var zoneData = that.engine.zones[data.name].zoneData;
+                        var cData = {};
+                        cData[CENUMS.NAME] = data.name;
+                        cData[CENUMS.ZONEDATA] = zoneData;
+                        that.engine.queuePlayer(that,CENUMS.MAPDATA,cData);
                     }catch(e){
-                        that.gameEngine.debug(that,{id: 'requestMapDataError', error: e.stack});
+                        that.engine.debug(that,{id: 'requestMapDataError', error: e.stack});
                     }
                     break;
             }
@@ -297,17 +296,17 @@ Player.prototype.setupSocket = function() {
                 console.log('Say: ' + data.cString);
                 var players = [];
                 //send a move command to all players in adjacent sectors
-                var zone = that.gameEngine.zones[that.character.currentMap];
+                var zone = that.engine.zones[that.character.currentMap];
                 var coords = zone.getSectorXY(that.character.currentSector);
                 for (var i = -1;i < 2;i++){
                     for (var j = -1;j < 2;j++){
                         try{
                             for (var pl in zone.map[(coords.x+i) + 'x' + (coords.y+j)].players){
                                 var player = zone.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
-                                that.gameEngine.queuePlayer(player,"say", {id: that.id,text: data.cString});
+                                that.engine.queuePlayer(player,"say", {id: that.id,text: data.cString});
                             }
                         }catch(e){
-                            that.gameEngine.debug(that,{id: 'chatAttempt', error: e.stack});
+                            that.engine.debug(that,{id: 'chatAttempt', error: e.stack});
                         }
                     }
                 }
@@ -332,13 +331,13 @@ Player.prototype.setupSocket = function() {
                     var pokemon = [Math.ceil(Math.random()*15)];
                     var levels = [5];//[Math.ceil(Math.random()*20)];
 
-                    var battle = new Battle(that.gameEngine);
-                    var pkmn = new Trainer(that.gameEngine);
+                    var battle = new Battle(that.engine);
+                    var pkmn = new Trainer(that.engine);
                     pkmn.init({wild: true,pokemon:pokemon,levels:levels});
                     if (battle.init({team1: [that.character],team2: [pkmn],type: '1v1'})){
                         console.log("Battle successfully initialized!!");
                         that.battle = battle;
-                        that.gameEngine.activeBattles[battle.id] = battle;
+                        that.engine.activeBattles[battle.id] = battle;
                     }
                     break;
                 case 'arp':
@@ -347,11 +346,11 @@ Player.prototype.setupSocket = function() {
                     var level = Math.ceil(Math.random()*100);
 
                     var newPoke = new Pokemon();
-                    newPoke.init(that.gameEngine.pokemon[pokemon],{
+                    newPoke.init(that.engine.pokemon[pokemon],{
                         character: that.character,
                         nickname: '',
                         level: level,
-                        id: that.gameEngine.getId()
+                        id: that.engine.getId()
                     })
                     that.character.addPokemon(newPoke);
                     break;
@@ -366,7 +365,7 @@ Player.prototype.setupSocket = function() {
             that.user.unlock();
             console.log('Player ' + that.id + ' (' + that.user.userData.username + ') has disconnected.');
             that.user.updateDB();
-            that.gameEngine.removePlayer(that);
+            that.engine.removePlayer(that);
             // If callback exists, call it
             if(that.onDisconnectHandler != null && typeof that.onDisconnectHandler == 'function' ) {
                 that.onDisconnectHandler();
@@ -402,13 +401,13 @@ Player.prototype.setupSocket = function() {
                                     that.user.setOwner(that);
                                     that.user.init(data.Item);
                                     that.user.lock();
-                                    that.gameEngine.users[d.sn] = that.user;
-                                    that.gameEngine.queuePlayer(that,"loggedIn", {name:data.Item.username, characters: that.user.characters});
+                                    that.engine.users[d.sn] = that.user;
+                                    that.engine.queuePlayer(that,"loggedIn", {name:data.Item.username, characters: that.user.characters});
                                 }else{
-                                    that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'wrongpass'});
+                                    that.engine.queuePlayer(that,"setLoginErrorText", {text: 'wrongpass'});
                                 }
                             }else{
-                                that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'wrongpass'});
+                                that.engine.queuePlayer(that,"setLoginErrorText", {text: 'wrongpass'});
                             }
                         }
                     }catch(e){
@@ -419,7 +418,7 @@ Player.prototype.setupSocket = function() {
         }catch(e){
             console.log('Login Attempt failed');
             console.log(e);
-            that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'wrongpass'});
+            that.engine.queuePlayer(that,"setLoginErrorText", {text: 'wrongpass'});
         }
     });
     this.socket.on('guestLogin', function (d) {
@@ -438,7 +437,7 @@ Player.prototype.setupSocket = function() {
                 if (err) {
                 } else {
                     console.log("Attempting guest logon...");
-                    if (d.sn.length >= 3 && d.sn.length <= 16 && typeof data.Item == 'undefined' && typeof that.gameEngine.users[d.sn] == 'undefined'){
+                    if (d.sn.length >= 3 && d.sn.length <= 16 && typeof data.Item == 'undefined' && typeof that.engine.users[d.sn] == 'undefined'){
                         console.log('valid username - adding guest');
                         var u = {
                             username: d.sn,
@@ -447,12 +446,12 @@ Player.prototype.setupSocket = function() {
                         that.user = User();
                         that.user.setOwner(that);
                         that.user.init(u);
-                        that.gameEngine.users[d.sn] = that.user;
-                        that.gameEngine.queuePlayer(that,"loggedIn", {name:d.sn, characters: that.user.characters});
-                    }else if (typeof data.Item != 'undefined' || typeof that.gameEngine.users[d.sn] != 'undefined'){
-                        that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
+                        that.engine.users[d.sn] = that.user;
+                        that.engine.queuePlayer(that,"loggedIn", {name:d.sn, characters: that.user.characters});
+                    }else if (typeof data.Item != 'undefined' || typeof that.engine.users[d.sn] != 'undefined'){
+                        that.engine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
                     }else{
-                        that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'snlength'});
+                        that.engine.queuePlayer(that,"setLoginErrorText", {text: 'snlength'});
                     }
                 }
             });
@@ -466,7 +465,7 @@ Player.prototype.setupSocket = function() {
         if (that.user){return;}
         try{
             d.sn = d.sn.toLowerCase();
-            if (typeof that.gameEngine.users[d.sn] == 'undefined'){
+            if (typeof that.engine.users[d.sn] == 'undefined'){
                 var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                 var params = {
                     TableName: 'users',
@@ -504,8 +503,8 @@ Player.prototype.setupSocket = function() {
                                     that.user = User();
                                     that.user.setOwner(that);
                                     that.user.init(u);
-                                    that.gameEngine.users[d.sn] = that.user;
-                                    that.gameEngine.queuePlayer(that,"loggedIn", {name:d.sn, characters: that.user.characters});
+                                    that.engine.users[d.sn] = that.user;
+                                    that.engine.queuePlayer(that,"loggedIn", {name:d.sn, characters: that.user.characters});
                                     var params3 = {
                                         TableName: 'users',
                                         Item: {
@@ -528,17 +527,17 @@ Player.prototype.setupSocket = function() {
                             });
                             
                         }else if (typeof data.Item != 'undefined'){
-                            that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
+                            that.engine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
                         }else if (d.sn.length < 3 || d.sn.length > 16){
-                            that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'snlength'});
+                            that.engine.queuePlayer(that,"setLoginErrorText", {text: 'snlength'});
                         }else if (d.pw.length < 8 || d.pw.length > 16){
-                            that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'plength'});
+                            that.engine.queuePlayer(that,"setLoginErrorText", {text: 'plength'});
                         }
                     }
                 });
             }else{
                 //user exists
-                that.gameEngine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
+                that.engine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
             }
         }catch(e){
             console.log('error creating user');

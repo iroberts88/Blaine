@@ -1,5 +1,8 @@
 var Attack = function(){}
-        
+
+var CENUMS = require('./enums.js').Enums; //init client enums
+CENUMS.init();
+
 Attack.prototype.init = function(data){
     this.attackid = data.attackid;
     this.name = data.name;
@@ -22,14 +25,14 @@ Attack.prototype.init = function(data){
 
 Attack.prototype.getClientData = function(){
     var data = {}
-    data.attackid = this.attackid;
-    data.name = this.name;
-    data.targetType = this.targetType;
-    data.acc = this.acc;
-    data.pp = this.pp;
-    data.power = this.power;
-    data.type = this.type;
-    data.description = this.description;
+    data[CENUMS.MOVEID] = this.attackid;
+    data[CENUMS.NAME] = this.name;
+    data[CENUMS.TARGETTYPE] = this.targetType;
+    data[CENUMS.ACCURACY] = this.acc;
+    data[CENUMS.PP] = this.pp;
+    data[CENUMS.POWER] = this.power;
+    data[CENUMS.TYPE] = this.type;
+    data[CENUMS.DESCRIPTION] = this.description;
     return data;
 }
 

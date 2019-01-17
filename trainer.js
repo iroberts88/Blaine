@@ -6,7 +6,7 @@
 var Pokemon = require('./pokemon.js').Pokemon;
 
 var Trainer = function(ge){
-    this.gameEngine = ge;
+    this.engine = ge;
     this.MAX_POKEMON = 6;
 
     this.id = null;
@@ -33,11 +33,11 @@ Trainer.prototype.init = function(data) {
         this.wild = true;
         for (var i = 0 ; i < data.pokemon.length;i++){
             var newPoke = new Pokemon();
-            newPoke.init(this.gameEngine.pokemon[data.pokemon],{
+            newPoke.init(this.engine.pokemon[data.pokemon],{
                 character: this,
                 nickname: '',
                 level: data.levels[i],
-                id: this.gameEngine.getId()
+                id: this.engine.getId()
             })
             this.addPokemon(newPoke);
         }

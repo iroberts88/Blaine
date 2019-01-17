@@ -86,7 +86,7 @@ GameEngine.prototype.tick = function() {
         if (self.debugList[k].t <= -5.0){
             //debug hasnt been updated in 5 seconds
             //remove from debug list
-            this.log('deleting debug with id ' + self.debugList[k].id);
+            self.log('deleting debug with id ' + self.debugList[k].id);
             delete self.debugList[k];
         }
     }

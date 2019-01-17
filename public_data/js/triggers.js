@@ -20,6 +20,7 @@ TriggerEnums = {
 				Game.removePC(i);
 			}
 			if (!Game.requestMade && typeof Game.mapsCache[data.map] == 'undefined'){
+				var sData = {};
                 Acorn.Net.socket_.emit('playerUpdate',{command: 'requestMapData',name: data.map});
                 Game.requestMade = true;
             }

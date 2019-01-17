@@ -1,4 +1,6 @@
 var Attribute = require('./attribute.js').Attribute;
+var CENUMS = require('./enums.js').Enums; //init client enums
+CENUMS.init();
 
 var Pokemon = function(){
     this.MAX_ATTACKS = 4;
@@ -62,16 +64,16 @@ Pokemon.prototype.reset = function(){
 Pokemon.prototype.getMoves = function(options){
     this.moves = [];
     for (var i = this.level;i > 0;i--){
-        if (typeof this.gameEngine.pokemon[this.number].moveList[i] != 'undefined'){
+        if (typeof this.engine.pokemon[this.number].moveList[i] != 'undefined'){
             //this level has available moves....
             //add them
-            for (var j = 0; j < this.gameEngine.pokemon[this.number].moveList[i].length;j++){
+            for (var j = 0; j < this.engine.pokemon[this.number].moveList[i].length;j++){
                 if (this.moves.length < this.MAX_ATTACKS){
-                    var attackid = this.gameEngine.pokemon[this.number].moveList[i][j].attackid;
-                    if (typeof this.gameEngine.attacks[attackid] == 'undefined'){
+                    var attackid = this.engine.pokemon[this.number].moveList[i][j].attackid;
+                    if (typeof this.engine.attacks[attackid] == 'undefined'){
                         //MOVE DOESNT EXIST
-                        console.log('Move with id "'+ attackid + '" doesn\'t exist');
-                        console.log('Defaulting to Tackle');
+                        this.character.engine.log('Move with id "'+ attackid + '" doesn\'t exist');
+                        this.character.engine.log('Defaulting to Tackle');
                         attackid = 'tackle';
                     }
                     var hasMove = false;
@@ -84,8 +86,8 @@ Pokemon.prototype.getMoves = function(options){
                     if (hasMove){
                         continue;
                     }
-                    this.moves.push(this.gameEngine.attacks[attackid]);
-                    this.currentPP[this.moves.length-1] = this.gameEngine.attacks[attackid].pp
+                    this.moves.push(this.engine.attacks[attackid]);
+                    this.currentPP[this.moves.length-1] = this.engine.attacks[attackid].pp
                 }else{
                     return;
                 }
@@ -99,7 +101,7 @@ Pokemon.prototype.init = function(base,data) {
 
     this.nickname = (data.nickname == '') ? base.name : data.nickname; //REQUIRED IN <data>
     this.character = data.character; //REQUIRED IN <data>
-    this.gameEngine = data.character.gameEngine
+    this.engine = data.character.engine
     this.id = data.id; //REQUIRED IN <data>
 
     this.number = base.number;
@@ -118,7 +120,7 @@ Pokemon.prototype.init = function(base,data) {
         this.getMoves();
     }else{
         for (var j = 0; j < data.moves.length;j++){
-            this.moves.push(this.gameEngine.attacks[data.moves[j]]);
+            this.moves.push(this.engine.attacks[data.moves[j]]);
         }
     }
 
@@ -137,35 +139,35 @@ Pokemon.prototype.init = function(base,data) {
     this.spdefenseEV = (typeof data.spdefenseEV == 'undefined') ? 0 : data.spdefenseEV;
     this.speedEV = (typeof data.speedEV == 'undefined') ? 0 : data.speedEV;
 
-    this.evasion = 0;
-    this.accuracy = 0;
-
     this.damageMod = 1;
     this.defenseMod = 1;
     this.stabBonus = 1.5;
 
     this.hp = new Attribute();
     this.hp.init({
-        'id': 'hp',
-        'pokemon': this,
-        'value': base.baseStats.hp,
-        'min': 1,
-        'name': 'Maximum HP',
-        'max': 9999,
+        id: CENUMS.HP,
+        pokemon: this,
+        value: base.baseStats.hp,
+        min: 1,
+        name: 'Maximum HP',
+        max: 9999,
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.hpIV + Math.sqrt(this.pokemon.hpEV)/4))*this.pokemon.level)/100 + this.pokemon.level + 10;
             return Math.ceil((val*this.pMod)+this.nMod);
+        },
+        next: function(updateClient){
+            this.owner.hpPercent.set(updateClient);
         }
     });
 
     this.speed = new Attribute();
     this.speed.init({
-        'id': 'spd',
-        'pokemon': this,
-        'value': base.baseStats.speed, 
-        'min': 1,
-        'name': 'Speed',
-        'max': 9999,
+        id: CENUMS.SPEED,
+        pokemon: this,
+        value: base.baseStats.speed, 
+        min: 1,
+        name: 'Speed',
+        max: 9999,
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.speedIV + Math.sqrt(this.pokemon.speedEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
@@ -174,12 +176,12 @@ Pokemon.prototype.init = function(base,data) {
 
     this.attack = new Attribute();
     this.attack.init({
-        'id': 'atk',
-        'pokemon': this,
-        'name': 'Attack',
-        'value': base.baseStats.attack,
-        'min': 1,
-        'max': 9999,
+        id: CENUMS.ATTACK,
+        pokemon: this,
+        name: 'Attack',
+        value: base.baseStats.attack,
+        min: 1,
+        max: 9999,
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.attackIV + Math.sqrt(this.pokemon.attackEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
@@ -188,12 +190,12 @@ Pokemon.prototype.init = function(base,data) {
 
     this.spattack = new Attribute();
     this.spattack.init({
-        'id': 'spatk',
-        'pokemon': this,
-        'value': base.baseStats.spattack,
-        'min': 1,
-        'max': 9999,
-        'name': 'Special Attack',
+        id: CENUMS.SPECIALATTACK,
+        pokemon: this,
+        value: base.baseStats.spattack,
+        min: 1,
+        max: 9999,
+        name: 'Special Attack',
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.spattackIV + Math.sqrt(this.pokemon.spattackEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
@@ -202,12 +204,12 @@ Pokemon.prototype.init = function(base,data) {
 
     this.defense = new Attribute();
     this.defense.init({
-        'id': 'def',
-        'pokemon': this,
-        'value': base.baseStats.defense,
-        'min': 1,
-        'max': 9999,
-        'name': 'Defense',
+        id: CENUMS.DEFENSE,
+        pokemon: this,
+        value: base.baseStats.defense,
+        min: 1,
+        max: 9999,
+        name: 'Defense',
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.defenseIV + Math.sqrt(this.pokemon.defenseEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
@@ -216,17 +218,37 @@ Pokemon.prototype.init = function(base,data) {
 
     this.spdefense = new Attribute();
     this.spdefense.init({
-        'id': 'spdef',
-        'pokemon': this,
-        'value': base.baseStats.spdefense,
-        'min': 1,
-        'max': 9999,
-        'name': 'Special Defense',
+        id: CENUMS.SPECIALDEFENSE,
+        pokemon: this,
+        value: base.baseStats.spdefense,
+        min: 1,
+        max: 9999,
+        name: 'Special Defense',
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.spdefenseIV + Math.sqrt(this.pokemon.spdefenseEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
         }
     });
+
+    this.evasion = new Attribute();
+    this.evasion.init({
+        id: CENUMS.EVASION,
+        pokemon: this,
+        value: 0,
+        min: 0,
+        max: 100,
+        name: 'Evasion'
+    });
+    this.accuracy = new Attribute();
+    this.accuracy.init({
+        id: CENUMS.ACCURACY,
+        pokemon: this,
+        value: 100,
+        min: 0,
+        max: 600,
+        name: 'Accuracy'
+    });
+
 
     var data = {}
     for (var a in this){
@@ -237,7 +259,38 @@ Pokemon.prototype.init = function(base,data) {
         }
     }
 
-    this.currentHP = this.hp.value;
+    this.currentHP = new Attribute();
+    this.currentHP.init({
+        id: CENUMS.CURRENTHP,
+        pokemon: this,
+        value: this.hp.value,
+        min: 0,
+        max: 999,
+        name: 'Current HP',
+        formula: function(updateClient){
+            return this.value;
+        },
+        next: function(updateClient){
+            this.owner.hpPercent.set(updateClient);
+        }
+    });
+    this.attributeIndex[CENUMS.CURRENTHP] = this.currentHP;
+    this.hpPercent = new Attribute();
+    this.hpPercent.init({
+        id: CENUMS.HPPERCENT,
+        pokemon: this,
+        value: 100,
+        min: 0,
+        max: 100,
+        name: 'Current HP Percent',
+        formula: function(updateClient){
+            return this.value;
+        },
+    });
+    this.attributeIndex[CENUMS.HPPERCENT] = this.hpPercent;
+    this.currentHP.set();
+
+
     this.reset();
 };
 
@@ -248,44 +301,39 @@ Pokemon.prototype.getDBObj = function(){
     return dbObj;
 }
 
-Pokemon.prototype.getClientData = function(){
+Pokemon.prototype.getClientData = function(less = false){
     //create object to send to the client
-    var data = {}
-    for (var a in this){
-        if (this[a] instanceof Attribute){
-            data[a] = this[a].value;
-        }
+    var data = this.getLessClientData()
+    if (less){
+        return data;
     }
-    data.name = this.name;
-    data.nickname = this.nickname;
-    data.number = this.number;
-    data.level = this.level;
-    data.types = this.types;
-    data.moves = [];
+
+    data[CENUMS.NAME] = this.name;
+    data[CENUMS.TYPES] = this.types;
+    data[CENUMS.MOVES] = [];
     for (var i = 0; i < this.moves.length;i++){
-        data.moves.push(this.moves[i].getClientData());
+        data[CENUMS.MOVES].push(this.moves[i].getClientData());
     }
-    data.id = this.id;
-    data.exp = this.exp;
-    data.currentHP = this.currentHP;
-    data.currentPP = this.currentPP;
-    data.slot = this.slot;
-    data.hpIV = this.hpIV;
-    data.speedIV = this.speedIV;
-    data.attackIV = this.attackIV;
-    data.defenseIV = this.defenseIV;
-    data.spattackIV = this.spattackIV;
-    data.spdefenseIV = this.spdefenseIV;
+    data[CENUMS.EXP] = this.exp;
+    data[CENUMS.CURRENTHP] = this.currentHP;
+    data[CENUMS.CURRENTPP] = this.currentPP;
+    data[CENUMS.SLOT] = this.slot;
+    data[CENUMS.HPIV] = this.hpIV;
+    data[CENUMS.SPEEDIV] = this.speedIV;
+    data[CENUMS.ATTACKIV] = this.attackIV;
+    data[CENUMS.DEFENSEIV] = this.defenseIV;
+    data[CENUMS.SPECIALATTACKIV] = this.spattackIV;
+    data[CENUMS.SPECIALDEFENSEIV] = this.spdefenseIV;
     return data;
 }
 
 Pokemon.prototype.getLessClientData = function(){
     var data = {}
-    data.nickname = this.nickname;
-    data.number = this.number;
-    data.level = this.level;
-    data.id = this.id;
-    data.hpPercent = this.currentHP/this.hp.value;
+    data[CENUMS.NICKNAME] = this.nickname;
+    data[CENUMS.NUMBER] = this.number;
+    data[CENUMS.LEVEL] = this.level;
+    data[CENUMS.ID] = this.id;
+    data[CENUMS.HPPERCENT] = this.hpPercent.value;
     return data;
 }
 
@@ -295,8 +343,8 @@ Pokemon.prototype.setStat = function(id,amt){
         this.getStat(id).base = amt;
         this.getStat(id).set(true);
     }catch(e){
-        console.log("unable to set stat " + id);
-        console.log(e);
+        this.character.engine.log("unable to set stat " + id);
+        this.character.engine.log(e);
     }
 };
 
@@ -305,8 +353,8 @@ Pokemon.prototype.getStat = function(id){
     try{
         return this.attributeIndex[id];
     }catch(e){
-        console.log("unable to get stat " + id);
-        console.log(e);
+        this.character.engine.log("unable to get stat " + id);
+        this.character.engine.log(e);
     }
 };
 
@@ -315,8 +363,8 @@ Pokemon.prototype.modStat = function(id,amt){
         this.getStat(id).nMod += amt;
         this.getStat(id).set(true);
     }catch(e){
-        console.log("unable to mod stat " + id);
-        console.log(e);
+        this.character.engine.log("unable to mod stat " + id);
+        this.character.engine.log(e);
     }
 };
 

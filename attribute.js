@@ -1,4 +1,5 @@
-
+var CENUMS = require('./enums.js').Enums; //init client enums
+CENUMS.init();
     
 
 var Attribute = function(){
@@ -33,18 +34,22 @@ Attribute.prototype.init = function(data){
         5: 2/4,
         6: 2/3,
         7: 2/2,
-        8: 3/6,
-        9: 4/6,
-        10: 5/6,
-        11: 6/6,
-        12: 7/6,
-        13: 8/6,
+        8: 3/2,
+        9: 4/2,
+        10: 5/2,
+        11: 6/2,
+        12: 7/2,
+        13: 8/2,
     }
 	this.min = data.min; //minimum value
 	this.max = data.max; //maximum value
 
 	this.setBool = false; //the attribute is forced to change to this value if true
 	this.setValue = 0;
+    //this is a stat that can be updated on the client (hidden or not?)
+    this.updateClient = Utils.udCheck(data.clientUpdate,true,data.clientUpdate);
+    //this is a stat that is updated to all players
+    this.updateAll = Utils.udCheck(data.updateAll,false,data.updateAll);
 	//formula for setting the attribute
 	if (typeof data.formula == 'undefined'){
 		this.formula = function(){return Math.round(this.base*this.pMod+this.nMod);};
@@ -93,11 +98,11 @@ Attribute.prototype.set = function(updateClient){
     try{this.next()}catch(e){}
     try{
         if (updateClient){
-            this.pokemon.character.owner.gameEngine.queuePlayer(this.pokemon.character.owner,'setUnitStat',{
-                'id': this.pokemon.id,
-                'stat': this.id,
-                'amt': this.value
-            });
+            var cData = {};{
+            cData[CENUMS.ID] = this.pokemon.id;
+            cData[CENUMS.STAT] = this.id;
+            cData[CENUMS.VALUE] = this.value;
+            this.pokemon.character.owner.engine.queuePlayer(this.pokemon.character.owner,CENUMS.SETUNITSTAT,cData);
         }
     }catch(e){}
 }

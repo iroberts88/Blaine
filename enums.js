@@ -2,36 +2,44 @@
 //enums.js
 //----------------------------------------------------------------
 var enums = {
-	CHARACTER: 'cha',
-	CONNINFO: 'coi',
+        CHANGEMAP: 'chm',
+        CHARACTER: 'cha',
+        CONNINFO: 'coi',
 
-	ID: 'i',
+        ID: 'i',
 
-	MAP: 'm',
-	MAPID: 'mid',
-	MAPNAME: 'mna',
-	MAPDATA: 'mda',
-	MUSIC: 'mu',
+        MAP: 'm',
+        MAPID: 'mid',
+        MAPNAME: 'mna',
+        MAPDATA: 'mda',
+        MOVEPC: 'mpc',
+        MUSIC: 'mu',
 
-	OPEN: 'op',
-	OVERLAYRESOURCE: 'ov',
+        NAME: 'nam',
 
-	PLAYERS: 'pla',
+        OPEN: 'op',
+        OVERLAYRESOURCE: 'ov',
 
-	RESOURCE: 're',
+        PLAYERS: 'pla',
 
-	SECTORARRAY: 'sar',
-	SERVERUPDATE: 'seu',
-	STARTGAME: 'stg',
+        REQUESTMAPDATA: 'req',
+        RESOURCE: 're',
 
-	TILES: 'ti',
-	TRIGGERS: 'triggers',
+        SECTOR: 'sec',
+        SECTORARRAY: 'sar',
+        SERVERUPDATE: 'seu',
+        START: 'sta',
+        STARTGAME: 'stg',
 
-	X: 'x',
+        TILE: 'til',
+        TILES: 'tis',
+        TRIGGERS: 'triggers',
 
-	Y: 'y',
+        X: 'x',
 
-	ZONEDATA: 'zod'
+        Y: 'y',
+
+        ZONEDATA: 'zod'
 };
 
 var Enums = function() {};

@@ -153,22 +153,22 @@ var getSectorXY = function(string){
     Sector.prototype.init = function(s,data){
     	this.pos = getSectorXY(s);
     	this.tiles = [];
-    	for (var i = 0; i < data.tiles.length;i++){
+    	for (var i = 0; i < data[CENUMS.TILES].length;i++){
     		var arr = [];
-    		for (var j = 0; j < data.tiles[i].length;j++){
+    		for (var j = 0; j < data[CENUMS.TILES][i].length;j++){
  				var newTile = new Tile();
                 newTile.init({
                 	sectorid: s,
                     x: i,
                     y: j,
-                    resource: data.tiles[i][j].resource,
-                    open: data.tiles[i][j].open,
-                    triggers: data.tiles[i][j].triggers,
-                    overlayResource: data.tiles[i][j].overlayResource
+                    resource: data[CENUMS.TILES][i][j][CENUMS.RESOURCE],
+                    open: data[CENUMS.TILES][i][j][CENUMS.OPEN],
+                    triggers: data[CENUMS.TILES][i][j][CENUMS.TRIGGERS],
+                    overlayResource: data[CENUMS.TILES][i][j][CENUMS.OVERLAYRESOURCE]
                 });
                 newTile.sprite.position.x = this.pos.x*this.fullSectorSize + i*this.TILE_SIZE;
                 newTile.sprite.position.y = this.pos.y*this.fullSectorSize + j*this.TILE_SIZE;
-                if (data.tiles[i][j].resource == '1x1'){
+                if (data[CENUMS.TILES][i][j][CENUMS.RESOURCE] == '1x1'){
                     Graphics.worldContainer2.addChild(newTile.sprite);
                 }else{
                     Graphics.worldContainer.addChild(newTile.sprite);
@@ -176,7 +176,7 @@ var getSectorXY = function(string){
                 if (newTile.overlaySprite){
                     newTile.overlaySprite.position.x = this.pos.x*this.fullSectorSize + i*this.TILE_SIZE;
                     newTile.overlaySprite.position.y = this.pos.y*this.fullSectorSize + j*this.TILE_SIZE;
-                    if (data.tiles[i][j].overlayResource == '1x1'){
+                    if (data[CENUMS.TILES][i][j][CENUMS.OVERLAYRESOURCE] == '1x1'){
                         Graphics.worldContainer2.addChild(newTile.overlaySprite);
                     }else{
                         Graphics.worldContainer.addChild(newTile.overlaySprite);
@@ -214,8 +214,8 @@ var getSectorXY = function(string){
             this.sprite = Graphics.getSprite(data.resource); //tile sprite
             this.sprite.scale.x = mainObj.GAME_SCALE;
             this.sprite.scale.y = mainObj.GAME_SCALE;
-            this.open = (typeof data.open == 'undefined')  ? null : data.open;
-            this.overlayResource = (typeof data.overlayResource == 'undefined')  ? null : data.overlayResource;
+            this.open = data.open;
+            this.overlayResource = !data.overlayResource ? null : data.overlayResource;
             this.overlaySprite = null; //2nd layer sprite
             if (this.overlayResource){
                 this.overlaySprite = Graphics.getSprite(data.overlayResource); //tile sprite

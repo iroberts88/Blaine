@@ -116,7 +116,7 @@ function User() {
             }
         },
         updateDB: function(){
-            var ge = this.owner.gameEngine;
+            var ge = this.owner.engine;
             if (this.userData.username != 'guest'){
                 //Player is not a guest - update DB
                 /*try{
@@ -170,7 +170,7 @@ function User() {
         },
         setOwner: function(o) {
             this.owner = o;
-            var ge = this.owner.gameEngine;
+            var ge = this.owner.engine;
 
         }
 
