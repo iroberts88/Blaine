@@ -2,7 +2,7 @@
 (function(window) {
     Party = {
         pokemon: {},
-        init: function(data){
+        init: function(pokeArray){
         	this.pokemon = {
                 '1': '',
                 '2': '',
@@ -11,10 +11,10 @@
                 '5': '',
                 '6': ''
             }
-            if (data.pokemon){
-                for (var i = 0; i < data.pokemon.length;i++){
-                    this.setPokemon(data.pokemon[i].slot,data.pokemon[i]);
-                }
+            for (var i = 0; i < pokeArray.length;i++){
+                var newpoke = new Pokemon();
+                newpoke.init(pokeArray[i]);
+                this.setPokemon(newpoke.slot,newpoke);
             }
             for (var i = 1; i < 7; i++){
                 Game.resetPokemon(i);
@@ -45,3 +45,5 @@
 
     window.Party = Party;
 })(window);
+
+

@@ -1,4 +1,8 @@
 var CENUMS = require('./enums.js').Enums; //init client enums
+
+var utils = require('./utils.js').Utils;
+var Utils = new utils();
+
 CENUMS.init();
     
 
@@ -98,7 +102,7 @@ Attribute.prototype.set = function(updateClient){
     try{this.next()}catch(e){}
     try{
         if (updateClient){
-            var cData = {};{
+            var cData = {};
             cData[CENUMS.ID] = this.pokemon.id;
             cData[CENUMS.STAT] = this.id;
             cData[CENUMS.VALUE] = this.value;

@@ -140,6 +140,8 @@ function init() {
     lastTime = Date.now();
     Settings.init();
     Player.init();
+    PCS.init();
+    NPCS.init();
     //Init Touch Events
     Graphics.app.stage.on('touchstart', Acorn.Input.handleTouchEvent).on('touchmove', Acorn.Input.handleTouchEvent);
 

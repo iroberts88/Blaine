@@ -1,0 +1,48 @@
+This is a Pokemon MMO prototype. Instead of turn based battle, the battles will use an active charge bar system loosely based off jrpg titles such as final fantasy. when the battle begins, each pokemon will charge up their turn (based on their speed stat). Commands can be issued at any time, and when the charging is finished, the pokemon can either use the ability on the selected target, use an item (up to 5 per battle), or swap to another pokemon on the team. This makes for much faster battles.
+
+wild pokemon do not give exp, and will run away at low health instead of just fainting and givign exp.
+trainer battles give exp, items, and money. Most rare items in the game are acquired by defeating powerful trainers.
+trainers spawn on a timer, and despawn once defeated. 
+
+Players can challenge eachother to battles, or trades.
+
+A players highest level pokemon is considered when a challenge is issued, the 2 players must be within 5 levels.
+
+
+(maybe a server that forces these battles to occur? like a pvp server??)
+
+BATTLE TYPES:
+
+Wild battles
+1v1-5
+
+Trainer Battles
+1v1
+2v2
+3v3
+4v4
+
+Team Battles
+
+2 players
+1+1 v 1+1
+2+2 v 2+2
+
+
+
+SPEED
+
+the fastest pokemon in the current battle P1 will receive a charge time of <N> seconds
+
+other pokemon in the battle will receive a charge time relative to the fastest pokemon <N*P1_SPEED/P2_SPEED>
+
+E.G.
+
+P1 has 125 speed
+P2 has 75 speed
+
+P1 charge time is 10 seconds - the charge counter for this battle is 10*125 = 1250
+
+the charge for each pokemon will fill at their speed until they hit 1250
+
+if a faster pokemon is swapped out - the charge counter is reset  and the pokemon that remain out are given their % of charge into the new charge counter

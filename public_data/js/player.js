@@ -23,18 +23,19 @@
         },
 
         initCharacter: function(data){
-            this.owTexture = data.owSprite;
+            this.owTexture = data[CENUMS.RESOURCE];
         	this.character = {
-        		name: data.name,
-        		money: data.money,
-        		sector: data.sector,
-        		tile: data.tile,
+                id: data[CENUMS.ID],
+        		name: data[CENUMS.NAME],
+        		money: data[CENUMS.MONEY],
+        		sector: data[CENUMS.SECTOR],
+        		tile: data[CENUMS.TILE],
                 sprite: Graphics.getSprite('ow_' + this.owTexture + '_d1'),
                 sprite2: Graphics.getSprite('ow_' + this.owTexture + '_d1'),
-                map: data.map,
-                inventory: data.inventory
+                map: data[CENUMS.MAP],
+                inventory: data[CENUMS.INVENTORY]
         	};
-            Party.init(data);
+            Party.init(data[CENUMS.POKEMON]);
             this.character.sprite.scale.x = mainObj.GAME_SCALE;
             this.character.sprite.scale.y = mainObj.GAME_SCALE;
             this.character.sprite.anchor.x = 0.5;

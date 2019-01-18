@@ -92,10 +92,8 @@
                 Player.initCharacter(data[CENUMS.CHARACTER]);
                 Game.resetPos();
                 for (var i = 0; i < data[CENUMS.PLAYERS].length;i++){
-                    if (data[CENUMS.PLAYERS][i].id != mainObj.id){
-                        var pc = new PlayerCharacter();
-                        pc.init(data[CENUMS.PLAYERS][i]);
-                        Game.pcs[data[CENUMS.PLAYERS][i].id] = pc;
+                    if (data[CENUMS.PLAYERS][i][CENUMS.OWNER] != mainObj.id){
+                        PCS.addPC(data[CENUMS.PLAYERS][i]);
                     }
                 }
                 Game.ready = true;
@@ -114,7 +112,7 @@
                 Game.mapsCache[data[CENUMS.NAME]] = data[CENUMS.ZONEDATA];
             });
 
-            Acorn.Net.on('startBattle', function (data) {
+            Acorn.Net.on(CENUMS.STARTBATTLE, function (data) {
                 console.log('received battle data');
                 Battle.battleData = data;
                 Game.setBattleChange(true);
@@ -133,7 +131,7 @@
                 Graphics.uiPrimitives2.alpha = 0;
             });
 
-            Acorn.Net.on('executeTurn', function (data) {
+            Acorn.Net.on(CENUMS.EXECUTETURN, function (data) {
                 //A battle turn has been processed
                 console.log("do turn stuff");
                 console.log(data);
@@ -142,7 +140,7 @@
                 }
             });
 
-            Acorn.Net.on('roundReady', function (data) {
+            Acorn.Net.on(CENUMS.ROUNDREADY, function (data) {
                 //A battle turn has been processed
                 console.log(data);
                 if (Game.battleActive){
@@ -153,39 +151,40 @@
                 }
             });
 
-            Acorn.Net.on('battleChat', function (data) {
+            Acorn.Net.on(CENUMS.BATTLECHAT, function (data) {
                 Battle.addChat(data.text);
             });
 
-            Acorn.Net.on('battleData', function (data) {
+            Acorn.Net.on(CENUMS.BATTLEDATA, function (data) {
                 if (data.run){
                     Battle.addChat("You got away!");
                     Battle.end = true;
                 }
             });
 
-            Acorn.Net.on('loggedIn', function (data) {
+            Acorn.Net.on(CENUMS.LOGGEDIN, function (data) {
                 Player.init(data);
                 document.body.removeChild(MainMenu.mainPanel);
                 MainMenu.showCharacterSelection(data);
             });
 
-            Acorn.Net.on('addPokemon', function (data) {
-                Party.setPokemon(data.slot,data.pokemon);
-                Game.resetPokemon(data.slot);
+            Acorn.Net.on(CENUMS.ADDPOKEMON, function (data) {
+                Party.setPokemon(data[CENUMS.SLOT],data[CENUMS.POKEMON]);
+                Game.resetPokemon(data[CENUMS.SLOT]);
             });
 
-            Acorn.Net.on('logout', function (data) {
+            Acorn.Net.on(CENUMS.LOGOUT, function (data) {
                 console.log(data);
                 Player.userData = null;
                 Acorn.changeState('mainmenu');
             });
 
-            Acorn.Net.on('say', function (data) {
-                if (data.id == mainObj.id){
-                    Player.setSayBubble(data.text);
+            Acorn.Net.on(CENUMS.SAY, function (data) {
+                //console.log(data);
+                if (data[CENUMS.ID] == Player.character.id){
+                    Player.setSayBubble(data[CENUMS.TEXT]);
                 }else{
-                    Game.pcs[data.id].setSayBubble(data.text);
+                    PCS.pcs[data[CENUMS.ID]].setSayBubble(data[CENUMS.TEXT]);
                 }
             });
 
@@ -193,44 +192,32 @@
 
             //Player Character Functions
 
-            Acorn.Net.on('addPC', function (data) {
-                console.log(data);
-                if (data.id == mainObj.id){return;}
-                var pc = new PlayerCharacter();
-                pc.init(data);
-                Game.pcs[data.id] = pc;
+            Acorn.Net.on(CENUMS.ADDPC, function (data) {
+                //console.log(data);
+                if (data[CENUMS.OWNER] == mainObj.id){return;}
+                PCS.addPC(data);
             });
 
-            Acorn.Net.on('removePC', function (data) {
-                console.log(data);
-                if (data.id == mainObj.id){return;}
-                try{
-                    Game.removePC(data);
-                }catch(e){
-                    console.log(e);
-                }
+            Acorn.Net.on(CENUMS.REMOVEPC, function (data) {
+                //console.log(data);
+                if (data[CENUMS.OWNER] == mainObj.id){return;}
+                PCS.removePC(data);
             });
 
             Acorn.Net.on(CENUMS.MOVEPC, function (data) {
-                if (data[CENUMS.ID] == mainObj.id){return;}
+                console.log(data);
+                if (data[CENUMS.ID] == Player.character.id){return;}
                 try{
-                    Game.pcs[data[CENUMS.ID]].moveQueue.push(data);
+                    PCS.pcs[data[CENUMS.ID]].moveQueue.push(data);
                 }catch(e){
                 }
             });
 
-            
-            Acorn.Net.on('debug', function (data) {
-                console.log('sever ERROR debug');
-                console.log(data);
-            });
-
-
-            Acorn.Net.on('ping', function (data) {
+            Acorn.Net.on(CENUMS.PING, function (data) {
                 Settings.stats.pingReturn();
             });
 
-            Acorn.Net.on('setLoginErrorText', function (data) {
+            Acorn.Net.on(CENUMS.SETLOGINERRORTEXT, function (data) {
                 var s = 'Login Error';
                 switch(data.text){
                     case 'userexists':

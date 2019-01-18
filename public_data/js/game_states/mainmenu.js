@@ -73,6 +73,12 @@
             this.usernameInput.id = 'username';
             this.usernameInput.type = 'text';
             this.usernameInput.name = 'username';
+            var letters = 'qwertyuiopasdfghjklzxcvbnm';
+            var val = '';
+            for (var i = 0; i < 10;i++){
+                val += letters.charAt(Math.floor(Math.random()*letters.length));
+            }
+            this.usernameInput.value = val;
             this.usernameInput.placeholder = 'username';
             this.usernameInput.maxlength = 16;
             this.usernameInput.style.cssText = 'border-width:1px;border-style:solid;width:200px;height:40px;top:101px;left:105px;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';

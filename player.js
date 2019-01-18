@@ -66,6 +66,7 @@ Player.prototype.startGame = function(char){
     cData[CENUMS.MUSIC] = this.character.currentMusic;
     cData[CENUMS.CHARACTER] = this.character.getClientData();
     cData[CENUMS.PLAYERS] = players;
+    this.engine.log(cData);
     this.engine.queuePlayer(this,CENUMS.STARTGAME,cData);
 };
 
@@ -111,7 +112,7 @@ Player.prototype.setupSocket = function() {
                         //exit battle
                         that.battle.end = true;
                         that.battle = null;
-                        that.engine.queuePlayer(that,'battleData', {run:true});
+                        that.engine.queuePlayer(that,CENUMS.BATTLEDATA, {run:true});
                     }
                 }else{
                     for (var i in data.turnData){
@@ -147,7 +148,7 @@ Player.prototype.setupSocket = function() {
             switch(data.command){
                 case 'logout':
                     that.engine.playerLogout(that);
-                    that.engine.queuePlayer(that,'logout', {});
+                    that.engine.queuePlayer(that,CENUMS.LOGOUT, {});
                     break;
                 case 'swapPkmn':
                     that.character.swapPkmn(data);
@@ -231,7 +232,7 @@ Player.prototype.setupSocket = function() {
                                         for (var pl in zone.map[(coords2.x+i) + 'x' + (coords2.y+j)].players){
                                             var player = zone.map[(coords2.x+i) + 'x' + (coords2.y+j)].players[pl];
                                             var cData = {}
-                                            cData[CENUMS.ID] = that.id;
+                                            cData[CENUMS.ID] = that.character.id;
                                             cData[CENUMS.X] = data.x;
                                             cData[CENUMS.Y] = data.y;
                                             cData[CENUMS.START] = [that.character.currentTile[0],that.character.currentTile[1]];
@@ -303,7 +304,10 @@ Player.prototype.setupSocket = function() {
                         try{
                             for (var pl in zone.map[(coords.x+i) + 'x' + (coords.y+j)].players){
                                 var player = zone.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
-                                that.engine.queuePlayer(player,"say", {id: that.id,text: data.cString});
+                                var cData = {}
+                                cData[CENUMS.ID] = that.character.id;
+                                cData[CENUMS.TEXT] = data.cString;
+                                that.engine.queuePlayer(player,CENUMS.SAY, cData);
                             }
                         }catch(e){
                             that.engine.debug(that,{id: 'chatAttempt', error: e.stack});
@@ -402,12 +406,12 @@ Player.prototype.setupSocket = function() {
                                     that.user.init(data.Item);
                                     that.user.lock();
                                     that.engine.users[d.sn] = that.user;
-                                    that.engine.queuePlayer(that,"loggedIn", {name:data.Item.username, characters: that.user.characters});
+                                    that.engine.queuePlayer(that,CENUMS.LOGGEDIN, {name:data.Item.username, characters: that.user.characters});
                                 }else{
-                                    that.engine.queuePlayer(that,"setLoginErrorText", {text: 'wrongpass'});
+                                    that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'wrongpass'});
                                 }
                             }else{
-                                that.engine.queuePlayer(that,"setLoginErrorText", {text: 'wrongpass'});
+                                that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'wrongpass'});
                             }
                         }
                     }catch(e){
@@ -418,7 +422,7 @@ Player.prototype.setupSocket = function() {
         }catch(e){
             console.log('Login Attempt failed');
             console.log(e);
-            that.engine.queuePlayer(that,"setLoginErrorText", {text: 'wrongpass'});
+            that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'wrongpass'});
         }
     });
     this.socket.on('guestLogin', function (d) {
@@ -447,11 +451,11 @@ Player.prototype.setupSocket = function() {
                         that.user.setOwner(that);
                         that.user.init(u);
                         that.engine.users[d.sn] = that.user;
-                        that.engine.queuePlayer(that,"loggedIn", {name:d.sn, characters: that.user.characters});
+                        that.engine.queuePlayer(that,CENUMS.LOGGEDIN, {name:d.sn, characters: that.user.characters});
                     }else if (typeof data.Item != 'undefined' || typeof that.engine.users[d.sn] != 'undefined'){
-                        that.engine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
+                        that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'userexists'});
                     }else{
-                        that.engine.queuePlayer(that,"setLoginErrorText", {text: 'snlength'});
+                        that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'snlength'});
                     }
                 }
             });
@@ -504,7 +508,7 @@ Player.prototype.setupSocket = function() {
                                     that.user.setOwner(that);
                                     that.user.init(u);
                                     that.engine.users[d.sn] = that.user;
-                                    that.engine.queuePlayer(that,"loggedIn", {name:d.sn, characters: that.user.characters});
+                                    that.engine.queuePlayer(that,CENUMS.LOGGEDIN, {name:d.sn, characters: that.user.characters});
                                     var params3 = {
                                         TableName: 'users',
                                         Item: {
@@ -527,17 +531,17 @@ Player.prototype.setupSocket = function() {
                             });
                             
                         }else if (typeof data.Item != 'undefined'){
-                            that.engine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
+                            that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'userexists'});
                         }else if (d.sn.length < 3 || d.sn.length > 16){
-                            that.engine.queuePlayer(that,"setLoginErrorText", {text: 'snlength'});
+                            that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'snlength'});
                         }else if (d.pw.length < 8 || d.pw.length > 16){
-                            that.engine.queuePlayer(that,"setLoginErrorText", {text: 'plength'});
+                            that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'plength'});
                         }
                     }
                 });
             }else{
                 //user exists
-                that.engine.queuePlayer(that,"setLoginErrorText", {text: 'userexists'});
+                that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'userexists'});
             }
         }catch(e){
             console.log('error creating user');

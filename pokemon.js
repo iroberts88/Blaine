@@ -315,15 +315,15 @@ Pokemon.prototype.getClientData = function(less = false){
         data[CENUMS.MOVES].push(this.moves[i].getClientData());
     }
     data[CENUMS.EXP] = this.exp;
-    data[CENUMS.CURRENTHP] = this.currentHP;
+    data[CENUMS.CURRENTHP] = this.currentHP.value;
     data[CENUMS.CURRENTPP] = this.currentPP;
     data[CENUMS.SLOT] = this.slot;
-    data[CENUMS.HPIV] = this.hpIV;
-    data[CENUMS.SPEEDIV] = this.speedIV;
-    data[CENUMS.ATTACKIV] = this.attackIV;
-    data[CENUMS.DEFENSEIV] = this.defenseIV;
-    data[CENUMS.SPECIALATTACKIV] = this.spattackIV;
-    data[CENUMS.SPECIALDEFENSEIV] = this.spdefenseIV;
+    data[CENUMS.HP] = this.hp.value;
+    data[CENUMS.SPEED] = this.speed.value;
+    data[CENUMS.ATTACK] = this.attack.value;
+    data[CENUMS.DEFENSE] = this.defense.value;
+    data[CENUMS.SPECIALATTACK] = this.spattack.value;
+    data[CENUMS.SPECIALDEFENSE] = this.spdefense.value;
     return data;
 }
 

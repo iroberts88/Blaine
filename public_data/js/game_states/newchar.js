@@ -34,6 +34,12 @@
             this.characterNameInput.id = 'charname';
             this.characterNameInput.type = 'text';
             this.characterNameInput.name = 'charname';
+            var letters = 'qwertyuiopasdfghjklzxcvbnm';
+            var val = '';
+            for (var i = 0; i < 10;i++){
+                val += letters.charAt(Math.floor(Math.random()*letters.length));
+            }
+            this.characterNameInput.value = val;
             this.characterNameInput.placeholder = 'name';
             this.characterNameInput.maxlength = 16;
             this.characterNameInput.style.cssText = 'border-width:1px;border-style:solid;width:200px;height:40px;top:10%;left:75%;background-color:#fff;font-weight:bold;font-size: 24px;font-family:Helvetica;position:absolute';

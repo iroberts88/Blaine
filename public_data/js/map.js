@@ -168,19 +168,9 @@ var getSectorXY = function(string){
                 });
                 newTile.sprite.position.x = this.pos.x*this.fullSectorSize + i*this.TILE_SIZE;
                 newTile.sprite.position.y = this.pos.y*this.fullSectorSize + j*this.TILE_SIZE;
-                if (data[CENUMS.TILES][i][j][CENUMS.RESOURCE] == '1x1'){
-                    Graphics.worldContainer2.addChild(newTile.sprite);
-                }else{
-                    Graphics.worldContainer.addChild(newTile.sprite);
-                }
                 if (newTile.overlaySprite){
                     newTile.overlaySprite.position.x = this.pos.x*this.fullSectorSize + i*this.TILE_SIZE;
                     newTile.overlaySprite.position.y = this.pos.y*this.fullSectorSize + j*this.TILE_SIZE;
-                    if (data[CENUMS.TILES][i][j][CENUMS.OVERLAYRESOURCE] == '1x1'){
-                        Graphics.worldContainer2.addChild(newTile.overlaySprite);
-                    }else{
-                        Graphics.worldContainer.addChild(newTile.overlaySprite);
-                    }
                 }
                 arr.push(newTile);
     		}
@@ -188,11 +178,32 @@ var getSectorXY = function(string){
     	}
     };
     Sector.prototype.setVisible = function(bool){
-        for (var i = 0; i < this.tiles.length;i++){
-            for (var j = 0; j < this.tiles[i].length;j++){
-                this.tiles[i][j].sprite.visible = bool;
-                if (this.tiles[i][j].overlaySprite){
-                    this.tiles[i][j].overlaySprite.visible = bool;
+        if (bool){
+            for (var i = 0; i < this.tiles.length;i++){
+                for (var j = 0; j < this.tiles[i].length;j++){
+                    if (this.tiles[i][j].sprite.parent){continue;}
+                    if (this.tiles[i][j].resource == '1x1'){
+                        Graphics.worldContainer2.addChild(this.tiles[i][j].sprite);
+                    }else{
+                        Graphics.worldContainer.addChild(this.tiles[i][j].sprite);
+                    }
+                    if (this.tiles[i][j].overlaySprite){
+                        if (this.tiles[i][j].overlaySprite.parent){continue;}
+                        if (this.tiles[i][j].overlayResource == '1x1'){
+                            Graphics.worldContainer2.addChild(this.tiles[i][j].overlaySprite);
+                        }else{
+                            Graphics.worldContainer.addChild(this.tiles[i][j].overlaySprite);
+                        }
+                    }
+                }
+            }
+        }else{
+            for (var i = 0; i < this.tiles.length;i++){
+                for (var j = 0; j < this.tiles[i].length;j++){
+                    this.tiles[i][j].sprite.parent.removeChild(this.tiles[i][j].sprite)
+                    if (this.tiles[i][j].overlaySprite){
+                        this.tiles[i][j].overlaySprite.parent.removeChild(this.tiles[i][j].overlaySprite)
+                    }
                 }
             }
         }
@@ -221,10 +232,8 @@ var getSectorXY = function(string){
                 this.overlaySprite = Graphics.getSprite(data.overlayResource); //tile sprite
                 this.overlaySprite.scale.x = mainObj.GAME_SCALE;
                 this.overlaySprite.scale.y = mainObj.GAME_SCALE;
-                this.overlaySprite.visible = false;
             }
             this.triggers = (typeof data.triggers == 'undefined')  ? [] : data.triggers;
-            this.sprite.visible = false;
         }catch(e){
             console.log("failed to init Tile");
             console.log(e);

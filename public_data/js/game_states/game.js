@@ -9,9 +9,6 @@
 
         ready: false,
 
-        pcs: {},
-        npcs: {},
-
         screenChange: false,
         screenTicker: 0,
 
@@ -193,9 +190,8 @@
                 this.clearUI();
             }
             //update each PC
-            for (var i in this.pcs){
-                this.pcs[i].update(deltaTime);
-            }
+            PCS.update(deltaTime);
+            NPCS.update(deltaTime);
             if (this.currentSelectedItem && this.itemUITooltip == null){
                /* //INIT itemUITooltip
                 this.itemUITooltip = new Tooltip();
@@ -363,38 +359,14 @@
                 Game.screenTicker = 0;
                 Graphics.uiPrimitives2.clear();
                 for (var i = 0; i < Game.newMapData[CENUMS.PLAYERS].length;i++){
-                    if (Game.newMapData[CENUMS.PLAYERS][i].id != mainObj.id){
-                        var pc = new PlayerCharacter();
-                        pc.init(Game.newMapData[CENUMS.PLAYERS][i]);
-                        Game.pcs[Game.newMapData[CENUMS.PLAYERS][i].id] = pc;
+                    if (Game.newMapData[CENUMS.PLAYERS][i][CENUMS.OWNER] != mainObj.id){
+                        PCS.addPC(Game.newMapData[CENUMS.PLAYERS][i]);
                     }
                 }
                 Game.newMapData = null;
                 Game.requestMade = false;
             }catch(e){
                 console.log(e);
-            }
-        },
-
-        removePC: function(data){
-            try{
-                var pc = Game.pcs[data.id];
-                pc.remove = true;
-            }catch(e){
-                //TODO remove trycatch
-            }
-        },
-
-        _removePC: function(data){
-            try{
-                var pc = Game.pcs[data.id];
-                Graphics.charContainer1.removeChild(pc.sprite);
-                Graphics.charContainer2.removeChild(pc.sprite2);
-                Graphics.charContainer2.removeChild(pc.nameTag);
-                Graphics.charContainer2.removeChild(pc.playerMask);
-                delete Game.pcs[data.id];
-            }catch(e){
-                //TODO remove trycatch
             }
         },
 
@@ -918,7 +890,7 @@
             spatk.position.x = c.pokeSprite.position.x;
             spatk.position.y = def.position.y + def.height + 5;
             sprites.addChild(spatk);
-            c.spattack = new PIXI.Text(pokemon.spattack, AcornSetup.style2);
+            c.spattack = new PIXI.Text(pokemon.specialAttack, AcornSetup.style2);
             c.spattack.anchor.x = 1.0;
             c.spattack.position.x = c.pokeSprite.position.x + xSize/3;
             c.spattack.position.y = def.position.y + def.height + 5;
@@ -928,7 +900,7 @@
             spdef.position.x = c.pokeSprite.position.x;
             spdef.position.y = spatk.position.y + spatk.height + 5;
             sprites.addChild(spdef);
-            c.spdefense = new PIXI.Text(pokemon.spdefense, AcornSetup.style2);
+            c.spdefense = new PIXI.Text(pokemon.specialDefense, AcornSetup.style2);
             c.spdefense.anchor.x = 1.0;
             c.spdefense.position.x = c.pokeSprite.position.x + xSize/3;
             c.spdefense.position.y = spatk.position.y + spatk.height + 5;
@@ -965,9 +937,9 @@
                 gfx.drawRoundedRect(x,y,mSizeX,mSizeY,5);
                 gfx.endFill();
 
-                var name = new PIXI.Text(move.name,AcornSetup.style2);
-                var pp = new PIXI.Text('PP: ' + pokemon.currentPP[i] + '/' + move.pp,AcornSetup.style2);
-                var type = new PIXI.Text(this.typeList[move.type],AcornSetup.style2);
+                var name = new PIXI.Text(move[CENUMS.NAME],AcornSetup.style2);
+                var pp = new PIXI.Text('PP: ' + pokemon.currentPP[i] + '/' + move[CENUMS.PP],AcornSetup.style2);
+                var type = new PIXI.Text(this.typeList[move[CENUMS.TYPE]],AcornSetup.style2);
                 name.anchor.x = 0.5;
                 pp.anchor.x = 0.5;
                 type.anchor.x = 0.5;

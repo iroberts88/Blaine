@@ -118,22 +118,8 @@ Zone.prototype.changeSector = function(p,arr,id,tile){
             if (addList[i] == null){continue;}
             for (var pl in addList[i].players){
                 var player = addList[i].players[pl];
-                this.engine.queuePlayer(player,'addPC',{
-                    id: p.id,
-                    name:p.user.userData.username,
-                    user: p.user.userData.username,
-                    owSprite: p.character.owSprite,
-                    tile: [tile.x,tile.y],
-                    sector: id
-                });
-                this.engine.queuePlayer(p,'addPC',{
-                    id: player.id,
-                    user: player.user.userData.username,
-                    name:player.user.userData.username,
-                    owSprite: player.character.owSprite,
-                    tile: player.character.currentTile,
-                    sector: player.character.currentSector
-                });
+                this.engine.queuePlayer(player,CENUMS.ADDPC,p.character.getClientData(less));
+                this.engine.queuePlayer(p,CENUMS.ADDPC,player.character.getClientData(less));
             }
         }catch(e){
             console.log(e);
@@ -144,8 +130,12 @@ Zone.prototype.changeSector = function(p,arr,id,tile){
             if (removeList[i] == null){continue;}
             for (var pl in removeList[i].players){
                 var player = removeList[i].players[pl];
-                this.engine.queuePlayer(player,'removePC',{id: p.id})
-                this.engine.queuePlayer(p,'removePC',{id: player.id})
+                var cData = {}
+                cData[CENUMS.ID] = p.id;
+                this.engine.queuePlayer(player,CENUMS.REMOVEPC,cData);
+                var cData = {}
+                cData[CENUMS.ID] = player.id;
+                this.engine.queuePlayer(p,CENUMS.REMOVEPC,cData);
             }
         }catch(e){
             console.log(e);
@@ -169,14 +159,7 @@ Zone.prototype.getPlayers = function(sector){
             }
             for (var pl in this.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players){
                 var player = this.map[(sector.sectorX+i) + 'x' + (sector.sectorY+j)].players[pl];
-                players.push({
-                    id: player.id,
-                    user: player.user.userData.username,
-                    name:player.user.userData.username,
-                    owSprite: player.character.owSprite,
-                    tile: player.character.currentTile,
-                    sector: player.character.currentSector
-                })
+                players.push(player.character.getClientData(true))
             }
         }
     }
@@ -196,14 +179,7 @@ Zone.prototype.addPlayer = function(p){
             for (var pl in this.map[(coords.x+i) + 'x' + (coords.y+j)].players){
                 var player = this.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
                 if (player == p){continue;}
-                this.engine.queuePlayer(player,'addPC',{
-                    id: p.id,
-                    name:p.user.userData.username,
-                    user: p.user.userData.username,
-                    owSprite: p.character.owSprite,
-                    tile: p.character.currentTile,
-                    sector: p.character.currentSector
-                });
+                this.engine.queuePlayer(player,CENUMS.ADDPC,p.character.getClientData(true));
             }
         }
     }
@@ -221,7 +197,9 @@ Zone.prototype.removePlayer = function(p){
             }
             for (var pl in this.map[(coords.x+i) + 'x' + (coords.y+j)].players){
                 var player = this.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
-                this.engine.queuePlayer(player,'removePC',{id: p.id})
+                var cData = {}
+                cData[CENUMS.ID] = p.id;
+                this.engine.queuePlayer(player,CENUMS.REMOVEPC,cData)
             }
         }
     }

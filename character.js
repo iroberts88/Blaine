@@ -2,6 +2,10 @@ var Pokemon = require('./pokemon.js').Pokemon;
 var Inventory = require('./inventory.js').Inventory;
 var PokemonStorage = require('./pokemonstorage.js').PokemonStorage;
 
+
+CENUMS = require('./enums.js').Enums; //init client enums
+CENUMS.init();
+
 var Character = function(){
     this.MAX_POKEMON = 6;
 
@@ -195,7 +199,7 @@ Character.prototype.addPokemon = function(p,initBool){
         p.slot = this.party.length;
         info.partySlot = p.slot;
         if (typeof initBool == 'undefined'){
-            this.owner.engine.queuePlayer(this.owner,'addPokemon',{
+            this.owner.engine.queuePlayer(this.owner,CENUMS.ADDPOKEMON,{
                 'pokemon': p.getClientData(),
                 'slot': this.party.length
             });
@@ -220,26 +224,35 @@ Character.prototype.getDBObj = function(){
     return dbObj;
 };
 
-Character.prototype.getClientData = function(){
+Character.prototype.getClientData = function(less = false){
+
     //create object to send to the client
-    var data = {}
-    data.owner = this.owner.id;
-    data.name = this.name;
-    data.user = this.owner.user.userData.username;
-    data.id = this.id
-    data.money = this.money;
-    data.sector = this.currentSector;
-    data.tile = this.currentTile;
-    data.owSprite = this.owSprite;
-    
-    data.inventory = this.inventory.getClientData();
+    var data = this.getLessClientData();
+    if (less){
+        return data;
+    }
+
+    data[CENUMS.MONEY] = this.money;
+    data[CENUMS.INVENTORY] = this.inventory.getClientData();
     //badges
     //pokemon
-    data.pokemon = [];
+    data[CENUMS.POKEMON] = [];
     for (var i = 0;i< this.party.length;i++){
-        data.pokemon.push(this.party[i].getClientData());
+        data[CENUMS.POKEMON].push(this.party[i].getClientData());
     }
     //pokedex ETCCCC
+    return data;
+}
+Character.prototype.getLessClientData = function(){
+    //create object to send to the client
+    var data = {}
+    data[CENUMS.OWNER] = this.owner.id;
+    data[CENUMS.NAME] = this.name;
+    data[CENUMS.USER] = this.owner.user.userData.username;
+    data[CENUMS.ID] = this.id
+    data[CENUMS.SECTOR] = this.currentSector;
+    data[CENUMS.TILE] = this.currentTile;
+    data[CENUMS.RESOURCE] = this.owSprite;
     return data;
 }
 

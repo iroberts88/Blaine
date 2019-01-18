@@ -24,12 +24,12 @@
     }
 
     PlayerCharacter.prototype.init = function(data){
-        this.id = data.id;
-		this.name = data.name;
-        this.user = data.user;
-		this.sector = data.sector;
-		this.tile = data.tile;
-        this.owTexture = data.owSprite;
+        this.id = data[CENUMS.ID];
+		this.name = data[CENUMS.NAME];
+        this.user = data[CENUMS.USER];
+		this.sector = data[CENUMS.SECTOR];
+		this.tile = data[CENUMS.TILE];
+        this.owTexture = data[CENUMS.RESOURCE];
         this.sprite = Graphics.getSprite('ow_' + this.owTexture + '_d1');
         this.sprite2 = Graphics.getSprite('ow_' + this.owTexture + '_d1');
         this.sprite.scale.x = mainObj.GAME_SCALE;
@@ -55,7 +55,7 @@
         this.playerMask.position.y = this.sprite.position.y - mainObj.TILE_SIZE/2;
         this.sprite2.mask = this.playerMask;
 
-        this.nameTag = new PIXI.Text(data.user.toUpperCase(),AcornSetup.nameStyle);
+        this.nameTag = new PIXI.Text(this.user.toUpperCase(),AcornSetup.nameStyle);
         this.nameTag.anchor.x = 0.5;
         this.nameTag.anchor.y = 0.5;
         this.nameTag.position.x = (mainObj.TILE_SIZE/2)+Game.map[this.sector].fullSectorSize*coords.x + mainObj.TILE_SIZE*this.tile[0];
@@ -117,7 +117,7 @@
         this.animate(dt);
 
         if (this.remove && this.moveQueue.length == 0){
-            Game._removePC({id:this.id});
+            PCS._removePC({id:this.id});
         }
         if (this.moving){
             this.moveTicker += dt;

@@ -2,9 +2,14 @@
 
     CENUMS = {
         ACCURACY: 'accuracy',
+        ADDPC: 'adpc',
+        ADDPOKEMON: 'apk',
         ATTACK: 'atk',
         ATTACKEV: 'ate',
         ATTACKIV: 'ati',
+
+        BATTLECHAT: 'bcha',
+        BATTLEDATA: 'bda',
 
         CHANGEMAP: 'chm',
         CHARACTER: 'cha',
@@ -18,6 +23,7 @@
         DESCRIPTION: 'descrp',
 
         EVASION: 'evasss',
+        EXECUTETURN: 'ext',
         EXP: 'ex',
 
         HP: 'aychpee',
@@ -26,13 +32,17 @@
         HPPERCENT: 'hpp',
 
         ID: 'i',
+        INVENTORY: 'inv',
 
         LEVEL: 'lev',
+        LOGGEDIN: 'lgi',
+        LOGOUT: 'log',
 
         MAP: 'm',
         MAPID: 'mid',
         MAPNAME: 'mna',
         MAPDATA: 'mda',
+        MONEY: 'mon',
         MOVEPC: 'mpc',
         MOVES: 'mov',
         MOVEID: 'moi',
@@ -44,21 +54,28 @@
 
         OPEN: 'op',
         OVERLAYRESOURCE: 'ov',
+        OWNER: 'own',
 
+        PING: 'png',
         PLAYERS: 'pla',
+        POKEMON: 'poke',
         POWER: 'pwerrr',
         PP: 'pp',
 
+        REMOVEPC: 'rmpc',
         REQUESTMAPDATA: 'req',
         RESOURCE: 're',
+        ROUNDREADY: 'rrd',
 
+        SAY: 'sayee',
         SECTOR: 'sec',
         SECTORARRAY: 'sect',
         SERVERUPDATE: 'ser',
+        SETLOGINERRORTEXT: 'slgert',
         SETUNITSTAT: 'setu',
         SLOT: 'slo',
         SPECIALATTACK: 'spea',
-        SPECIALATTACKEV 'spev',
+        SPECIALATTACKEV: 'spev',
         SPECIALATTACKIV: 'speiv',
         SPECIALDEFENSE: 'sped',
         SPECIALDEFENSEEV: 'spedev',
@@ -68,16 +85,21 @@
         SPEEDIV: 'spi',
         STAT: 'statttt',
         START: 'sta',
+        STARTBATTLE: 'stb',
         STARTGAME: 'stg',
 
         TARGETTYPE: 'tartyp',
+        TEXT: 'tex',
         TILE: 'til',
         TILES: 'tis',
         TRIGGERS: 'tri',
         TYPE: 'ty[ee',
         TYPES: 'typ',
 
-        VALUE: 'value',
+        USER: 'use',
+
+        VALUE: 'val',
+
         WILD: 'wil',
 
         X: 'x',

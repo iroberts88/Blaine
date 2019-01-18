@@ -16,9 +16,7 @@ TriggerEnums = {
 
 		changeMap: function(data){
 			Game.screenChange = true;
-			for (var i in Game.pcs){
-				Game.removePC(i);
-			}
+			PCS.clearAll();
 			if (!Game.requestMade && typeof Game.mapsCache[data.map] == 'undefined'){
 				var sData = {};
                 Acorn.Net.socket_.emit('playerUpdate',{command: 'requestMapData',name: data.map});
