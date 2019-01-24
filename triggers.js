@@ -17,7 +17,6 @@ var Triggers = function(){
 
 Triggers.prototype.changeMap = function(character,data){
 	try{
-        console.log(data);
         //check current Tile
         var zone = character.engine.zones[character.currentMap]
         var tile = zone.map[character.currentSector].tiles[character.currentTile[0]][character.currentTile[1]];

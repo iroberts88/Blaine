@@ -38,15 +38,15 @@ var Character = function(){
     this.currentMusic = null;
 
     this.currentTeam = null;
-    this.activePokemon = []; //a list of the currently active pokemon for use in a battle
+    this.activePokemon = {}; //a list of the currently active pokemon for use in a battle
 
     this.speed = 0.25;
 }
 
 Character.prototype.init = function(data) {
     //Set up all stats and attributes
-    this.name = data.name;
-    this.slot = data.slot;
+    this.name = data[CENUMS.NAME];
+    this.slot = data[CENUMS.SLOT];
     this.owner = data.owner;
     this.engine = data.owner.engine
     this.id = data.id;
@@ -121,8 +121,8 @@ Character.prototype.init = function(data) {
         'youngster2': 'youngster'
     };
 
-    if (spriteOptions[data.sprite]){
-        this.owSprite = spriteOptions[data.sprite];
+    if (spriteOptions[data[CENUMS.RESOURCE]]){
+        this.owSprite = spriteOptions[data[CENUMS.RESOURCE]];
     }else{
         this.owSprite = 'ash';
     }
@@ -132,11 +132,12 @@ Character.prototype.init = function(data) {
     this.pokedex = data.pokedex;
     //init pokemon
     this.party = [];
-    var pkmn = [1,4,7];
+    var pkmn = [1,4,7,10,13];
     for (var i = 0; i < pkmn.length;i++){
         var newPoke = new Pokemon();
         newPoke.init(this.owner.engine.pokemon[pkmn[i]],{
             character: this,
+            engine: this.engine,
             nickname: '',
             id: this.owner.engine.getId()
         })
@@ -154,14 +155,19 @@ Character.prototype.init = function(data) {
     }
 };
 
-Character.prototype.initBattle = function(battle,n,team){
-    this.activePokemon = [];
+Character.prototype.initBattle = function(battle,wild,team){
+    this.activePokemon = {};
     this.currentTeam = team;
+    var n = 3;
+    if (wild){n = 1}
     for (var i = 0; i < n;i++){
+        if (typeof this.party[i] == 'undefined'){
+            continue;
+        }
         if (this.party[i].currentHP <= 0){
             continue;
         }
-        this.activePokemon.push(this.party[i]);
+        this.activePokemon[this.party[i].id] = this.party[i];
         battle.activePokemon[this.party[i].id] = this.party[i];
         if (team == 1){
             battle.team1Pokemon.push(this.party[i]);
@@ -172,20 +178,20 @@ Character.prototype.initBattle = function(battle,n,team){
 };
 
 Character.prototype.swapPkmn = function(data){
-    if (typeof data.first == 'number' && typeof data.second == 'number'){
-        if (data.first < 1 || data.second < 1){
+    if (typeof data[CENUMS.POKEMON1] == 'number' && typeof data[CENUMS.POKEMON2] == 'number'){
+        if (data[CENUMS.POKEMON1] < 1 || data[CENUMS.POKEMON2] < 1){
             //TODO THROW ERROR
             console.log("error - cant be less than 1");
             return;
         }
-        if (data.first > this.party.length || data.second > this.party.length){
+        if (data[CENUMS.POKEMON1] > this.party.length || data[CENUMS.POKEMON2] > this.party.length){
             //TODO THROW ERROR
             console.log("error - cant be > party length");
             return;
         }
-        var temp = this.party[data.first-1];
-        this.party[data.first-1] = this.party[data.second-1];
-        this.party[data.second-1] = temp;
+        var temp = this.party[data[CENUMS.POKEMON1]-1];
+        this.party[data[CENUMS.POKEMON1]-1] = this.party[data[CENUMS.POKEMON2]-1];
+        this.party[data[CENUMS.POKEMON2]-1] = temp;
     }
 };
 Character.prototype.addPokemon = function(p,initBool){
@@ -199,10 +205,10 @@ Character.prototype.addPokemon = function(p,initBool){
         p.slot = this.party.length;
         info.partySlot = p.slot;
         if (typeof initBool == 'undefined'){
-            this.owner.engine.queuePlayer(this.owner,CENUMS.ADDPOKEMON,{
-                'pokemon': p.getClientData(),
-                'slot': this.party.length
-            });
+            var cData = {};
+            cData[CENUMS.POKEMON] = p.getClientData();
+            cData[CENUMS.SLOT] = this.party.length;
+            this.owner.engine.queuePlayer(this.owner,CENUMS.ADDPOKEMON,cData);
         }
         //do pokedex stuff
         if (!this.pokedex[p.number]){

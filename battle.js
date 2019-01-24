@@ -21,193 +21,13 @@ var Battle = function(ge) {
 
     // 1v1      -   2 players   1-6 pokemon each, 1 active at a time, 1 from each player 
     // 2v2      -   2 players   1-6 pokemon each, 2 active at a time, 2 from each player 
-    // 3v3      -   2 players   1-6 pokemon each, 3 active at a time, 3 from each player 
-    // 4v4      -   2 players   1-6 pokemon each, 4 active at a time, 4 from each player
+    // 3v3      -   2 players   1-6 pokemon each, 3 active at a time, 3 from each player
 
     // team2v2  -   4 players   1-6 pokemon each, 2 active at a time, 1 from each player
     // team3v3  -   6 players   1-6 pokemon each, 3 active at a time, 1 from each player
     // team4v4  -   8 players   1-6 pokemon each, 4 active at a time, 1 from each player
 
     // duoteam4v4   4 players   1-6 pokemon each, 4 active at a time, 2 from each player
-
-    this.moveEffectiveness = {
-        1: { //normal
-            13: 0.5,
-            14: 0,
-            17: 0.5
-        },
-        2: { //fire
-            2: 0.5,
-            3: 0.5,
-            5: 2,
-            6: 2,
-            12:2,
-            13:0.5,
-            15:0.5
-        },
-        3: { //water
-            2:2,
-            3:0.5,
-            5:0.5,
-            9:2,
-            13:2,
-            15:0.5
-        },
-        4: { //electric
-            3:2,
-            4:0.5,
-            5:0.5,
-            9:0,
-            10:2,
-            15:0.5
-        },
-        5: { //grass
-            2:0.5,
-            3:2,
-            5:0.5,
-            8:0.5,
-            9:2,
-            10:0.5,
-            12:0.5,
-            13:2,
-            15:0.5,
-            17:0.5
-        },
-        6: { //ice
-            2:0.5,
-            3:0.5,
-            5:2,
-            6:0.5,
-            9:2,
-            10:2,
-            15:2,
-            17:0.5
-        },
-        7: { //fighting
-            1:2,
-            6:2,
-            8:0.5,
-            10:0.5,
-            11:0.5,
-            12:0.5,
-            13:2,
-            14:0,
-            16:2,
-            17:2,
-            18:0.5
-        },
-        8: { //poison
-            5:2,
-            8:0.5,
-            9:0.5,
-            13:0.5,
-            14:0.5,
-            17:0,
-            18:2
-        },
-        9: { //ground
-            2:2,
-            4:2,
-            5:0.5,
-            8:2,
-            9:0.5,
-            10:0,
-            12:0.5,
-            13:2,
-            17:0.5
-        },
-        10: { //flying
-            4:0.5,
-            5:2,
-            7:2,
-            12:2,
-            13:0.5,
-            17:2,
-        },
-        11: { //psychic
-            7:2,
-            8:2,
-            11:0.5,
-            16:0,
-            17:0.5
-        },
-        12: { //bug
-            2:0.5,
-            5:2,
-            7:0.5,
-            8:0.5,
-            10:0.5,
-            11:2,
-            14:0.5,
-            16:2,
-            17:0.5,
-            18:0.5
-        },
-        13: { //rock
-            2:2,
-            6:2,
-            7:0.5,
-            9:0.5,
-            10:2,
-            12:2,
-            17:0.5
-        },
-        14: { //ghost
-            1:0,
-            11:2,
-            14:2,
-            16:0.5
-        },
-        15: { //dragon
-            15:2,
-            15:0.5,
-            18:0
-        },
-        16: { //dark
-            7:0.5,
-            11:2,
-            14:2,
-            16:0.5,
-            18:0.5
-        },
-        17: { //steel
-            2:0.5,
-            3:0.5,
-            4:0.5,
-            6:2,
-            13:2,
-            17:0.5,
-            18:2
-        },
-        18: { //fairy
-            2:0.5,
-            7:2,
-            8:0.5,
-            15:2,
-            16:2,
-            17:0.5
-        },
-    }
-    this.ActivePkmn = {
-        '1v1': 1,
-        '2v2': 2,
-        'team2v2': 1,
-        '3v3': 3,
-        'team3v3': 1,
-        '4v4': 4,
-        'team4v4': 1
-    };
-
-    this.TeamLengths = {
-        '1v1': 1,
-        '2v2': 1,
-        'team2v2': 2,
-        '3v3': 1,
-        'team3v3': 3,
-        '4v4': 1,
-        'team4v4': 4
-    };
-
 
     //Battle Types
     this.type = null;
@@ -222,11 +42,6 @@ var Battle = function(ge) {
     //valid turn data added here...
     this.turnData = {};
 
-    this.round = 1;
-    this.roundTime = 30.0; //round time in seconds
-    this.roundActive = false;
-    this.roundTicker = 0;
-    this.readyForNextRound = {};
     this.wild = null;
 }
 
@@ -234,61 +49,67 @@ Battle.prototype.init = function (data) {
     //initialize based on battle type
 
     //type defaults to 1v1
-    this.type = (typeof data.type == 'undefined') ? '1v1' : data.type;
-
-    this.wild = (typeof data.wild == 'undefined') ? true : data.wild;
-    //team 1 and 2 must be the same length AND of the player.character or trainer type
-    if (!(data.team1.length == this.TeamLengths[data.type] && data.team2.length == this.TeamLengths[data.type])){
-        console.log('Battle type "' + this.type + '" must have a team length of ' + this.TeamLengths[data.type] + '.');
-        return false;
-    }
+    this.type = data.type;
+    this.wild = data.type == 'wild';
+    
     for (var i = 0; i < data.team1.length;i++){
         if (data.team1[i] instanceof Character || data.team1[i] instanceof Trainer){
-            data.team1[i].initBattle(this,this.TeamLengths[data.type],1);
+            data.team1[i].initBattle(this,this.wild,1);
             this.team1.push(data.team1[i]);
             if (data.team1[i] instanceof Character){
                 this.players[data.team1[i].owner.id] = data.team1[i].owner;
-                this.readyForNextRound[data.team1[i].owner.id] = false;
             }
         }else{
-            console.log("Teams must consist of Characters or Trainers");
-            return false;
+            this.team1.push(data.team1[i]);
+            this.team1Pokemon.push(data.team1[i]);
+            this.activePokemon[data.team1[i].id] = data.team1[i];
         }
     }
     for (var i = 0; i < data.team2.length;i++){
         if (data.team2[i] instanceof Character || data.team2[i] instanceof Trainer){
-            data.team2[i].initBattle(this,this.TeamLengths[data.type],2);
+            data.team2[i].initBattle(this,this.wild,2);
             this.team2.push(data.team2[i]);
             if (data.team2[i] instanceof Character){
                 this.players[data.team2[i].owner.id] = data.team2[i].owner;
-                this.readyForNextRound[data.team2[i].owner.id] = false;
             }
         }else{
-            console.log("Teams must consist of Characters or Trainers");
-            return false;
+            this.team2.push(data.team2[i]);
+            this.team2Pokemon.push(data.team2[i]);
+            this.activePokemon[data.team2[i].id] = data.team2[i];
         }
     }
     //Battle successfully initialized
     //send down battle info to each player
     var t1 = [];
     var t2 = [];
+    var t1p = [];
+    var t2p = [];
+    for (var i = 0; i < this.team1Pokemon.length;i++){
+        t1p.push(this.team1Pokemon[i].getLessClientData());
+    }
+    for (var i = 0; i < this.team2Pokemon.length;i++){
+        t2p.push(this.team2Pokemon[i].getLessClientData());
+    }
     for (var i = 0; i < this.team1.length;i++){
-        for (var j = 0; j < this.team1[i].activePokemon.length;j++){
-            t1.push(this.team1[i].activePokemon[j].getLessClientData());
-        }
+        t1.push(this.team1[i].getLessClientData());
     }
     for (var i = 0; i < this.team2.length;i++){
-        for (var j = 0; j < this.team2[i].activePokemon.length;j++){
-            t2.push(this.team2[i].activePokemon[j].getLessClientData());
-        }
+        t2.push(this.team2[i].getLessClientData());
     }
+    var cData = {}
+    cData[CENUMS.WILD] = this.wild;
+    cData[CENUMS.TEAM1] = t1;
+    cData[CENUMS.TEAM2] = t2;
+    cData[CENUMS.TEAM1POKEMON] = t1p;
+    cData[CENUMS.TEAM2POKEMON] = t2p;
     for (var i in this.players){
-        this.engine.queuePlayer(this.players[i],CENUMS.STARTBATTLE, {wild: this.wild,type: this.type,team1: t1,team2: t2});
+        this.engine.queuePlayer(this.players[i],CENUMS.STARTBATTLE, cData);
     }
     return true;
 };
 
 Battle.prototype.tick = function(deltaTime){
+    /*
     if (this.roundActive){
         this.roundTicker += deltaTime;
         //TODO time limits for pvp battles
@@ -305,7 +126,7 @@ Battle.prototype.tick = function(deltaTime){
             this.engine.queuePlayer(this.players[i],CENUMS.ROUNDREADY, {round: this.round,time: this.roundTime});
         }
         this.roundActive = true;
-    }
+    }*/
 };
 
 Battle.prototype.cleanUp = function(){

@@ -19,7 +19,9 @@ TriggerEnums = {
 			PCS.clearAll();
 			if (!Game.requestMade && typeof Game.mapsCache[data.map] == 'undefined'){
 				var sData = {};
-                Acorn.Net.socket_.emit('playerUpdate',{command: 'requestMapData',name: data.map});
+				sData[CENUMS.COMMAND] = CENUMS.REQUESTMAPDATA;
+				sData[CENUMS.NAME] = data.map;
+                Acorn.Net.socket_.emit(CENUMS.PLAYERUPDATE,sData);
                 Game.requestMade = true;
             }
 			return true;

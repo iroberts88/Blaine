@@ -25,7 +25,7 @@
 
             //The player's currently active pokemon
             this.myActivePokemon = {};
-            this.activePokemonIndex = [];
+            this.activePokemon = {};
             this.currentPokemonIndex = 0;
 
             this.pokemonButton = null;
@@ -49,6 +49,7 @@
 
             this.end = false;
             this.endTicker = 0;
+            this.ticker = 0;
 
             Graphics.uiPrimitives1.clear();
             Graphics.uiPrimitives1.lineStyle(3,0x000000,1);
@@ -117,53 +118,62 @@
             this.targetSelectText.position.x = Graphics.width/4 + (Graphics.width*0.75/2);
             this.targetSelectText.position.y = Graphics.height*0.75 + Graphics.height/8;
             //get which team you're on
-            for (var i = 0; i < this.battleData.team1.length;i++){
-                this.pokemonContainer[this.battleData.team1[i].id] = this.battleData.team1[i];
+            var myT = null;
+            var oT = null;
+            for (var i = 0; i < this.battleData[CENUMS.TEAM1POKEMON].length;i++){
+                var pokemon = new Pokemon();
+                pokemon.init(this.battleData[CENUMS.TEAM1POKEMON][i]);
+                this.pokemonContainer[pokemon.id] = pokemon;
+                this.pokemonContainer[pokemon.id].n = i;
                 for (var j in Party.pokemon){
-                    if (this.battleData.team1[i].id == Party.pokemon[j].id){
-                        this.myTeam = 1;
-                        this.otherTeam = 2;
+                    if (pokemon.id == Party.pokemon[j].id){
+                        myT = this.battleData[CENUMS.TEAM1POKEMON];
+                        oT = this.battleData[CENUMS.TEAM2POKEMON];
                         this.myActivePokemon[Party.pokemon[j].id] = Party.pokemon[j];
-                        this.activePokemonIndex.push(Party.pokemon[j].id);
                     }
                 }
             }
-            for (var i = 0; i < this.battleData.team2.length;i++){
-                this.pokemonContainer[this.battleData.team2[i].id] = this.battleData.team2[i];
+            for (var i = 0; i < this.battleData[CENUMS.TEAM2POKEMON].length;i++){
+                var pokemon = new Pokemon();
+                pokemon.init(this.battleData[CENUMS.TEAM2POKEMON][i]);
+                this.pokemonContainer[pokemon.id] = pokemon;
+                this.pokemonContainer[pokemon.id].n = i;
                 for (var j in Party.pokemon){
-                    if (this.battleData.team2[i].id == Party.pokemon[j].id){
-                        this.myTeam = 2;
-                        this.otherTeam = 1;
+                    if (pokemon.id == Party.pokemon[j].id){
+                        myT = this.battleData[CENUMS.TEAM2POKEMON];
+                        oT = this.battleData[CENUMS.TEAM1POKEMON];
                         this.myActivePokemon[Party.pokemon[j].id] = Party.pokemon[j];
-                        this.activePokemonIndex.push(Party.pokemon[j].id);
                     }
                 }
             }
-            if (this.battleData.wild){
+            this.myTeam = {};
+            this.otherTeam = {};
+            for (var i = 0; i < myT.length;i++){
+                this.myTeam[myT[i][CENUMS.ID]] = this.pokemonContainer[myT[i][CENUMS.ID]];
+            }
+            for (var i = 0; i < oT.length;i++){
+                this.otherTeam[oT[i][CENUMS.ID]] = this.pokemonContainer[oT[i][CENUMS.ID]];
+            }
+
+            //TODO if myTeam or otherteam = null, you are a spectator
+
+            for (var i in this.myTeam){
+                this.pokemonSpriteContainer[this.myTeam[i].id] = this.getPokemonData(this.pokemonContainer[this.myTeam[i].id],i,this.myTeam.length,1)
+            }
+            for (var i in this.otherTeam){
+                this.pokemonSpriteContainer[this.otherTeam[i].id] =  this.getPokemonData(this.pokemonContainer[this.otherTeam[i].id],i,this.otherTeam.length,2)
+            }
+            if (this.battleData[CENUMS.WILD]){
                 this.wild = true;
                 this.wildStart = true;
             }else{
                 this.wild = false;
             }
-            switch(this.battleData.type){
-                case '1v1':
-                    if (this.wild){
-                        var pkmn = this.battleData['team' + this.otherTeam][0];
-                        var data = this.getPokemonData(pkmn,2,1);
-                        data.sprite.pIndex = 0;
-                        data.tPos = data.sprite.position.x;
-                        data.sprite.position.x = Graphics.width/4 + data.sprite.width/2;
-                        data.mDistance = data.tPos - data.sprite.position.x;
-                        data.ticker = 0;
-                        data.sprite.tint = 0x000000;
-                        Graphics.uiContainer2.addChild(data.sprite);
-                        this.pokemonSpriteContainer[pkmn.id] = data;
-                    }
-                    break;
-            }
+
         },
         
         update: function(dt){ 
+            
             if (this.wildStart){
                 //wild pokemon start battle cutscene
                 this.updateWildStart(dt);
@@ -172,6 +182,7 @@
                 //sending out your pokemon cutscene
                 this.updateGopkmnStart(dt);
             }
+            /*
             if (this.end){
                 this.endTicker += dt;
                 if (this.endTicker >= 3.0){
@@ -203,41 +214,30 @@
                     Game.chatActive = true;
                 }
             }
+            */
         },
 
-        getPokemonData: function(pkmn,sSlot,iSlot){
-            //sSlot is the SPRITE position slot, from 1-8
-            //iSlot is POKEMON INFO position slot, from 1-8
-            /*_____________________________________________
-            |   i1  i2                      s1      s2    |
-            |   i3  i4                      s3      s4    |
-            |                                             |
-            |                                             |
-            |                                             |
-            |                                             |
-            |                                             |
-            |                                             |
-            |  s5   s6                      i5      i6    |
-            |  s7   s8                      i7      i8    |
-            |_____________________________________________|*/
+        getPokemonData: function(pkmn,n,teamSize,team){
+            
 
             var d = {}; 
-            if (sSlot<5){
-                d.sprite = Graphics.getSprite(pkmn.number);
-                d.sprite.scale.x = 4;
-                d.sprite.scale.y = 4;
-            }else{
-                d.sprite = Graphics.getSprite('b' + pkmn.number);
-                d.sprite.scale.x = 6;
-                d.sprite.scale.y = 6;
-            }
+            d.pokemon = pkmn;
+            d.sprite = Graphics.getSprite(pkmn.number);
+            d.sprite.scale.x = 4;
+            d.sprite.scale.y = 4;
             d.sprite.anchor.x = 0.5;
             d.sprite.anchor.y = 0.5;
             d.sprite.buttonMode = true;
             d.sprite.interactive = true;
             d.sprite.pkmninfo = pkmn;
-            d.sprite.sSlot = sSlot;
-            d.sprite.iSlot = iSlot;
+            if (team == 1){
+                d.sprite.scale.x = -4;
+                d.sprite.position.x = Graphics.width/4 + (Graphics.width*0.75 + (Graphics.width*0.75)/6);
+                d.sprite.position.y = (Graphics.height*0.75)/(teamSize+1);
+            }else if (team == 2){
+                d.sprite.position.x = Graphics.width/4 + (Graphics.width*0.75 - (Graphics.width*0.75)/6);
+                d.sprite.position.y = (Graphics.height*0.75)/(teamSize+1);
+            }
             var onClick = function(e){
                 switch(Battle.targetSelectMode){
                     case 'item':
@@ -274,28 +274,8 @@
             }
             d.sprite.on('tap', onClick);
             d.sprite.on('click', onClick);
-            var spritePositions = {
-                '1': [Graphics.width/4 + (Graphics.width*0.75 - (Graphics.width*0.75)/3),(Graphics.height*0.75)/6],
-                '2': [Graphics.width/4 + (Graphics.width*0.75 - (Graphics.width*0.75)/8),(Graphics.height*0.75)/6],
-                '3': [Graphics.width/4 + (Graphics.width*0.75 - (Graphics.width*0.75)/3),(Graphics.height*0.75)/2],
-                '4': [Graphics.width/4 + (Graphics.width*0.75 - (Graphics.width*0.75)/8),(Graphics.height*0.75)/2],
-                '5': [Graphics.width/4 + ((Graphics.width*0.75)/8),(Graphics.height*0.75)*0.6],
-                '6': [Graphics.width/4 + ((Graphics.width*0.75)/3),(Graphics.height*0.75)*0.6],
-                '7': [Graphics.width/4 + ((Graphics.width*0.75)/8),(Graphics.height*0.75)*0.9],
-                '8': [Graphics.width/4 + ((Graphics.width*0.75)/3),(Graphics.height*0.75)*0.9],
-            };
-            d.sprite.position.x = spritePositions[sSlot][0];
-            d.sprite.position.y = spritePositions[sSlot][1];
-            var infoPositions = {
-                '1': [Graphics.width/4 + 10,10],
-                '2': [Graphics.width/4 + 20 + (Graphics.width*0.75/4),10],
-                '3': [Graphics.width/4 + 10,(Graphics.height*0.75)*(0.1)],
-                '4': [Graphics.width/4 + 20 + (Graphics.width*0.75/4),(Graphics.height*0.75)*(0.1)],
-                '5': [Graphics.width/4 + Graphics.width*0.75/2 - 20,(Graphics.height*0.75)*0.8],
-                '6': [Graphics.width/4 + (Graphics.width*0.75)*0.75 - 10,(Graphics.height*0.75)*0.8],
-                '7': [Graphics.width/4 + Graphics.width*0.75/2 - 20,(Graphics.height*0.75)*0.9],
-                '8': [Graphics.width/4 + (Graphics.width*0.75)*0.75 - 10,(Graphics.height*0.75)*(0.9)],
-            };
+            Graphics.uiContainer2.addChild(d.sprite);
+            /*
             d.nameDisplay = new PIXI.Text(pkmn.nickname,AcornSetup.style2);
             d.nameDisplay.position.x = infoPositions[iSlot][0];
             d.nameDisplay.position.y = infoPositions[iSlot][1];
@@ -310,7 +290,7 @@
                 this.drawHPBar(d.hpBar,pkmn.hpPercent);
             }else{
                 this.drawHPBar(d.hpBar,pkmn.currentHP/pkmn.hp);
-            }
+            }*/
             return d;
         },
         drawHPBar: function(gfx,percent){
@@ -337,19 +317,18 @@
             }
         },
         updateWildStart: function(dt){
-            var time = 1.0;
-            var stop = false;
-            for (var i in this.pokemonSpriteContainer){
-                this.pokemonSpriteContainer[i].ticker += dt;
-                this.pokemonSpriteContainer[i].sprite.position.x = Graphics.width/4 + this.pokemonSpriteContainer[i].sprite.width/2 + (this.pokemonSpriteContainer[i].mDistance* (this.pokemonSpriteContainer[i].ticker/time));
-                if (this.pokemonSpriteContainer[i].ticker >= 2.0){
+            this.ticker += dt;
+            for (var i in this.otherTeam){
+                //this.pokemonSpriteContainer[i].sprite.tint = 0x000000;
+            }
+            for (var i in this.otherTeam){
+                if (this.ticker >= 2.0){
                     //next phase!
-                    this.addChat("& A wild " + this.battleData['team' + this.otherTeam][0].nickname.toUpperCase() + ' appeared!');
-                    this.pokemonSpriteContainer[i].sprite.position.x = this.pokemonSpriteContainer[i].tPos;
-                    this.pokemonSpriteContainer[i].sprite.tint = 0xFFFFFF;
-                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nameDisplay);
-                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].levelDisplay);
-                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].hpBar);
+                    this.addChat("& A wild " + this.otherTeam[i].nickname.toUpperCase() + ' appeared!');
+                    //this.pokemonSpriteContainer[i].sprite.tint = 0xFFFFFF;
+                    //Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nameDisplay);
+                    //Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].levelDisplay);
+                    //Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].hpBar);
                     stop = true;
                 }
             }
@@ -364,22 +343,22 @@
             var time = 1.5;
             this.gopkmnTicker += dt;
             if (this.gopkmnTicker >= time && this.gopkmnTicker < time*2){
-                this.addChat("& Go, " + this.battleData['team' + this.myTeam][0].nickname + '!');
+                for ( var i in this.myTeam){
+                    this.addChat("& Go, " + this.pokemonSpriteContainer[this.myTeam[i].id].nickname + '!');
+                }
                 this.gopkmnTicker = time*2;
             }
             if (this.gopkmnTicker >= time*3){
                 //add your pkmn
                 for (var i in this.myActivePokemon){
-                    var pkmn = this.myActivePokemon[i];
-                    var data = this.getPokemonData(pkmn,7,8); //todo for diff modes these numbers should be stored on the pokemon?
+                    var data = this.pokemonSpriteContainer[i];
                     Graphics.uiContainer2.addChild(data.sprite);
-                    Graphics.uiContainer2.addChild(data.hpBar);
-                    Graphics.uiContainer2.addChild(data.nameDisplay);
-                    Graphics.uiContainer2.addChild(data.levelDisplay);
-                    this.pokemonSpriteContainer[this.myActivePokemon[i].id] = data;
+                    //Graphics.uiContainer2.addChild(data.hpBar);
+                    //Graphics.uiContainer2.addChild(data.nameDisplay);
+                    //Graphics.uiContainer2.addChild(data.levelDisplay);
                 }
                 this.gopkmnStart = false;
-                Acorn.Net.socket_.emit('battleUpdate',{command: 'roundReady'});
+                //Acorn.Net.socket_.emit('battleUpdate',{command: 'roundReady'});
             }
         },
 

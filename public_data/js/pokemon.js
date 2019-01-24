@@ -11,7 +11,7 @@
         this.level = data[CENUMS.LEVEL];
         this.id = data[CENUMS.ID];
         this.hpPercent = data[CENUMS.HPPERCENT];
-
+        this.battleSprite = null;
 
         this.name = Utils.udCheck(data[CENUMS.NAME],null,data[CENUMS.NAME]);
         this.types = Utils.udCheck(data[CENUMS.TYPES],null,data[CENUMS.TYPES]);
@@ -27,6 +27,8 @@
         this.specialAttack = Utils.udCheck(data[CENUMS.SPECIALATTACK],null,data[CENUMS.SPECIALATTACK]);
         this.specialDefense = Utils.udCheck(data[CENUMS.SPECIALDEFENSE],null,data[CENUMS.SPECIALDEFENSE]);
     }
+
+    
 
     window.Pokemon = Pokemon;
 })(window);

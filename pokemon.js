@@ -72,8 +72,8 @@ Pokemon.prototype.getMoves = function(options){
                     var attackid = this.engine.pokemon[this.number].moveList[i][j].attackid;
                     if (typeof this.engine.attacks[attackid] == 'undefined'){
                         //MOVE DOESNT EXIST
-                        this.character.engine.log('Move with id "'+ attackid + '" doesn\'t exist');
-                        this.character.engine.log('Defaulting to Tackle');
+                        console.log('Move with id "'+ attackid + '" doesn\'t exist');
+                        console.log('Defaulting to Tackle');
                         attackid = 'tackle';
                     }
                     var hasMove = false;
@@ -101,7 +101,7 @@ Pokemon.prototype.init = function(base,data) {
 
     this.nickname = (data.nickname == '') ? base.name : data.nickname; //REQUIRED IN <data>
     this.character = data.character; //REQUIRED IN <data>
-    this.engine = data.character.engine
+    this.engine = data.engine;
     this.id = data.id; //REQUIRED IN <data>
 
     this.number = base.number;
@@ -334,6 +334,7 @@ Pokemon.prototype.getLessClientData = function(){
     data[CENUMS.LEVEL] = this.level;
     data[CENUMS.ID] = this.id;
     data[CENUMS.HPPERCENT] = this.hpPercent.value;
+    data[CENUMS.OWNER] = this.character ? this.character.id : null;
     return data;
 }
 
@@ -343,8 +344,8 @@ Pokemon.prototype.setStat = function(id,amt){
         this.getStat(id).base = amt;
         this.getStat(id).set(true);
     }catch(e){
-        this.character.engine.log("unable to set stat " + id);
-        this.character.engine.log(e);
+        this.engine.log("unable to set stat " + id);
+        this.engine.log(e);
     }
 };
 
@@ -353,8 +354,8 @@ Pokemon.prototype.getStat = function(id){
     try{
         return this.attributeIndex[id];
     }catch(e){
-        this.character.engine.log("unable to get stat " + id);
-        this.character.engine.log(e);
+        this.engine.log("unable to get stat " + id);
+        this.engine.log(e);
     }
 };
 
@@ -363,8 +364,8 @@ Pokemon.prototype.modStat = function(id,amt){
         this.getStat(id).nMod += amt;
         this.getStat(id).set(true);
     }catch(e){
-        this.character.engine.log("unable to mod stat " + id);
-        this.character.engine.log(e);
+        this.engine.log("unable to mod stat " + id);
+        this.engine.log(e);
     }
 };
 

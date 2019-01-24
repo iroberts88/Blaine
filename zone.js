@@ -131,10 +131,10 @@ Zone.prototype.changeSector = function(p,arr,id,tile){
             for (var pl in removeList[i].players){
                 var player = removeList[i].players[pl];
                 var cData = {}
-                cData[CENUMS.ID] = p.id;
+                cData[CENUMS.ID] = p.character.id;
                 this.engine.queuePlayer(player,CENUMS.REMOVEPC,cData);
                 var cData = {}
-                cData[CENUMS.ID] = player.id;
+                cData[CENUMS.ID] = player.character.id;
                 this.engine.queuePlayer(p,CENUMS.REMOVEPC,cData);
             }
         }catch(e){
@@ -198,7 +198,7 @@ Zone.prototype.removePlayer = function(p){
             for (var pl in this.map[(coords.x+i) + 'x' + (coords.y+j)].players){
                 var player = this.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
                 var cData = {}
-                cData[CENUMS.ID] = p.id;
+                cData[CENUMS.ID] = p.character.id;
                 this.engine.queuePlayer(player,CENUMS.REMOVEPC,cData)
             }
         }

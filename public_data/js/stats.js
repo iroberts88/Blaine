@@ -165,7 +165,8 @@ var Stats = function () {
                 frames = 0;
 
                 //update PING
-                //Acorn.Net.socket_.emit('clientCommand',{command: 'ping'});
+                var sData = {};
+                Acorn.Net.socket_.emit(CENUMS.PING,sData);
                 pingTimeStart = Date.now();
                 pingMin = Math.min( pingMin, ping );
                 pingMax = Math.max( pingMax, ping );

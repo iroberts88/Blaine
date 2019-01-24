@@ -113,7 +113,9 @@
             });
 
             Acorn.Net.on(CENUMS.STARTBATTLE, function (data) {
+                console.log(data);
                 console.log('received battle data');
+                
                 Battle.battleData = data;
                 Game.setBattleChange(true);
                 Game.battleTicker = 0;
@@ -169,7 +171,10 @@
             });
 
             Acorn.Net.on(CENUMS.ADDPOKEMON, function (data) {
-                Party.setPokemon(data[CENUMS.SLOT],data[CENUMS.POKEMON]);
+                console.log(data);
+                var newpoke = new Pokemon();
+                newpoke.init(data[CENUMS.POKEMON]);
+                Party.setPokemon(data[CENUMS.SLOT],newpoke);
                 Game.resetPokemon(data[CENUMS.SLOT]);
             });
 
@@ -199,8 +204,8 @@
             });
 
             Acorn.Net.on(CENUMS.REMOVEPC, function (data) {
-                //console.log(data);
-                if (data[CENUMS.OWNER] == mainObj.id){return;}
+                console.log(data);
+                if (data[CENUMS.ID] == Player.character.id){return;}
                 PCS.removePC(data);
             });
 
@@ -219,17 +224,17 @@
 
             Acorn.Net.on(CENUMS.SETLOGINERRORTEXT, function (data) {
                 var s = 'Login Error';
-                switch(data.text){
-                    case 'userexists':
+                switch(data[CENUMS.TEXT]){
+                    case CENUMS.PWERRORUSEREXISTS:
                         s = 'Username is already in use. Please try another!'
                         break;
-                    case 'snlength':
+                    case CENUMS.PWERRORSNLENGTH:
                         s = 'Username length must be between 3 and 16 characters';
                         break;
-                    case 'plength':
+                    case CENUMS.PWERRORPLENGTH:
                         s = 'Password length must be at least 6 characters'
                         break;
-                    case 'wrongpass':
+                    case CENUMS.PWERRORWRONGPASS:
                         s = 'Incorrect username or password';
                         break;
                 }

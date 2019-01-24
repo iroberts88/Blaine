@@ -14,7 +14,11 @@ var enums = {
 
         CHANGEMAP: 'chm',
         CHARACTER: 'cha',
+        CHARACTERS: 'cha',
+        CLIENTCOMMAND: 'clc',
+        COMMAND: 'cmm',
         CONNINFO: 'coi',
+        CREATEUSER: 'cru',
         CURRENTHP: 'chp',
         CURRENTPP: 'cpp',
 
@@ -27,6 +31,8 @@ var enums = {
         EXECUTETURN: 'ext',
         EXP: 'ex',
 
+        GUESTLOGIN: 'gue',
+
         HP: 'aychpee',
         HPEV: 'hpe',
         HPIV: 'hpi',
@@ -36,6 +42,7 @@ var enums = {
         INVENTORY: 'inv',
 
         LEVEL: 'lev',
+        LOGINATTEMPT: 'lga',
         LOGGEDIN: 'lgi',
         LOGOUT: 'log',
 
@@ -45,11 +52,13 @@ var enums = {
         MAPDATA: 'mda',
         MONEY: 'mon',
         MOVEPC: 'mpc',
+        MOVEATTEMPT: 'matt',
         MOVES: 'mov',
         MOVEID: 'moi',
         MUSIC: 'mu',
 
         NAME: 'nam',
+        NEWCHAR: 'new',
         NICKNAME: 'nic',
         NUMBER: 'num',
 
@@ -57,11 +66,17 @@ var enums = {
         OVERLAYRESOURCE: 'ov',
         OWNER: 'own',
 
+        PASSWORD: 'pwd',
         PING: 'png',
+        PLAYERUPDATE: 'pupdate',
         PLAYERS: 'pla',
         POKEMON: 'poke',
         POWER: 'pwerrr',
         PP: 'pp',
+        PWERRORUSEREXISTS: 'pwe1',
+        PWERRORSNLENGTH: 'pwe2',
+        PWERRORWRONGPASS: 'pwe3',
+        PWERRORPLENGTH: 'pwe4',
 
         REMOVEPC: 'rmpc',
         REQUESTMAPDATA: 'req',
@@ -88,8 +103,13 @@ var enums = {
         START: 'sta',
         STARTBATTLE: 'stb',
         STARTGAME: 'stg',
+        SWAPPKMN: 'swp',
 
         TARGETTYPE: 'tartyp',
+        TEAM1: 'tea1',
+        TEAM2: 'tea2',
+        TEAM1POKEMON: 'tea1p',
+        TEAM2POKEMON: 'tea2p',
         TEXT: 'tex',
         TILE: 'til',
         TILES: 'tis',
@@ -98,6 +118,7 @@ var enums = {
         TYPES: 'typ',
 
         USER: 'use',
+
 
         VALUE: 'val',
 

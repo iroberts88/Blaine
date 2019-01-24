@@ -97,7 +97,12 @@
             this.okButton.style.cssText = 'top:80%;left:50%;cursor: pointer;position:absolute;border-radius:10px;background-color: #484848;border: none;color: gray;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;color:#D2D2D2;font-family:Pokemon;font-weight:bold;line-height:15px';
             this.okButton.onpointerup = function(){
                 if (NewChar.characterNameInput.value.length > 3){
-                    Acorn.Net.socket_.emit('playerUpdate',{command: 'newChar',sprite: NewChar.currentSprite,name:NewChar.characterNameInput.value,slot: NewChar.slot});
+                    var sData = {};
+                    sData[CENUMS.COMMAND] = CENUMS.NEWCHAR;
+                    sData[CENUMS.RESOURCE] = NewChar.currentSprite;
+                    sData[CENUMS.NAME] = NewChar.characterNameInput.value;
+                    sData[CENUMS.SLOT] = NewChar.slot;
+                    Acorn.Net.socket_.emit(CENUMS.PLAYERUPDATE,sData);
                 }
             }
             Graphics.elements.push('okButton');
@@ -113,23 +118,6 @@
                 document.body.appendChild(this.okButton);
                 this.prompted = true;
             }
-              /*  //for now just prompt names
-                var name = '';
-                var sprite = ''
-                var rival = '';
-                while (name == '' || rival == ''){
-                    sprite = prompt("enter sprite_name", 'ash');
-                    name = prompt("enter character_name", 'ASH');
-                    rival = prompt("enter rival_name", 'GARY');
-                    if (rival.length <3 || rival.length > 16 || name.length < 3 || name.length > 16){
-                        name = '';
-                        rival = '';
-                        alert("names must be between 3 and 16 characters");
-                    }
-                }
-                this.prompted = true;
-                Acorn.Net.socket_.emit('playerUpdate',{command: 'newChar',sprite: sprite,name:name,rival:rival,slot: this.slot});
-            }*/
         }
 
     }

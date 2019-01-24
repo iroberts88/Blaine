@@ -130,7 +130,9 @@
             if (!this.ready){return;}
             if (this.chatActive){
                 if (Acorn.Input.isPressed(Acorn.Input.Key.ENTER)){
-                    Acorn.Net.socket_.emit('clientCommand',{cString: this.chat.value});
+                    var sData = {}
+                    sData[CENUMS.TEXT] = this.chat.value;
+                    Acorn.Net.socket_.emit(CENUMS.CLIENTCOMMAND,sData);
                     this.chat.value = '';
                     document.body.removeChild(this.chat);
                     Graphics.uiContainer2.addChild(this.chatButton);
@@ -288,10 +290,14 @@
             first.position.y = this.pkmnSwapData.firstStart.y + (dy1*(this.pkmnSwapTicker/this.pkmnSwapSpeed));
             second.position.x = this.pkmnSwapData.secondStart.x + (dx2*(this.pkmnSwapTicker/this.pkmnSwapSpeed));
             second.position.y = this.pkmnSwapData.secondStart.y + (dy2*(this.pkmnSwapTicker/this.pkmnSwapSpeed));
-            //Perform the swap
+            //Perform the swapPkmn
             if (this.pkmnSwapTicker >= this.pkmnSwapSpeed){
                 //send swap info to server
-                Acorn.Net.socket_.emit('playerUpdate',{command: 'swapPkmn',first:first.pokemonNumber,second:second.pokemonNumber});
+                var sData = {};
+                sData[CENUMS.COMMAND] = CENUMS.SWAPPKMN;
+                sData[CENUMS.POKEMON1] = first.pokemonNumber;
+                sData[CENUMS.POKEMON2] = second.pokemonNumber;
+                Acorn.Net.socket_.emit(CENUMS.PLAYERUPDATE,sData);
 
                 first.position.x = this.pkmnSwapData.secondStart.x;
                 first.position.y = this.pkmnSwapData.secondStart.y;
@@ -423,7 +429,7 @@
             Graphics.app.renderer.render(c1,pkmnTex);
             sprite.texture = Graphics.getResource('ow_pokeball');
             Graphics.app.renderer.render(c1,invTex);
-            sprite.texture = Graphics.getResource('ow_' + Game.char.owSprite + '_d1');
+            sprite.texture = Graphics.getResource('ow_' + Game.char[CENUMS.RESOURCE] + '_d1');
             Graphics.app.renderer.render(c1,charTex);
             sprite.texture = Graphics.getResource('ow_clipboard');
             Graphics.app.renderer.render(c1,setTex);

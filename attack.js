@@ -18,7 +18,7 @@ Attack.prototype.init = function(data){
 
     //target types
 
-    //single -- target another pokemon 
+    //single -- target another pokemon
     //all -- target all pokemon
     //self -- target self
 }

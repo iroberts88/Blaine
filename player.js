@@ -139,22 +139,23 @@ Player.prototype.setupSocket = function() {
         }
     });
 
-    this.socket.on('playerUpdate', function (data) {
+    this.socket.on(CENUMS.PLAYERUPDATE, function (data) {
+
         try{
             if (that.battle != null){
                 //player updates during an active battle are ignored
                 return;
             }
-            switch(data.command){
-                case 'logout':
+            switch(data[CENUMS.COMMAND]){
+                case CENUMS.LOGOUT:
                     that.engine.playerLogout(that);
                     that.engine.queuePlayer(that,CENUMS.LOGOUT, {});
                     break;
-                case 'swapPkmn':
+                case CENUMS.SWAPPKMN:
                     that.character.swapPkmn(data);
                     break;
-                case 'newChar':
-                    if (data.slot < 1 || data.slot > 3){
+                case CENUMS.NEWCHAR:
+                    if (data[CENUMS.SLOT] < 1 || data[CENUMS.SLOT] > 3){
                         //TODO deal with bad char info
                         break;
                     }else{
@@ -171,14 +172,15 @@ Player.prototype.setupSocket = function() {
                         data.currentTile = [9,12];
                         data.currentMap = 'pallet_house1_floor2';
                         data.music = 'pallet';
+                        data.engine = that.engine;
                         char.init(data);
                         that.startGame(char);
                     }
                     break;
-                case 'moveAttempt':
+                case CENUMS.MOVEATTEMPT:
                     //get tile at x/y
                     try{
-                        if (data.cTile[0] != that.character.currentTile[0] || data.cTile[1] != that.character.currentTile[1] || data.cSector != that.character.currentSector){
+                        if (data[CENUMS.TILE][0] != that.character.currentTile[0] || data[CENUMS.TILE][1] != that.character.currentTile[1] || data[CENUMS.SECTOR] != that.character.currentSector){
                             return;
                         }
                         var zone = that.engine.zones[that.character.currentMap];
@@ -192,22 +194,22 @@ Player.prototype.setupSocket = function() {
                         var end = false;
                         for (var i = 0; i < t.triggers.length;i++){
                             var trigger = t.triggers[i];
-                            if (trigger.on == directions[data.x+','+data.y]){
+                            if (trigger.on == directions[data[CENUMS.X]+','+data[CENUMS.Y]]){
                                 if (Triggers.doTrigger(that.character,trigger)){
                                     end = true;
                                 }
                             }
                         }
                         if (end){return;}
-                        tile.x += data.x;
-                        tile.y += data.y;
+                        tile.x += data[CENUMS.X];
+                        tile.y += data[CENUMS.Y];
                         var moveSector = [0,0];
                         if (tile.x < 0){
-                            tile.x = 21+data.x;
+                            tile.x = 21+data[CENUMS.X];
                             coords.x -=1;
                             moveSector[0] -= 1;
                         }else if (tile.y < 0){
-                            tile.y = 21+data.y;
+                            tile.y = 21+data[CENUMS.Y];
                             coords.y -=1;
                             moveSector[1] -= 1;
                         }else if (tile.x > 20){
@@ -233,8 +235,8 @@ Player.prototype.setupSocket = function() {
                                             var player = zone.map[(coords2.x+i) + 'x' + (coords2.y+j)].players[pl];
                                             var cData = {}
                                             cData[CENUMS.ID] = that.character.id;
-                                            cData[CENUMS.X] = data.x;
-                                            cData[CENUMS.Y] = data.y;
+                                            cData[CENUMS.X] = data[CENUMS.X];
+                                            cData[CENUMS.Y] = data[CENUMS.Y];
                                             cData[CENUMS.START] = [that.character.currentTile[0],that.character.currentTile[1]];
                                             that.engine.queuePlayer(player,CENUMS.MOVEPC,cData)
                                         }
@@ -257,11 +259,11 @@ Player.prototype.setupSocket = function() {
                         that.engine.debug(that,e,{id: 'moveAttempt', error: e.stack});
                     }
                     break;
-                case 'requestMapData':
+                case CENUMS.REQUESTMAPDATA:
                     try{
-                        var zoneData = that.engine.zones[data.name].zoneData;
+                        var zoneData = that.engine.zones[data[CENUMS.NAME]].zoneData;
                         var cData = {};
-                        cData[CENUMS.NAME] = data.name;
+                        cData[CENUMS.NAME] = data[CENUMS.NAME];
                         cData[CENUMS.ZONEDATA] = zoneData;
                         that.engine.queuePlayer(that,CENUMS.MAPDATA,cData);
                     }catch(e){
@@ -275,26 +277,31 @@ Player.prototype.setupSocket = function() {
         }
     });
 
+    this.socket.on(CENUMS.PING, function(data) {
+        that.engine.queuePlayer(that,CENUMS.PING,{});
+    });
 
-    this.socket.on('clientCommand', function(data) {
-        // this needs to be parsed: data.cString
+    this.socket.on(CENUMS.CLIENTCOMMAND, function(data) {
+        // this needs to be parsed: command
         // format: >COMMAND ID AMOUNT
         //commands:
-        if (data.cString.length > 128){
+        console.log(data);
+        var command = data[CENUMS.TEXT];
+        if (command.length > 128){
             return;
         }
         try{
-            if (data.cString.charAt(0) != '/'){
+            if (command.charAt(0) != '/'){
                 //its a SAY command
-                if (data.cString == ''){
+                if (command == ''){
                     return;
                 }
                 if (that.battle){
                     var u = that.user.userData.username
-                    that.battle.sendChat(u.toUpperCase() + ': ' + data.cString);
+                    that.battle.sendChat(u.toUpperCase() + ': ' + command);
                     return
                 }
-                console.log('Say: ' + data.cString);
+                console.log('Say: ' + command);
                 var players = [];
                 //send a move command to all players in adjacent sectors
                 var zone = that.engine.zones[that.character.currentMap];
@@ -306,7 +313,7 @@ Player.prototype.setupSocket = function() {
                                 var player = zone.map[(coords.x+i) + 'x' + (coords.y+j)].players[pl];
                                 var cData = {}
                                 cData[CENUMS.ID] = that.character.id;
-                                cData[CENUMS.TEXT] = data.cString;
+                                cData[CENUMS.TEXT] = command;
                                 that.engine.queuePlayer(player,CENUMS.SAY, cData);
                             }
                         }catch(e){
@@ -317,7 +324,7 @@ Player.prototype.setupSocket = function() {
                 return;
             }
             var commandBool = false;
-            var c = data.cString.substring(1,data.cString.length);
+            var c = command.substring(1,command.length);
             var commands = [];
             var from = 0;
             for (var i = 0; i < c.length; i++){
@@ -330,15 +337,53 @@ Player.prototype.setupSocket = function() {
             console.log(commands);
             switch (commands[0]){
                 case 'battle':
+                    //trainer battle
                     if (that.battle != null){console.log("Battle exists");return;}
                     console.log("Start Battle");
-                    var pokemon = [Math.ceil(Math.random()*15)];
+                    var pokemon = [Math.ceil(Math.random()*15),Math.ceil(Math.random()*15),Math.ceil(Math.random()*15)];
                     var levels = [5];//[Math.ceil(Math.random()*20)];
 
                     var battle = new Battle(that.engine);
-                    var pkmn = new Trainer(that.engine);
-                    pkmn.init({wild: true,pokemon:pokemon,levels:levels});
-                    if (battle.init({team1: [that.character],team2: [pkmn],type: '1v1'})){
+                    var trainer = new Trainer(that.engine);
+                    trainer.init({pokemon:pokemon,levels:levels});
+                    if (battle.init({team1: [that.character],team2: [trainer],type: 'trainer'})){
+                        console.log("Battle successfully initialized!!");
+                        that.battle = battle;
+                        that.engine.activeBattles[battle.id] = battle;
+                    }
+                    break;
+                case 'wbattle':
+                    //wild battle
+                    //1v1 pokemon, the pokemon is likely to run when its health gets low 
+                    if (that.battle != null){console.log("Battle exists");return;}
+                    console.log("Start Battle");
+
+                    var battle = new Battle(that.engine);
+                    var newPoke = new Pokemon();
+                    newPoke.init(that.engine.pokemon[Math.ceil(Math.random()*15)],{
+                        character: null,
+                        nickname: '',
+                        level: 2,
+                        id: that.engine.getId(),
+                        engine: that.engine
+                    });
+
+                    if (battle.init({team1: [that.character],team2: [newPoke],type: 'wild'})){
+                        console.log("Battle successfully initialized!!");
+                        that.battle = battle;
+                        that.engine.activeBattles[battle.id] = battle;
+                    }
+                    break;
+                case 'tbattle':
+                    if (that.battle != null){console.log("Battle exists");return;}
+                    console.log("Start Battle");
+                    var pokemon = [Math.ceil(Math.random()*15)];
+                    var levels = [5];
+
+                    var battle = new Battle(that.engine);
+                    var trainer = new Trainer(that.engine);
+                    trainer.init({wild: true,pokemon:pokemon,levels:levels});
+                    if (battle.init({team1: [that.character],team2: [trainer],type: 'team'})){
                         console.log("Battle successfully initialized!!");
                         that.battle = battle;
                         that.engine.activeBattles[battle.id] = battle;
@@ -353,6 +398,7 @@ Player.prototype.setupSocket = function() {
                     newPoke.init(that.engine.pokemon[pokemon],{
                         character: that.character,
                         nickname: '',
+                        engine: that.engine,
                         level: level,
                         id: that.engine.getId()
                     })
@@ -380,38 +426,44 @@ Player.prototype.setupSocket = function() {
     });
 
     
-    this.socket.on('loginAttempt', function (d) {
+    this.socket.on(CENUMS.LOGINATTEMPT, function (d) {
         if (that.user){return;}
+        var cData = {};
         try{
-            if (d.sn && d.pw){
-                d.sn = d.sn.toLowerCase();
+            if (d[CENUMS.USER] && d[CENUMS.PASSWORD]){
+                d[CENUMS.USER] = d[CENUMS.USER].toLowerCase();
                 var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                 var params = {
                     TableName: 'users',
                     Key: {
-                        username: d.sn
+                        username: d[CENUMS.USER]
                     }
                 }
                 docClient.get(params, function(err, data) {
+                    var cData = {};
                     try{
                         if (err) {
                             console.error("Unable to find user. Error JSON:", JSON.stringify(err, null, 2));
                         } else {
                             if (typeof data.Item != 'undefined'){
-                                const hash = crypto.createHmac('sha256', d.pw);
+                                const hash = crypto.createHmac('sha256', d[CENUMS.PASSWORD]);
                                 if (hash.digest('hex') == data.Item.password){
                                     //SET USER DATA TO EXISTING USER
                                     that.user = User();
                                     that.user.setOwner(that);
                                     that.user.init(data.Item);
                                     that.user.lock();
-                                    that.engine.users[d.sn] = that.user;
-                                    that.engine.queuePlayer(that,CENUMS.LOGGEDIN, {name:data.Item.username, characters: that.user.characters});
+                                    that.engine.users[d[CENUMS.USER]] = that.user;
+                                    cData[CENUMS.NAME] = data.Item.username;
+                                    cData[CENUMS.CHARACTERS] = that.user.characters;
+                                    that.engine.queuePlayer(that,CENUMS.LOGGEDIN, cData);
                                 }else{
-                                    that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'wrongpass'});
+                                    cData[CENUMS.TEXT] = CENUMS.PWERRORWRONGPASS;
+                                    that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, cData);
                                 }
                             }else{
-                                that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'wrongpass'});
+                                cData[CENUMS.TEXT] = CENUMS.PWERRORWRONGPASS;
+                                that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, cData);
                             }
                         }
                     }catch(e){
@@ -422,40 +474,44 @@ Player.prototype.setupSocket = function() {
         }catch(e){
             console.log('Login Attempt failed');
             console.log(e);
-            that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'wrongpass'});
+            cData[CENUMS.TEXT] = CENUMS.PWERRORWRONGPASS;
+            that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, cData);
         }
     });
-    this.socket.on('guestLogin', function (d) {
+    this.socket.on(CENUMS.GUESTLOGIN, function (d) {
         console.log(d);
+        var cData = {}
         if (that.user){return;}
         try{
-            d.sn = d.sn.toLowerCase();
+            d[CENUMS.USER] = d[CENUMS.USER].toLowerCase();
             var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
             var params = {
                 TableName: 'users',
                 Key: {
-                    username: d.sn
+                    username: d[CENUMS.USER]
                 }
             }
             docClient.get(params, function(err, data) {
                 if (err) {
                 } else {
                     console.log("Attempting guest logon...");
-                    if (d.sn.length >= 3 && d.sn.length <= 16 && typeof data.Item == 'undefined' && typeof that.engine.users[d.sn] == 'undefined'){
+                    if (d[CENUMS.USER].length >= 3 && d[CENUMS.USER].length <= 16 && typeof data.Item == 'undefined' && typeof that.engine.users[d[CENUMS.USER]] == 'undefined'){
                         console.log('valid username - adding guest');
                         var u = {
-                            username: d.sn,
+                            username: d[CENUMS.USER],
                             guest: true
                         };
                         that.user = User();
                         that.user.setOwner(that);
                         that.user.init(u);
-                        that.engine.users[d.sn] = that.user;
-                        that.engine.queuePlayer(that,CENUMS.LOGGEDIN, {name:d.sn, characters: that.user.characters});
-                    }else if (typeof data.Item != 'undefined' || typeof that.engine.users[d.sn] != 'undefined'){
-                        that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'userexists'});
+                        that.engine.users[d[CENUMS.USER]] = that.user;
+                        that.engine.queuePlayer(that,CENUMS.LOGGEDIN, {name:d[CENUMS.USER], characters: that.user.characters});
+                    }else if (typeof data.Item != 'undefined' || typeof that.engine.users[d[CENUMS.USER]] != 'undefined'){
+                        cData[CENUMS.TEXT] = CENUMS.PWERRORUSEREXISTS;
+                        that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, cData);
                     }else{
-                        that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'snlength'});
+                        cData[CENUMS.TEXT] = CENUMS.PWERRORSNLENGTH;
+                        that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, cData);
                     }
                 }
             });
@@ -464,17 +520,18 @@ Player.prototype.setupSocket = function() {
             console.log(e.stack);
         }
     });
-    this.socket.on('createUser', function (d) {
+    this.socket.on(CENUMS.CREATEUSER, function (d) {
         console.log(d);
         if (that.user){return;}
+        var cData = {};
         try{
-            d.sn = d.sn.toLowerCase();
-            if (typeof that.engine.users[d.sn] == 'undefined'){
+            d[CENUMS.USER] = d[CENUMS.USER].toLowerCase();
+            if (typeof that.engine.users[d[CENUMS.USER]] == 'undefined'){
                 var docClient = new AWS.DynamoDB.DocumentClient({ region: 'us-east-1' });
                 var params = {
                     TableName: 'users',
                     Key: {
-                        username: d.sn
+                        username: d[CENUMS.USER]
                     }
                 };
                 docClient.get(params, function(err, data) {
@@ -482,14 +539,15 @@ Player.prototype.setupSocket = function() {
                         console.error("Unable to find user. Error JSON:", JSON.stringify(err, null, 2));
                     } else {
                         //check password lengths, and if item exists
+                        var cData = {};
                         console.log("Create user succeeded:", JSON.stringify(data, null, 2));
-                        if (d.sn.length >= 3 && d.sn.length <= 16 && d.pw.length >= 6 && typeof data.Item == 'undefined'){
+                        if (d[CENUMS.USER].length >= 3 && d[CENUMS.USER].length <= 16 && d[CENUMS.PASSWORD].length >= 6 && typeof data.Item == 'undefined'){
                             console.log('valid account info - creating account');
                             //first, initialize the user data
                             var params2 = {
                                 TableName: 'blaine_userdata',
                                 Item: {
-                                    'username': d.sn,
+                                    'username': d[CENUMS.USER],
                                     'characters': {},
                                 }
                             }
@@ -499,20 +557,22 @@ Player.prototype.setupSocket = function() {
                                 } else {
                                     console.log("Create userdata succeeded:", JSON.stringify(data2, null, 2));
                                     //hash the password
-                                    const hash = crypto.createHmac('sha256', d.pw);
+                                    const hash = crypto.createHmac('sha256', d[CENUMS.PASSWORD]);
                                     var u = {
-                                        username: d.sn,
+                                        username: d[CENUMS.USER],
                                         password: hash.digest('hex')
                                     };
                                     that.user = User();
                                     that.user.setOwner(that);
                                     that.user.init(u);
-                                    that.engine.users[d.sn] = that.user;
-                                    that.engine.queuePlayer(that,CENUMS.LOGGEDIN, {name:d.sn, characters: that.user.characters});
+                                    that.engine.users[d[CENUMS.USER]] = that.user;
+                                    cData[CENUMS.NAME] = d[CENUMS.USER];
+                                    cData[CENUMS.CHARACTERS] = that.user.characters;
+                                    that.engine.queuePlayer(that,CENUMS.LOGGEDIN, cData);
                                     var params3 = {
                                         TableName: 'users',
                                         Item: {
-                                            'username': d.sn,
+                                            'username': d[CENUMS.USER],
                                             'password': that.user.userData.password,
                                             'admin': false,
                                             'loggedin': true,
@@ -531,17 +591,21 @@ Player.prototype.setupSocket = function() {
                             });
                             
                         }else if (typeof data.Item != 'undefined'){
-                            that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'userexists'});
-                        }else if (d.sn.length < 3 || d.sn.length > 16){
-                            that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'snlength'});
-                        }else if (d.pw.length < 8 || d.pw.length > 16){
-                            that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'plength'});
+                            cData[CENUMS.TEXT] = CENUMS.PWERRORUSEREXISTS;
+                            that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, cData);
+                        }else if (d[CENUMS.USER].length < 3 || d[CENUMS.USER].length > 16){
+                            cData[CENUMS.TEXT] = CENUMS.PWERRORSNLENGTH;
+                            that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, cData);
+                        }else if (d[CENUMS.PASSWORD].length < 8 || d[CENUMS.PASSWORD].length > 16){
+                            cData[CENUMS.TEXT] = CENUMS.PWERRORPLENGTH;
+                            that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, cData);
                         }
                     }
                 });
             }else{
                 //user exists
-                that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, {text: 'userexists'});
+                cData[CENUMS.TEXT] = CENUMS.PWERRORUSEREXISTS;
+                that.engine.queuePlayer(that,CENUMS.SETLOGINERRORTEXT, cData);
             }
         }catch(e){
             console.log('error creating user');

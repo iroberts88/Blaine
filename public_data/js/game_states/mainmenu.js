@@ -165,17 +165,20 @@
             this.submitButton.onpointerup = function(){
                 //check for valid sn/pw;
                 Acorn.Sound.play('select');
+                var sData = {};
+                sData[CENUMS.USER] = MainMenu.usernameInput.value;
+                sData[CENUMS.PASSWORD] = MainMenu.passwordInput.value
                 var sn = MainMenu.usernameInput.value;
                 var pw = MainMenu.passwordInput.value;
                 switch(MainMenu.loginType){
                     case 'normal':
-                        Acorn.Net.socket_.emit('loginAttempt',{sn: sn,pw:pw});
+                        Acorn.Net.socket_.emit(CENUMS.LOGINATTEMPT,sData);
                         break;
                     case 'new':
-                        Acorn.Net.socket_.emit('createUser',{sn: sn,pw:pw});
+                        Acorn.Net.socket_.emit(CENUMS.CREATEUSER,sData);
                         break;
                     case 'guest':
-                        Acorn.Net.socket_.emit('guestLogin',{sn: sn});
+                        Acorn.Net.socket_.emit(CENUMS.GUESTLOGIN,sData);
                         break;
                 }
             }
@@ -309,7 +312,9 @@
                 position: [Graphics.width/2+190,Graphics.height/2+190],
                 anchor: [1,1],
                 clickFunc: function onClick(){
-                        Acorn.Net.socket_.emit('playerUpdate',{command: 'logout'});
+                        var sData = {}
+                        sData[CENUMS.COMMAND] = CENUMS.LOGOUT;
+                        Acorn.Net.socket_.emit(CENUMS.PLAYERUPDATE,sData);
                 }
             });
             backButton.style.fontSize = 24;

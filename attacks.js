@@ -94,8 +94,8 @@ Attacks.prototype.doAttack = function(attack,battle,data){
             }
             var effectiveness = 1;
             for (var i = 0; i < target.types.length;i++){ //add effectiveness bonus
-                if (typeof battle.moveEffectiveness[attack.type][target.types[i]] != 'undefined'){ 
-                    effectiveness *= battle.moveEffectiveness[attack.type][target.types[i]];
+                if (typeof battle.engine.moveEffectiveness[attack.type][target.types[i]] != 'undefined'){ 
+                    effectiveness *= battle.engine.moveEffectiveness[attack.type][target.types[i]];
                 }
             }
             if (effectiveness == 0){
