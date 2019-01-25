@@ -88,16 +88,20 @@ Player.prototype.setupSocket = function() {
     // On playerUpdate event
     var that = this;
 
-    this.socket.on('battleUpdate', function (data) {
-        if (typeof data.command == 'undefined'){
+    this.socket.on(CENUMS.BATTLEUPDATE, function (data) {
+        if (typeof data[CENUMS.COMMAND] == 'undefined'){
             //TODO Error no command
             that.engine.log("No Command")
             that.engine.log(data);
             return;
         }
 
-        if (!that.battle){return;}
-        switch(data.command){
+        if (!that.battle){
+            that.engine.log('no battle...');
+            return;
+
+        }
+        switch(data[CENUMS.COMMAND]){
             case 'turn':
                 if (that.battle == null || typeof data.turnData == 'undefined'){
                     return;
@@ -132,9 +136,8 @@ Player.prototype.setupSocket = function() {
                     }
                 }
                 break;
-            case 'roundReady':
-                that.battle.readyForNextRound[that.id] = true;
-                that.engine.log(that.battle.readyForNextRound)
+            case CENUMS.READY:
+                that.ready = true;
                 break;
         }
     });
@@ -341,8 +344,7 @@ Player.prototype.setupSocket = function() {
                     if (that.battle != null){console.log("Battle exists");return;}
                     console.log("Start Battle");
                     var pokemon = [Math.ceil(Math.random()*15),Math.ceil(Math.random()*15),Math.ceil(Math.random()*15)];
-                    var levels = [5];//[Math.ceil(Math.random()*20)];
-
+                    var levels = [3,3,3];
                     var battle = new Battle(that.engine);
                     var trainer = new Trainer(that.engine);
                     trainer.init({pokemon:pokemon,levels:levels});
@@ -381,9 +383,19 @@ Player.prototype.setupSocket = function() {
                     var levels = [5];
 
                     var battle = new Battle(that.engine);
-                    var trainer = new Trainer(that.engine);
-                    trainer.init({wild: true,pokemon:pokemon,levels:levels});
-                    if (battle.init({team1: [that.character],team2: [trainer],type: 'team'})){
+                    var pokemon = [Math.ceil(Math.random()*15),Math.ceil(Math.random()*15),Math.ceil(Math.random()*15)];
+                    var levels = [3,3,3];
+                    var trainer1 = new Trainer(that.engine);
+                    trainer1.init({wild: true,pokemon:pokemon,levels:levels});
+                    var pokemon = [Math.ceil(Math.random()*15),Math.ceil(Math.random()*15),Math.ceil(Math.random()*15)];
+                    var levels = [3,3,3];
+                    var trainer2 = new Trainer(that.engine);
+                    trainer2.init({wild: true,pokemon:pokemon,levels:levels});
+                    var pokemon = [Math.ceil(Math.random()*15),Math.ceil(Math.random()*15),Math.ceil(Math.random()*15)];
+                    var levels = [3,3,3];
+                    var trainer3 = new Trainer(that.engine);
+                    trainer3.init({wild: true,pokemon:pokemon,levels:levels});
+                    if (battle.init({team1: [that.character,trainer1],team2: [trainer2,trainer3],type: 'team'})){
                         console.log("Battle successfully initialized!!");
                         that.battle = battle;
                         that.engine.activeBattles[battle.id] = battle;

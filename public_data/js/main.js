@@ -134,7 +134,8 @@ function checkReady() {
         console.log('Waiting on load...');
     }
 }
-
+var test = 0;
+var time = 0;
 function init() {
     //do some stuff after Graphics and network are initialized
     lastTime = Date.now();
@@ -152,6 +153,9 @@ function init() {
     Graphics.app.ticker.add(function update(){
         Settings.stats.begin();
         Acorn.states[Acorn.currentState].update(Graphics.app.ticker.elapsedMS/1000); //update the current state
+        test += 75*(Graphics.app.ticker.elapsedMS/1000);
+        time += Graphics.app.ticker.elapsedMS/1000;
+        console.log(test + ' in ' + time + ' seconds')
         Acorn.Sound.update(Graphics.app.ticker.elapsedMS/1000)
         Graphics.app.renderer.render(Graphics.app.stage);
 

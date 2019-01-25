@@ -167,7 +167,7 @@ Pokemon.prototype.init = function(base,data) {
         value: base.baseStats.speed, 
         min: 1,
         name: 'Speed',
-        max: 9999,
+        max: 1075,
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.speedIV + Math.sqrt(this.pokemon.speedEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);

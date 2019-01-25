@@ -32,16 +32,16 @@ Team Battles
 
 SPEED
 
-the fastest pokemon in the current battle P1 will receive a charge time of <N> seconds
+slowest pokemon gets a charge time of 10 seconds
 
-other pokemon in the battle will receive a charge time relative to the fastest pokemon <N*P1_SPEED/P2_SPEED>
+other pokemon in the battle will receive a charge time relative to the slowest pokemon <N*P1_SPEED/P2_SPEED>
 
 E.G.
 
 P1 has 125 speed
 P2 has 75 speed
 
-P1 charge time is 10 seconds - the charge counter for this battle is 10*125 = 1250
+P2 charge time is 10 seconds - the charge counter for this battle is 10*75 = 750;
 
 the charge for each pokemon will fill at their speed until they hit 1250
 

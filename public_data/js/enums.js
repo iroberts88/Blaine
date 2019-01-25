@@ -10,6 +10,7 @@
 
         BATTLECHAT: 'bcha',
         BATTLEDATA: 'bda',
+        BATTLEUPDATE: 'bdu',
 
         CHANGEMAP: 'chm',
         CHARACTER: 'cha',
@@ -77,6 +78,7 @@
         PWERRORWRONGPASS: 'pwe3',
         PWERRORPLENGTH: 'pwe4',
 
+        READY: 'rdy',
         REMOVEPC: 'rmpc',
         REQUESTMAPDATA: 'req',
         RESOURCE: 're',
@@ -113,6 +115,8 @@
         TILE: 'til',
         TILES: 'tis',
         TRIGGERS: 'tri',
+        TURN: 'tur',
+        TURNDATA: 'tda',
         TYPE: 'ty[ee',
         TYPES: 'typ',
 

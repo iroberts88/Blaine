@@ -554,6 +554,14 @@
                 element.parent.addChildAt(element.glowSprite2,0);
             }
         },
+        fitText: function(text,size){
+            //resize a text object to the given size
+            while(text.width > size){
+                var s = parseInt(text.style.fontSize);
+                text.style.fontSize = (s-1) + 'px';
+            }
+            return text;
+        },
         setSlideBar: function(bar,func){
             bar.clicked = false;
             bar.percent = 0;

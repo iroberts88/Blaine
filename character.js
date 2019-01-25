@@ -160,6 +160,9 @@ Character.prototype.initBattle = function(battle,wild,team){
     this.currentTeam = team;
     var n = 3;
     if (wild){n = 1}
+    if (battle.type == 'team'){
+        n = 2;
+    };
     for (var i = 0; i < n;i++){
         if (typeof this.party[i] == 'undefined'){
             continue;

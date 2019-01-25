@@ -5,8 +5,9 @@
     }
 
     Pokemon.prototype.init = function(data){
-
+        console.log(data);
         this.nickname = data[CENUMS.NICKNAME];
+        this.owner = data[CENUMS.OWNER];
         this.number = data[CENUMS.NUMBER];
         this.level = data[CENUMS.LEVEL];
         this.id = data[CENUMS.ID];
