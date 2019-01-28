@@ -133,6 +133,14 @@
                 Graphics.uiPrimitives2.alpha = 0;
             });
 
+            Acorn.Net.on(CENUMS.CHARGECOUNTER, function (data) {
+                Battle.setChargeCounter(data[CENUMS.VALUE]);
+            });
+
+            Acorn.Net.on(CENUMS.READY, function (data) {
+                Battle.ready = true;
+            });
+
             Acorn.Net.on(CENUMS.EXECUTETURN, function (data) {
                 //A battle turn has been processed
                 console.log("do turn stuff");

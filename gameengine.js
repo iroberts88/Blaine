@@ -191,6 +191,7 @@ var GameEngine = function() {
     this.zones = {};
     this.zoneUpdateList = {}; //a list of zones with active players
 
+    this.inactiveBattles = {};
     this.activeBattles = {}; //active battles
 
     //variables for ID's
@@ -216,8 +217,6 @@ GameEngine.prototype.start = function () {
     self = this;
     setInterval(this.tick, this.gameTickInterval);
 }
-
-
 
 GameEngine.prototype.tick = function() {
     var now = Date.now();
@@ -250,6 +249,15 @@ GameEngine.prototype.tick = function() {
     self.emit();
     self.clearQueue();
     self.lastTime = now;
+}
+
+GameEngine.prototype.battleReady = function(battle) {
+    if (typeof this.inactiveBattles[battle.id] == 'undefined'){
+        console.log('Battle does not exist or is already ready');
+    }else{
+        this.activeBattles[battle.id] = battle;
+        delete this.inactiveBattles[battle.id];
+    }
 }
 
 GameEngine.prototype.getId = function() {

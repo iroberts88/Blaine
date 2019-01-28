@@ -66,7 +66,6 @@ Player.prototype.startGame = function(char){
     cData[CENUMS.MUSIC] = this.character.currentMusic;
     cData[CENUMS.CHARACTER] = this.character.getClientData();
     cData[CENUMS.PLAYERS] = players;
-    this.engine.log(cData);
     this.engine.queuePlayer(this,CENUMS.STARTGAME,cData);
 };
 
@@ -138,6 +137,7 @@ Player.prototype.setupSocket = function() {
                 break;
             case CENUMS.READY:
                 that.ready = true;
+                that.battle.checkReady();
                 break;
         }
     });
@@ -351,7 +351,7 @@ Player.prototype.setupSocket = function() {
                     if (battle.init({team1: [that.character],team2: [trainer],type: 'trainer'})){
                         console.log("Battle successfully initialized!!");
                         that.battle = battle;
-                        that.engine.activeBattles[battle.id] = battle;
+                        that.engine.inactiveBattles[battle.id] = battle;
                     }
                     break;
                 case 'wbattle':
@@ -373,7 +373,7 @@ Player.prototype.setupSocket = function() {
                     if (battle.init({team1: [that.character],team2: [newPoke],type: 'wild'})){
                         console.log("Battle successfully initialized!!");
                         that.battle = battle;
-                        that.engine.activeBattles[battle.id] = battle;
+                        that.engine.inactiveBattles[battle.id] = battle;
                     }
                     break;
                 case 'tbattle':
@@ -398,7 +398,7 @@ Player.prototype.setupSocket = function() {
                     if (battle.init({team1: [that.character,trainer1],team2: [trainer2,trainer3],type: 'team'})){
                         console.log("Battle successfully initialized!!");
                         that.battle = battle;
-                        that.engine.activeBattles[battle.id] = battle;
+                        that.engine.inactiveBattles[battle.id] = battle;
                     }
                     break;
                 case 'arp':

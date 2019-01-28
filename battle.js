@@ -42,7 +42,11 @@ var Battle = function(ge) {
     //valid turn data added here...
     this.turnData = {};
 
+    this.chargeCounter = 0;
+
     this.wild = null;
+
+    this.ready = false;
 }
 
 Battle.prototype.init = function (data) {
@@ -96,12 +100,16 @@ Battle.prototype.init = function (data) {
     for (var i = 0; i < this.team2.length;i++){
         t2.push(this.team2[i].getLessClientData());
     }
+
+    this.getChargeCounter(false);
+
     var cData = {}
     cData[CENUMS.WILD] = this.wild;
     cData[CENUMS.TEAM1] = t1;
     cData[CENUMS.TEAM2] = t2;
     cData[CENUMS.TEAM1POKEMON] = t1p;
     cData[CENUMS.TEAM2POKEMON] = t2p;
+    cData[CENUMS.CHARGECOUNTER] = this.chargeCounter;
     for (var i in this.players){
         this.engine.queuePlayer(this.players[i],CENUMS.STARTBATTLE, cData);
     }
@@ -109,6 +117,7 @@ Battle.prototype.init = function (data) {
 };
 
 Battle.prototype.tick = function(deltaTime){
+    
     /*
     if (this.roundActive){
         this.roundTicker += deltaTime;
@@ -129,10 +138,50 @@ Battle.prototype.tick = function(deltaTime){
     }*/
 };
 
+Battle.prototype.checkReady = function(){
+    for (var i in this.players){
+        if (!this.players[i].ready){
+            this.ready = false;
+            return;
+        }
+    }
+    this.ready = true;
+    this.engine.battleReady(this);
+    var cData = {}
+    for (var i in this.players){
+        this.engine.queuePlayer(this.players[i],CENUMS.READY,cData);
+    }
+};
+Battle.prototype.getChargeCounter = function(updateClient = true){
+    //set the charge counter
+    //slowest pokemon is found, counter is set to speed*10
+    // this should be called every time a pokemon switch is made OR a pokemon's speed is changed!
+    var slowest = null;
+    var n = Infinity;
+    for (var i in this.activePokemon){
+        if (this.activePokemon[i].speed.value < n){
+            slowest = i;
+            n = this.activePokemon[i].speed.value
+        }
+    }
+    this.chargeCounter = n*10;
+
+    if (updateClient){
+        var cData = {};
+        cData[CENUMS.VALUE] = this.chargeCounter;
+        for (var i in this.players){
+            this.engine.queuePlayer(this.players[i],CENUMS.CHARGECOUNTER, cData);
+        }
+    }
+
+    console.log('the counter is ' + this.chargeCounter);
+
+}
 Battle.prototype.cleanUp = function(){
     //remove players etc?
     for (var i in this.players){
         this.players[i].battle = null;
+        this.players[i].ready = false;
     }
 };
 

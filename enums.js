@@ -11,10 +11,12 @@ var enums = {
 
         BATTLECHAT: 'bcha',
         BATTLEDATA: 'bda',
+        BATTLEUPDATE: 'bdu',
 
         CHANGEMAP: 'chm',
         CHARACTER: 'cha',
         CHARACTERS: 'cha',
+        CHARGECOUNTER: 'chg',
         CLIENTCOMMAND: 'clc',
         COMMAND: 'cmm',
         CONNINFO: 'coi',
@@ -78,6 +80,7 @@ var enums = {
         PWERRORWRONGPASS: 'pwe3',
         PWERRORPLENGTH: 'pwe4',
 
+        READY: 'rdy',
         REMOVEPC: 'rmpc',
         REQUESTMAPDATA: 'req',
         RESOURCE: 're',

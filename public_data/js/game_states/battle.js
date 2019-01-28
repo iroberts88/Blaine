@@ -56,6 +56,10 @@
             this.endTicker = 0;
             this.ticker = 0;
 
+            this.ready = false;
+
+            this.chargeCounter = this.battleData[CENUMS.CHARGECOUNTER];
+
             Graphics.uiPrimitives1.clear();
             Graphics.uiPrimitives1.lineStyle(3,0x000000,1);
             Graphics.uiPrimitives1.beginFill(0xFFFFFF,1);
@@ -241,6 +245,13 @@
                 //sending out your pokemon cutscene
                 this.updateTrainerStart(dt);
             }
+            if (!this.ready){
+                return;
+            }
+
+            for (var i in this.pokemonContainer){
+                this.pokemonContainer[i].update(dt);
+            }
             /*
             if (this.end){
                 this.endTicker += dt;
@@ -274,6 +285,10 @@
                 }
             }
             */
+        },
+
+        setChargeCounter: function(v){
+            this.chargeCounter = v;
         },
 
         getPokemonData: function(pkmn,n,teamSize,team){
@@ -359,16 +374,18 @@
             }
             d.hpBar = new PIXI.Graphics();
             d.hpBar.position.x = d.nameDisplay.position.x;
-            if (team == 1){
-                d.hpBar.position.y = d.sprite.position.y + d.levelDisplay.height/2 + 5;
-            }else if (team == 2){
-                d.hpBar.position.y = d.sprite.position.y + d.levelDisplay.height/2 + 5;
-            }
+            d.hpBar.position.y = d.sprite.position.y + d.levelDisplay.height/2 + 5;
+            d.chargeBar = new PIXI.Graphics();
+            d.chargeBar.position.x = d.nameDisplay.position.x;
+            d.chargeBar.position.y = d.sprite.position.y + d.levelDisplay.height/2 + 30;
             if (!pkmn.currentHP){
                 this.drawHPBar(d.hpBar,pkmn.hpPercent/100);
             }else{
                 this.drawHPBar(d.hpBar,pkmn.currentHP/pkmn.hp);
             }
+            console.log(pkmn.charge);
+            console.log(this.chargeCounter)
+            this.drawChargeBar(d.chargeBar,pkmn.charge/this.chargeCounter);
             return d;
         },
         drawHPBar: function(gfx,percent){
@@ -379,18 +396,40 @@
                 gfx.lineStyle(2,0x707070,1);
                 gfx.beginFill(0x707070,1);
                 var size = xSize * percent;
-                gfx.drawRoundedRect(0,0,size,20,10);
-                gfx.drawRect(10,0,size-10,20);
+                gfx.drawRoundedRect(0,0,size,ySize,10);
+                gfx.drawRect(10,0,Math.min(0,size-10),ySize);
                 gfx.endFill();
 
                 gfx.lineStyle(2,0x000000,1);
                 gfx.beginFill(0x707070,0);
-                gfx.drawRoundedRect(0,0,xSize,20,10);
+                gfx.drawRoundedRect(0,0,xSize,ySize,10);
                 gfx.endFill();
             }else{
                 gfx.lineStyle(2,0x000000,1);
                 gfx.beginFill(0x707070,1);
-                gfx.drawRoundedRect(0,0,xSize,20,10);
+                gfx.drawRoundedRect(0,0,xSize,ySize,10);
+                gfx.endFill();
+            }
+        },
+        drawChargeBar: function(gfx,percent){
+            gfx.clear();
+            var xSize = ((Graphics.width)/8);
+            var ySize = 10;
+            if (percent != 1){
+                gfx.lineStyle(2,0xff8484,1);
+                gfx.beginFill(0xff8484,1);
+                var size = xSize * percent;
+                gfx.drawRect(0,0,size,ySize);
+                gfx.endFill();
+
+                gfx.lineStyle(2,0x000000,1);
+                gfx.beginFill(0x707070,0);
+                gfx.drawRect(0,0,xSize,ySize);
+                gfx.endFill();
+            }else{
+                gfx.lineStyle(2,0x000000,1);
+                gfx.beginFill(0xff8484,1);
+                gfx.drawRect(0,0,xSize,ySize);
                 gfx.endFill();
             }
         },
@@ -409,6 +448,7 @@
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nameDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].levelDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].hpBar);
+                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].chargeBar);
                     stop = true;
                 }
             }
@@ -443,6 +483,7 @@
                     this.pokemonSpriteContainer[i].sprite.visible = true;
                     this.addChat("& " + trainer.name.toUpperCase() + ' sends out ' + this.otherTeam[i].nickname.toUpperCase() + '!');
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].hpBar);
+                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].chargeBar);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nameDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].levelDisplay);
                 }
@@ -484,6 +525,7 @@
                     }
                     this.pokemonSpriteContainer[i].sprite.visible = true;
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].hpBar);
+                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].chargeBar);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nameDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].levelDisplay);
                 }

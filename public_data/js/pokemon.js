@@ -13,6 +13,7 @@
         this.id = data[CENUMS.ID];
         this.hpPercent = data[CENUMS.HPPERCENT];
         this.battleSprite = null;
+        this.charge = 0;
 
         this.name = Utils.udCheck(data[CENUMS.NAME],null,data[CENUMS.NAME]);
         this.types = Utils.udCheck(data[CENUMS.TYPES],null,data[CENUMS.TYPES]);
@@ -27,6 +28,18 @@
         this.defense = Utils.udCheck(data[CENUMS.DEFENSE],null,data[CENUMS.DEFENSE]);
         this.specialAttack = Utils.udCheck(data[CENUMS.SPECIALATTACK],null,data[CENUMS.SPECIALATTACK]);
         this.specialDefense = Utils.udCheck(data[CENUMS.SPECIALDEFENSE],null,data[CENUMS.SPECIALDEFENSE]);
+    }
+
+    Pokemon.prototype.update = function(deltaTime){
+        if (this.charge == Battle.chargeCounter){
+            return;
+        }
+        this.charge += deltaTime*this.speed;
+        if (this.charge >= Battle.chargeCounter){
+            this.charge = Battle.chargeCounter;
+        }
+        var bar = Battle.pokemonSpriteContainer[this.id].chargeBar;
+        Battle.drawChargeBar(bar,this.charge/Battle.chargeCounter);
     }
 
     

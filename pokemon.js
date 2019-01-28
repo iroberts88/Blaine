@@ -156,7 +156,7 @@ Pokemon.prototype.init = function(base,data) {
             return Math.ceil((val*this.pMod)+this.nMod);
         },
         next: function(updateClient){
-            this.owner.hpPercent.set(updateClient);
+            this.pokemon.hpPercent.set(updateClient);
         }
     });
 
@@ -167,10 +167,16 @@ Pokemon.prototype.init = function(base,data) {
         value: base.baseStats.speed, 
         min: 1,
         name: 'Speed',
-        max: 1075,
+        max: 9999,
         formula: function(){
             var val = (((this.base * 2 + this.pokemon.speedIV + Math.sqrt(this.pokemon.speedEV)/4))*this.pokemon.level)/100 + 5;
             return Math.ceil((val*this.pMod)+this.nMod);
+        },
+        next: function(){
+            var battle = this.pokemon.owner.battle;
+            if (battle){
+                battle.setChargeCounter();
+            }
         }
     });
 
@@ -271,7 +277,7 @@ Pokemon.prototype.init = function(base,data) {
             return this.value;
         },
         next: function(updateClient){
-            this.owner.hpPercent.set(updateClient);
+            this.pokemon.hpPercent.set(updateClient);
         }
     });
     this.attributeIndex[CENUMS.CURRENTHP] = this.currentHP;
@@ -284,7 +290,8 @@ Pokemon.prototype.init = function(base,data) {
         max: 100,
         name: 'Current HP Percent',
         formula: function(updateClient){
-            return this.value;
+            console.log('setting hp percent of ' + this.pokemon.name)
+            return Math.round((this.pokemon.currentHP.value/this.pokemon.hp.value)*10)*10;
         },
     });
     this.attributeIndex[CENUMS.HPPERCENT] = this.hpPercent;
@@ -319,7 +326,6 @@ Pokemon.prototype.getClientData = function(less = false){
     data[CENUMS.CURRENTPP] = this.currentPP;
     data[CENUMS.SLOT] = this.slot;
     data[CENUMS.HP] = this.hp.value;
-    data[CENUMS.SPEED] = this.speed.value;
     data[CENUMS.ATTACK] = this.attack.value;
     data[CENUMS.DEFENSE] = this.defense.value;
     data[CENUMS.SPECIALATTACK] = this.spattack.value;
@@ -333,6 +339,7 @@ Pokemon.prototype.getLessClientData = function(){
     data[CENUMS.NUMBER] = this.number;
     data[CENUMS.LEVEL] = this.level;
     data[CENUMS.ID] = this.id;
+    data[CENUMS.SPEED] = this.speed.value;
     data[CENUMS.HPPERCENT] = this.hpPercent.value;
     data[CENUMS.OWNER] = this.character ? this.character.id : null;
     return data;

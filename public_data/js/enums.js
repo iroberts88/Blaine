@@ -15,6 +15,7 @@
         CHANGEMAP: 'chm',
         CHARACTER: 'cha',
         CHARACTERS: 'cha',
+        CHARGECOUNTER: 'chg',
         CLIENTCOMMAND: 'clc',
         COMMAND: 'cmm',
         CONNINFO: 'coi',

@@ -99,7 +99,7 @@ Attribute.prototype.set = function(updateClient){
     		}
     	}
 	}
-    try{this.next()}catch(e){}
+    try{this.next(updateClient);}catch(e){}
     try{
         if (updateClient){
             var cData = {};
