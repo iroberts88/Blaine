@@ -110,6 +110,9 @@
                 MainMenu.mainPanel.removeChild(MainMenu.loginButton);
                 MainMenu.mainPanel.removeChild(MainMenu.createButton);
                 MainMenu.mainPanel.removeChild(MainMenu.guestButton);
+                //TODO remove this
+                MainMenu.submit();
+                //TODO REMOVE THIS
             }
             this.mainPanel.appendChild( this.guestButton );
             //login and play button
@@ -165,22 +168,7 @@
             this.submitButton.onpointerup = function(){
                 //check for valid sn/pw;
                 Acorn.Sound.play('select');
-                var sData = {};
-                sData[CENUMS.USER] = MainMenu.usernameInput.value;
-                sData[CENUMS.PASSWORD] = MainMenu.passwordInput.value
-                var sn = MainMenu.usernameInput.value;
-                var pw = MainMenu.passwordInput.value;
-                switch(MainMenu.loginType){
-                    case 'normal':
-                        Acorn.Net.socket_.emit(CENUMS.LOGINATTEMPT,sData);
-                        break;
-                    case 'new':
-                        Acorn.Net.socket_.emit(CENUMS.CREATEUSER,sData);
-                        break;
-                    case 'guest':
-                        Acorn.Net.socket_.emit(CENUMS.GUESTLOGIN,sData);
-                        break;
-                }
+                MainMenu.submit();
             }
             this.cancelButton = document.createElement( 'div' );
             this.cancelButton.id = 'cancelButton';
@@ -206,6 +194,26 @@
             console.log('Main Menu INITIALIZED');
             Acorn.Sound.play('opening');
         },
+        submit: function(){
+            var sData = {};
+            sData[CENUMS.USER] = MainMenu.usernameInput.value;
+            sData[CENUMS.PASSWORD] = MainMenu.passwordInput.value
+            var sn = MainMenu.usernameInput.value;
+            var pw = MainMenu.passwordInput.value;
+            console.log(sData)
+            switch(MainMenu.loginType){
+                case 'normal':
+                    Acorn.Net.socket_.emit(CENUMS.LOGINATTEMPT,sData);
+                    break;
+                case 'new':
+                    Acorn.Net.socket_.emit(CENUMS.CREATEUSER,sData);
+                    break;
+                case 'guest':
+                    Acorn.Net.socket_.emit(CENUMS.GUESTLOGIN,sData);
+                    break;
+            }
+
+        },
         setLoginErrorText: function(s){
             this.errorText.innerHTML = s;
             this.errorText.style.left = 200 - this.errorText.clientWidth/2;
@@ -215,6 +223,14 @@
             this.errorText.style.color = 'rgba(255, 0, 0,' +  this.errorAlpha + ')';
         },
         showCharacterSelection(data){
+            //TODO REMOVE THIS
+
+                            //new character!
+                            MainMenu.currentChar = 1;
+                    console.log('play')
+                    Acorn.Sound.play('newChar');
+                    MainMenu.fadeOut = true;
+            //REMOVE THIS
             this.charSelect = true;
             Graphics.uiPrimitives.lineStyle(1,0xFFFFFF,1);
             Graphics.uiPrimitives.beginFill(0xFFFFFF,1)

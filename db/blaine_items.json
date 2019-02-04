@@ -77,7 +77,7 @@
       "stack": true,
       "description": "Catches Pokemon",
       "use": {
-        "type": "battleenemy",
+        "type": "ball",
         "effects": [
           {
             "effectid": "catch",
@@ -94,7 +94,7 @@
       "stack": true,
       "description": "Catches Pokemon. More effective than a pokeball",
       "use": {
-        "type": "battleenemy",
+        "type": "ball",
         "effects": [
           {
             "effectid": "catch",
@@ -111,7 +111,7 @@
       "stack": true,
       "description": "Catches Pokemon. More effective than a great ball",
       "use": {
-        "type": "battleenemy",
+        "type": "ball",
         "effects": [
           {
             "effectid": "catch",
@@ -128,7 +128,7 @@
       "stack": true,
       "description": "Catches Pokemon. The most effective ball ever made",
       "use": {
-        "type": "battleenemy",
+        "type": "ball",
         "effects": [
           {
             "effectid": "catch",
@@ -139,6 +139,19 @@
     },
 
 
+    {
+      "itemid": "tm1",
+      "name": "TM 01",
+      "type": "tm",
+      "price": 5000,
+      "stack": true,
+      "description": "Contains the move Mega Punch",
+      "use": {
+        "type": "fieldpkmn",
+        "effects": [
+        ]
+      }
+    },
 
     {
       "itemid": "coincase",

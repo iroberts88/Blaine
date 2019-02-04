@@ -100,6 +100,7 @@ Player.prototype.setupSocket = function() {
             return;
 
         }
+        console.log(data);
         switch(data[CENUMS.COMMAND]){
             case 'turn':
                 if (that.battle == null || typeof data.turnData == 'undefined'){
@@ -339,12 +340,12 @@ Player.prototype.setupSocket = function() {
             commands.push(c.substring(from,c.length));
             console.log(commands);
             switch (commands[0]){
-                case 'battle':
+                case 'b':
                     //trainer battle
                     if (that.battle != null){console.log("Battle exists");return;}
                     console.log("Start Battle");
                     var pokemon = [Math.ceil(Math.random()*15),Math.ceil(Math.random()*15),Math.ceil(Math.random()*15)];
-                    var levels = [3,3,3];
+                    var levels = [Math.ceil(Math.random()*30),Math.ceil(Math.random()*30),Math.ceil(Math.random()*30)];
                     var battle = new Battle(that.engine);
                     var trainer = new Trainer(that.engine);
                     trainer.init({pokemon:pokemon,levels:levels});
@@ -365,7 +366,7 @@ Player.prototype.setupSocket = function() {
                     newPoke.init(that.engine.pokemon[Math.ceil(Math.random()*15)],{
                         character: null,
                         nickname: '',
-                        level: 2,
+                        level: 3,
                         id: that.engine.getId(),
                         engine: that.engine
                     });

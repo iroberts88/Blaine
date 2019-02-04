@@ -1,3 +1,23 @@
+var CENUMS = require('./enums.js').Enums; //init client enums
+CENUMS.init();
+
+var targetTypeEnums = {
+    'all': CENUMS.ALL,
+    'allpkmn': CENUMS.ALLPKMN,
+    'ball': CENUMS.BALL,
+    'enemy': CENUMS.ENEMY,
+    'field': CENUMS.FIELD,
+    'fieldpkmn': CENUMS.FIELDPKMN,
+    'battlepkmn': CENUMS.BATTLEPKMN,
+    'battle': CENUMS.BATTLE
+}
+
+var typeEnums = {
+    'main': CENUMS.MAIN,
+    'ball': CENUMS.BALL,
+    'tm': CENUMS.TM,
+    'key': CENUMS.KEY
+}
 
 var Inventory = function(){
     this.MAX_ITEM_STACK = 99;
@@ -107,11 +127,28 @@ Inventory.prototype.getDBObj = function(){
 Inventory.prototype.getClientData = function(){
     //create object to send to the client
     var data = {}
-    data.items = {};
+    data[CENUMS.ITEMS] = {};
     for (var i in this.items){
-        data.items[i] = this.items[i].getClientData();
+        data[CENUMS.ITEMS][i] = this.items[i].getClientData();
     }
-    data.order = this.order;
+    data[CENUMS.ORDER] = {};
+    data[CENUMS.ORDER][CENUMS.MAIN] = [];
+    for (var i = 0; i < this.order.main.length;i++){
+        data[CENUMS.ORDER][CENUMS.MAIN].push(this.order.main[i]);
+    }
+    data[CENUMS.ORDER][CENUMS.BALL] = [];
+    for (var i = 0; i < this.order.ball.length;i++){
+        data[CENUMS.ORDER][CENUMS.BALL].push(this.order.ball[i]);
+    }
+    data[CENUMS.ORDER][CENUMS.TM] = [];
+    for (var i = 0; i < this.order.tm.length;i++){
+        data[CENUMS.ORDER][CENUMS.TM].push(this.order.tm[i]);
+    }
+    data[CENUMS.ORDER][CENUMS.KEY] = [];
+    for (var i = 0; i < this.order.key.length;i++){
+        data[CENUMS.ORDER][CENUMS.KEY].push(this.order.key[i]);
+    }
+
     return data;
 }
 
@@ -142,12 +179,13 @@ Item.prototype.init = function(data) {
 
 Item.prototype.getClientData = function() {
     var data = {};
-    data.name = this.name;
-    data.type = this.type;
-    data.price = this.price;
-    data.description = this.description;
-    data.amount = this.amount;
-    data.targetType = this.use.type;
+    data[CENUMS.NAME] = this.name;
+    data[CENUMS.ID] = this.id;
+    data[CENUMS.TYPE] = this.type;
+    data[CENUMS.PRICE] = this.price;
+    data[CENUMS.DESCRIPTION] = this.description;
+    data[CENUMS.AMOUNT] = this.amount;
+    data[CENUMS.TARGETTYPE] = targetTypeEnums[this.use.type];
     return data;
 };
 

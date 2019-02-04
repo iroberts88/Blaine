@@ -46,3 +46,25 @@ P2 charge time is 10 seconds - the charge counter for this battle is 10*75 = 750
 the charge for each pokemon will fill at their speed until they hit 1250
 
 if a faster pokemon is swapped out - the charge counter is reset  and the pokemon that remain out are given their % of charge into the new charge counter
+
+MOVE TARGET TYPES
+
+Single - pick any target
+Ally - pick a single ally
+Enemy - pick a single enemy
+Self - self only (instant confirm)
+All - (instant confirm)
+Enemy Team - hits the entire enemy team (instant confirm)
+
+ITEM USE TYPES
+
+ENEMY - can use on an enemy pokemon
+ALL - can use in the field or battle
+ALLPKMN - can use in the field or battle on a single pokemon
+BATTLE - can use in battle only (item that resets all stat value?)
+BATTLE - can use in battle only on a single pokemon (X stats items)
+FIELD - can use in field only ( key items )
+FIELDPKMN - can use in field onyl on a single pokemon (tms)
+BALL - can use ina wild battle
+
+

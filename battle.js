@@ -44,6 +44,8 @@ var Battle = function(ge) {
 
     this.chargeCounter = 0;
 
+    this.baseChargeTime = 15; //the lowest pokemon will take n secinds to charge
+
     this.wild = null;
 
     this.ready = false;
@@ -171,7 +173,7 @@ Battle.prototype.getChargeCounter = function(updateClient = true){
             n = this.activePokemon[i].speed.value
         }
     }
-    this.chargeCounter = n*10;
+    this.chargeCounter = n*this.baseChargeTime;
 
     if (updateClient){
         var cData = {};

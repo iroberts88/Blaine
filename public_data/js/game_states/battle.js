@@ -10,12 +10,8 @@
             this.otherTeam = null;
             this.chatLog = [];
 
-            this.roundActive = false;
-            this.turn = null; //turn animations/etc are playing
             this.wildStart = false;
-
             this.trainerStart = false;
-
             this.gopkmnStart = false;
             this.gopkmnTicker = 0;
 
@@ -42,8 +38,9 @@
             this.itemUI = null;
             this.fightUI = null;
 
+            this.currentPokemon = null;
+
             this.confirmTurnWindow = null;
-            this.turnData = {};
             this.currentSelectedItem = null;
             this.currentSelectedAttack = null;
             this.moveButtons = [];
@@ -114,8 +111,9 @@
                 interactive: true,buttonMode: true,
                 clickFunc: function onClick(e){
                     if (Battle.wild){
-                        Battle.turnData['run'] = true;
-                        Battle.toggleTurnOptions(false);
+                        Battle.turnData = {};
+                        Battle.turnData[CENUMS.COMMAND] = CENUMS.RUN;
+                        Battle.hideTurnOptions();
                         Battle.getConfirmTurnWindow();
                     }
                 }
@@ -230,7 +228,13 @@
             }
 
         },
-        
+        startGame: function(){
+            for (var i in this.myTeam){
+                this.currentPokemon = this.myTeam[i];
+                break;
+            }
+            this.showTurnOptions();
+        },
         update: function(dt){ 
             
             if (this.wildStart){
@@ -252,7 +256,7 @@
             for (var i in this.pokemonContainer){
                 this.pokemonContainer[i].update(dt);
             }
-            /*
+            
             if (this.end){
                 this.endTicker += dt;
                 if (this.endTicker >= 3.0){
@@ -261,13 +265,14 @@
                     Game.setBattleChange(false);
                 }
             }
+            /*
             if (this.turn != null){
                 this.turn.update(dt);
                 if (this.turn.end){
                     Acorn.Net.socket_.emit('battleUpdate',{command: 'roundReady'});
                     this.turn = null;
                 }
-            }
+            }*/
             if (!Game.chatActive){
                 if (Acorn.Input.isPressed(Acorn.Input.Key.COMMAND)){
                     Game.chat.value = '/';
@@ -284,7 +289,6 @@
                     Game.chatActive = true;
                 }
             }
-            */
         },
 
         setChargeCounter: function(v){
@@ -312,37 +316,67 @@
                 d.sprite.position.y = ((Graphics.height*0.75)/(teamSize+1))*n;
             }
             var onClick = function(e){
+                //there is a current target select mode
+                var pkmn = e.currentTarget.pkmninfo;
                 switch(Battle.targetSelectMode){
                     case 'item':
-                        if (Battle.wild == false || e.currentTarget.pkmninfo.id == Battle.activePokemonIndex[Battle.currentPokemonIndex].id){
+                        if (Battle.wild == false || pkmn.id == Battle.activePokemonIndex[Battle.currentPokemonIndex].id){
                             return;
                         }
                         Battle.turnData[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id] = {
                             command: 'item',
                             type: Battle.currentSelectedItem.itemInfo.type,
                             oIndex: Battle.currentSelectedItem.orderIndex,
-                            pID: e.currentTarget.pkmninfo.id,
+                            pID: pkmn.id,
                             pIndex: e.currentTarget.pIndex
                         };
                         Game.clearUI();
-                        Battle.checkTurnReady();
                         break;
                     case 'pkmn':
-                        //TODO make sure its not the active pokemon
-                        if (e.currentTarget.pkmninfo.id == Battle.activePokemonIndex[Battle.currentPokemonIndex].id){
-                            return;
+                        //set turn data and bring up confim window
+                        switch(Battle.currentSelectedAttack[CENUMS.TARGETTYPE]){
+                            case CENUMS.ALLY:
+                                //check to see if the pokemon is on your team!
+                                var isAlly = false;
+                                for (var i in Battle.myTeam){
+                                    if (pkmn == Battle.myTeam[i]){
+                                        isAlly = true;
+                                    }
+                                }
+                                if (!isAlly){
+                                    return;
+                                }
+                                console.log("ERROR - NOT AN ALLY");
+                                break;
+                            case CENUMS.ENEMY:
+                                var isEnemy = false;
+                                for (var i in Battle.otherTeam){
+                                    if (pkmn == Battle.otherTeam[i]){
+                                        isEnemy = true;
+                                    }
+                                }
+                                if (!isEnemy){
+                                    return;
+                                }
+                                console.log("ERROR - NOT AN ENEMY");
+                                break;
                         }
-                        Battle.turnData[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id] = {
-                            command: 'fight',
-                            moveIndex: Battle.currentSelectedAttack,
-                            pID: e.currentTarget.pkmninfo.id,
-                            pIndex: e.currentTarget.pIndex
-                        };
-                        Game.clearUI();
-                        Battle.checkTurnReady();
+                        Battle.turnData = {};
+                        Battle.turnData[CENUMS.COMMAND] = CENUMS.ATTACK;
+                        Battle.turnData[CENUMS.POKEMON] = Battle.currentPokemon.id;
+                        Battle.turnData[CENUMS.TARGET] = pkmn.id;
+                        Battle.turnData[CENUMS.MOVEID] = Battle.currentSelectedAttack[CENUMS.MOVEID];
+                        Battle.getConfirmTurnWindow();
                         break;
                     default:
-                        //set the current pokemon to give commands
+                        //set the current pokemon to give commands?
+                        //check if you own the pokemon
+                        //and that you havent sent a battle command yet
+                        console.log(pkmn)
+                        if (pkmn.owner == Player.character.id && !pkmn.battleCommandSent){
+                            Battle.currentPokemon = pkmn;
+                            Battle.showTurnOptions();
+                        }
                         break;
                 }
             }
@@ -539,104 +573,104 @@
                 Acorn.Net.socket_.emit(CENUMS.BATTLEUPDATE,sData);
             }
         },
-
-        toggleTurnOptions: function(bool){
-            if (this.waitingForData){
-                this.targetSelectText.text = 'Waiting...'
-                Graphics.uiContainer2.addChild(this.targetSelectText);
-                return;
-            }
-            if (bool && this.roundActive){
-                //remove previous highlights
-                for (var i in this.myActivePokemon){
-                    Battle.pokemonSpriteContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
-                }
-                Graphics.uiContainer2.addChild(this.fightButton);
-                Graphics.uiContainer2.addChild(this.pokemonButton);
-                Graphics.uiContainer2.addChild(this.itemButton);
-                Graphics.uiContainer2.addChild(this.runButton);
-                //highlight the active pokemon
-                var outLineFilter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF00000, 0.5);
-                this.pokemonSpriteContainer[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id].sprite.filters = [outLineFilter];
-            }else{
-                for (var i in this.myActivePokemon){
-                    Battle.pokemonSpriteContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
-                }
-                Graphics.uiContainer2.removeChild(this.fightButton);
-                Graphics.uiContainer2.removeChild(this.pokemonButton);
-                Graphics.uiContainer2.removeChild(this.itemButton);
-                Graphics.uiContainer2.removeChild(this.runButton);
-                for (var i = 0; i < this.moveButtons.length;i++){
-                    Graphics.uiContainer2.removeChild(this.moveButtons[i]);
-                }
-                this.moveButtons = [];
+        hideTurnOptions: function(){
+            Graphics.uiContainer2.removeChild(this.fightButton);
+            Graphics.uiContainer2.removeChild(this.pokemonButton);
+            Graphics.uiContainer2.removeChild(this.itemButton);
+            Graphics.uiContainer2.removeChild(this.runButton);
+            for (var i = 0; i < this.moveButtons.length;i++){
+                Graphics.uiContainer2.removeChild(this.moveButtons[i]);
             }
         },
+        showTurnOptions: function(){
+            this.targetSelectMode = '';
+            //clear move buttons
+            for (var i = 0; i < this.moveButtons.length;i++){
+                Graphics.uiContainer2.removeChild(this.moveButtons[i]);
+            }
+            this.moveButtons = [];
+            //clear previous filters on pokemon
+            for (var i in this.pokemonContainer){
+                Battle.pokemonSpriteContainer[i].sprite.filters = [];
+            }
 
-        toggleTargetSelect: function(bool,type){
-            if (this.waitingForData){
-                this.targetSelectText.text = 'Waiting...'
+            if (!this.currentPokemon){
+                this.targetSelectText.text = 'Waiting...';
                 Graphics.uiContainer2.addChild(this.targetSelectText);
                 return;
             }
-            if (bool){
-                //remove previous highlights
-                for (var i in this.myActivePokemon){
-                    Battle.pokemonSpriteContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
-                }
-                type = (typeof type != 'undefined')? type : '';
-                if (type == 'item'){
-                    this.targetSelectText.text = "Pick a pokemon to use " + this.currentSelectedItem.itemInfo.name + ' on!';
-                    this.targetSelectMode = 'item';
-                }else if (type == 'pkmn'){
-                    this.targetSelectText.text = "Pick a pokemon to use " + Battle.myActivePokemon[i].moves[this.currentSelectedAttack].name + ' on!';
-                    this.targetSelectMode = 'pkmn';
-                }
-                Graphics.uiContainer2.addChild(this.targetSelectText);
-            }else{
-                for (var i in this.myActivePokemon){
-                    Battle.pokemonSpriteContainer[Battle.myActivePokemon[i].id].sprite.filters = [];
-                }
-                Graphics.uiContainer2.removeChild(this.targetSelectText);
+
+            Graphics.uiContainer2.addChild(this.fightButton);
+            Graphics.uiContainer2.addChild(this.pokemonButton);
+            Graphics.uiContainer2.addChild(this.itemButton);
+            if (this.wild){
+                Graphics.uiContainer2.addChild(this.runButton);
             }
+            //highlight the active pokemon
+            var outLineFilter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF00000, 0.5);
+            this.pokemonSpriteContainer[this.currentPokemon.id].sprite.filters = [outLineFilter];
+        },
+
+        showTargetSelect: function(type){
+            //need to select a target for a move/item
+            
+            //clear move buttons
+            for (var i = 0; i < this.moveButtons.length;i++){
+                Graphics.uiContainer2.removeChild(this.moveButtons[i]);
+            }
+            this.moveButtons = [];
+            //clear previous filters on pokemon
+            for (var i in this.pokemonContainer){
+                Battle.pokemonSpriteContainer[i].sprite.filters = [];
+            }
+            type = (typeof type != 'undefined')? type : '';
+            if (type == 'item'){
+                this.targetSelectText.text = "Pick a pokemon to use " + this.currentSelectedItem.itemInfo.name + ' on!';
+                this.targetSelectMode = 'item';
+            }else if (type == 'pkmn'){
+                this.targetSelectText.text = "Pick a pokemon to use " + this.currentSelectedAttack[CENUMS.NAME] + ' on!';
+                this.targetSelectMode = 'pkmn';
+            }
+            Graphics.uiContainer2.addChild(this.targetSelectText);
+        },
+        hideTargetSelect: function(){
+            Graphics.uiContainer2.removeChild(this.targetSelectText);
+            this.showTurnOptions();
         },
 
         showFightUI: function(){
-            this.toggleTurnOptions(false);
-            this.currentPokemonIndex = 0;
-            var activePokemon = this.myActivePokemon[this.activePokemonIndex[this.currentPokemonIndex]];
+            this.hideTurnOptions();
             //display moves
             //TODO ADD BACK BUTTON
-            this.displayMoves(activePokemon);
+            this.displayMoves(this.currentPokemon);
         },
 
         showPokemonUI: function(){
             Game.switchUI(Game.pokemonUI);
-            this.toggleTurnOptions(false);
+            this.hideTurnOptions();
         },
 
         showItemUI: function(){
             Game.switchUI(Game.inventoryUI);
             Game.resetItems();
-            this.toggleTurnOptions(false);
+            this.hideTurnOptions();
         },
 
-        checkTurnReady: function(){
-            //check if all active pokemon have Turn data
-            var ready = true;
-            for (var i = 0; i < Battle.activePokemonIndex.length;i++){
-                if (typeof Battle.turnData[Battle.activePokemonIndex[i]] == 'undefined'){
-                    ready = false;
-                    Battle.currentPokemonIndex = i;
-                    Battle.toggleTurnOptions(true);
-                    break;
+        checkBattleCommand: function(){
+            //check if a pokemon is charging/ready
+
+            Graphics.ui.removeChild(Battle.confirmTurnWindow);
+            Graphics.uiContainer2.removeChild(this.targetSelectText);
+
+            for (var i in this.myTeam){
+                if (!this.myTeam[i].battleCommandSent){
+                    this.currentPokemon = this.myTeam[i];
+                    this.showTurnOptions();
+                    return;
                 }
             }
-            //otherwise send turn data
-            if (ready){
-                Battle.toggleTurnOptions(false);
-                Battle.sendTurnData();
-            }
+            this.currentPokemon = null;
+            this.showTurnOptions();
         },
 
         //Display the move buttons for a given pokemon
@@ -657,14 +691,30 @@
                     clickFunc: function onClick(e){
                         //set turn data
                         //TODO for 'all' and 'self' type attacks, skip target selection
-                        Battle.currentSelectedAttack = e.currentTarget.moveIndex;
-                        Battle.toggleTurnOptions(false);
-                        Battle.toggleTargetSelect(true,'pkmn');
+                        Battle.currentSelectedAttack = e.currentTarget.move;
+                        Battle.hideTurnOptions();
+                        switch(e.currentTarget.move[CENUMS.TARGETTYPE]){
+                            case CENUMS.SINGLE:
+                                Battle.showTargetSelect('pkmn');
+                                break;
+                            case CENUMS.ALLY:
+                                Battle.showTargetSelect('pkmn');
+                                break;
+                            case CENUMS.ENEMY:
+                                Battle.showTargetSelect('pkmn');
+                                break;
+                            case CENUMS.ALL:
+                                break;
+                            case CENUMS.ENEMYTEAM:
+                                break;
+                            case CENUMS.SELF:
+                                break;
+                        }
                     }
                 });
 
                 button.pkmnID = pkmn.id;
-                button.moveIndex = i;
+                button.move = move;
 
                 if (i == 1){
                     button.position.x = Graphics.width/4 + (Graphics.width*0.75/2) + this.BUTTON_BUFFER;
@@ -681,21 +731,20 @@
         },
 
         sendTurnData: function(){
-            console.log("Sending Turn Data!!!!!");
-            //show confirm dialogue box
-            this.getConfirmTurnWindow();
-            //clear any ui buttons
-            for (var i = 0; i < this.moveButtons.length;i++){
-                Graphics.uiContainer2.removeChild(this.moveButtons[i]);
-            }
-            this.moveButtons = [];
+            this.currentPokemon.battleCommandSent = true;
+            Acorn.Net.socket_.emit(CENUMS.BATTLEUPDATE,this.turnData);
+            this.currentPokemon = null;
+            Game.clearUI();
+            Battle.clear();
+            this.checkBattleCommand();
+            this.turnData = null;
         },
-
-        executeTurn: function(data){
-            this.turn = new Turn();
-            this.turn.init(data.turnData);
+        clear: function(){
+            this.hideTurnOptions();
+            Battle.targetSelectMode = '';
+            Battle.currentSelectedItem = null;
+            Battle.currentSelectedAttack = null;
         },
-
         getConfirmTurnWindow: function(){
 
             this.confirmTurnWindow = new PIXI.Container();
@@ -709,43 +758,47 @@
             var minheight = 200
             var minwidth = 550;
             var num = 1;
-            textArr = [];
-            for (var i in this.turnData){
-                if (i == 'run'){
-                    textArr = ['Run away?']
-                    break;
-                }
-                var pkmn = Party.getPokemon(i);
-                var text = this.pokemonContainer[i].nickname + ' ';
-                if (this.turnData[i].command == 'fight'){
-                    text += ('will use ' + pkmn.moves[this.turnData[i].moveIndex].name + ' on ' + this.pokemonContainer[this.turnData[i].pID].nickname);  
-                }else if (this.turnData[i].command == 'swap'){
-                    text += ('will swap with ' + Party.pokemon[this.turnData[i].index].nickname);  
-                }else if (this.turnData[i].command == 'item'){
-                    var item = Player.character.inventory.items[Player.character.inventory.order[this.turnData[i].type][this.turnData[i].oIndex]];
-                    if (item.targetType == 'allpkmn' || item.targetType == 'battlepkmn' ){
-                        text += ('will forgo its turn so you can use '+ item.name + ' on ' + Party.pokemon[this.turnData[i].pIndex].nickname);  
-                    }else if (item.targetType == 'all' || item.targetType == 'battle' ){
-                        text += ('will forgo its turn so you can use '+ item.name);
-                    }else if (item.targetType == 'battleenemy'){
-                        text += ('will forgo its turn so you can use '+ item.name + ' on ' + this.pokemonContainer[this.turnData[i].pID].nickname);
+
+            var pkmn = Party.getPokemon(this.turnData[CENUMS.POKEMON]);
+            var text = pkmn.nickname + ' ';
+            switch(this.turnData[CENUMS.COMMAND]){
+                case CENUMS.ATTACK:
+                    text += ('will use ' + Battle.currentSelectedAttack[CENUMS.NAME]);
+                    if (this.turnData[CENUMS.TARGET]){
+                        text += (' on ' + this.pokemonContainer[this.turnData[CENUMS.TARGET]].nickname + '!');
+                    }else{
+                        text += '!';
                     }
-                }
-                textArr.push(text);
-                num += 1;
+                    break;
+                case CENUMS.ITEM:
+                    text += ('will forego its turn to use ' + Battle.currentSelectedItem[CENUMS.NAME]);
+                    if (this.turnData[CENUMS.TARGET]){
+                        var pkmn = this.pokemonContainer[this.turnData[CENUMS.TARGET]];
+                        if (typeof pkmn == 'undefined'){
+                            pkmn = Party.getPokemon(this.turnData[CENUMS.TARGET]);
+                        }
+                        text += (' on ' + pkmn.nickname + '!');
+                    }else{
+                        text += '!';
+                    }
+                    break;
+                case CENUMS.SWAPPKMN:
+                    text += ('will be swapped with ' + Party.getPokemon(this.turnData[CENUMS.TARGET]).nickname);
+                    break;
+
             }
-            for (var j = 0; j < textArr.length;j++){
-                var newtext = new PIXI.Text(textArr[j],AcornSetup.style2);
-                newtext.anchor.x = 0.5;
-                newtext.anchor.y = 0;
-                newtext.position.y = h;
-                if (newtext.width + 40 > w){
-                    w = newtext.width + 40;
-                }
-                h += newtext.height;
-                h += 20;
-                t.addChild(newtext)
+
+            var newtext = new PIXI.Text(text,AcornSetup.style2);
+            newtext.anchor.x = 0.5;
+            newtext.anchor.y = 0;
+            newtext.position.y = h;
+            if (newtext.width + 40 > w){
+                w = newtext.width + 40;
             }
+            h += newtext.height;
+            h += 20;
+            t.addChild(newtext)
+
             h += buttonSize;
             if (h < minheight){h = minheight;}
             if (w < minwidth){w = minwidth;}
@@ -772,18 +825,7 @@
                 position: [Graphics.width/2-5,Graphics.height/2 + h/2-5], 
                 interactive: true,buttonMode: true,
                 clickFunc: function onClick(e){
-                    //CONFIRM turn, clear turn data and send it to server
-                    Acorn.Net.socket_.emit('battleUpdate',{command: 'turn',turnData: Battle.turnData});
-                    console.log(Battle.turnData);
-                    Battle.turnData = {};
-                    Game.clearUI();
-                    Battle.roundActive = false;
-                    Battle.toggleTurnOptions(false);
-                    Battle.currentPokemonIndex = 0;
-                    Graphics.ui.removeChild(Battle.confirmTurnWindow);
-                    Battle.targetSelectText.text = "Waiting...";
-                    Battle.waitingForData = true;
-                    Battle.toggleTargetSelect(true);
+                    Battle.sendTurnData();
                 }
             }));
             this.confirmTurnWindow.addChild(Graphics.makeUiElement({
@@ -795,7 +837,7 @@
                     //CANCEL turn, clear turn data
                     Battle.turnData = {};
                     Game.clearUI();
-                    Battle.currentPokemonIndex = 0;
+                    Battle.clear();
                     Graphics.ui.removeChild(Battle.confirmTurnWindow);
                 }
             }));
@@ -861,7 +903,7 @@
             g.drawRoundedRect(0,0,xSize,ySize,20);
             g.endFill();
 
-            var nameText = new PIXI.Text(move.name,AcornSetup.style2);
+            var nameText = new PIXI.Text(move[CENUMS.NAME],AcornSetup.style2);
             nameText.style.fontSize = 48;
             nameText.anchor.x = 0.5;
             nameText.anchor.y = 0.5;
@@ -869,7 +911,7 @@
             nameText.position.y = ySize/3;
             t.addChild(nameText);
 
-            var typeText = new PIXI.Text(Game.typeList[move.type],AcornSetup.style2);
+            var typeText = new PIXI.Text(Game.typeList[move[CENUMS.TYPE]],AcornSetup.style2);
             typeText.style.fontSize = 24;
             typeText.anchor.x = 0.5;
             typeText.anchor.y = 0.5;
@@ -877,7 +919,7 @@
             typeText.position.y = ySize*0.75;
             t.addChild(typeText);
 
-            var ppText = new PIXI.Text(pp+ ' / ' + move.pp,AcornSetup.style2);
+            var ppText = new PIXI.Text(pp+ ' / ' + move[CENUMS.PP],AcornSetup.style2);
             ppText.style.fontSize = 24;
             ppText.anchor.x = 0.5;
             ppText.anchor.y = 0.5;

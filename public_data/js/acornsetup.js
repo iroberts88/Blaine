@@ -139,6 +139,7 @@
 
             Acorn.Net.on(CENUMS.READY, function (data) {
                 Battle.ready = true;
+                Battle.startGame();
             });
 
             Acorn.Net.on(CENUMS.EXECUTETURN, function (data) {

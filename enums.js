@@ -2,15 +2,22 @@
 //enums.js
 //----------------------------------------------------------------
 var enums = {
-        ACCURACY: 'accuracy',
+        ACCURACY: 'acc',
         ADDPC: 'adpc',
         ADDPOKEMON: 'apk',
+        AMOUNT: 'amt',
+        ALL: 'al',
+        ALLPKMN: 'alp',
+        ALLY: 'aly',
         ATTACK: 'atk',
         ATTACKEV: 'ate',
         ATTACKIV: 'ati',
 
+        BALL: 'bal',
+        BATTLE: 'bat',  
         BATTLECHAT: 'bcha',
         BATTLEDATA: 'bda',
+        BATTLEPKMN: 'bpk',
         BATTLEUPDATE: 'bdu',
 
         CHANGEMAP: 'chm',
@@ -29,9 +36,14 @@ var enums = {
         DEFENSEIV: 'dei',
         DESCRIPTION: 'descrp',
 
+        ENEMY: 'ene',
+        ENEMYTEAM: 'ent',
         EVASION: 'evasss',
         EXECUTETURN: 'ext',
         EXP: 'ex',
+
+        FIELD: 'fie',
+        FIELDPKMN: 'fpkm',
 
         GUESTLOGIN: 'gue',
 
@@ -42,12 +54,17 @@ var enums = {
 
         ID: 'i',
         INVENTORY: 'inv',
+        ITEM: 'itm',
+        ITEMS: 'ite',
+
+        KEY: 'ky',
 
         LEVEL: 'lev',
         LOGINATTEMPT: 'lga',
         LOGGEDIN: 'lgi',
         LOGOUT: 'log',
 
+        MAIN: 'mai',
         MAP: 'm',
         MAPID: 'mid',
         MAPNAME: 'mna',
@@ -65,6 +82,7 @@ var enums = {
         NUMBER: 'num',
 
         OPEN: 'op',
+        ORDER: 'ord',
         OVERLAYRESOURCE: 'ov',
         OWNER: 'own',
 
@@ -73,8 +91,11 @@ var enums = {
         PLAYERUPDATE: 'pupdate',
         PLAYERS: 'pla',
         POKEMON: 'poke',
+        POKEMON1: 'poke1',
+        POKEMON2: 'poke2',
         POWER: 'pwerrr',
         PP: 'pp',
+        PRICE: 'pri',
         PWERRORUSEREXISTS: 'pwe1',
         PWERRORSNLENGTH: 'pwe2',
         PWERRORWRONGPASS: 'pwe3',
@@ -85,13 +106,16 @@ var enums = {
         REQUESTMAPDATA: 'req',
         RESOURCE: 're',
         ROUNDREADY: 'rrd',
+        RUN: 'rn',
 
         SAY: 'sayee',
         SECTOR: 'sec',
         SECTORARRAY: 'sect',
+        SELF: 'sel',
         SERVERUPDATE: 'ser',
         SETLOGINERRORTEXT: 'slgert',
         SETUNITSTAT: 'setu',
+        SINGLE: 'sin',
         SLOT: 'slo',
         SPECIALATTACK: 'spea',
         SPECIALATTACKEV: 'spev',
@@ -108,6 +132,7 @@ var enums = {
         STARTGAME: 'stg',
         SWAPPKMN: 'swp',
 
+        TARGET: 'tar',
         TARGETTYPE: 'tartyp',
         TEAM1: 'tea1',
         TEAM2: 'tea2',
@@ -116,6 +141,7 @@ var enums = {
         TEXT: 'tex',
         TILE: 'til',
         TILES: 'tis',
+        TM: 'tmmm',
         TRIGGERS: 'tri',
         TYPE: 'ty[ee',
         TYPES: 'typ',

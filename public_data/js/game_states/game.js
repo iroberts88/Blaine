@@ -572,30 +572,32 @@
                 position: [Graphics.width/2,Graphics.height - 25],
                 interactive: true,buttonMode: true,
                 clickFunc: function onClick(e){
+                    var item = Game.currentSelectedItem.itemInfo;
+                    var tt = item[CENUMS.TARGETTYPE];
                     if (Game.battleActive){
-                        var item = Game.currentSelectedItem;
                         //use item in battle
-                        if (item.itemInfo.targetType == 'all' || item.itemInfo.targetType == 'battle'){
-                            Battle.turnData[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id] = {
-                                command: 'item',
-                                type: item.itemInfo.type,
-                                oIndex: item.orderIndex
-                            };
-                            Battle.toggleTurnOptions(false);
+                        Battle.currentSelectedItem = Game.currentSelectedItem;
+                        if (tt == CENUMS.ALL || tt == CENUMS.BATTLE){
+                            Battle.turnData = {};
+                            Battle.turnData[CENUMS.COMMAND] = CENUMS.ITEM;
+                            Battle.turnData[CENUMS.POKEMON] = Battle.currentPokemon.id;
+                            Battle.turnData[CENUMS.ID] = item[CNUMS.ID];
+                            Battle.currentSelectedItem = item;
+                            Battle.hideTurnOptions();
                             Battle.getConfirmTurnWindow();
-                        }else if (item.itemInfo.targetType == 'allpkmn' || item.itemInfo.targetType == 'battlepkmn' ){
+                        }else if (tt == CENUMS.ALLPKMN || tt == CENUMS.BATTLEPKMN){
+                            Battle.currentSelectedItem = item;
                             Game.switchUI(Game.pokemonUI);
+                        }else if (t == CENUMS.ENEMY){
                             Battle.currentSelectedItem = item;
-                        }else if (item.itemInfo.targetType == 'battleenemy' ){
                             Game.clearUI();
-                            Battle.toggleTurnOptions(false);
-                            Battle.currentSelectedItem = item;
-                            Battle.toggleTargetSelect(true,'item');
+                            Battle.hideTurnOptions();
+                            Battle.showTargetSelect('item');
                         }
                     }else{
-                        //normal use the item here..
-                        if (item.itemInfo.targetType == 'all' || item.itemInfo.targetType == 'field'){
-                        }else if (item.itemInfo.targetType == 'allpkmn' || item.itemInfo.targetType == 'fieldpkmn' ){
+                        //normal use the item here.
+                        if (tt == CENUMS.ALL || tt == CENUMS.FIELD){
+                        }else if (tt == CENUMS.ALLPKMN || tt == CENUMS.FIELDPKMN ){
                             Game.switchUI(Game.pokemonUI);
                             Game.currentSelectedItem = item;
                         }
@@ -650,28 +652,28 @@
                         //swap pokemon here??
                         //make sure it isnt active pokemon
                         if (Battle.currentSelectedItem){
-                            Battle.turnData[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id] = {
-                                command: 'item',
-                                type: Battle.currentSelectedItem.itemInfo.type,
-                                oIndex: Battle.currentSelectedItem.orderIndex,
-                                pIndex: e.currentTarget.pokemonNumber
-                            };
+                            Battle.turnData = {};
+                            Battle.turnData[CENUMS.COMMAND] = CENUMS.ITEM;
+                            Battle.turnData[CENUMS.POKEMON] = Battle.currentPokemon.id;
+                            Battle.turnData[CENUMS.ID] = Battle.currentSelectedItem[CENUMS.ID];
+                            Battle.turnData[CENUMS.TARGET] = Party.pokemon[e.currentTarget.pokemonNumber].id;
                             Game.clearUI();
-                            Battle.checkTurnReady();
+                            Battle.getConfirmTurnWindow();
                             return;
                         }
-                        for (var i = 0; i < Battle.activePokemonIndex.length;i++){
-                            if (Party.pokemon[e.currentTarget.pokemonNumber].id == Battle.activePokemonIndex[i]){
-                                Battle.addChat('& That pokemon is already in battle!');
-                                return;
-                            }
+                        if (Party.pokemon[e.currentTarget.pokemonNumber].id == Battle.currentPokemon.id){
+                            Battle.addChat('& That pokemon is already in battle!');
+                            return;
                         }
-                        Battle.turnData[Battle.myActivePokemon[Battle.activePokemonIndex[Battle.currentPokemonIndex]].id] = {
-                            command: 'swap',
-                            index: e.currentTarget.pokemonNumber
-                        };
+                        if (!Party.getPokemon(Party.pokemon[e.currentTarget.pokemonNumber].id)){
+                            return;
+                        }
+                        Battle.turnData = {};
+                        Battle.turnData[CENUMS.COMMAND] = CENUMS.SWAPPKMN;
+                        Battle.turnData[CENUMS.POKEMON] = Battle.currentPokemon.id;
+                        Battle.turnData[CENUMS.TARGET] = Party.pokemon[e.currentTarget.pokemonNumber].id;
                         Game.clearUI();
-                        Battle.checkTurnReady();
+                        Battle.getConfirmTurnWindow();
                         return;
                     }
                     if (!Game.pkmnSelected){
@@ -732,7 +734,7 @@
             }
             this.inventoryUIElements = [];
 
-            var itemTypes = ['main', 'ball','tm','key'];
+            var itemTypes = [CENUMS.MAIN, CENUMS.BALL,CENUMS.TM,CENUMS.KEY];
             var yStart = 275;
             var xStart = Graphics.width*0.2;
             var options = {
@@ -741,11 +743,11 @@
             };
 
             for (var j = 0; j < itemTypes.length;j++){
-                var itemArr = Player.character.inventory.order[itemTypes[j]];
+                var itemArr = Player.character.inventory[CENUMS.ORDER][itemTypes[j]];
                 for (var i = 0; i < itemArr.length;i++){
-                    var item = Player.character.inventory.items[itemArr[i]];
+                    var item = Player.character.inventory[CENUMS.ITEMS][itemArr[i]];
                     var newButton = Graphics.makeUiElement({
-                        texture: this.getTextButton(item.name,24,options),
+                        texture: this.getTextButton(item[CENUMS.NAME],24,options),
                         style: AcornSetup.style3,
                         position: [xStart,yStart],
                         interactive: true,buttonMode: true,
@@ -757,20 +759,10 @@
                             Game.currentSelectedItem = e.currentTarget;
                             var filter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF00000, 0.5);
                             Game.currentSelectedItem.filters = [filter];
-                            if (Game.battleActive){
-                                var canuse = {'allpkmn':true,'battlepkmn':true,'all':true,'battle':true,'battleenemy':true}
-                                if (canuse[e.currentTarget.itemInfo.targetType]){
-                                    Game.inventoryUseButton.visible = true;
-                                }else{
-                                    Game.inventoryUseButton.visible = false;
-                                }
+                            if (Game.canUse(e.currentTarget.itemInfo[CENUMS.TARGETTYPE])){
+                                Game.inventoryUseButton.visible = true;
                             }else{
-                                var canuse = {'allpkmn':true,'fieldpkmn':true,'all':true,'field':true,}
-                                if (canuse[e.currentTarget.itemInfo.targetType]){
-                                    Game.inventoryUseButton.visible = true;
-                                }else{
-                                    Game.inventoryUseButton.visible = false;
-                                }
+                                Game.inventoryUseButton.visible = false;
                             }
                         }
                     });
@@ -783,7 +775,48 @@
                 xStart += Graphics.width*0.2;
             }
         },
-
+        canUse(itemTT){
+            if (Game.battleActive){
+                switch(itemTT){
+                    case CENUMS.BATTLE:
+                        return true;
+                        break;
+                    case CENUMS.BATTLEPKMN:
+                        return true;
+                        break;
+                    case CENUMS.ALL:
+                        return true;
+                        break;
+                    case CENUMS.ALLPKMN:
+                        return true;
+                        break;
+                    case CENUMS.ENEMY:
+                        return true;
+                        break;
+                    case CENUMS.BALL:
+                        if (Battle.wild){
+                            return true;
+                        }
+                        break;
+                }
+            }else{
+                switch(itemTT){
+                    case CENUMS.FIELD:
+                        return true;
+                        break;
+                    case CENUMS.ALL:
+                        return true;
+                        break;
+                    case CENUMS.FIELDPKMN:
+                        return true;
+                        break;
+                    case CENUMS.ALLPKMN:
+                        return true;
+                        break;
+                }
+            }
+            return false;
+        },
         resetPokemon: function(slot){
             var xSize = this.pkmnBoxSize[0];
             var ySize = this.pkmnBoxSize[1];
@@ -1024,7 +1057,7 @@
             this.clearUI();
             Graphics.ui.addChild(ui);
             if (this.battleActive){
-                Battle.toggleTurnOptions(false);
+                Battle.hideTurnOptions();
             }
             Game.uiActive = ui;
         },
@@ -1040,15 +1073,11 @@
                 this.chat.value = '';
             }
             if (this.battleActive){
-                Battle.toggleTurnOptions(true);
-                Battle.toggleTargetSelect(false);
-                Battle.targetSelectMode = '';
-                Battle.currentSelectedItem = null;
-                Battle.currentSelectedAttack = null;
+                Battle.showTurnOptions();
+                Battle.hideTargetSelect();
             }
             this.uiActive = null;
             this.currentSelectedItem = null;
-            Battle.currentSelectedItem = null;
             this.currentSelectedItemIndex = null;
             this.inventoryUseButton.visible = false;
         },
