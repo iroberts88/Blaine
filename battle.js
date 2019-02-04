@@ -117,7 +117,14 @@ Battle.prototype.init = function (data) {
 };
 
 Battle.prototype.tick = function(deltaTime){
-    
+    for (var i in this.activePokeemon){
+        p = this.activePokeemon[i];
+        p.charge += deltaTime*p.speed.value;
+        if (p.charge >= this.chargeCounter){
+            p.charge = this.chargeCounter;
+            //if pokemon has a battle command ready - initiate it
+        }
+    }
     /*
     if (this.roundActive){
         this.roundTicker += deltaTime;

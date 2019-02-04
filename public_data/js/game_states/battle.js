@@ -342,6 +342,7 @@
                         Battle.checkTurnReady();
                         break;
                     default:
+                        //set the current pokemon to give commands
                         break;
                 }
             }

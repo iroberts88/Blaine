@@ -13,8 +13,10 @@
         this.id = data[CENUMS.ID];
         this.hpPercent = data[CENUMS.HPPERCENT];
         this.battleSprite = null;
-        this.charge = 0;
 
+        this.charge = 0;
+        this.battleCommand = null;
+        
         this.name = Utils.udCheck(data[CENUMS.NAME],null,data[CENUMS.NAME]);
         this.types = Utils.udCheck(data[CENUMS.TYPES],null,data[CENUMS.TYPES]);
         this.moves = Utils.udCheck(data[CENUMS.MOVES],null,data[CENUMS.MOVES]);
