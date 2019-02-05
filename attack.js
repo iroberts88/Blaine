@@ -24,11 +24,7 @@ Attack.prototype.init = function(data){
     this.description = (typeof data.description == 'undefined') ? '' : data.description;
     this.effects = (typeof data.effects == 'undefined') ? [] : data.effects;
 
-    //target types
-
-    //single -- target another pokemon
-    //all -- target all pokemon
-    //self -- target self
+    this.attackindex = 0;
 }
 
 Attack.prototype.getClientData = function(){

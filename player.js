@@ -82,6 +82,14 @@ Player.prototype.setGameEngine = function(ge){
     this.engine = ge;
     this.id = ge.getId();
 };
+Player.prototype.checkData = function(obj,elements){
+    for (var i = 0; i < elements.length;i++){
+        if (typeof obj[elements[i]] == 'undefined'){
+            return false;
+        }
+    }
+    return true;
+}
 Player.prototype.setupSocket = function() {
 
     // On playerUpdate event
@@ -102,38 +110,102 @@ Player.prototype.setupSocket = function() {
         }
         console.log(data);
         switch(data[CENUMS.COMMAND]){
-            case 'turn':
-                if (that.battle == null || typeof data.turnData == 'undefined'){
+            case CENUMS.ATTACK:
+                if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.MOVEID])){
                     return;
                 }
                 //Parse turn info as valid, add to battle
                 //TODO ALL OF THESE CHECKS
-                if (data.turnData.run){
-                    //check run
-                    that.engine.log('Trying to run');
-                    if (that.battle.wild){
-                        //TODO run % chance?
-                        //exit battle
-                        that.battle.end = true;
-                        that.battle = null;
-                        that.engine.queuePlayer(that,CENUMS.BATTLEDATA, {run:true});
-                    }
-                }else{
-                    for (var i in data.turnData){
-                        switch(data.turnData[i].command){
-                            case 'item':
-                                //make sure player HAS the item
-                                //if used on a pokemon, make sure the pokemon is valid and item type is valid
-                                break;
-                            case 'switch':
-                                //make sure the pokemon switch is valid
-                                break;
-                            case 'fight':
-                                //make sure the move has PP and is valid
-                                break;
+                //MAKE SURE THE MOVE IS VALID!
+                var pokemon = that.character.getPokemon(data[CENUMS.POKEMON]);
+                if (!pokemon){
+                    console.log('pokemon with id ' + data[CENUMS.POKEMON] + ' doesnt exist');
+                    return;
+                }
+                if (!pokemon.getMove(data[CENUMS.MOVEID])){
+                    console.log('pokemon dos not have move: ' + data[CENUMS.MOVEID] );
+                    return;
+                }
+                var move = pokemon.getMove(data[CENUMS.MOVEID]);
+                //make sure the move has pp
+                if (pokemon.currentPP[pokemon.getMoveIndex(data[CENUMS.MOVEID])] <= 0){
+                    console.log('move is out of PP: ' + data[CENUMS.MOVEID] );
+                    return;
+                }
+                //make sure the target is valid
+                var target = null;
+                switch (move.targetType){
+                    case CENUMS.SINGLE:
+                        target = that.battle.activePokemon[data[CENUMS.TARGET]];
+                        if (typeof target == 'undefined'){
+                            console.log('invalid target');
+                            return;
                         }
-                        that.battle.addTurnData(i,data.turnData[i]);
-                    }
+                        break;
+                    case CENUMS.ALLY:
+                        var team = that.battle.getTeam(that.character);
+                        var isonteam = false;
+                        for (var i = 0; i < team.length;i++){
+                            for (var j in team[i].activePokemon){
+                                if (team[i].activePokemon[j].id == data[CENUMS.TARGET]){
+                                    isonteam = true;
+                                }
+                            }
+                        }
+                        if (!isonteam){
+                            console.log('invalid target');
+                            return;
+                        }else{
+                            target = that.battle.activePokemon[data[CENUMS.TARGET]];
+                        }
+                        break;
+                    case CENUMS.ENEMY:
+                        var team = that.battle.getEnemyTeam(that.character);
+                        var isonteam = false;
+                        for (var i = 0; i < team.length;i++){
+                            for (var j in team[i].activePokemon){
+                                if (team[i].activePokemon[j].id == data[CENUMS.TARGET]){
+                                    isonteam = true;
+                                }
+                            }
+                        }
+                        if (!isonteam){
+                            console.log('invalid target');
+                            return;
+                        }else{
+                            target = that.battle.activePokemon[data[CENUMS.TARGET]];
+                        }
+                        break;
+
+                }
+                //add the move the the pokemon!
+                pokemon.currentTurnData = {
+                    command: 'attack',
+                    target: target,
+                    move: move
+                }
+                break;
+            case CENUMS.SWAPPKMN:
+                if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.TARGET])){
+                    return;
+                }
+                break;
+            case CENUMS.ITEM:
+                if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.ID])){
+                    return;
+                }
+                break;
+            case CENUMS.RUN:
+                if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.MOVEID])){
+                    return;
+                }
+                that.engine.log('Trying to run');
+                if (that.battle.wild){
+                    //TODO run % chance?
+                    //exit battle
+                    that.battle.end = true;
+                    that.battle = null;
+                    that.engine.queuePlayer(that,CENUMS.BATTLEDATA, {run:true});
                 }
                 break;
             case CENUMS.READY:

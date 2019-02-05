@@ -119,12 +119,16 @@ Battle.prototype.init = function (data) {
 };
 
 Battle.prototype.tick = function(deltaTime){
-    for (var i in this.activePokeemon){
-        p = this.activePokeemon[i];
+    for (var i in this.activePokemon){
+        p = this.activePokemon[i];
         p.charge += deltaTime*p.speed.value;
         if (p.charge >= this.chargeCounter){
             p.charge = this.chargeCounter;
             //if pokemon has a battle command ready - initiate it
+            if (p.currentTurnData){
+                console.log(p.currentTurnData);
+                p.currentTurnData = null;
+            }
         }
     }
     /*
@@ -354,6 +358,40 @@ Battle.prototype.addTurnData = function(pkmnID,data){
     }
 }
 
+Battle.prototype.getTeam = function(player){
+    for (var i = 0; i < this.team1.length;i++){
+        if (this.team1[i].id == player.id){
+            return this.team1;
+        }
+    }
+    for (var i = 0; i < this.team2.length;i++){
+        if (this.team2[i].id == player.id){
+            return this.team2;
+        }
+    }
+    return null;
+}
+Battle.prototype.getEnemyTeam = function(player){
+    var isteam1 = false;
+    var isteam2 = false;
+    for (var i = 0; i < this.team1.length;i++){
+        if (this.team1[i].id == player.id){
+            isteam1 = true;
+        }
+    }
+    for (var i = 0; i < this.team2.length;i++){
+        if (this.team2[i].id == player.id){
+            isteam2 = true;
+        }
+    }
+    if (isteam1){
+        return this.team2;
+    }else if (isteam2){
+        return this.team1;
+    }else{
+        return null;
+    }
+}
 Battle.prototype.sendChat = function(text){
     for (var i in this.players){
         this.engine.queuePlayer(this.players[i],CENUMS.BATTLECHAT, {text: text});

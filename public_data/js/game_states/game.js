@@ -124,6 +124,31 @@
                 }
             });
             Graphics.uiContainer2.addChild(this.chatButton);
+
+            Acorn.Input.onDown(Acorn.Input.Key.CANCEL, function(){
+                Game.clearUI();
+                if (Game.chatActive){
+                    Game.chat.value = '';
+                    document.body.removeChild(Game.chat);
+                    Graphics.uiContainer2.addChild(Game.chatButton);
+                    Game.chatActive = false;
+                }
+                if (Game.battleActive && Battle.ready){
+                    Battle.turnData = {};
+                    Game.clearUI();
+                    Battle.clear();
+                    Graphics.ui.removeChild(Battle.confirmTurnWindow);
+                    Battle.checkBattleCommand();
+                }
+            });
+
+            Acorn.Input.onDown(Acorn.Input.Key.INTERACT, function(){
+                if (Game.battleActive){
+                    if (Battle.confirmTurnWindow){
+                        Battle.sendTurnData();
+                    }
+                }
+            });
         },
 
         update: function(deltaTime){
@@ -188,9 +213,8 @@
                     Game.chatActive = true;
                 }
             }
-            if (Acorn.Input.isPressed(Acorn.Input.Key.CANCEL)){
-                this.clearUI();
-            }
+
+
             //update each PC
             PCS.update(deltaTime);
             NPCS.update(deltaTime);

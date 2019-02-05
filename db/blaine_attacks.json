@@ -14,7 +14,9 @@
       "power": 0,
       "targetType": "single",
       "name": "Leer",
-      "type": 1
+      "type": 1,
+      "castTime": 0.75,
+      "animationTime": 0.75
     },
     {
       "effects": [
@@ -32,7 +34,9 @@
       "power": 30,
       "targetType": "single",
       "name": "Bubble",
-      "type": 3
+      "type": 3,
+      "castTime": 0.75,
+      "animationTime": 0.75
     },
     {
       "acc": 100,
@@ -42,7 +46,9 @@
       "physical": true,
       "targetType": "single",
       "name": "Scratch",
-      "type": 1
+      "type": 1,
+      "castTime": 0.75,
+      "animationTime": 0.75
     },
     {
       "effects": [
@@ -56,7 +62,9 @@
       "power": 0,
       "targetType": "single",
       "name": "Leech Seed",
-      "type": 5
+      "type": 5,
+      "castTime": 0.75,
+      "animationTime": 0.75
     },
     {
       "acc": 100,
@@ -66,7 +74,9 @@
       "physical": true,
       "targetType": "single",
       "name": "Vine Whip",
-      "type": 5
+      "type": 5,
+      "castTime": 0.75,
+      "animationTime": 0.75
     },
     {
       "effects": [
@@ -82,7 +92,9 @@
       "power": 40,
       "targetType": "single",
       "name": "Ember",
-      "type": 2
+      "type": 2,
+      "castTime": 0.75,
+      "animationTime": 0.75
     },
     {
       "effects": [
@@ -98,7 +110,9 @@
       "power": 0,
       "targetType": "single",
       "name": "Tail Whip",
-      "type": 1
+      "type": 1,
+      "castTime": 0.75,
+      "animationTime": 0.75
     },
     {
       "effects": [
@@ -114,7 +128,8 @@
       "power": 0,
       "targetType": "single",
       "name": "Growl",
-      "type": 1
+      "type": 1,
+      "castTime": 0.75
     },
     {
       "acc": 95,
@@ -124,7 +139,9 @@
       "physical": true,
       "targetType": "single",
       "name": "Tackle",
-      "type": 1
+      "type": 1,
+      "castTime": 0.75,
+      "animationTime": 0.75
     },
     {
       "effects": [],
@@ -135,7 +152,9 @@
       "power": 40,
       "targetType": "single",
       "name": "Water Gun",
-      "type": 3
+      "type": 3,
+      "castTime": 0.75,
+      "animationTime": 0.75
     }
   ]
 }

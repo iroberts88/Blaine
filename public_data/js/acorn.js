@@ -58,7 +58,10 @@
             ENTER: 10,
             COMMAND: 11,
             SPACE: 12,
-            TALK: 13
+            TALK: 13,
+            MOD_SHIFT: 14,
+            MOD_CTRL: 15,
+            MOD_ALT: 16
         },
         keysPressed: [],
         keyBindings: [],
@@ -77,6 +80,8 @@
         touchEventCallback: null,
         scrollCallback: null,
 
+        downCallBacks: {},
+        upCallBacks: {},
 
         init: function() {
             this.bind();
@@ -102,16 +107,48 @@
             this.keyBindings[191] = Acorn.Input.Key.COMMAND; //F SLASH
             this.keyBindings[32] = Acorn.Input.Key.SPACE; //SPACE
             this.keyBindings[84] = Acorn.Input.Key.TALK; //T
+            this.keyBindings[16] = Acorn.Input.Key.MOD_SHIFT; //shift mod
+            this.keyBindings[17] = Acorn.Input.Key.MOD_CTRL; //ctrl mod
+            this.keyBindings[18] = Acorn.Input.Key.MOD_ALT; //alt mod
         },
         getBinding: function(keyCode) {
             return this.keyBindings[keyCode];
         },
+        onDown: function(binding,f){
+            this.downCallBacks[binding] = f;
+        },
+        onUp: function(binding,f){
+            this.upCallBacks[binding] = f;
+        },
+        clearCallbacks: function(){
+            this.downCallBacks = {};
+            this.upCallBacks = {};
+        },
         keyDown: function(keyCode) {
             console.log(keyCode);
+            if (this.keysPressed[Acorn.Input.Key.MOD_SHIFT]){
+                keyCode = 's'+keyCode;
+            }
+            if (this.keysPressed[Acorn.Input.Key.MOD_CTRL]){
+                keyCode = 'c'+keyCode;
+            }
+            if (this.keysPressed[Acorn.Input.Key.MOD_ALT]){
+                keyCode = 'a'+keyCode;
+            }
             this.keysPressed[this.getBinding(keyCode)] = true;
+            if (this.downCallBacks[this.getBinding(keyCode)]){
+                console.log('DOWN CODE: ' + keyCode);
+                var f = this.downCallBacks[this.getBinding(keyCode)];
+                f();
+            }
         },
         keyUp: function(keyCode) {
             this.keysPressed[this.getBinding(keyCode)] = false;
+            /*if (this.upCallBacks[this.getBinding(keyCode)]){
+                console.log('UP CODE: ' + keyCode);
+                var f = this.upCallBacks[this.getBinding(keyCode)];
+                f();
+            }*/
         },
         setValue: function(binding, value) {
             this.keysPressed[binding] = value;

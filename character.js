@@ -226,6 +226,15 @@ Character.prototype.addPokemon = function(p,initBool){
     return info;
 };
 
+Character.prototype.getPokemon = function(id){
+    for (var i = 0; i < this.party.length; i++){
+        if (this.party[i].id == id){
+            return this.party[i];
+        }
+    }
+    return null;
+};
+
 Character.prototype.getDBObj = function(){
     var dbObj = {};
     dbObj.name = this.name;

@@ -55,10 +55,16 @@ var Pokemon = function(){
         '3': 0
     }
 
+    this.currentTurnData = null;
+
     this.status = [];
+
+    this.charge = 0;
 }
 
 Pokemon.prototype.reset = function(){
+    this.charge = 0;
+    this.currentTurnData = null;
 }
 
 Pokemon.prototype.getMoves = function(options){
@@ -375,6 +381,23 @@ Pokemon.prototype.modStat = function(id,amt){
         this.engine.log(e);
     }
 };
+
+Pokemon.prototype.getMove = function(id){
+    for (var i = 0; i < this.moves.length;i++){
+        if (this.moves[i].attackid == id){
+            return this.moves[i];
+        }
+    }
+    return false;
+}
+Pokemon.prototype.getMoveIndex = function(id){
+    for (var i = 0; i < this.moves.length;i++){
+        if (this.moves[i].attackid == id){
+            return i;
+        }
+    }
+    return null;
+}
 
 Pokemon.prototype.addExp = function(amt){
 

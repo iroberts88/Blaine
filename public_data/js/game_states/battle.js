@@ -747,6 +747,8 @@
         },
         getConfirmTurnWindow: function(){
 
+            //TODO setting.autoconfirm?
+
             this.confirmTurnWindow = new PIXI.Container();
 
             var c = new PIXI.Container();
@@ -784,6 +786,9 @@
                     break;
                 case CENUMS.SWAPPKMN:
                     text += ('will be swapped with ' + Party.getPokemon(this.turnData[CENUMS.TARGET]).nickname);
+                    break;
+                case CENUMS.RUN:
+                    text = 'Run away?';
                     break;
 
             }

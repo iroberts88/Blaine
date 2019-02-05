@@ -15,10 +15,11 @@
         BALL: 'bal',
         BATTLE: 'bat',  
         BATTLECHAT: 'bcha',
-        BATTLEDATA: 'bda',
+        BATTLEDATA: 'bda', //new battle action to client
         BATTLEPKMN: 'bpk',
-        BATTLEUPDATE: 'bdu',
+        BATTLEUPDATE: 'bdu', //receviing battle update from client
 
+        CASTTIME: 'cas',
         CHANGEMAP: 'chm',
         CHARACTER: 'cha',
         CHARACTERS: 'cha',

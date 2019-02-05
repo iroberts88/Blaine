@@ -118,6 +118,8 @@ $(function() {
     Acorn.Sound.addSound({url: 'sounds/sfx/exit.mp3', id: 'exit', volume: 1.0});
     Acorn.Sound.addSound({url: 'sounds/sfx/enter.mp3', id: 'enter', volume: 1.0});
     Acorn.Sound.addSound({url: 'sounds/sfx/menu.mp3', id: 'menu', volume: 1.0});
+    //pokemon attacks
+    Acorn.Sound.addSound({url: 'sounds/sfx/a_scratch.mp3', id: 'a_scratch', volume: 1.0});
 });
 
 function setupSocket() {
