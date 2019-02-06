@@ -10,6 +10,7 @@ var enums = {
         ALLPKMN: 'alp',
         ALLY: 'aly',
         ATTACK: 'atk',
+        ATTACKDONE: 'akd',
         ATTACKEV: 'ate',
         ATTACKIV: 'ati',
 

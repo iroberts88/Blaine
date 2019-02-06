@@ -120,14 +120,36 @@ Battle.prototype.init = function (data) {
 
 Battle.prototype.tick = function(deltaTime){
     for (var i in this.activePokemon){
-        p = this.activePokemon[i];
+        var p = this.activePokemon[i];
+        p.update(deltaTime);
         p.charge += deltaTime*p.speed.value;
         if (p.charge >= this.chargeCounter){
             p.charge = this.chargeCounter;
             //if pokemon has a battle command ready - initiate it
             if (p.currentTurnData){
-                console.log(p.currentTurnData);
-                p.currentTurnData = null;
+
+                //EXECUTE TURN...
+                switch (p.currentTurnData.command){
+                    case 'attack':
+                        //begin attack animation
+                        if (p.castingAttack){
+                            break;
+                        }
+                        p.castingAttack = p.currentTurnData.move;
+                        p.castingAttackTicker = 0;
+                        //send to client!!
+                        var cData = {};
+                        cData[CENUMS.POKEMON] = p.id;
+                        cData[CENUMS.ID] = p.currentTurnData.move.attackid;
+                        console.log(cData)
+                        this.queueData(CENUMS.ATTACK,cData);
+                        break;
+                    case 'item':
+                        break;
+                    case 'switch':
+                        break;
+                }
+
             }
         }
     }
@@ -390,6 +412,11 @@ Battle.prototype.getEnemyTeam = function(player){
         return this.team1;
     }else{
         return null;
+    }
+}
+Battle.prototype.queueData = function(call,data){
+    for (var i in this.players){
+        this.engine.queuePlayer(this.players[i],call,data);
     }
 }
 Battle.prototype.sendChat = function(text){

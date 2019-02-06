@@ -18,6 +18,8 @@ Attack.prototype.init = function(data){
     this.acc = data.acc;
     this.pp = data.pp;
     this.power = data.power;
+    this.castTime = data.castTime; //the time in which the attack can be interrupted
+    this.animationTime = data.animationTime; //the full duration of the animation time before the attack completes
     //optional
     this.type = (typeof data.type == 'undefined') ? 1 : data.type;
     this.physical = (typeof data.physical == 'undefined') ? false : data.physical;

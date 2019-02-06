@@ -96,6 +96,7 @@ Player.prototype.setupSocket = function() {
     var that = this;
 
     this.socket.on(CENUMS.BATTLEUPDATE, function (data) {
+        if (!data){return;}
         if (typeof data[CENUMS.COMMAND] == 'undefined'){
             //TODO Error no command
             that.engine.log("No Command")

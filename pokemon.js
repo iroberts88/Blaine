@@ -57,6 +57,9 @@ var Pokemon = function(){
 
     this.currentTurnData = null;
 
+    this.castingAttack = null;
+    this.castingAttackTicker = 0;
+
     this.status = [];
 
     this.charge = 0;
@@ -64,7 +67,23 @@ var Pokemon = function(){
 
 Pokemon.prototype.reset = function(){
     this.charge = 0;
+    this.castingAttack = null
     this.currentTurnData = null;
+    this.castingAttackTicker = 0;
+}
+
+Pokemon.prototype.update = function(deltaTime){
+    if (this.castingAttack){
+        //update the current attack cast...
+        this.castingAttackTicker += deltaTime;
+        if (this.castingAttack.animationTime <= this.castingAttackTicker){
+            console.log(this.castingAttackTicker);
+            this.reset();
+            var cData = {};
+            cData[CENUMS.POKEMON] = this.id;
+            this.character.owner.battle.queueData(CENUMS.ATTACKDONE,cData);
+        }
+    }
 }
 
 Pokemon.prototype.getMoves = function(options){

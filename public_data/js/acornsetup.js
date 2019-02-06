@@ -142,12 +142,15 @@
                 Battle.startGame();
             });
 
-            Acorn.Net.on(CENUMS.EXECUTETURN, function (data) {
-                //A battle turn has been processed
-                console.log("do turn stuff");
+            Acorn.Net.on(CENUMS.ATTACK, function (data) {
+                //execute attack
                 console.log(data);
-                if (Game.battleActive){
-                    Battle.executeTurn(data);
+                
+            });
+            Acorn.Net.on(CENUMS.ATTACKDONE, function (data) {
+                if (typeof Battle.pokemonContainer[data[CENUMS.POKEMON]] != 'undefined'){
+                    Battle.pokemonContainer[data[CENUMS.POKEMON]].charge = 0;
+                    Battle.pokemonContainer[data[CENUMS.POKEMON]].reset();
                 }
             });
 
