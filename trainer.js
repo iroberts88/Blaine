@@ -13,6 +13,7 @@ var Trainer = function(ge){
     this.name = null;
     this.portrait = null;
 
+    this.battle = null;
 
     //inventory
     this.inventory = null;
@@ -48,6 +49,7 @@ Trainer.prototype.init = function(data) {
 Trainer.prototype.initBattle = function(battle,wild,team){
     this.activePokemon = [];
     this.currentTeam = team;
+    this.battle = battle;
     var n = 3;
     if (wild){n == 1};
     if (battle.type == 'team'){

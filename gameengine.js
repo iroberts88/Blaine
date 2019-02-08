@@ -312,7 +312,8 @@ GameEngine.prototype.loadPokemon = function(arr) {
 GameEngine.prototype.loadAttacks = function(arr) {
     for (var i = 0; i < arr.length;i++){
         var atk = new Attack();
-        atk.init(arr[i])
+        atk.init(arr[i]);
+        atk.attackid = self.getId();
         self.attacks[arr[i].attackid] = atk;
     }
     console.log('loaded ' + arr.length + ' Attacks from file');

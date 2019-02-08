@@ -26,6 +26,7 @@ var enums = {
         CHARACTER: 'cha',
         CHARACTERS: 'cha',
         CHARGECOUNTER: 'chg',
+        CLIENTID: 'cli',
         CLIENTCOMMAND: 'clc',
         COMMAND: 'cmm',
         CONNINFO: 'coi',

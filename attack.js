@@ -12,7 +12,8 @@ var typeEnums = {
     'enemyTeam': CENUMS.ENEMYTEAM
 }
 Attack.prototype.init = function(data){
-    this.attackid = data.attackid;
+    this.attackid = null;
+    this.id = data.attackid;
     this.name = data.name;
     this.targetType = (typeof data.targetType == 'undefined') ? CENUMS.SINGLE : typeEnums[data.targetType];
     this.acc = data.acc;
@@ -20,6 +21,7 @@ Attack.prototype.init = function(data){
     this.power = data.power;
     this.castTime = data.castTime; //the time in which the attack can be interrupted
     this.animationTime = data.animationTime; //the full duration of the animation time before the attack completes
+    this.clientID = data.clientID;
     //optional
     this.type = (typeof data.type == 'undefined') ? 1 : data.type;
     this.physical = (typeof data.physical == 'undefined') ? false : data.physical;

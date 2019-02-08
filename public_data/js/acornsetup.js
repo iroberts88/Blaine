@@ -7,6 +7,11 @@
             fill: Graphics.pallette.color1,
             align: 'left'
         },
+        style: {
+            font: '24px Lato',
+            fill: '#ffa64d',
+            align: 'left'
+        },
 
         style2: {
             font: '18px Pokemon',
@@ -143,14 +148,17 @@
             });
 
             Acorn.Net.on(CENUMS.ATTACK, function (data) {
-                //execute attack
-                console.log(data);
-                
+                var newAction = new Action();
+                newAction.init(data);
+                Battle.actions.push(newAction);
             });
             Acorn.Net.on(CENUMS.ATTACKDONE, function (data) {
                 if (typeof Battle.pokemonContainer[data[CENUMS.POKEMON]] != 'undefined'){
                     Battle.pokemonContainer[data[CENUMS.POKEMON]].charge = 0;
                     Battle.pokemonContainer[data[CENUMS.POKEMON]].reset();
+                    if (!Battle.currentPokemon){
+                        Battle.showTurnOptions();
+                    }
                 }
             });
 
@@ -173,6 +181,13 @@
                 if (data.run){
                     Battle.addChat("You got away!");
                     Battle.end = true;
+                }
+            });
+
+            Acorn.Net.on(CENUMS.HPPERCENT, function (data) {
+                if (Battle.pokemonContainer[data[CENUMS.POKEMON]]){
+                    Battle.pokemonContainer[data[CENUMS.POKEMON]].hpPercent = data[CENUMS.VALUE];
+                    Battle.drawHPBar(Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]].hpBar,data[CENUMS.VALUE]/100);
                 }
             });
 

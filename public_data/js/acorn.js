@@ -91,6 +91,12 @@
             window.onmousedown = Acorn.Input.handleMouseClick;
             window.onmouseup = Acorn.Input.handleMouseUp;
             window.onwheel = Acorn.Input.handleScroll;
+
+            window.addEventListener("focus", function(event){ 
+                Acorn.Input.keysPressed[Acorn.Input.Key.MOD_SHIFT] = false;
+                Acorn.Input.keysPressed[Acorn.Input.Key.MOD_CTRL] = false;
+                Acorn.Input.keysPressed[Acorn.Input.Key.MOD_ALT] = false;
+            }, false);
         },
         bind: function() {
             this.keyBindings[87] = Acorn.Input.Key.UP; //W

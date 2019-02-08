@@ -16,7 +16,8 @@
       "name": "Leer",
       "type": 1,
       "castTime": 0.75,
-      "animationTime": 0.75
+      "animationTime": 0.75,
+      "clientID": 1
     },
     {
       "effects": [
@@ -36,7 +37,8 @@
       "name": "Bubble",
       "type": 3,
       "castTime": 0.75,
-      "animationTime": 0.75
+      "animationTime": 0.75,
+      "clientID": 1
     },
     {
       "acc": 100,
@@ -47,8 +49,9 @@
       "targetType": "single",
       "name": "Scratch",
       "type": 1,
-      "castTime": 0.75,
-      "animationTime": 0.75
+      "castTime": 0.05,
+      "animationTime": 0.33,
+      "clientID": 1
     },
     {
       "effects": [
@@ -64,7 +67,8 @@
       "name": "Leech Seed",
       "type": 5,
       "castTime": 0.75,
-      "animationTime": 0.75
+      "animationTime": 0.75,
+      "clientID": 1
     },
     {
       "acc": 100,
@@ -76,7 +80,8 @@
       "name": "Vine Whip",
       "type": 5,
       "castTime": 0.75,
-      "animationTime": 0.75
+      "animationTime": 0.75,
+      "clientID": 1
     },
     {
       "effects": [
@@ -94,7 +99,8 @@
       "name": "Ember",
       "type": 2,
       "castTime": 0.75,
-      "animationTime": 0.75
+      "animationTime": 0.75,
+      "clientID": 1
     },
     {
       "effects": [
@@ -112,7 +118,8 @@
       "name": "Tail Whip",
       "type": 1,
       "castTime": 0.75,
-      "animationTime": 0.75
+      "animationTime": 0.75,
+      "clientID": 1
     },
     {
       "effects": [
@@ -129,7 +136,9 @@
       "targetType": "single",
       "name": "Growl",
       "type": 1,
-      "castTime": 0.75
+      "castTime": 0.75,
+      "animationTime": 0.75,
+      "clientID": 1
     },
     {
       "acc": 95,
@@ -141,7 +150,8 @@
       "name": "Tackle",
       "type": 1,
       "castTime": 0.75,
-      "animationTime": 0.75
+      "animationTime": 0.75,
+      "clientID": 1
     },
     {
       "effects": [],
@@ -154,7 +164,8 @@
       "name": "Water Gun",
       "type": 3,
       "castTime": 0.75,
-      "animationTime": 0.75
+      "animationTime": 0.75,
+      "clientID": 1
     }
   ]
 }

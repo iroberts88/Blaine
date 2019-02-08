@@ -182,6 +182,7 @@ Player.prototype.setupSocket = function() {
                 //add the move the the pokemon!
                 pokemon.currentTurnData = {
                     command: 'attack',
+                    id: that.engine.getId(),
                     target: target,
                     move: move
                 }

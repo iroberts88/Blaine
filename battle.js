@@ -140,7 +140,10 @@ Battle.prototype.tick = function(deltaTime){
                         //send to client!!
                         var cData = {};
                         cData[CENUMS.POKEMON] = p.id;
-                        cData[CENUMS.ID] = p.currentTurnData.move.attackid;
+                        cData[CENUMS.TARGET] = p.currentTurnData.target.id;
+                        cData[CENUMS.ID] = p.currentTurnData.id;
+                        cData[CENUMS.CLIENTID] = p.currentTurnData.move.clientID;
+                        cData[CENUMS.NAME] = p.currentTurnData.move.name;
                         console.log(cData)
                         this.queueData(CENUMS.ATTACK,cData);
                         break;

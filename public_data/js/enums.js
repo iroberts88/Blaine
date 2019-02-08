@@ -26,6 +26,7 @@
         CHARACTERS: 'cha',
         CHARGECOUNTER: 'chg',
         CLIENTCOMMAND: 'clc',
+        CLIENTID: 'cli',
         COMMAND: 'cmm',
         CONNINFO: 'coi',
         CREATEUSER: 'cru',

@@ -79,6 +79,13 @@ Attribute.prototype.reset = function(updateClient){
     this.stage = 7;
     this.set(updateClient);
 }
+Attribute.prototype.battleUpdate = function(battle){
+    var cData = {};
+    cData[CENUMS.VALUE] = this.value;
+    cData[CENUMS.POKEMON] = this.pokemon.id;
+    console.log(cData);
+    battle.queueData(this.id,cData);
+}
 Attribute.prototype.set = function(updateClient){
 	if (this.setBool){
 		//force value change
@@ -99,7 +106,7 @@ Attribute.prototype.set = function(updateClient){
     		}
     	}
 	}
-    try{this.next(updateClient);}catch(e){}
+    try{this.next(updateClient);}catch(e){console.log(e);}
     try{
         if (updateClient){
             var cData = {};

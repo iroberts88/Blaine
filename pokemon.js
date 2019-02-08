@@ -1,4 +1,5 @@
 var Attribute = require('./attribute.js').Attribute;
+var Actions = require('./actions.js').Actions;
 var CENUMS = require('./enums.js').Enums; //init client enums
 CENUMS.init();
 
@@ -77,7 +78,7 @@ Pokemon.prototype.update = function(deltaTime){
         //update the current attack cast...
         this.castingAttackTicker += deltaTime;
         if (this.castingAttack.animationTime <= this.castingAttackTicker){
-            console.log(this.castingAttackTicker);
+            Actions.doAttack(this,this.castingAttack,this.currentTurnData);
             this.reset();
             var cData = {};
             cData[CENUMS.POKEMON] = this.id;
@@ -316,8 +317,14 @@ Pokemon.prototype.init = function(base,data) {
         name: 'Current HP Percent',
         formula: function(updateClient){
             console.log('setting hp percent of ' + this.pokemon.name)
-            return Math.round((this.pokemon.currentHP.value/this.pokemon.hp.value)*10)*10;
+            return (this.pokemon.currentHP.value/this.pokemon.hp.value)*100;
         },
+        next: function(updateClient){
+            //if in a battle, send battleData
+            if (this.pokemon.character.battle){
+                this.battleUpdate(this.pokemon.character.battle)
+            }
+        }
     });
     this.attributeIndex[CENUMS.HPPERCENT] = this.hpPercent;
     this.currentHP.set();

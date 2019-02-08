@@ -41,6 +41,7 @@ var Character = function(){
     this.activePokemon = {}; //a list of the currently active pokemon for use in a battle
 
     this.speed = 0.25;
+    this.battle = null;
 }
 
 Character.prototype.init = function(data) {
@@ -158,6 +159,13 @@ Character.prototype.init = function(data) {
 Character.prototype.initBattle = function(battle,wild,team){
     this.activePokemon = {};
     this.currentTeam = team;
+    this.currentEnemyTeam = null;
+    this.battle = battle;
+    if (team == battle.team1){
+        this.currentEnemyTeam = battle.team2;
+    }else{
+        this.currentEnemyTeam = battle.team1;
+    }
     var n = 3;
     if (wild){n = 1}
     if (battle.type == 'team'){

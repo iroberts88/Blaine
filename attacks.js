@@ -6,7 +6,8 @@ var Attacks = function() {};
 //ATTACK ACTIONS
 
 var AttackEnums = {
-    TestAttack: 'testAttack'
+    TestAttack: 'testAttack',
+    Scratch: 'scratch'
 }
 
 
@@ -29,29 +30,25 @@ Attacks.prototype.doAttack = function(attack,battle,data){
     var targets = [];
     switch(attack.targetType){
         case 'single':
-            var enemyTeam = battle.team1Pokemon;
-            if (pkmnDoingAttack.character.currentTeam == 1){
-                enemyTeam = battle.team2Pokemon;
-            }
-            targets.push(enemyTeam[data.pIndex]);
-            data.ctd.push({
-                action: 'attack',
-                pokemon1: pkmnDoingAttack.id,
-                pokemon2: enemyTeam[data.pIndex].id,
-                attackid: attack.attackid,
-                attack: attack.name
-            });
+            targets.push(data.target);
             break;
         case 'all':
+            //get all targets...
             break;
         case 'self':
+            break;
+        case 'enemy':
+            break;
+        case 'enemyTeam':
+            break;
+        case 'ally':
             break;
     }
     //targets acquired.. do attack damage and move effects
     for (var i = 0; i < targets.length;i++){
         //check to see if attack hits
         var target = targets[i];
-        if (Math.random()*100 > attack.acc || (Math.random()*100 < (target.evasion - pkmnDoingAttack.accuracy))){
+        if (Math.random()*100 > attack.acc || (Math.random()*100 < (target.evasion.value - pkmnDoingAttack.accuracy.value))){
             //hit misses, add to ctd
             //TODO - any on-miss effects go here
             data.ctd.push({
@@ -172,6 +169,9 @@ Attacks.prototype.getAttackEffect = function(attackStr){
     switch(attackStr) {
         case AttackEnums.TestAttack:
             return Attacks.testAttack;
+            break;
+        case AttackEnums.Scratch:
+            return Attacks.scratch;
             break;
         default:
             console.log('Unable to find attack: ' + attackStr);

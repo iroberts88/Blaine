@@ -38,7 +38,7 @@
             this.itemUI = null;
             this.fightUI = null;
 
-            this.currentPokemon = null;
+            this.currentPokemon = null; //currently selected pokemon
 
             this.confirmTurnWindow = null;
             this.currentSelectedItem = null;
@@ -56,6 +56,8 @@
             this.ready = false;
 
             this.chargeCounter = this.battleData[CENUMS.CHARGECOUNTER];
+
+            this.actions = [];
 
             Graphics.uiPrimitives1.clear();
             Graphics.uiPrimitives1.lineStyle(3,0x000000,1);
@@ -256,6 +258,15 @@
             for (var i in this.pokemonContainer){
                 this.pokemonContainer[i].update(dt);
             }
+
+            for (var i = 0; i < this.actions.length;i++){
+                this.actions[i].update(dt);
+                if (this.actions[i].end){
+                    this.pokemonSpriteContainer[this.actions[i].pokemon.id].lastMoveTicker = 2.0;
+                    this.actions.splice(i,1);
+                    i-=1;
+                }
+            }
             
             if (this.end){
                 this.endTicker += dt;
@@ -299,6 +310,7 @@
             
             var d = {}; 
             d.pokemon = pkmn;
+            d.team = team;
             d.sprite = Graphics.getSprite(pkmn.number);
             d.sprite.scale.x = 3;
             d.sprite.scale.y = 3;
@@ -384,7 +396,6 @@
             d.sprite.on('click', onClick);
             Graphics.uiContainer2.addChild(d.sprite);
             d.sprite.visible = false;
-            
             d.nameDisplay = new PIXI.Text(pkmn.nickname,AcornSetup.style2);
             d.nameDisplay.anchor.y = 0.5;
             if (team == 1){
@@ -407,6 +418,17 @@
                 d.levelDisplay.position.x = Graphics.width-10;
                 d.levelDisplay.position.y = d.sprite.position.y;
             }
+            d.lastMoveText = new PIXI.Text('',AcornSetup.style);
+            d.lastMoveText.position.x = 10;
+            d.lastMoveText.position.y = 10;
+            d.lastMovePrims = new PIXI.Graphics();
+            d.lastMoveDisplay = new PIXI.Container();
+            d.lastMoveDisplay.addChild(d.lastMovePrims);
+            d.lastMoveDisplay.addChild(d.lastMoveText);
+            d.lastMoveTicker = 0;
+            d.lastMoveDisplay.position.x = d.sprite.position.x;
+            d.lastMoveDisplay.position.y = d.sprite.position.y - d.sprite.height/2 - 20;
+            d.lastMoveDisplay.visible = false;
             d.hpBar = new PIXI.Graphics();
             d.hpBar.position.x = d.nameDisplay.position.x;
             d.hpBar.position.y = d.sprite.position.y + d.levelDisplay.height/2 + 5;
@@ -423,16 +445,36 @@
             this.drawChargeBar(d.chargeBar,pkmn.charge/this.chargeCounter);
             return d;
         },
+        drawLastMoveDisplay: function(psc,newText){
+            //psc = pokemonSpriteContainer
+            psc.lastMovePrims.clear();
+            psc.lastMoveText.text = newText;
+            psc.lastMovePrims.lineStyle(2,0xffa64d,1);
+            psc.lastMovePrims.beginFill(0x000000,0.5);
+            psc.lastMovePrims.drawRect(0,0,psc.lastMoveText.width+20,psc.lastMoveText.height+20);
+            psc.lastMovePrims.endFill();
+            psc.lastMoveDisplay.position.x = psc.sprite.position.x-10-psc.lastMoveText.width/2;
+            psc.lastMoveDisplay.position.y = psc.sprite.position.y - psc.sprite.height/2 - 40;
+            psc.lastMoveDisplay.visible = true;
+        },
         drawHPBar: function(gfx,percent){
             gfx.clear();
             var xSize = ((Graphics.width)/8);
             var ySize = 20;
+            if (!percent){
+                console.log('fdskjafdlsafdsa;')
+                gfx.lineStyle(2,0x000000,1);
+                gfx.beginFill(0x707070,0);
+                gfx.drawRoundedRect(0,0,xSize,ySize,10);
+                gfx.endFill();
+                return;
+            }
             if (percent != 1){
                 gfx.lineStyle(2,0x707070,1);
                 gfx.beginFill(0x707070,1);
                 var size = xSize * percent;
                 gfx.drawRoundedRect(0,0,size,ySize,10);
-                gfx.drawRect(10,0,Math.min(0,size-10),ySize);
+                gfx.drawRect(10,0,Math.max(0,size-10),ySize);
                 gfx.endFill();
 
                 gfx.lineStyle(2,0x000000,1);
@@ -481,6 +523,7 @@
                     this.addChat("& A wild " + this.otherTeam[i].nickname.toUpperCase() + ' appeared!');
                     this.pokemonSpriteContainer[i].sprite.tint = 0xFFFFFF;
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nameDisplay);
+                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].lastMoveDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].levelDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].hpBar);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].chargeBar);
@@ -518,6 +561,7 @@
                     this.pokemonSpriteContainer[i].sprite.visible = true;
                     this.addChat("& " + trainer.name.toUpperCase() + ' sends out ' + this.otherTeam[i].nickname.toUpperCase() + '!');
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].hpBar);
+                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].lastMoveDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].chargeBar);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nameDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].levelDisplay);
@@ -560,6 +604,7 @@
                     }
                     this.pokemonSpriteContainer[i].sprite.visible = true;
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].hpBar);
+                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].lastMoveDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].chargeBar);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nameDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].levelDisplay);
@@ -595,10 +640,22 @@
             }
 
             if (!this.currentPokemon){
-                this.targetSelectText.text = 'Waiting...';
-                Graphics.uiContainer2.addChild(this.targetSelectText);
-                return;
+                var p = false;
+                for (var i in this.pokemonContainer){
+                    if (!this.pokemonContainer[i].battleCommandSent && this.pokemonContainer[i].owner == Player.character.id){
+                        this.currentPokemon = this.pokemonContainer[i];
+                        p = true;
+                    }
+                }
+                if (!p){
+                    this.targetSelectText.text = 'Waiting...';
+                    this.waiting = true;
+                    Graphics.uiContainer2.addChild(this.targetSelectText);
+                    return;
+                }
             }
+            this.waiting = false;
+            this.targetSelectText.text = '';
 
             Graphics.uiContainer2.addChild(this.fightButton);
             Graphics.uiContainer2.addChild(this.pokemonButton);
@@ -741,6 +798,8 @@
         },
         clear: function(){
             this.hideTurnOptions();
+            Graphics.ui.removeChild(Battle.confirmTurnWindow);
+            this.confirmTurnWindow = null;
             Battle.targetSelectMode = '';
             Battle.currentSelectedItem = null;
             Battle.currentSelectedAttack = null;
@@ -843,7 +902,6 @@
                     Battle.turnData = {};
                     Game.clearUI();
                     Battle.clear();
-                    Graphics.ui.removeChild(Battle.confirmTurnWindow);
                 }
             }));
             Graphics.ui.addChild(Battle.confirmTurnWindow);

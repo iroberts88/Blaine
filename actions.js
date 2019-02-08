@@ -1,3 +1,7 @@
+
+var CENUMS = require('./enums.js').Enums; //init client enums
+CENUMS.init();
+
 var Actions = function() {};
 
 var ActionEnums = {
@@ -10,11 +14,6 @@ var ActionEnums = {
 ////       Item Actions        ////
 ///////////////////////////////////
 
-//data.battle
-//data.item
-//data.ctd - return clientTurnData
-//data.actionData - the current item actions being executed with relevant data
-//data.turnData - the current turn being executed in a battle
 
 Actions.prototype.testAction = function(data){
     console.log(data);
@@ -28,7 +27,123 @@ Actions.prototype.testAction = function(data){
     });
     return data.ctd;
 }
+Actions.prototype.doAttack = function(pokemon,attack,data){
+    //data.target - the target pkmn
+    if (pokemon.currentHP.value <= 0){
+        console.log('Pokemon fainted before doing the attack!')
+        return;
+    }
+    var targets = [];
+    switch(attack.targetType){
+        case CENUMS.SINGLE:
+            targets.push(data.target);
+            break;
+        case CENUMS.ALL:
+            for (var i in this.character.owner.battle.pokemonContainer){
+                targets.push(this.character.owner.battle.pokemonContainer[i])
+            }
+            break;
+        case CENUMS.SELF:
+            targets.push(pokemon);
+            break;
+        case CENUMS.ENEMY:
+            targets.push(data.target);
+            break;
+        case CENUMS.ENEMYTEAM:
+            for (var i in this.character.currentEnemyTeam){
+                targets.push(this.character.currentEnemyTeam[i])
+            }
+            break;
+        case CENUMS.ALLY:
+            for (var i in this.character.currentTeam){
+                targets.push(this.character.currentTeam[i])
+            }
+    }
+    //targets acquired.. do attack damage and move effects
+    var battle = pokemon.character.owner.battle;
+    for (var i = 0; i < targets.length;i++){
+        //check to see if attack hits
+        var target = targets[i];
+        if (Math.random()*100 > attack.acc || (Math.random()*100 < (target.evasion - pokemon.accuracy))){
+            //hit misses, add to ctd
+            //TODO - any on-miss effects go here
+            console.log('Attack evaded')
+            continue;
+        }
+        var damage = 0;
+        if (attack.power != 0){
+            //this attack does damage, calculate it
+            var a,d = 0;
+            if (attack.physical){
+                a = pokemon.attack.value;
+                d = target.defense.value;
+            }else{
+                a = pokemon.spattack.value;
+                d = target.spdefense.value;
+            }
+            var critMod = 1;
+            if (Math.random()*100 < pokemon.critChance){
+                //attack is a critical hit
+                console.log("critical hit!")
+                critMod = pokemon.critMod;
+                if (attack.physical && target.defense.base < target.defense.value){
+                    d = target.defense.base;
+                }else if (targetsp.defense.base < target.spdefense.value){
+                    d = target.spdefense.base;
+                }
+            }
+            var mod = pokemon.damageMod * target.damageMod;
+            for (var i = 0; i < pokemon.types.length;i++){ //add STAB bonus
+                if (pokemon.types[i] == attack.type){
+                    mod *= pokemon.stabBonus;
+                }
+            }
+            var effectiveness = 1;
+            for (var i = 0; i < target.types.length;i++){ //add effectiveness bonus
+                if (typeof battle.engine.moveEffectiveness[attack.type][target.types[i]] != 'undefined'){ 
+                    effectiveness *= battle.engine.moveEffectiveness[attack.type][target.types[i]];
+                }
+            }
+            if (effectiveness == 0){
+                console.log("No effect!");
+            }else if (effectiveness < 1){
+                console.log("Not very effective...")
+            }else if (effectiveness > 1){
+                console.log("super effective!!!")
+            }else{
 
+            }
+            mod *= effectiveness;
+            mod *= (0.15*Math.random()+0.85);
+            console.log(mod);
+            console.log(critMod)
+
+            //TODO add additional bonuses (burn,statuses weather etc.)
+            damage = Math.ceil((((2*(pokemon.level*critMod)/5)*attack.power*(a/d)/50)+2)*mod);
+            console.log(pokemon.nickname + ' attacks ' + target.nickname + ' with ' + attack.name + ". Damage: " + damage);
+        }
+        //do the attack effects
+        for (var eff = 0; eff < attack.effects.length;eff++){
+            console.log(attack.effects[eff])
+            var effect = attack.effects[eff];
+            var E = Effects.getEffect(effect.effectName);
+            if (!E){
+                console.log('No effect named "' + effect.effectName + '"')
+                continue;
+            }
+            
+        }
+        console.log(target.currentHP.value);
+        target.currentHP.value -= damage;
+        console.log(target.currentHP.value)
+        target.currentHP.set(true);
+        if (target.currentHP.value > 0){
+            
+        }else{
+            console.log('POkemon fainted!')
+        }
+    }
+}
 Actions.prototype.catch = function(data){
     //TODO ATTEMPT TO CATCH THE POKEMON
     var pokemon = data.battle.activePokemon[data.turnData.pID];
