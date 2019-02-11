@@ -32,9 +32,9 @@ var Battle = function(ge) {
     //Battle Types
     this.type = null;
 
-    this.team1 = [];
+    this.team1 = []; //list of each team's players
     this.team2 = [];
-    this.team1Pokemon = [];
+    this.team1Pokemon = [];//list of each team's pokemon
     this.team2Pokemon = [];
     this.activePokemon = {};
     this.players = {}; //keep track of players that receive the data of each round
@@ -49,6 +49,9 @@ var Battle = function(ge) {
     this.wild = null;
 
     this.ready = false;
+
+    this.paused = false;
+    this.currentAction = null;
 }
 
 Battle.prototype.init = function (data) {
@@ -122,11 +125,13 @@ Battle.prototype.tick = function(deltaTime){
     for (var i in this.activePokemon){
         var p = this.activePokemon[i];
         p.update(deltaTime);
-        p.charge += deltaTime*p.speed.value;
+        if (!this.paused){
+            p.charge += deltaTime*p.speed.value;
+        }
         if (p.charge >= this.chargeCounter){
             p.charge = this.chargeCounter;
             //if pokemon has a battle command ready - initiate it
-            if (p.currentTurnData){
+            if (p.currentTurnData && !this.currentAction){
 
                 //EXECUTE TURN...
                 switch (p.currentTurnData.command){
@@ -146,6 +151,8 @@ Battle.prototype.tick = function(deltaTime){
                         cData[CENUMS.NAME] = p.currentTurnData.move.name;
                         console.log(cData)
                         this.queueData(CENUMS.ATTACK,cData);
+                        this.paused = true;
+                        this.currentAction = p.currentTurnData;
                         break;
                     case 'item':
                         break;
@@ -154,6 +161,16 @@ Battle.prototype.tick = function(deltaTime){
                 }
 
             }
+        }
+    }
+    for (var i = 0; i < this.team1.length;i++){
+        if (this.team1[i] instanceof Trainer){
+            this.team1[i].update(deltaTime);
+        }
+    }
+    for (var i = 0; i < this.team2.length;i++){
+        if (this.team2[i] instanceof Trainer){
+            this.team2[i].update(deltaTime);
         }
     }
     /*
@@ -383,6 +400,10 @@ Battle.prototype.addTurnData = function(pkmnID,data){
     }
 }
 
+Battle.prototype.pokemonFainted = function(pkmn){
+
+}
+
 Battle.prototype.getTeam = function(player){
     for (var i = 0; i < this.team1.length;i++){
         if (this.team1[i].id == player.id){
@@ -392,6 +413,19 @@ Battle.prototype.getTeam = function(player){
     for (var i = 0; i < this.team2.length;i++){
         if (this.team2[i].id == player.id){
             return this.team2;
+        }
+    }
+    return null;
+}
+Battle.prototype.getTeamPkmn = function(player){
+    for (var i = 0; i < this.team1.length;i++){
+        if (this.team1[i].id == player.id){
+            return this.team1Pokemon;
+        }
+    }
+    for (var i = 0; i < this.team2.length;i++){
+        if (this.team2[i].id == player.id){
+            return this.team2Pokemon;
         }
     }
     return null;
@@ -413,6 +447,27 @@ Battle.prototype.getEnemyTeam = function(player){
         return this.team2;
     }else if (isteam2){
         return this.team1;
+    }else{
+        return null;
+    }
+}
+Battle.prototype.getEnemyTeamPokemon = function(player){
+    var isteam1 = false;
+    var isteam2 = false;
+    for (var i = 0; i < this.team1.length;i++){
+        if (this.team1[i].id == player.id){
+            isteam1 = true;
+        }
+    }
+    for (var i = 0; i < this.team2.length;i++){
+        if (this.team2[i].id == player.id){
+            isteam2 = true;
+        }
+    }
+    if (isteam1){
+        return this.team2Pokemon;
+    }else if (isteam2){
+        return this.team1Pokemon;
     }else{
         return null;
     }

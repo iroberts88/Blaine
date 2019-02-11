@@ -15,7 +15,6 @@
       "targetType": "single",
       "name": "Leer",
       "type": 1,
-      "castTime": 0.75,
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -36,7 +35,6 @@
       "targetType": "single",
       "name": "Bubble",
       "type": 3,
-      "castTime": 0.75,
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -49,7 +47,6 @@
       "targetType": "single",
       "name": "Scratch",
       "type": 1,
-      "castTime": 0.05,
       "animationTime": 0.33,
       "clientID": 1
     },
@@ -66,7 +63,6 @@
       "targetType": "single",
       "name": "Leech Seed",
       "type": 5,
-      "castTime": 0.75,
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -79,7 +75,6 @@
       "targetType": "single",
       "name": "Vine Whip",
       "type": 5,
-      "castTime": 0.75,
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -98,7 +93,6 @@
       "targetType": "single",
       "name": "Ember",
       "type": 2,
-      "castTime": 0.75,
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -117,7 +111,6 @@
       "targetType": "single",
       "name": "Tail Whip",
       "type": 1,
-      "castTime": 0.75,
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -136,7 +129,6 @@
       "targetType": "single",
       "name": "Growl",
       "type": 1,
-      "castTime": 0.75,
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -149,7 +141,6 @@
       "targetType": "single",
       "name": "Tackle",
       "type": 1,
-      "castTime": 0.75,
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -163,7 +154,6 @@
       "targetType": "single",
       "name": "Water Gun",
       "type": 3,
-      "castTime": 0.75,
       "animationTime": 0.75,
       "clientID": 1
     }

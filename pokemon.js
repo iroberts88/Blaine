@@ -77,12 +77,14 @@ Pokemon.prototype.update = function(deltaTime){
     if (this.castingAttack){
         //update the current attack cast...
         this.castingAttackTicker += deltaTime;
-        if (this.castingAttack.animationTime <= this.castingAttackTicker){
+        if (this.castingAttack.animationTime+1.0 <= this.castingAttackTicker){
             Actions.doAttack(this,this.castingAttack,this.currentTurnData);
             this.reset();
             var cData = {};
             cData[CENUMS.POKEMON] = this.id;
-            this.character.owner.battle.queueData(CENUMS.ATTACKDONE,cData);
+            this.character.battle.queueData(CENUMS.ATTACKDONE,cData);
+            this.character.battle.paused = false;
+            this.character.battle.currentAction = null; 
         }
     }
 }
@@ -304,6 +306,10 @@ Pokemon.prototype.init = function(base,data) {
         },
         next: function(updateClient){
             this.pokemon.hpPercent.set(updateClient);
+            //check faint!!
+            if (this.value >= 0){
+                this.pokemon.character.battle.pokemonFainted(this);
+            }
         }
     });
     this.attributeIndex[CENUMS.CURRENTHP] = this.currentHP;

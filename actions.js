@@ -60,7 +60,7 @@ Actions.prototype.doAttack = function(pokemon,attack,data){
             }
     }
     //targets acquired.. do attack damage and move effects
-    var battle = pokemon.character.owner.battle;
+    var battle = pokemon.character.battle;
     for (var i = 0; i < targets.length;i++){
         //check to see if attack hits
         var target = targets[i];
@@ -123,7 +123,7 @@ Actions.prototype.doAttack = function(pokemon,attack,data){
             console.log(pokemon.nickname + ' attacks ' + target.nickname + ' with ' + attack.name + ". Damage: " + damage);
         }
         //do the attack effects
-        for (var eff = 0; eff < attack.effects.length;eff++){
+        /*for (var eff = 0; eff < attack.effects.length;eff++){
             console.log(attack.effects[eff])
             var effect = attack.effects[eff];
             var E = Effects.getEffect(effect.effectName);
@@ -132,16 +132,9 @@ Actions.prototype.doAttack = function(pokemon,attack,data){
                 continue;
             }
             
-        }
-        console.log(target.currentHP.value);
+        }*/
         target.currentHP.value -= damage;
-        console.log(target.currentHP.value)
         target.currentHP.set(true);
-        if (target.currentHP.value > 0){
-            
-        }else{
-            console.log('POkemon fainted!')
-        }
     }
 }
 Actions.prototype.catch = function(data){

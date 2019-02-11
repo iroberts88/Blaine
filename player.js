@@ -137,44 +137,31 @@ Player.prototype.setupSocket = function() {
                 var target = null;
                 switch (move.targetType){
                     case CENUMS.SINGLE:
-                        target = that.battle.activePokemon[data[CENUMS.TARGET]];
-                        if (typeof target == 'undefined'){
+                        if (data[CENUMS.TEAM] == 1){
+                            target = that.battle.team1Pokemon[data[CENUMS.TARGET]];
+                        }else if (data[CENUMS.TEAM] == 2){
+                            target = that.battle.team2Pokemon[data[CENUMS.TARGET]];
+                        }
+                        
+                        if (typeof target == 'undefined' || !target){
                             console.log('invalid target');
                             return;
                         }
                         break;
                     case CENUMS.ALLY:
-                        var team = that.battle.getTeam(that.character);
-                        var isonteam = false;
-                        for (var i = 0; i < team.length;i++){
-                            for (var j in team[i].activePokemon){
-                                if (team[i].activePokemon[j].id == data[CENUMS.TARGET]){
-                                    isonteam = true;
-                                }
-                            }
-                        }
-                        if (!isonteam){
+                        var team = that.battle.getTeamPokemon(that.character);
+                        target = team[data[CENUMS.TARGET]];
+                        if (typeof target == 'undefined' || !target){
                             console.log('invalid target');
                             return;
-                        }else{
-                            target = that.battle.activePokemon[data[CENUMS.TARGET]];
                         }
                         break;
                     case CENUMS.ENEMY:
-                        var team = that.battle.getEnemyTeam(that.character);
-                        var isonteam = false;
-                        for (var i = 0; i < team.length;i++){
-                            for (var j in team[i].activePokemon){
-                                if (team[i].activePokemon[j].id == data[CENUMS.TARGET]){
-                                    isonteam = true;
-                                }
-                            }
-                        }
-                        if (!isonteam){
+                        var team = that.battle.getEnemyTeamPokemon(that.character);
+                        target = team[data[CENUMS.TARGET]];
+                        if (typeof target == 'undefined' || !target){
                             console.log('invalid target');
                             return;
-                        }else{
-                            target = that.battle.activePokemon[data[CENUMS.TARGET]];
                         }
                         break;
 

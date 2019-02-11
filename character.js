@@ -8,7 +8,7 @@ CENUMS.init();
 
 var Character = function(){
     this.MAX_POKEMON = 6;
-
+    
     this.id = null;
     this.owner = null;
     this.name = null;

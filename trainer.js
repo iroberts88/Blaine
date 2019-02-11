@@ -46,6 +46,36 @@ Trainer.prototype.init = function(data) {
     
 };
 
+Trainer.prototype.update = function(deltaTime) {
+    for (var i in this.activePokemon){
+        var pkmn = this.activePokemon[i];
+        if (pkmn.currentTurnData == null){
+            //for now just attack a random pokemon
+
+            var eTeam = this.battle.getEnemyTeamPokemon(this);
+            var move = pkmn.moves[Math.floor(Math.random()*pkmn.moves.length)]
+            var target = null;
+            switch(move.targetType){
+                case CENUMS.SINGLE:
+                    target = eTeam[Math.floor(Math.random()*eTeam.length)];
+                    break;
+                case CENUMS.ENEMY:
+                    target = eTeam[Math.floor(Math.random()*eTeam.length)];
+                    break;
+                case CENUMS.ALLY:
+                    var mTeam = this.battle.getTeamPokemon(this);
+                    target = mTeam[Math.floor(Math.random()*mTeam.length)];
+            }
+            pkmn.currentTurnData = {
+                command: 'attack',
+                id: this.engine.getId(),
+                target: target,
+                move: move
+            }
+        }
+    }
+};
+
 Trainer.prototype.initBattle = function(battle,wild,team){
     this.activePokemon = [];
     this.currentTeam = team;

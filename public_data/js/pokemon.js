@@ -17,6 +17,9 @@
         this.charge = 0;
         this.battleCommand = null;
         this.battleCommandSent = false;
+
+        this.n = null;
+        this.team = null;
         
         this.name = Utils.udCheck(data[CENUMS.NAME],null,data[CENUMS.NAME]);
         this.types = Utils.udCheck(data[CENUMS.TYPES],null,data[CENUMS.TYPES]);
@@ -51,8 +54,15 @@
                 cont.lastMoveDisplay.visible = false;
             }
         }
-    }
-
+    };
+    Pokemon.prototype.getMove = function(id){
+        for (var i = 0; i < this.moves.length;i++){
+            if (this.moves[i][CENUMS.MOVEID] == id){
+                return this.moves[i];
+            }
+        }
+        return null;
+    };
     Pokemon.prototype.reset = function(){
         this.battleCommand = null;
         this.battleCommandSent = false;

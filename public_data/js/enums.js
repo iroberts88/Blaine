@@ -136,6 +136,7 @@
 
         TARGET: 'tar',
         TARGETTYPE: 'tartyp',
+        TEAM: 'tem',
         TEAM1: 'tea1',
         TEAM2: 'tea2',
         TEAM1POKEMON: 'tea1p',

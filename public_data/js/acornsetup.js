@@ -151,15 +151,18 @@
                 var newAction = new Action();
                 newAction.init(data);
                 Battle.actions.push(newAction);
+                Battle.paused = true;
             });
             Acorn.Net.on(CENUMS.ATTACKDONE, function (data) {
                 if (typeof Battle.pokemonContainer[data[CENUMS.POKEMON]] != 'undefined'){
                     Battle.pokemonContainer[data[CENUMS.POKEMON]].charge = 0;
+                    Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]].nextMoveText.text = '';
                     Battle.pokemonContainer[data[CENUMS.POKEMON]].reset();
                     if (!Battle.currentPokemon){
                         Battle.showTurnOptions();
                     }
                 }
+                Battle.paused = false;
             });
 
             Acorn.Net.on(CENUMS.ROUNDREADY, function (data) {

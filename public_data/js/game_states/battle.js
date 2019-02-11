@@ -58,6 +58,7 @@
             this.chargeCounter = this.battleData[CENUMS.CHARGECOUNTER];
 
             this.actions = [];
+            this.paused = false;
 
             Graphics.uiPrimitives1.clear();
             Graphics.uiPrimitives1.lineStyle(3,0x000000,1);
@@ -136,6 +137,7 @@
                 pokemon.init(this.battleData[CENUMS.TEAM1POKEMON][i]);
                 this.pokemonContainer[pokemon.id] = pokemon;
                 this.pokemonContainer[pokemon.id].n = i;
+                this.pokemonContainer[pokemon.id].team = 1;
                 for (var j in Party.pokemon){
                     if (pokemon.id == Party.pokemon[j].id){
                         myTP = this.battleData[CENUMS.TEAM1POKEMON];
@@ -152,6 +154,7 @@
                 pokemon.init(this.battleData[CENUMS.TEAM2POKEMON][i]);
                 this.pokemonContainer[pokemon.id] = pokemon;
                 this.pokemonContainer[pokemon.id].n = i;
+                this.pokemonContainer[pokemon.id].team = 2;
                 for (var j in Party.pokemon){
                     if (pokemon.id == Party.pokemon[j].id){
                         myTP = this.battleData[CENUMS.TEAM2POKEMON];
@@ -255,14 +258,16 @@
                 return;
             }
 
-            for (var i in this.pokemonContainer){
-                this.pokemonContainer[i].update(dt);
+            if (!this.paused){
+                for (var i in this.pokemonContainer){
+                    this.pokemonContainer[i].update(dt);
+                }
             }
 
             for (var i = 0; i < this.actions.length;i++){
                 this.actions[i].update(dt);
                 if (this.actions[i].end){
-                    this.pokemonSpriteContainer[this.actions[i].pokemon.id].lastMoveTicker = 2.0;
+                    this.pokemonSpriteContainer[this.actions[i].pokemon.id].lastMoveTicker = 0.1;
                     this.actions.splice(i,1);
                     i-=1;
                 }
@@ -376,7 +381,9 @@
                         Battle.turnData = {};
                         Battle.turnData[CENUMS.COMMAND] = CENUMS.ATTACK;
                         Battle.turnData[CENUMS.POKEMON] = Battle.currentPokemon.id;
-                        Battle.turnData[CENUMS.TARGET] = pkmn.id;
+                        Battle.turnData[CENUMS.TARGET] = pkmn.n;
+                        Battle.turnData.t = pkmn;
+                        Battle.turnData[CENUMS.TEAM] = pkmn.team;
                         Battle.turnData[CENUMS.MOVEID] = Battle.currentSelectedAttack[CENUMS.MOVEID];
                         Battle.getConfirmTurnWindow();
                         break;
@@ -429,6 +436,9 @@
             d.lastMoveDisplay.position.x = d.sprite.position.x;
             d.lastMoveDisplay.position.y = d.sprite.position.y - d.sprite.height/2 - 20;
             d.lastMoveDisplay.visible = false;
+            d.nextMoveText = new PIXI.Text('',AcornSetup.style2);
+            d.nextMoveText.position.x = Graphics.width/4 + 10;
+            d.nextMoveText.position.y = d.levelDisplay.position.y - 45;
             d.hpBar = new PIXI.Graphics();
             d.hpBar.position.x = d.nameDisplay.position.x;
             d.hpBar.position.y = d.sprite.position.y + d.levelDisplay.height/2 + 5;
@@ -524,6 +534,7 @@
                     this.pokemonSpriteContainer[i].sprite.tint = 0xFFFFFF;
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nameDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].lastMoveDisplay);
+                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nextMoveText);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].levelDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].hpBar);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].chargeBar);
@@ -562,6 +573,7 @@
                     this.addChat("& " + trainer.name.toUpperCase() + ' sends out ' + this.otherTeam[i].nickname.toUpperCase() + '!');
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].hpBar);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].lastMoveDisplay);
+                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nextMoveText);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].chargeBar);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nameDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].levelDisplay);
@@ -605,6 +617,7 @@
                     this.pokemonSpriteContainer[i].sprite.visible = true;
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].hpBar);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].lastMoveDisplay);
+                    Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nextMoveText);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].chargeBar);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].nameDisplay);
                     Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[i].levelDisplay);
@@ -789,7 +802,24 @@
 
         sendTurnData: function(){
             this.currentPokemon.battleCommandSent = true;
+            this.turnData.t = null;
             Acorn.Net.socket_.emit(CENUMS.BATTLEUPDATE,this.turnData);
+            //set next move text
+            var d = this.pokemonSpriteContainer[this.currentPokemon.id];
+            var t = '';
+            switch(this.turnData[CENUMS.COMMAND]){
+                case CENUMS.ATTACK:
+                    t = this.pokemonContainer[this.turnData[CENUMS.POKEMON]].getMove(this.turnData[CENUMS.MOVEID])[CENUMS.NAME];
+                    break;
+                case CENUMS.ITEM:
+                    t = 'ITEM';
+                    break;
+                case CENUMS.SWAPPKMN:
+                    t = 'SWAP';
+                    break;
+
+            }
+            d.nextMoveText.text = '> ' + t;
             this.currentPokemon = null;
             Game.clearUI();
             Battle.clear();
@@ -826,7 +856,7 @@
                 case CENUMS.ATTACK:
                     text += ('will use ' + Battle.currentSelectedAttack[CENUMS.NAME]);
                     if (this.turnData[CENUMS.TARGET]){
-                        text += (' on ' + this.pokemonContainer[this.turnData[CENUMS.TARGET]].nickname + '!');
+                        text += (' on ' + this.turnData.t.nickname + '!');
                     }else{
                         text += '!';
                     }
@@ -834,11 +864,7 @@
                 case CENUMS.ITEM:
                     text += ('will forego its turn to use ' + Battle.currentSelectedItem[CENUMS.NAME]);
                     if (this.turnData[CENUMS.TARGET]){
-                        var pkmn = this.pokemonContainer[this.turnData[CENUMS.TARGET]];
-                        if (typeof pkmn == 'undefined'){
-                            pkmn = Party.getPokemon(this.turnData[CENUMS.TARGET]);
-                        }
-                        text += (' on ' + pkmn.nickname + '!');
+                        text += (' on ' + this.turnData.t.nickname + '!');
                     }else{
                         text += '!';
                     }

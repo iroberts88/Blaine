@@ -48,6 +48,10 @@
     };
 
     Action.prototype.scratch = function(dt,action,data){
+        action.t += dt;
+        if (action.t < 1){
+            return;
+        }
         if (typeof data.sprite == 'undefined'){
             data.sprite = Graphics.getSprite('e_scratch4');
             data.spriteNum = 4;
@@ -59,8 +63,7 @@
             data.sprite.position.y = action.targetSC.sprite.position.y+action.targetSC.sprite.height/2;
             Graphics.uiContainer2.addChild(data.sprite);
         }
-        action.t += dt;
-        if(action.t > 0.075){
+        if(action.t > 1.075){
             data.spriteNum -= 1;
             if (data.spriteNum < 1){
                 action.end = true;
