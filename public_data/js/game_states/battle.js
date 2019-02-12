@@ -267,7 +267,7 @@
             for (var i = 0; i < this.actions.length;i++){
                 this.actions[i].update(dt);
                 if (this.actions[i].end){
-                    this.pokemonSpriteContainer[this.actions[i].pokemon.id].lastMoveTicker = 0.1;
+                    this.pokemonSpriteContainer[this.actions[i].pokemon.id].lastMoveDisplay.visible = false;
                     this.actions.splice(i,1);
                     i-=1;
                 }
@@ -641,6 +641,9 @@
             }
         },
         showTurnOptions: function(){
+            if (this.confirmTurnWindow){
+                return;
+            }
             this.targetSelectMode = '';
             //clear move buttons
             for (var i = 0; i < this.moveButtons.length;i++){
@@ -716,6 +719,9 @@
         },
 
         showPokemonUI: function(){
+            for (var i in Game.pokemonUIElements){
+                Game.updatePokemonBox(Game.pokemonUIElements[i]);
+            }
             Game.switchUI(Game.pokemonUI);
             this.hideTurnOptions();
         },

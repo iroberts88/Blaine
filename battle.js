@@ -52,6 +52,9 @@ var Battle = function(ge) {
 
     this.paused = false;
     this.currentAction = null;
+
+    this.swapTime = 3.0;
+    this.swapTicker = 0;
 }
 
 Battle.prototype.init = function (data) {
@@ -122,6 +125,14 @@ Battle.prototype.init = function (data) {
 };
 
 Battle.prototype.tick = function(deltaTime){
+    if (this.swapping){
+        this.swapTicker += deltaTime;
+        if (this.swapTicker >= this.swapTime){
+            //swap done
+            this.paused = false;
+            this.currentAction = null; 
+        }
+    }
     for (var i in this.activePokemon){
         var p = this.activePokemon[i];
         p.update(deltaTime);
@@ -157,6 +168,32 @@ Battle.prototype.tick = function(deltaTime){
                     case 'item':
                         break;
                     case 'switch':
+                        //begin attack animation
+                        this.swapTicker = 0;
+                        this.paused = true;
+                        this.swapping = true;
+                        var p1 = p.currentTurnData.pkmn;
+                        var p2 = p.currentTurnData.target;
+                        var team = this.getTeamPkmn(p1.character);
+                        for (var j = 0; j < team.length;j++){
+                            if (p1.id == team[j].id){
+                                team[j] = p2;
+                            }
+                        }
+                        delete p1.character.activePokemon[p1.id];
+                        delete this.activePokemon[p1.id];
+
+                        p1.character.activePokemon[p2.id] = p2;
+                        this.activePokemon[p2.id] = p2;
+                        //send to client!!
+                        var cData = {};
+                        cData[CENUMS.POKEMON1] = p1.id;
+                        cData[CENUMS.POKEMON2] = p2.getLessClientData();
+                        cData[CENUMS.ID] = p.currentTurnData.id;
+                        cData[CENUMS.VALUE] = this.swapTime;
+                        console.log(cData)
+                        this.queueData(CENUMS.BATTLESWAP,cData);
+                        this.currentAction = p.currentTurnData;
                         break;
                 }
 

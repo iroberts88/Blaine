@@ -685,11 +685,16 @@
                             Battle.getConfirmTurnWindow();
                             return;
                         }
-                        if (Party.pokemon[e.currentTarget.pokemonNumber].id == Battle.currentPokemon.id){
+                        console.log(e.currentTarget);
+                        if (e.currentTarget.pokemonActive){
                             Battle.addChat('& That pokemon is already in battle!');
                             return;
                         }
                         if (!Party.getPokemon(Party.pokemon[e.currentTarget.pokemonNumber].id)){
+                            return;
+                        }
+                        if (e.currentTarget.fainted){
+                            Battle.addChat('& That Pokemon is fainted!');
                             return;
                         }
                         Battle.turnData = {};
@@ -841,13 +846,71 @@
             }
             return false;
         },
+        updatePokemonBox: function(c){
+            var xSize = this.pkmnBoxSize[0];
+            var ySize = this.pkmnBoxSize[1];
+            var pokemon = c.pokemon;
+            if (c.pokemon == ''){
+                return;
+            }
+            c.pokeSprite.texture = Graphics.getResource('' + pokemon.number);
+            c.nnText.text = pokemon.nickname;
+            c.lvlText.text = "L: " + pokemon.level;
+            //HP Display
+            c.hpText.text = "HP: " + pokemon.currentHP + '/' + pokemon.hp;
+            c.gfx.clear();
+            c.gfx.lineStyle(5,0x000000,1);
+            c.gfx.beginFill(0xFFFFFF,1);
+            c.gfx.drawRoundedRect(0,0,xSize,ySize,25);
+            c.gfx.endFill();
+            if (pokemon.currentHP != pokemon.hp){
+                c.gfx.lineStyle(2,0x707070,1);
+                c.gfx.beginFill(0x707070,1);
+                var size = xSize/3 * (pokemon.currentHP/pokemon.hp);
+                c.gfx.drawRoundedRect(c.pokeSprite.position.x,c.pokeSprite.position.y + c.pokeSprite.height + 5,size,15,6);
+                c.gfx.drawRect(c.pokeSprite.position.x+10,c.pokeSprite.position.y + c.pokeSprite.height + 5,size-10,15);
+                c.gfx.endFill();
+
+                c.gfx.lineStyle(2,0x000000,1);
+                c.gfx.beginFill(0x707070,0);
+                c.gfx.drawRoundedRect(c.pokeSprite.position.x,c.pokeSprite.position.y + c.pokeSprite.height + 5,xSize/3,15,6);
+                c.gfx.endFill();
+            }else{
+                c.gfx.lineStyle(2,0x000000,1);
+                c.gfx.beginFill(0x707070,1);
+                c.gfx.drawRoundedRect(c.pokeSprite.position.x,c.pokeSprite.position.y + c.pokeSprite.height + 5,xSize/3,15,6);
+                c.gfx.endFill();
+            }
+
+            c.attack.text = pokemon.attack;
+            c.defense.text = pokemon.defense;
+            c.spattack.text = pokemon.specialAttack;
+            c.spdefense.text = pokemon.specialDefense;
+            c.speed.text = pokemon.speed;
+            
+            c.overlayText.visible = false;
+            c.fainted = false;
+            c.pkmnActive = false;            
+            if (pokemon.currentHP == 0){
+                c.overlayText.text = 'Fainted';
+                c.overlayText.visible = true;
+                c.fainted = true;
+            }
+            if (this.battleActive){
+                if (Battle.pokemonContainer[pokemon.id]){
+                    c.overlayText.text = 'Active';
+                    c.overlayText.visible = true;
+                    c.pokemonActive = true;
+                }
+            }
+        },
         resetPokemon: function(slot){
             var xSize = this.pkmnBoxSize[0];
             var ySize = this.pkmnBoxSize[1];
             var pokemon = Party.pokemon[slot];
             var c = this.pokemonUIElements[slot];
             c.removeChildren();
-
+            c.pokemon = pokemon;
             if (typeof Party.pokemon[slot] == 'undefined' || Party.pokemon[slot] == '' ){
                 this.pokemonUI.removeChild(c);
                 return;
@@ -860,7 +923,8 @@
             gfx.beginFill(0xFFFFFF,1);
             gfx.drawRoundedRect(0,0,xSize,ySize,25);
             gfx.endFill();
-
+            c.gfx = gfx;
+            c.spr = sprites;
             c.addChild(gfx);
             c.addChild(sprites);
 
@@ -1019,6 +1083,30 @@
                 sprites.addChild(pp);
                 sprites.addChild(type);
             }
+            c.overlayText = new PIXI.Text('',AcornSetup.style2);
+            c.overlayText.visible = false;
+            c.overlayText.position.x = xSize/2;
+            c.overlayText.position.y = ySize/2;
+            c.overlayText.anchor.x = 0.5;
+            c.overlayText.anchor.y = 0.5;
+            c.overlayText.style.fontSize = 64;
+            c.overlayText.style.fill = 'red';
+            c.fainted = false;
+            c.pkmnActive = false;
+            sprites.addChild(c.overlayText);
+            if (pokemon.currentHP == 0){
+                c.overlayText.text = 'Fainted';
+                c.overlayText.visible = true;
+                c.fainted = true;
+            }
+            if (this.battleActive){
+                if (Battle.pokemonContainer[pokemon.id]){
+                    c.overlayText.text = Active;
+                    c.overlayText.visible = true;
+                    c.pokemonActive = true;
+                }
+            }
+
             this.pokemonUI.addChild(c);
         },
         initCharUI: function(){

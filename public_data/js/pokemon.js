@@ -47,13 +47,6 @@
         var bar = Battle.pokemonSpriteContainer[this.id].chargeBar;
         Battle.drawChargeBar(bar,this.charge/Battle.chargeCounter);
 
-        var cont = Battle.pokemonSpriteContainer[this.id];
-        if (cont.lastMoveTicker >= 0){
-            cont.lastMoveTicker -= deltaTime;
-            if (cont.lastMoveTicker <= 0){
-                cont.lastMoveDisplay.visible = false;
-            }
-        }
     };
     Pokemon.prototype.getMove = function(id){
         for (var i = 0; i < this.moves.length;i++){

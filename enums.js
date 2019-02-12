@@ -19,6 +19,7 @@ var enums = {
         BATTLECHAT: 'bcha',
         BATTLEDATA: 'bda', //new battle action to client
         BATTLEPKMN: 'bpk',
+        BATTLESWAP: 'bsw',
         BATTLEUPDATE: 'bdu', //receviing battle update from client
 
         CASTTIME: 'cas',

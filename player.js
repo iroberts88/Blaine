@@ -178,6 +178,37 @@ Player.prototype.setupSocket = function() {
                 if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.TARGET])){
                     return;
                 }
+                //make sure the pokemon is this players, not fainted, and not active
+
+                var pokemon = that.character.getPokemon(data[CENUMS.POKEMON]);
+                var target = that.character.getPokemon(data[CENUMS.TARGET]);
+                if (!pokemon){
+                    console.log('pokemon with id ' + data[CENUMS.POKEMON] + ' doesnt exist');
+                    return;
+                }
+                if (!target){
+                    console.log('target pokemon with id ' + data[CENUMS.TARGET] + ' doesnt exist');
+                    return;
+                }
+                if (target.currentHP.value == 0){
+                    console.log('target pokemon is fainted');
+                    return;
+                }
+                if (target.character.battle.activePokemon[target.id]){
+                    console.log('target pokemon is already active');
+                    return;
+                }
+                //make sure the move has pp
+                if (pokemon.currentPP[pokemon.getMoveIndex(data[CENUMS.MOVEID])] <= 0){
+                    console.log('move is out of PP: ' + data[CENUMS.MOVEID] );
+                    return;
+                }
+                pokemon.currentTurnData = {
+                    command: 'switch',
+                    id: that.engine.getId(),
+                    target: target,
+                    pkmn: pokemon
+                }
                 break;
             case CENUMS.ITEM:
                 if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.ID])){
@@ -406,7 +437,7 @@ Player.prototype.setupSocket = function() {
                     if (that.battle != null){console.log("Battle exists");return;}
                     console.log("Start Battle");
                     var pokemon = [Math.ceil(Math.random()*15),Math.ceil(Math.random()*15),Math.ceil(Math.random()*15)];
-                    var levels = [Math.ceil(Math.random()*30),Math.ceil(Math.random()*30),Math.ceil(Math.random()*30)];
+                    var levels = [3,3,3];
                     var battle = new Battle(that.engine);
                     var trainer = new Trainer(that.engine);
                     trainer.init({pokemon:pokemon,levels:levels});

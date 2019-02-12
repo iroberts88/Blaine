@@ -164,6 +164,9 @@
                 }
                 Battle.paused = false;
             });
+            Acorn.Net.on(CENUMS.BATTLESWAP, function (data) {
+                console.log(data);
+            });
 
             Acorn.Net.on(CENUMS.ROUNDREADY, function (data) {
                 //A battle turn has been processed
