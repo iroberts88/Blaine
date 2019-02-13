@@ -9,6 +9,7 @@
         MISS: 3,
         NVE: 4, //Not very effective
         SUPERE: 5, //super effective!
+        SWAP: 6
     };
 
     Action.prototype.init = function(data){
@@ -19,13 +20,11 @@
         this.target = Battle.pokemonContainer[data[CENUMS.TARGET]];
         this.pokemonSC = Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]];
         this.targetSC = Battle.pokemonSpriteContainer[data[CENUMS.TARGET]];
-        this.clientId = data[CENUMS.CLIENTID];
+        this.clientid = data[CENUMS.CLIENTID];
         this.mname = data[CENUMS.NAME];
 
         this.end = false;
 
-        //update last action use of pokemon!
-        Battle.drawLastMoveDisplay(this.pokemonSC,this.mname);
     };
 
     Action.prototype.update = function(dt){
@@ -41,6 +40,9 @@
             case actionEnums.DAMAGE:
                 return this.damage;
                 break;
+            case actionEnums.SWAP:
+                return this.swap;
+                break;
             default:
                 return this.scratch;
                 break;
@@ -48,6 +50,11 @@
     };
 
     Action.prototype.scratch = function(dt,action,data){
+        if (typeof data.lmd == 'undefined'){
+            //update last action use of pokemon!
+            Battle.drawLastMoveDisplay(action.pokemonSC,action.mname);
+            data.lmd = true;
+        }
         action.t += dt;
         if (action.t < 1){
             return;
@@ -67,6 +74,7 @@
             data.spriteNum -= 1;
             if (data.spriteNum < 1){
                 action.end = true;
+                Battle.pokemonSpriteContainer[action.pokemon.id].lastMoveDisplay.visible = false;
                 Graphics.uiContainer2.removeChild(data.sprite);
                 return;
             }
@@ -91,6 +99,36 @@
             if (data.blinks >= 10){
                 action.end = true;
                 actions.pokemonSC.sprite.visible = true;
+            }
+        }
+    };
+    Action.prototype.swap = function(dt,action,data){
+        action.t += dt;
+
+        if (typeof data.team == 'undefined'){
+            data.p1 = Battle.pokemonContainer[data[CENUMS.POKEMON1]];
+            data.n = data.p1.n;
+            if (Party.getPokemon(data[CENUMS.POKEMON2][CENUMS.ID])){
+                data.p2 = Party.getPokemon(data[CENUMS.POKEMON2][CENUMS.ID]);
+            }else{
+                data.p2 = new Pokemon();
+                data.p2.init(data[CENUMS.POKEMON2])
+            }
+            data.team = data.p1.team;
+            Battle.addChat("& " + Battle.trainers[data.p1.owner].name + ' withdraws ' + data.p1.name + '!');
+
+        }
+        if (action.t >= data[CENUMS.VALUE]/2){
+            //remove the pokemon
+            if (typeof data.removed == 'undefined'){
+                Battle.removePokemon(data.p1);
+                data.removed = true;
+            }
+            if (action.t >= data[CENUMS.VALUE]){
+                action.end = true;
+                Battle.paused = false;
+                Battle.addPokemon(data.p2,data.n,data.team);
+                Battle.addChat("& " + Battle.trainers[data.p1.owner].name + ' sends out ' + data.p2.name + '!');
             }
         }
     };

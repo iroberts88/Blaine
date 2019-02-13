@@ -214,6 +214,7 @@
             }
 
             //TODO if myTeam or otherteam = null, you are a spectator
+            this.teamSize = myTP.length;
             var c = 1;
             for (var i in this.myTeam){
                 this.pokemonSpriteContainer[this.myTeam[i].id] = this.getPokemonData(this.pokemonContainer[this.myTeam[i].id],c,myTP.length,1)
@@ -267,7 +268,6 @@
             for (var i = 0; i < this.actions.length;i++){
                 this.actions[i].update(dt);
                 if (this.actions[i].end){
-                    this.pokemonSpriteContainer[this.actions[i].pokemon.id].lastMoveDisplay.visible = false;
                     this.actions.splice(i,1);
                     i-=1;
                 }
@@ -310,12 +310,45 @@
         setChargeCounter: function(v){
             this.chargeCounter = v;
         },
+        removePokemon: function(p){
+            if (this.myTeam[p.id]){
+                delete this.myTeam[p.id];
+            }
+            if (this.otherTeam[p.id]){
+                delete this.otherTeam[p.id];
+            }
+            var sc = Battle.pokemonSpriteContainer[p.id];
+            Graphics.uiContainer2.removeChild(sc.sprite);
+            Graphics.uiContainer2.removeChild(sc.nameDisplay);
+            Graphics.uiContainer2.removeChild(sc.lastMoveDisplay);
+            Graphics.uiContainer2.removeChild(sc.nextMoveText);
+            Graphics.uiContainer2.removeChild(sc.levelDisplay);
+            Graphics.uiContainer2.removeChild(sc.hpBar);
+            Graphics.uiContainer2.removeChild(sc.chargeBar);
+            delete Battle.pokemonSpriteContainer[p.id];
+            delete Battle.pokemonContainer[p.id];
+        },
+        addPokemon: function(p,n,team){
+            team[p.id] = p;
+            Battle.pokemonSpriteContainer[p.id] = Battle.getPokemonData(p,n,this.teamSize,team);
+            Battle.pokemonContainer[p.id] = p;
+            Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].nameDisplay);
+            Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].sprite);
+            this.pokemonSpriteContainer[p.id].sprite.visible = true;
+            Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].lastMoveDisplay);
+            Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].nextMoveText);
+            Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].levelDisplay);
+            Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].hpBar);
+            Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].chargeBar);
 
+        },
         getPokemonData: function(pkmn,n,teamSize,team){
             
             var d = {}; 
             d.pokemon = pkmn;
             d.team = team;
+            pkmn.team = team;
+            pkmn.n = n;
             d.sprite = Graphics.getSprite(pkmn.number);
             d.sprite.scale.x = 3;
             d.sprite.scale.y = 3;
@@ -472,7 +505,6 @@
             var xSize = ((Graphics.width)/8);
             var ySize = 20;
             if (!percent){
-                console.log('fdskjafdlsafdsa;')
                 gfx.lineStyle(2,0x000000,1);
                 gfx.beginFill(0x707070,0);
                 gfx.drawRoundedRect(0,0,xSize,ySize,10);

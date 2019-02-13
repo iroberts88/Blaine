@@ -42,7 +42,7 @@ var Battle = function(ge) {
     //valid turn data added here...
     this.turnData = {};
 
-    this.chargeCounter = 0;
+    this.chargeCounter = 1;
 
     this.baseChargeTime = 15; //the lowest pokemon will take n secinds to charge
 
@@ -129,8 +129,11 @@ Battle.prototype.tick = function(deltaTime){
         this.swapTicker += deltaTime;
         if (this.swapTicker >= this.swapTime){
             //swap done
+            console.log("SWAPPED!")
             this.paused = false;
             this.currentAction = null; 
+            this.swapTicker = 0;
+            this.swapping = false;
         }
     }
     for (var i in this.activePokemon){
@@ -151,6 +154,11 @@ Battle.prototype.tick = function(deltaTime){
                         if (p.castingAttack){
                             break;
                         }
+                        if (!this.activePokemon[p.currentTurnData.target.id]){
+                            console.log('target pokemon is not active');
+                            p.turnInvalid();
+                            return;
+                        }
                         p.castingAttack = p.currentTurnData.move;
                         p.castingAttackTicker = 0;
                         //send to client!!
@@ -160,7 +168,6 @@ Battle.prototype.tick = function(deltaTime){
                         cData[CENUMS.ID] = p.currentTurnData.id;
                         cData[CENUMS.CLIENTID] = p.currentTurnData.move.clientID;
                         cData[CENUMS.NAME] = p.currentTurnData.move.name;
-                        console.log(cData)
                         this.queueData(CENUMS.ATTACK,cData);
                         this.paused = true;
                         this.currentAction = p.currentTurnData;
@@ -168,12 +175,24 @@ Battle.prototype.tick = function(deltaTime){
                     case 'item':
                         break;
                     case 'switch':
-                        //begin attack animation
+                        //begin switch
+                        //CHECK TO MAKE SURE STILL VALID
+
+                        var p1 = p.currentTurnData.pkmn;
+                        var p2 = p.currentTurnData.target;
+                        if (this.activePokemon[p2.id]){
+                            console.log('target pokemon is already active');
+                            p1.turnInvalid();
+                            return;
+                        }
+                        if (p2.currentHP.value == 0){
+                            console.log('target pokemon is fainted');
+                            p1.turnInvalid();
+                            return;
+                        }
                         this.swapTicker = 0;
                         this.paused = true;
                         this.swapping = true;
-                        var p1 = p.currentTurnData.pkmn;
-                        var p2 = p.currentTurnData.target;
                         var team = this.getTeamPkmn(p1.character);
                         for (var j = 0; j < team.length;j++){
                             if (p1.id == team[j].id){
@@ -187,13 +206,15 @@ Battle.prototype.tick = function(deltaTime){
                         this.activePokemon[p2.id] = p2;
                         //send to client!!
                         var cData = {};
+                        p2.charge = 0;
                         cData[CENUMS.POKEMON1] = p1.id;
                         cData[CENUMS.POKEMON2] = p2.getLessClientData();
                         cData[CENUMS.ID] = p.currentTurnData.id;
                         cData[CENUMS.VALUE] = this.swapTime;
-                        console.log(cData)
+                        cData[CENUMS.CLIENTID] = 6;
                         this.queueData(CENUMS.BATTLESWAP,cData);
                         this.currentAction = p.currentTurnData;
+                        this.getChargeCounter();
                         break;
                 }
 
@@ -248,6 +269,7 @@ Battle.prototype.getChargeCounter = function(updateClient = true){
     //set the charge counter
     //slowest pokemon is found, counter is set to speed*10
     // this should be called every time a pokemon switch is made OR a pokemon's speed is changed!
+    var currentC = this.chargeCounter;
     var slowest = null;
     var n = Infinity;
     for (var i in this.activePokemon){
@@ -257,6 +279,9 @@ Battle.prototype.getChargeCounter = function(updateClient = true){
         }
     }
     this.chargeCounter = n*this.baseChargeTime;
+    for (var i in this.activePokemon){
+        this.activePokemon[i].charge = this.chargeCounter*(this.activePokemon[i].charge/currentC);
+    }
 
     if (updateClient){
         var cData = {};

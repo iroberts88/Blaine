@@ -115,22 +115,27 @@ Player.prototype.setupSocket = function() {
                 if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.MOVEID])){
                     return;
                 }
+                var cData = {};
+                cData[data[CENUMS.POKEMON]] = data[CENUMS.POKEMON];
                 //Parse turn info as valid, add to battle
                 //TODO ALL OF THESE CHECKS
                 //MAKE SURE THE MOVE IS VALID!
                 var pokemon = that.character.getPokemon(data[CENUMS.POKEMON]);
                 if (!pokemon){
                     console.log('pokemon with id ' + data[CENUMS.POKEMON] + ' doesnt exist');
+                    pokemon.turnInvalid();
                     return;
                 }
                 if (!pokemon.getMove(data[CENUMS.MOVEID])){
                     console.log('pokemon dos not have move: ' + data[CENUMS.MOVEID] );
+                    pokemon.turnInvalid();
                     return;
                 }
                 var move = pokemon.getMove(data[CENUMS.MOVEID]);
                 //make sure the move has pp
                 if (pokemon.currentPP[pokemon.getMoveIndex(data[CENUMS.MOVEID])] <= 0){
                     console.log('move is out of PP: ' + data[CENUMS.MOVEID] );
+                    pokemon.turnInvalid();
                     return;
                 }
                 //make sure the target is valid
@@ -138,29 +143,34 @@ Player.prototype.setupSocket = function() {
                 switch (move.targetType){
                     case CENUMS.SINGLE:
                         if (data[CENUMS.TEAM] == 1){
-                            target = that.battle.team1Pokemon[data[CENUMS.TARGET]];
+                            target = that.battle.team1Pokemon[data[CENUMS.TARGET]-1];
                         }else if (data[CENUMS.TEAM] == 2){
-                            target = that.battle.team2Pokemon[data[CENUMS.TARGET]];
+                            target = that.battle.team2Pokemon[data[CENUMS.TARGET]-1];
                         }
-                        
+                        for (var i = 0; i < that.battle.team2Pokemon.length;i++){
+                            console.log(that.battle.team2Pokemon[i].name)
+                        }
                         if (typeof target == 'undefined' || !target){
                             console.log('invalid target');
+                            pokemon.turnInvalid();
                             return;
                         }
                         break;
                     case CENUMS.ALLY:
                         var team = that.battle.getTeamPokemon(that.character);
-                        target = team[data[CENUMS.TARGET]];
+                        target = team[data[CENUMS.TARGET]-1];
                         if (typeof target == 'undefined' || !target){
                             console.log('invalid target');
+                            pokemon.turnInvalid();
                             return;
                         }
                         break;
                     case CENUMS.ENEMY:
                         var team = that.battle.getEnemyTeamPokemon(that.character);
-                        target = team[data[CENUMS.TARGET]];
+                        target = team[data[CENUMS.TARGET]-1];
                         if (typeof target == 'undefined' || !target){
                             console.log('invalid target');
+                            pokemon.turnInvalid();
                             return;
                         }
                         break;
@@ -178,29 +188,30 @@ Player.prototype.setupSocket = function() {
                 if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.TARGET])){
                     return;
                 }
+                var cData = {};
+                cData[data[CENUMS.POKEMON]] = data[CENUMS.POKEMON];
                 //make sure the pokemon is this players, not fainted, and not active
 
                 var pokemon = that.character.getPokemon(data[CENUMS.POKEMON]);
                 var target = that.character.getPokemon(data[CENUMS.TARGET]);
                 if (!pokemon){
                     console.log('pokemon with id ' + data[CENUMS.POKEMON] + ' doesnt exist');
+                    pokemon.turnInvalid();
                     return;
                 }
                 if (!target){
                     console.log('target pokemon with id ' + data[CENUMS.TARGET] + ' doesnt exist');
+                    pokemon.turnInvalid();
                     return;
                 }
                 if (target.currentHP.value == 0){
                     console.log('target pokemon is fainted');
+                    pokemon.turnInvalid();
                     return;
                 }
                 if (target.character.battle.activePokemon[target.id]){
                     console.log('target pokemon is already active');
-                    return;
-                }
-                //make sure the move has pp
-                if (pokemon.currentPP[pokemon.getMoveIndex(data[CENUMS.MOVEID])] <= 0){
-                    console.log('move is out of PP: ' + data[CENUMS.MOVEID] );
+                    pokemon.turnInvalid();
                     return;
                 }
                 pokemon.currentTurnData = {

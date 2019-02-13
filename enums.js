@@ -148,6 +148,7 @@ var enums = {
         TILES: 'tis',
         TM: 'tmmm',
         TRIGGERS: 'tri',
+        TURNINVALID: 'tuv',
         TYPE: 'ty[ee',
         TYPES: 'typ',
 

@@ -139,6 +139,11 @@
             });
 
             Acorn.Net.on(CENUMS.CHARGECOUNTER, function (data) {
+                var old = Battle.chargeCounter;
+                for (var i in Battle.pokemonContainer){
+                    var pkmn = Battle.pokemonContainer[i];
+                    pkmn.charge = data[CENUMS.VALUE]*(pkmn.charge/old);
+                }
                 Battle.setChargeCounter(data[CENUMS.VALUE]);
             });
 
@@ -164,8 +169,26 @@
                 }
                 Battle.paused = false;
             });
+
+            Acorn.Net.on(CENUMS.TURNINVALID, function (data) {
+                console.log("Invalid turn - resetting pokemon");
+                console.log(data)
+                if (typeof Battle.pokemonContainer[data[CENUMS.POKEMON]] != 'undefined'){
+                    Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]].nextMoveText.text = '';
+                    Battle.pokemonContainer[data[CENUMS.POKEMON]].battleCommand = null;
+                    Battle.pokemonContainer[data[CENUMS.POKEMON]].battleCommandSent = false;
+                    if (!Battle.currentPokemon){
+                        Battle.showTurnOptions();
+                    }
+                }
+            });
+
             Acorn.Net.on(CENUMS.BATTLESWAP, function (data) {
                 console.log(data);
+                var newAction = new Action();
+                newAction.init(data);
+                Battle.actions.push(newAction);
+                Battle.paused = true;
             });
 
             Acorn.Net.on(CENUMS.ROUNDREADY, function (data) {

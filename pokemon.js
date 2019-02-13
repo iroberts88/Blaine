@@ -73,6 +73,18 @@ Pokemon.prototype.reset = function(){
     this.castingAttackTicker = 0;
 }
 
+Pokemon.prototype.turnInvalid = function(){
+    this.castingAttack = null
+    this.currentTurnData = null;
+    this.castingAttackTicker = 0;
+    if (this.character.owner){
+        var cData = {};
+        cData[CENUMS.POKEMON] = this.id;
+
+        this.character.owner.engine.queuePlayer(this.character.owner,CENUMS.TURNINVALID,cData);
+    }
+}
+
 Pokemon.prototype.update = function(deltaTime){
     if (this.castingAttack){
         //update the current attack cast...
