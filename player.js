@@ -174,6 +174,9 @@ Player.prototype.setupSocket = function() {
                             return;
                         }
                         break;
+                    default:
+                        target = pokemon;
+                        break;
 
                 }
                 //add the move the the pokemon!
@@ -183,6 +186,10 @@ Player.prototype.setupSocket = function() {
                     target: target,
                     move: move
                 }
+                break;
+            case CENUMS.NEWPKMN:
+                console.log('NEW POKEMDsjaKJDSKL');
+                console.log(data);
                 break;
             case CENUMS.SWAPPKMN:
                 if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.TARGET])){
@@ -447,7 +454,7 @@ Player.prototype.setupSocket = function() {
                     //trainer battle
                     if (that.battle != null){console.log("Battle exists");return;}
                     console.log("Start Battle");
-                    var pokemon = [Math.ceil(Math.random()*15),Math.ceil(Math.random()*15),Math.ceil(Math.random()*15)];
+                    var pokemon = [4,4,4,4,4,4];//[Math.ceil(Math.random()*15),Math.ceil(Math.random()*15),Math.ceil(Math.random()*15)];
                     var levels = [3,3,3];
                     var battle = new Battle(that.engine);
                     var trainer = new Trainer(that.engine);

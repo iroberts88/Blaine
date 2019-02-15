@@ -80,7 +80,6 @@ Pokemon.prototype.turnInvalid = function(){
     if (this.character.owner){
         var cData = {};
         cData[CENUMS.POKEMON] = this.id;
-
         this.character.owner.engine.queuePlayer(this.character.owner,CENUMS.TURNINVALID,cData);
     }
 }
@@ -94,9 +93,12 @@ Pokemon.prototype.update = function(deltaTime){
             this.reset();
             var cData = {};
             cData[CENUMS.POKEMON] = this.id;
+            cData[CENUMS.WAITING] = this.character.waitingForNextPokemon;
             this.character.battle.queueData(CENUMS.ATTACKDONE,cData);
-            this.character.battle.paused = false;
-            this.character.battle.currentAction = null; 
+            if (!this.character.waitingForNextPokemon){
+                this.character.battle.paused = false;
+                this.character.battle.currentAction = null; 
+            }
         }
     }
 }
@@ -282,7 +284,7 @@ Pokemon.prototype.init = function(base,data) {
         pokemon: this,
         value: 0,
         min: 0,
-        max: 100,
+        max: 90,
         name: 'Evasion'
     });
     this.accuracy = new Attribute();
@@ -319,8 +321,8 @@ Pokemon.prototype.init = function(base,data) {
         next: function(updateClient){
             this.pokemon.hpPercent.set(updateClient);
             //check faint!!
-            if (this.value >= 0){
-                this.pokemon.character.battle.pokemonFainted(this);
+            if (this.value == 0){
+                this.pokemon.character.battle.pokemonFainted(this.pokemon);
             }
         }
     });

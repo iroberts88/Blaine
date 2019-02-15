@@ -20,6 +20,7 @@ var Trainer = function(ge){
     //active party of pokemon
     this.party = null;
     this.currentTeam = null;
+    this.participated = {}; //list of pokemon that had participated in the current battle for exp purposes
     this.activePokemon = []; //a list of the currently active pokemon for use in a battle
 }
 
@@ -65,6 +66,14 @@ Trainer.prototype.update = function(deltaTime) {
                 case CENUMS.ALLY:
                     var mTeam = this.battle.getTeamPokemon(this);
                     target = mTeam[Math.floor(Math.random()*mTeam.length)];
+                    break;
+                default:
+                    target = pkmn;
+                    break;
+
+            }
+            if (!target){
+                continue;
             }
             pkmn.currentTurnData = {
                 command: 'attack',
@@ -107,6 +116,15 @@ Trainer.prototype.addPokemon = function(p){
         this.party.push(p);
         p.slot = this.party.length;
     }
+};
+
+Trainer.prototype.hasWaitingPokemon = function(id){
+    for (var i = 0; i < this.party.length; i++){
+        if (!this.activePokemon[this.party[i].id] && this.party[i].hpPercent != 0){
+            return true;
+        }
+    }
+    return false;
 };
 
 Trainer.prototype.getClientData = function(less = false){

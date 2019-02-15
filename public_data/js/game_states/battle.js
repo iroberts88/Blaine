@@ -122,6 +122,7 @@
                 }
             });
 
+            this.newPokemonButtons = {};
             this.targetSelectText = new PIXI.Text('',AcornSetup.style2);
             this.targetSelectText.anchor.x = 0.5;
             this.targetSelectText.anchor.y = 0.5;
@@ -224,6 +225,30 @@
             for (var i in this.otherTeam){
                 this.pokemonSpriteContainer[this.otherTeam[i].id] =  this.getPokemonData(this.pokemonContainer[this.otherTeam[i].id],c,oTP.length,2)
                 c += 1;
+            }
+            for (var i in this.myActivePokemon){
+                var button = Graphics.makeUiElement({
+                    texture: this.getButtonTexture('POKEMON'),
+                    anchor: [0,0],
+                    position: [0,0],
+                    interactive: true,buttonMode: true,
+                    clickFunc: function onClick(e){
+                        console.log("new pokemon menu");
+                        //SHOW Pokemon Menu
+                        Battle.newPokemonPos = e.currentTarget.number;
+                        Battle.selectingNewPokemon = true;
+                        this.currentlySelectedItem = null;
+                        Battle.showPokemonUI();
+                    }
+                });
+                button.scale.x = 0.5;
+                button.scale.y = 0.5;
+                button.number = this.myActivePokemon[i].n;
+                button.visible = false;
+                button.position.y = Battle.pokemonSpriteContainer[i].sprite.position.y;
+                button.position.x = Graphics.width/4 + 50;
+                Graphics.uiContainer2.addChild(button);
+                this.newPokemonButtons[button.number] = button;
             }
             if (this.battleData[CENUMS.WILD]){
                 this.wild = true;
@@ -673,7 +698,7 @@
             }
         },
         showTurnOptions: function(){
-            if (this.confirmTurnWindow){
+            if (this.confirmTurnWindow || this.selectingNewPokemon){
                 return;
             }
             this.targetSelectMode = '';

@@ -45,6 +45,7 @@
         EXECUTETURN: 'ext',
         EXP: 'ex',
 
+        FAINT: 'fai',
         FIELD: 'fie',
         FIELDPKMN: 'fpkm',
 
@@ -81,6 +82,7 @@
 
         NAME: 'nam',
         NEWCHAR: 'new',
+        NEWPKMN: 'npk',
         NICKNAME: 'nic',
         NUMBER: 'num',
 
@@ -156,6 +158,7 @@
 
         VALUE: 'val',
 
+        WAITING: 'wai',
         WILD: 'wil',
 
         X: 'x',

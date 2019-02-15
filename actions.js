@@ -39,8 +39,8 @@ Actions.prototype.doAttack = function(pokemon,attack,data){
             targets.push(data.target);
             break;
         case CENUMS.ALL:
-            for (var i in this.character.owner.battle.pokemonContainer){
-                targets.push(this.character.owner.battle.pokemonContainer[i])
+            for (var i in pokemon.character.battle.activePokemon){
+                targets.push(pokemon.character.battle.activePokemon[i])
             }
             break;
         case CENUMS.SELF:
@@ -50,20 +50,27 @@ Actions.prototype.doAttack = function(pokemon,attack,data){
             targets.push(data.target);
             break;
         case CENUMS.ENEMYTEAM:
-            for (var i in this.character.currentEnemyTeam){
-                targets.push(this.character.currentEnemyTeam[i])
+            var team = pokemon.character.battle.getEnemyTeamPokemon(pokemon.character);
+            for (var i = 0; i < team.length;i++){
+                if (team[i] && typeof team[i] != 'undefined'){
+                    targets.push(team[i]);
+                }
             }
             break;
         case CENUMS.ALLY:
-            for (var i in this.character.currentTeam){
-                targets.push(this.character.currentTeam[i])
+            var team = pokemon.character.battle.getTeamPokemon(pokemon.character);
+            for (var i = 0; i < team.length;i++){
+                if (team[i] && typeof team[i] != 'undefined'){
+                    targets.push(team[i]);
+                }
             }
     }
     //targets acquired.. do attack damage and move effects
     var battle = pokemon.character.battle;
-    for (var i = 0; i < targets.length;i++){
+    console.log('TARGETS:' +  targets.length);
+    for (var tar = 0; tar < targets.length;tar++){
         //check to see if attack hits
-        var target = targets[i];
+        var target = targets[tar];
         if (Math.random()*100 > attack.acc || (Math.random()*100 < (target.evasion - pokemon.accuracy))){
             //hit misses, add to ctd
             //TODO - any on-miss effects go here

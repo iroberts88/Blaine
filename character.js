@@ -39,6 +39,7 @@ var Character = function(){
 
     this.currentTeam = null;
     this.activePokemon = {}; //a list of the currently active pokemon for use in a battle
+    this.participated = {}; //list of pokemon that had participated in the current battle for exp purposes
 
     this.speed = 0.25;
     this.battle = null;
@@ -171,6 +172,9 @@ Character.prototype.initBattle = function(battle,wild,team){
     if (battle.type == 'team'){
         n = 2;
     };
+    for (var i = 0; i < this.party.length;i++){
+        this.participated[this.party[i].id] = false;
+    }
     for (var i = 0; i < n;i++){
         if (typeof this.party[i] == 'undefined'){
             continue;
@@ -241,6 +245,15 @@ Character.prototype.getPokemon = function(id){
         }
     }
     return null;
+};
+
+Character.prototype.hasWaitingPokemon = function(id){
+    for (var i = 0; i < this.party.length; i++){
+        if (!this.activePokemon[this.party[i].id] && this.party[i].hpPercent != 0){
+            return true;
+        }
+    }
+    return false;
 };
 
 Character.prototype.getDBObj = function(){

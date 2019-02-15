@@ -82,6 +82,7 @@ var enums = {
 
         NAME: 'nam',
         NEWCHAR: 'new',
+        NEWPKMN: 'npk',
         NICKNAME: 'nic',
         NUMBER: 'num',
 
@@ -157,6 +158,7 @@ var enums = {
 
         VALUE: 'val',
 
+        WAITING: 'wai',
         WILD: 'wil',
 
         X: 'x',

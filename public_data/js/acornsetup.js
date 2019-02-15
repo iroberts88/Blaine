@@ -167,7 +167,9 @@
                         Battle.showTurnOptions();
                     }
                 }
-                Battle.paused = false;
+                if (!data[CENUMS.WAITING]){
+                    Battle.paused = false;
+                }
             });
 
             Acorn.Net.on(CENUMS.TURNINVALID, function (data) {
@@ -214,9 +216,15 @@
             });
 
             Acorn.Net.on(CENUMS.HPPERCENT, function (data) {
-                if (Battle.pokemonContainer[data[CENUMS.POKEMON]]){
-                    Battle.pokemonContainer[data[CENUMS.POKEMON]].hpPercent = data[CENUMS.VALUE];
+                var pkmn = Battle.pokemonContainer[data[CENUMS.POKEMON]];
+                if (pkmn){
+                    pkmn.hpPercent = data[CENUMS.VALUE];
                     Battle.drawHPBar(Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]].hpBar,data[CENUMS.VALUE]/100);
+                }if (data[CENUMS.VALUE] == 0){
+                    //if it's your pokemon, add a "send out pokemon" button
+                    Battle.addChat('& ' + pkmn.name + ' fainted!');
+                    Battle.removePokemon(pkmn);
+                    Battle.newPokemonButtons[pkmn.n].visible = true;
                 }
             });
 
@@ -224,6 +232,10 @@
                 Player.init(data);
                 document.body.removeChild(MainMenu.mainPanel);
                 MainMenu.showCharacterSelection(data);
+            });
+
+            Acorn.Net.on(CENUMS.WAITING, function (data) {
+                Battle.paused = true;
             });
 
             Acorn.Net.on(CENUMS.ADDPOKEMON, function (data) {

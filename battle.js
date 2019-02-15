@@ -51,6 +51,9 @@ var Battle = function(ge) {
     this.ready = false;
 
     this.paused = false;
+    this.waitingForNextPokemon = false;
+    this.waitingTicker = 0;
+    this.waitingTime = 10.0;
     this.currentAction = null;
 
     this.swapTime = 3.0;
@@ -154,11 +157,13 @@ Battle.prototype.tick = function(deltaTime){
                         if (p.castingAttack){
                             break;
                         }
+
                         if (!this.activePokemon[p.currentTurnData.target.id]){
                             console.log('target pokemon is not active');
                             p.turnInvalid();
                             return;
                         }
+                        p.character.participated[p.id] = true;
                         p.castingAttack = p.currentTurnData.move;
                         p.castingAttackTicker = 0;
                         //send to client!!
@@ -310,160 +315,30 @@ Battle.prototype.removeSpectator = function(p){
 
 };
 
-Battle.prototype.addTurnData = function(pkmnID,data){
-    //Received turn data from a player
-    //check to see if all data has been received
-    //if it has, add AI turn data, parse all data and proceed with the turn
-
-    this.turnData[pkmnID] = data;
-    //check all pkmn data
-    var allTurnDataAcquired = true;
-    for (var i = 0; i < this.team1.length;i++){
-        if (this.team1[i] instanceof Character){
-            //see if all players have turnData for their pokemon
-            for (var j = 0; j < this.team1[i].activePokemon.length;j++){
-                if (typeof this.turnData[this.team1[i].activePokemon[j].id] == 'undefined'){
-                    allTurnDataAcquired = false;
-                }
-            }
-        }
-    }
-    for (var i = 0; i < this.team2.length;i++){
-        if (this.team2[i] instanceof Character){
-            //see if all players have turnData for their pokemon
-            for (var j = 0; j < this.team2[i].activePokemon.length;j++){
-                if (typeof this.turnData[this.team2[i].activePokemon[j].id] == 'undefined'){
-                    allTurnDataAcquired = false;
-                }
-            }
-        }
-    }
-
-    if (allTurnDataAcquired){
-        //Do the turn!!
-        for (var i in this.activePokemon){
-            if (this.activePokemon[i].character instanceof Character){
-                continue;
-            }
-            //get AI turn data
-            var mIndex,pID;
-            mIndex = Math.floor(Math.random()*this.activePokemon[i].moves.length);
-            var enemyTeam = this.team1Pokemon;
-            if (this.activePokemon[i].character.currentTeam == 1){
-                enemyTeam = this.team2Pokemon;
-            }
-            var index = Math.floor(Math.random()*enemyTeam.length);
-            this.turnData[this.activePokemon[i].id] = {
-                'command': 'fight',
-                'moveIndex': mIndex,
-                'pID': enemyTeam[index].id,
-                'pIndex': index
-            }
-            console.log(this.turnData);
-        }
-
-        //execute turn and create the turn data for client
-        var clientTurnData = [];
-
-        //get fight order...
-        var fightOrder = [];
-        for (var i in this.activePokemon){
-            var tData = this.turnData[this.activePokemon[i].id];
-            if (tData.command == 'fight'){
-                fightOrder.push({id: this.activePokemon[i].id,speed: this.activePokemon[i].speed.value});
-            }
-        }
-
-        //Use items first
-        for (var i in this.activePokemon){
-            var tData = this.turnData[this.activePokemon[i].id]
-            if (tData.command == 'item'){
-                //do item stuff
-                var item = this.activePokemon[i].character.inventory.getItemByOrder(tData.type,tData.oIndex);
-                //get item info
-                for (var j = 0;j<item.use.effects.length;j++){
-                    var A = Actions.getAction(item.use.effects[j].effectid);
-                    var data = {
-                        battle: this,
-                        item: item,
-                        ctd: clientTurnData,
-                        actionData: item.use.effects[j],
-                        turnData: tData,
-                        character: this.activePokemon[i].character
-                    }
-                    clientTurnData = A(data);
-                }
-                //TODO remove item
-            }
-        }
-        //then swap pokemon
-        var pkmnToAdd = [];
-        for (var i in this.activePokemon){
-            var tData = this.turnData[this.activePokemon[i].id]
-            if (tData.command == 'swap'){
-                var pkmnToSwapWith = this.activePokemon[i].character.party[tData.index-1];
-                pkmnToAdd.push(pkmnToSwapWith);
-                //update active pokemon of the character
-                for (var j = 0;j < this.activePokemon[i].character.activePokemon.length;j++){
-                    this.activePokemon[i].character.activePokemon[j] = pkmnToSwapWith;
-                }
-                //update team pokemon
-                for (var j = 0; j < this.team1Pokemon.length;j++){
-                    if (this.team1Pokemon[j].id == i){
-                        this.team1Pokemon[j] = pkmnToSwapWith;
-                    }
-                }
-                for (var j = 0; j < this.team2Pokemon.length;j++){
-                    if (this.team2Pokemon[j].id == i){
-                        this.team2Pokemon[j] = pkmnToSwapWith;
-                    }
-                }
-                //add client data
-                clientTurnData.push({
-                    action: 'swap',
-                    idToSwap: i,
-                    newPokemon: pkmnToSwapWith.getLessClientData()
-                });
-                delete this.activePokemon[i];
-            }
-        }
-        //update battle active pokemon
-        for (var i = 0; i < pkmnToAdd.length;i++){
-            this.activePokemon[pkmnToAdd[i].id] = pkmnToAdd[i];
-        }
-
-        //then use moves!!
-        //get each fight command
-        //the order them correctly...
-        fightOrder = this.mergeSort(fightOrder);
-        //then execute the move action
-        console.log(fightOrder);
-        for (var i = 0; i < fightOrder.length;i++){
-            this.turnData[fightOrder[i].id].ctd = clientTurnData;
-            this.turnData[fightOrder[i].id].pkmnDoingAttack = fightOrder[i].id;
-            Attacks.doAttack(this.activePokemon[fightOrder[i].id].moves[this.turnData[fightOrder[i].id].moveIndex],this,this.turnData[fightOrder[i].id])
-        }
-
-        console.log("Client Turn Data:");
-        console.log(clientTurnData);
-
-        for (var i in this.players){
-            this.engine.queuePlayer(this.players[i],CENUMS.EXECUTETURN, {turnData: clientTurnData});
-            this.readyForNextRound[this.players[i].id] = false;
-        }
-        this.roundActive = false;
-        this.round += 1;
-        this.roundTicker = 0;
-
-        if (this.endAfterTurn){
-            this.end = true;
-        }
-        this.turnData = {};
-    }
-}
-
 Battle.prototype.pokemonFainted = function(pkmn){
-
+    //give exp to other team's pokemon?? AT END OF BATTLE!
+    if (pkmn.character.hasWaitingPokemon()){
+        this.paused = true;
+        this.waitingForNextPokemon = true;
+    }
+    var team = this.getTeamPkmn(pkmn.character);
+    for (var j = 0; j < team.length;j++){
+        if (!team[j]){continue;}
+        if (pkmn.id == team[j].id){
+            team[j] = null;
+        }
+    }
+    delete pkmn.character.activePokemon[pkmn.id];
+    delete this.activePokemon[pkmn.id];
+    if (pkmn.character instanceof Trainer){
+        pkmn.character.pokemonHasFainted = true;
+        pkmn.character.pokemonHasFaintedTicker = 0;
+    }
+    var cData = {};
+    cData[CENUMS.VALUE] = this.waitingTime;
+    for (var i in this.players){
+        this.engine.queuePlayer(this.players[i],CENUMS.WAITING, cData);
+    }
 }
 
 Battle.prototype.getTeam = function(player){

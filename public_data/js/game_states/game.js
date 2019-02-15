@@ -697,6 +697,16 @@
                             Battle.addChat('& That Pokemon is fainted!');
                             return;
                         }
+                        if (Battle.selectingNewPokemon){
+                            var cData = {};
+                            cData[CENUMS.COMMAND] = CENUMS.NEWPKMN;
+                            cData[CENUMS.NUMBER] = Battle.newPokemonPos;
+                            cData[CENUMS.POKEMON] = Party.pokemon[e.currentTarget.pokemonNumber].id;
+                            Acorn.Net.socket_.emit(CENUMS.BATTLEUPDATE,cData);
+                            Battle.selectingNewPokemon = false;
+                            Battle.newPokemonButtons[Battle.newPokemonPos].visible = false;
+                            return;
+                        }
                         Battle.turnData = {};
                         Battle.turnData[CENUMS.COMMAND] = CENUMS.SWAPPKMN;
                         Battle.turnData[CENUMS.POKEMON] = Battle.currentPokemon.id;
