@@ -115,7 +115,7 @@
                 data.p2.init(data[CENUMS.POKEMON2])
             }
             data.team = data.p1.team;
-            Battle.addChat("& " + Battle.trainers[data.p1.owner].name + ' withdraws ' + data.p1.name + '!');
+            Battle.addChat("& " + Battle.trainers[data.p1.owner].name + ' withdraws ' + data.p1.nickname + '!');
 
         }
         if (action.t >= data[CENUMS.VALUE]/2){
@@ -128,7 +128,7 @@
                 action.end = true;
                 Battle.paused = false;
                 Battle.addPokemon(data.p2,data.n,data.team);
-                Battle.addChat("& " + Battle.trainers[data.p1.owner].name + ' sends out ' + data.p2.name + '!');
+                Battle.addChat("& " + Battle.trainers[data.p1.owner].name + ' sends out ' + data.p2.nickname + '!');
             }
         }
     };

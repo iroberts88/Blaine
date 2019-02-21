@@ -49,6 +49,9 @@
             this.targetSelectText = null;
             this.waitingForData = false;
 
+            this.waitingTime = 0;
+            this.waitingStart = null;
+
             this.end = false;
             this.endTicker = 0;
             this.ticker = 0;
@@ -196,6 +199,9 @@
             }
 
             for (var i = 0; i < oT.length;i++){
+                if (this.battleData[CENUMS.WILD]){
+                    continue;
+                }
                 if (typeof oT[i][CENUMS.NUMBER] != 'undefined'){continue;}
                 this.trainers[oT[i][CENUMS.ID]] = {
                     id: oT[i][CENUMS.ID],
@@ -287,6 +293,11 @@
             if (!this.paused){
                 for (var i in this.pokemonContainer){
                     this.pokemonContainer[i].update(dt);
+                }
+            }else if (this.waitingStart){
+                if (Date.now()-this.waitingStart >= (this.waitingTime*1000)){
+                    this.waitingStart = null;
+                    this.paused = false;
                 }
             }
 
@@ -837,10 +848,25 @@
                                 Battle.showTargetSelect('pkmn');
                                 break;
                             case CENUMS.ALL:
+                                Battle.turnData = {};
+                                Battle.turnData[CENUMS.COMMAND] = CENUMS.ATTACK;
+                                Battle.turnData[CENUMS.POKEMON] = Battle.currentPokemon.id;
+                                Battle.turnData[CENUMS.MOVEID] = Battle.currentSelectedAttack[CENUMS.MOVEID];
+                                Battle.getConfirmTurnWindow();
                                 break;
                             case CENUMS.ENEMYTEAM:
+                                Battle.turnData = {};
+                                Battle.turnData[CENUMS.COMMAND] = CENUMS.ATTACK;
+                                Battle.turnData[CENUMS.POKEMON] = Battle.currentPokemon.id;
+                                Battle.turnData[CENUMS.MOVEID] = Battle.currentSelectedAttack[CENUMS.MOVEID];
+                                Battle.getConfirmTurnWindow();
                                 break;
                             case CENUMS.SELF:
+                                Battle.turnData = {};
+                                Battle.turnData[CENUMS.COMMAND] = CENUMS.ATTACK;
+                                Battle.turnData[CENUMS.POKEMON] = Battle.currentPokemon.id;
+                                Battle.turnData[CENUMS.MOVEID] = Battle.currentSelectedAttack[CENUMS.MOVEID];
+                                Battle.getConfirmTurnWindow();
                                 break;
                         }
                     }
@@ -900,7 +926,7 @@
         getConfirmTurnWindow: function(){
 
             //TODO setting.autoconfirm?
-
+            Graphics.ui.removeChild(Battle.confirmTurnWindow);
             this.confirmTurnWindow = new PIXI.Container();
 
             var c = new PIXI.Container();

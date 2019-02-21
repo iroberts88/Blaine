@@ -22,6 +22,9 @@ var Trainer = function(ge){
     this.currentTeam = null;
     this.participated = {}; //list of pokemon that had participated in the current battle for exp purposes
     this.activePokemon = []; //a list of the currently active pokemon for use in a battle
+
+    this.pkmnHasFainted = false;
+    this.pkmnHasFaintedTicker = 0;
 }
 
 Trainer.prototype.init = function(data) {
@@ -46,8 +49,37 @@ Trainer.prototype.init = function(data) {
     }
     
 };
-
 Trainer.prototype.update = function(deltaTime) {
+
+    if (this.hasFaintedPokemon()){
+        this.checkBattleEnd();
+        this.pkmnHasFaintedTicker += deltaTime;
+        if (this.pkmnHasFaintedTicker >= 1.0){
+            //send out new pokemon
+            if (this.getWaitingPokemon()){
+                //get the waiting pokemon
+                var pkmn = this.getWaitingPokemon();
+                var cData = {};
+                var repNum = this.getFaintedPokemonSlot();
+                cData[CENUMS.POKEMON] = pkmn.getLessClientData();
+                cData[CENUMS.SLOT] = repNum+1;
+                this.battle.queueData(CENUMS.NEWPKMN,cData);
+
+                var team = this.battle.getTeamPkmn(this);
+                team[repNum] = pkmn;
+
+                this.activePokemon[pkmn.id] = pkmn;
+                this.battle.activePokemon[pkmn.id] = pkmn;
+
+                if (!this.hasFaintedPokemon()){
+                    //still has a fainte pokemon?
+                    this.battle.waitingTime = 1.5;
+                    this.battle.waitingTicker = 0;
+                }
+            }
+            this.pkmnHasFaintedTicker -= 1.0;
+        }
+    }
     for (var i in this.activePokemon){
         var pkmn = this.activePokemon[i];
         if (pkmn.currentTurnData == null){
@@ -85,15 +117,38 @@ Trainer.prototype.update = function(deltaTime) {
     }
 };
 
+Trainer.prototype.checkBattleEnd = function(){
+
+    var end = false;
+    if (!this.hasActivePokemon()){
+        if (this.battle.waitingTicker >= this.battle.waitingTime){
+            end = true;
+        }
+        if (!this.hasWaitingPokemon()){
+            end = true;
+        }
+    }
+    if (end){
+        this.battle.checkEnd(this.currentTeam);
+    }
+};
+
 Trainer.prototype.initBattle = function(battle,wild,team){
-    this.activePokemon = [];
+    this.activePokemon = {};
     this.currentTeam = team;
+    this.currentEnemyTeam = null;
     this.battle = battle;
+    this.battleSlots = [];
     var n = 3;
-    if (wild){n == 1};
+    if (wild){n = 1};
     if (battle.type == 'team'){
         n = 2;
     };
+    if (team == battle.team1){
+        this.currentEnemyTeam = battle.team2;
+    }else{
+        this.currentEnemyTeam = battle.team1;
+    }
     for (var i = 0; i < n;i++){
         if (typeof this.party[i] == 'undefined'){
             continue;
@@ -101,12 +156,14 @@ Trainer.prototype.initBattle = function(battle,wild,team){
         if (this.party[i].currentHP <= 0){
             continue;
         }
-        this.activePokemon.push(this.party[i]);
+        this.activePokemon[this.party[i].id] = this.party[i];
         battle.activePokemon[this.party[i].id] = this.party[i];
         if (team == 1){
             battle.team1Pokemon.push(this.party[i]);
+            this.battleSlots.push(battle.team1Pokemon.length-1);
         }else{
             battle.team2Pokemon.push(this.party[i]);
+            this.battleSlots.push(battle.team2Pokemon.length-1);
         }
     }
 };
@@ -118,13 +175,58 @@ Trainer.prototype.addPokemon = function(p){
     }
 };
 
-Trainer.prototype.hasWaitingPokemon = function(id){
+Trainer.prototype.hasActivePokemon = function(id){
     for (var i = 0; i < this.party.length; i++){
-        if (!this.activePokemon[this.party[i].id] && this.party[i].hpPercent != 0){
+        if (this.activePokemon[this.party[i].id]){
             return true;
         }
     }
     return false;
+};
+Trainer.prototype.hasWaitingPokemon = function(id){
+    for (var i = 0; i < this.party.length; i++){
+        if (!this.activePokemon[this.party[i].id] && this.party[i].hpPercent.value != 0){
+            return true;
+        }
+    }
+    return false;
+};
+Trainer.prototype.getWaitingPokemon = function(id){
+    for (var i = 0; i < this.party.length; i++){
+        if (!this.activePokemon[this.party[i].id] && this.party[i].hpPercent.value != 0){
+            return this.party[i];
+        }
+    }
+    return null;
+};
+
+Trainer.prototype.hasFaintedPokemon = function(){
+    for (var i = 0; i < this.battleSlots.length;i++){
+        if (this.currentTeam == 1){
+            if (!this.battle.team1Pokemon[this.battleSlots[i]]){
+                return true;
+            }
+        }else{
+            if (!this.battle.team2Pokemon[this.battleSlots[i]]){
+                return true;
+            }
+        }
+    }
+    return false;
+};
+Trainer.prototype.getFaintedPokemonSlot = function(){
+    for (var i = 0; i < this.battleSlots.length;i++){
+        if (this.currentTeam == 1){
+            if (!this.battle.team1Pokemon[this.battleSlots[i]]){
+                return this.battleSlots[i];
+            }
+        }else{
+            if (!this.battle.team2Pokemon[this.battleSlots[i]]){
+                return this.battleSlots[i];
+            }
+        }
+    }
+    return null;
 };
 
 Trainer.prototype.getClientData = function(less = false){

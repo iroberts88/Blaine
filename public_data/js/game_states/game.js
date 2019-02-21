@@ -705,6 +705,7 @@
                             Acorn.Net.socket_.emit(CENUMS.BATTLEUPDATE,cData);
                             Battle.selectingNewPokemon = false;
                             Battle.newPokemonButtons[Battle.newPokemonPos].visible = false;
+                            aGame.clearUI();
                             return;
                         }
                         Battle.turnData = {};
@@ -988,6 +989,7 @@
                 gfx.lineStyle(2,0x707070,1);
                 gfx.beginFill(0x707070,1);
                 var size = xSize/3 * (pokemon.currentHP/pokemon.hp);
+                if (pokemon.currentHP == 0){size = 0;}
                 gfx.drawRoundedRect(c.pokeSprite.position.x,c.pokeSprite.position.y + c.pokeSprite.height + 5,size,15,6);
                 gfx.drawRect(c.pokeSprite.position.x+10,c.pokeSprite.position.y + c.pokeSprite.height + 5,size-10,15);
                 gfx.endFill();
@@ -1104,7 +1106,7 @@
             c.fainted = false;
             c.pkmnActive = false;
             sprites.addChild(c.overlayText);
-            if (pokemon.currentHP == 0){
+            if (pokemon.hpPercent == 0){
                 c.overlayText.text = 'Fainted';
                 c.overlayText.visible = true;
                 c.fainted = true;

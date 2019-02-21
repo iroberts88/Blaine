@@ -82,9 +82,10 @@ Attribute.prototype.reset = function(updateClient){
 Attribute.prototype.battleUpdate = function(battle){
     var cData = {};
     cData[CENUMS.VALUE] = this.value;
-    cData[CENUMS.POKEMON] = this.pokemon.id;
+    cData[CENUMS.STAT] = this.id;
+    cData[CENUMS.ID] = this.pokemon.id;
     console.log(cData);
-    battle.queueData(this.id,cData);
+    battle.queueData(CENUMS.SETUNITSTAT,cData);
 }
 Attribute.prototype.set = function(updateClient){
 	if (this.setBool){
@@ -106,7 +107,7 @@ Attribute.prototype.set = function(updateClient){
     		}
     	}
 	}
-    try{this.next(updateClient);}catch(e){console.log(e);}
+    try{this.next(updateClient);}catch(e){}
     try{
         if (updateClient){
             var cData = {};

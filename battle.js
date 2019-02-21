@@ -44,7 +44,7 @@ var Battle = function(ge) {
 
     this.chargeCounter = 1;
 
-    this.baseChargeTime = 15; //the lowest pokemon will take n secinds to charge
+    this.baseChargeTime = 12; //the lowest pokemon will take n secinds to charge
 
     this.wild = null;
 
@@ -66,31 +66,25 @@ Battle.prototype.init = function (data) {
     //type defaults to 1v1
     this.type = data.type;
     this.wild = data.type == 'wild';
-    
+
     for (var i = 0; i < data.team1.length;i++){
-        if (data.team1[i] instanceof Character || data.team1[i] instanceof Trainer){
+        if (data.team1[i].isCharacter){
+            data.team1[i]._initBattle(this,this.wild,1);
+            this.team1.push(data.team1[i]);
+            this.players[data.team1[i].owner.id] = data.team1[i].owner;
+        }else{
             data.team1[i].initBattle(this,this.wild,1);
             this.team1.push(data.team1[i]);
-            if (data.team1[i] instanceof Character){
-                this.players[data.team1[i].owner.id] = data.team1[i].owner;
-            }
-        }else{
-            this.team1.push(data.team1[i]);
-            this.team1Pokemon.push(data.team1[i]);
-            this.activePokemon[data.team1[i].id] = data.team1[i];
         }
     }
     for (var i = 0; i < data.team2.length;i++){
-        if (data.team2[i] instanceof Character || data.team2[i] instanceof Trainer){
+        if (data.team2[i].isCharacter){
+            data.team2[i]._initBattle(this,this.wild,2);
+            this.team2.push(data.team2[i]);
+            this.players[data.team2[i].owner.id] = data.team2[i].owner;
+        }else{
             data.team2[i].initBattle(this,this.wild,2);
             this.team2.push(data.team2[i]);
-            if (data.team2[i] instanceof Character){
-                this.players[data.team2[i].owner.id] = data.team2[i].owner;
-            }
-        }else{
-            this.team2.push(data.team2[i]);
-            this.team2Pokemon.push(data.team2[i]);
-            this.activePokemon[data.team2[i].id] = data.team2[i];
         }
     }
     //Battle successfully initialized
@@ -111,6 +105,13 @@ Battle.prototype.init = function (data) {
     for (var i = 0; i < this.team2.length;i++){
         t2.push(this.team2[i].getLessClientData());
     }
+    var highest = 1;
+    if (t1p.length > highest){highest = t1p.length}
+    if (t2p.length > highest){highest = t2p.length}
+    //Base charge time varies between battle size!!
+    this.baseChargeTime = 7.5 + (highest-1)*2.5;
+
+    console.log("The base charge time is " + this.baseChargeTime)
 
     this.getChargeCounter(false);
 
@@ -138,6 +139,28 @@ Battle.prototype.tick = function(deltaTime){
             this.swapTicker = 0;
             this.swapping = false;
         }
+        return;
+    }
+    for (var i = 0; i < this.team1.length;i++){
+        if (this.team1[i] instanceof Trainer){
+            this.team1[i].update(deltaTime);
+        }
+    }
+    for (var i = 0; i < this.team2.length;i++){
+        if (this.team2[i] instanceof Trainer){
+            this.team2[i].update(deltaTime);
+        }
+    }
+    if (this.waitingForNextPokemon){
+        this.waitingTicker += deltaTime;
+        if (this.waitingTicker >= this.waitingTime){
+            this.waitingTicker = 0;
+            this.paused = false;
+            this.waitingForNextPokemon = false;
+            this.queueData(CENUMS.RESUME,{});
+            console.log('yey!!!')
+        }
+        return;
     }
     for (var i in this.activePokemon){
         var p = this.activePokemon[i];
@@ -226,16 +249,6 @@ Battle.prototype.tick = function(deltaTime){
             }
         }
     }
-    for (var i = 0; i < this.team1.length;i++){
-        if (this.team1[i] instanceof Trainer){
-            this.team1[i].update(deltaTime);
-        }
-    }
-    for (var i = 0; i < this.team2.length;i++){
-        if (this.team2[i] instanceof Trainer){
-            this.team2[i].update(deltaTime);
-        }
-    }
     /*
     if (this.roundActive){
         this.roundTicker += deltaTime;
@@ -257,6 +270,20 @@ Battle.prototype.tick = function(deltaTime){
 };
 
 Battle.prototype.checkReady = function(){
+    for (var i in this.players){
+        if (!this.players[i].ready){
+            this.ready = false;
+            return;
+        }
+    }
+    this.ready = true;
+    this.engine.battleReady(this);
+    var cData = {}
+    for (var i in this.players){
+        this.engine.queuePlayer(this.players[i],CENUMS.READY,cData);
+    }
+};
+Battle.prototype.checkEnd = function(){
     for (var i in this.players){
         if (!this.players[i].ready){
             this.ready = false;
@@ -317,9 +344,14 @@ Battle.prototype.removeSpectator = function(p){
 
 Battle.prototype.pokemonFainted = function(pkmn){
     //give exp to other team's pokemon?? AT END OF BATTLE!
+    if (this.wild){
+        console.log("wild pokemon fainted!!! (run away!!)")
+    }
     if (pkmn.character.hasWaitingPokemon()){
         this.paused = true;
         this.waitingForNextPokemon = true;
+        this.waitingTicker = 0;
+        this.waitingTime = 10.0;
     }
     var team = this.getTeamPkmn(pkmn.character);
     for (var j = 0; j < team.length;j++){

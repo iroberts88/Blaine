@@ -93,12 +93,12 @@ Pokemon.prototype.update = function(deltaTime){
             this.reset();
             var cData = {};
             cData[CENUMS.POKEMON] = this.id;
-            cData[CENUMS.WAITING] = this.character.waitingForNextPokemon;
+            cData[CENUMS.WAITING] = this.character.battle.waitingForNextPokemon;
             this.character.battle.queueData(CENUMS.ATTACKDONE,cData);
-            if (!this.character.waitingForNextPokemon){
+            if (!this.character.battle.waitingForNextPokemon){
                 this.character.battle.paused = false;
-                this.character.battle.currentAction = null; 
             }
+            this.character.battle.currentAction = null; 
         }
     }
 }

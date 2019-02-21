@@ -214,17 +214,16 @@
                     Battle.end = true;
                 }
             });
-
-            Acorn.Net.on(CENUMS.HPPERCENT, function (data) {
-                var pkmn = Battle.pokemonContainer[data[CENUMS.POKEMON]];
+            Acorn.Net.on(CENUMS.SETUNITSTAT, function (data) {
+                console.log(data);
+                var playerPkmn = Party.getPokemon(data[CENUMS.ID]);
+                if (playerPkmn){
+                    playerPkmn.setStat(data);
+                    return;
+                }
+                var pkmn = Battle.pokemonContainer[data[CENUMS.ID]];
                 if (pkmn){
-                    pkmn.hpPercent = data[CENUMS.VALUE];
-                    Battle.drawHPBar(Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]].hpBar,data[CENUMS.VALUE]/100);
-                }if (data[CENUMS.VALUE] == 0){
-                    //if it's your pokemon, add a "send out pokemon" button
-                    Battle.addChat('& ' + pkmn.name + ' fainted!');
-                    Battle.removePokemon(pkmn);
-                    Battle.newPokemonButtons[pkmn.n].visible = true;
+                    pkmn.setStat(data);
                 }
             });
 
@@ -235,15 +234,38 @@
             });
 
             Acorn.Net.on(CENUMS.WAITING, function (data) {
+                //battle is waiting for 
                 Battle.paused = true;
+                Battle.waitingStart = Date.now();
+                Battle.waitingTime = data[CENUMS.VALUE];
+            });
+            Acorn.Net.on(CENUMS.RESUME, function (data) {
+                //battle is waiting for 
+                Battle.paused = false;
+                Battle.waitingStart = null;
             });
 
+
             Acorn.Net.on(CENUMS.ADDPOKEMON, function (data) {
+                //add a pokemon to player
                 console.log(data);
                 var newpoke = new Pokemon();
                 newpoke.init(data[CENUMS.POKEMON]);
                 Party.setPokemon(data[CENUMS.SLOT],newpoke);
                 Game.resetPokemon(data[CENUMS.SLOT]);
+            });
+            Acorn.Net.on(CENUMS.NEWPKMN, function (data) {
+                //new battle pokemon
+                console.log(data);
+                if (Party.getPokemon(data[CENUMS.POKEMON][CENUMS.ID])){
+                    var newPoke = Party.getPokemon(data[CENUMS.POKEMON][CENUMS.ID]);
+                    Battle.addChat("& " + 'Go, ' + newPoke.nickname + '!');
+                }else{
+                    var newPoke = new Pokemon();
+                    newPoke.init(data[CENUMS.POKEMON]);
+                    Battle.addChat("& " + Battle.trainers[newPoke.owner].name + ' sends out ' + newPoke.nickname + '!');
+                }
+                Battle.addPokemon(newPoke,data[CENUMS.SLOT],Battle.trainers[newPoke.owner].team);
             });
 
             Acorn.Net.on(CENUMS.LOGOUT, function (data) {

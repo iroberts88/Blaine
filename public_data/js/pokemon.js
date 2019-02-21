@@ -62,7 +62,48 @@
         this.charge = 0;
     }
 
-    
+    Pokemon.prototype.setStat = function(data){
+        switch(data[CENUMS.STAT]){
+            case CENUMS.HP:
+                this.hp = data[CENUMS.VALUE];
+                break;
+            case CENUMS.CURRENTHP:
+                this.currentHP = data[CENUMS.VALUE];
+                break;
+            case CENUMS.HPPERCENT:
+                this.hpPercent = data[CENUMS.VALUE];
+                var pkmn = Battle.pokemonContainer[this.id];
+                if (pkmn){
+                    pkmn.hpPercent = data[CENUMS.VALUE];
+                    Battle.drawHPBar(Battle.pokemonSpriteContainer[this.id].hpBar,data[CENUMS.VALUE]/100);
+
+                    if (data[CENUMS.VALUE] == 0){
+                        //if it's your pokemon, add a "send out pokemon" button
+                        Battle.addChat('& ' + pkmn.nickname + ' fainted!');
+                        Battle.removePokemon(pkmn);
+                        if (Party.getPokemon(this.id)){
+                            Battle.newPokemonButtons[pkmn.n].visible = true;
+                        }
+                    }
+                }
+                break;
+            case CENUMS.SPEED:
+                this.speed = data[CENUMS.VALUE];
+                break;
+            case CENUMS.ATTACK:
+                this.attack = data[CENUMS.VALUE];
+                break;
+            case CENUMS.SPECIALATTACK:
+                this.specialAttack = data[CENUMS.VALUE];
+                break;
+            case CENUMS.DEFENSE:
+                this.defense = data[CENUMS.VALUE];
+                break;
+            case CENUMS.SPECIALDEFENSE:
+                this.specialDefense = data[CENUMS.VALUE];
+                break;
+        }
+    }
 
     window.Pokemon = Pokemon;
 })(window);

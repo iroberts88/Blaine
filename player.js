@@ -147,9 +147,6 @@ Player.prototype.setupSocket = function() {
                         }else if (data[CENUMS.TEAM] == 2){
                             target = that.battle.team2Pokemon[data[CENUMS.TARGET]-1];
                         }
-                        for (var i = 0; i < that.battle.team2Pokemon.length;i++){
-                            console.log(that.battle.team2Pokemon[i].name)
-                        }
                         if (typeof target == 'undefined' || !target){
                             console.log('invalid target');
                             pokemon.turnInvalid();
@@ -188,8 +185,39 @@ Player.prototype.setupSocket = function() {
                 }
                 break;
             case CENUMS.NEWPKMN:
-                console.log('NEW POKEMDsjaKJDSKL');
-                console.log(data);
+                var pkmn = that.character.getPokemon(data[CENUMS.POKEMON]);
+                if (!pkmn){
+                    return;
+                }else{
+                    if (pkmn.currentHP.value == 0){
+                        return;
+                    }
+                    if (that.character.battle.activePokemon[pkmn.id]){
+                        return;
+                    }
+                }
+                var repNum = data[CENUMS.NUMBER];
+                var team = that.character.battle.getTeamPkmn(that.character);
+                if (team[repNum-1]){
+                    console.log('that pokemon is already active!!');
+                    return;
+                }
+                team[repNum-1] = pkmn;
+
+                var cData = {};
+                cData[CENUMS.POKEMON] = pkmn.getLessClientData();
+                cData[CENUMS.SLOT] = repNum;
+                that.battle.queueData(CENUMS.NEWPKMN,cData);
+
+
+                that.character.activePokemon[pkmn.id] = pkmn;
+                that.battle.activePokemon[pkmn.id] = pkmn;
+
+                if (!that.character.hasFaintedPokemon()){
+                    //still has a fainte pokemon?
+                    that.battle.waitingTime = 1.5;
+                    that.battle.waitingTicker = 0;
+                }
                 break;
             case CENUMS.SWAPPKMN:
                 if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.TARGET])){
@@ -274,7 +302,7 @@ Player.prototype.setupSocket = function() {
                         break;
                     }else{
                         //create new character
-                        var char = new Character();
+                        var char = Character();
                         data.owner = that;
                         data.id = that.engine.getId();
                         data.money = 0;
@@ -287,7 +315,7 @@ Player.prototype.setupSocket = function() {
                         data.currentMap = 'pallet_house1_floor2';
                         data.music = 'pallet';
                         data.engine = that.engine;
-                        char.init(data);
+                        char._init(data);
                         that.startGame(char);
                     }
                     break;
@@ -455,7 +483,7 @@ Player.prototype.setupSocket = function() {
                     if (that.battle != null){console.log("Battle exists");return;}
                     console.log("Start Battle");
                     var pokemon = [4,4,4,4,4,4];//[Math.ceil(Math.random()*15),Math.ceil(Math.random()*15),Math.ceil(Math.random()*15)];
-                    var levels = [3,3,3];
+                    var levels = [3,3,3,3,3,3];
                     var battle = new Battle(that.engine);
                     var trainer = new Trainer(that.engine);
                     trainer.init({pokemon:pokemon,levels:levels});
@@ -467,21 +495,15 @@ Player.prototype.setupSocket = function() {
                     break;
                 case 'wbattle':
                     //wild battle
-                    //1v1 pokemon, the pokemon is likely to run when its health gets low 
+                    //1v1 pokemon, the pokemon is likely to run when its health gets low //trainer battle
                     if (that.battle != null){console.log("Battle exists");return;}
                     console.log("Start Battle");
-
+                    var pokemon = [Math.ceil(Math.random()*15)];
+                    var levels = [3];
                     var battle = new Battle(that.engine);
-                    var newPoke = new Pokemon();
-                    newPoke.init(that.engine.pokemon[Math.ceil(Math.random()*15)],{
-                        character: null,
-                        nickname: '',
-                        level: 3,
-                        id: that.engine.getId(),
-                        engine: that.engine
-                    });
-
-                    if (battle.init({team1: [that.character],team2: [newPoke],type: 'wild'})){
+                    var trainer = new Trainer(that.engine);
+                    trainer.init({pokemon:pokemon,levels:levels});
+                    if (battle.init({team1: [that.character],team2: [trainer],type: 'wild'})){
                         console.log("Battle successfully initialized!!");
                         that.battle = battle;
                         that.engine.inactiveBattles[battle.id] = battle;
@@ -525,7 +547,7 @@ Player.prototype.setupSocket = function() {
                         level: level,
                         id: that.engine.getId()
                     })
-                    that.character.addPokemon(newPoke);
+                    that.character._addPokemon(newPoke);
                     break;
             }
         }catch(e){

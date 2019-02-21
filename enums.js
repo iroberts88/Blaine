@@ -2,19 +2,19 @@
 //enums.js
 //----------------------------------------------------------------
 var enums = {
-        ACCURACY: 'acc',
-        ADDPC: 'adpc',
-        ADDPOKEMON: 'apk',
-        AMOUNT: 'amt',
+        ACCURACY: 'ac',
+        ADDPC: 'ad',
+        ADDPOKEMON: 'adp',
+        AMOUNT: 'am',
         ALL: 'al',
         ALLPKMN: 'alp',
         ALLY: 'aly',
-        ATTACK: 'atk',
-        ATTACKDONE: 'akd',
+        ATTACK: 'at',
+        ATTACKDONE: 'atd',
         ATTACKEV: 'ate',
         ATTACKIV: 'ati',
 
-        BALL: 'bal',
+        BALL: 'ba',
         BATTLE: 'bat',  
         BATTLECHAT: 'bcha',
         BATTLEDATA: 'bda', //new battle action to client
@@ -27,8 +27,8 @@ var enums = {
         CHARACTER: 'cha',
         CHARACTERS: 'cha',
         CHARGECOUNTER: 'chg',
-        CLIENTID: 'cli',
         CLIENTCOMMAND: 'clc',
+        CLIENTID: 'cli',
         COMMAND: 'cmm',
         CONNINFO: 'coi',
         CREATEUSER: 'cru',
@@ -46,6 +46,7 @@ var enums = {
         EXECUTETURN: 'ext',
         EXP: 'ex',
 
+        FAINT: 'fai',
         FIELD: 'fie',
         FIELDPKMN: 'fpkm',
 
@@ -110,6 +111,7 @@ var enums = {
         REMOVEPC: 'rmpc',
         REQUESTMAPDATA: 'req',
         RESOURCE: 're',
+        RESUME: 'resu',
         ROUNDREADY: 'rrd',
         RUN: 'rn',
 
@@ -166,7 +168,7 @@ var enums = {
         Y: 'y',
 
         ZONEDATA: 'zod'
-};
+    };
 
 var Enums = function() {};
 

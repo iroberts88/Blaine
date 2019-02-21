@@ -1,19 +1,19 @@
 (function(window) {
 
     CENUMS = {
-        ACCURACY: 'acc',
-        ADDPC: 'adpc',
-        ADDPOKEMON: 'apk',
-        AMOUNT: 'amt',
+        ACCURACY: 'ac',
+        ADDPC: 'ad',
+        ADDPOKEMON: 'adp',
+        AMOUNT: 'am',
         ALL: 'al',
         ALLPKMN: 'alp',
         ALLY: 'aly',
-        ATTACK: 'atk',
-        ATTACKDONE: 'akd',
+        ATTACK: 'at',
+        ATTACKDONE: 'atd',
         ATTACKEV: 'ate',
         ATTACKIV: 'ati',
 
-        BALL: 'bal',
+        BALL: 'ba',
         BATTLE: 'bat',  
         BATTLECHAT: 'bcha',
         BATTLEDATA: 'bda', //new battle action to client
@@ -110,6 +110,7 @@
         REMOVEPC: 'rmpc',
         REQUESTMAPDATA: 'req',
         RESOURCE: 're',
+        RESUME: 'resu',
         ROUNDREADY: 'rrd',
         RUN: 'rn',
 
