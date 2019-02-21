@@ -283,7 +283,20 @@ Battle.prototype.checkReady = function(){
         this.engine.queuePlayer(this.players[i],CENUMS.READY,cData);
     }
 };
-Battle.prototype.checkEnd = function(){
+Battle.prototype.checkEnd = function(team){
+    // check to see if the given team is out of pokemon 
+    // (or has no active pokemon for more than 10 seconds)
+    var end = false;
+    for (var i = 0; i < team.length;i++){
+        if (!this.hasActivePokemon()){
+            if (this.battle.waitingTicker >= this.battle.waitingTime){
+                end = true;
+            }
+            if (!this.hasWaitingPokemon()){
+                end = true;
+            }
+        }
+    }
     for (var i in this.players){
         if (!this.players[i].ready){
             this.ready = false;
