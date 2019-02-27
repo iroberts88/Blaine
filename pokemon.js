@@ -3,6 +3,24 @@ var Actions = require('./actions.js').Actions;
 var CENUMS = require('./enums.js').Enums; //init client enums
 CENUMS.init();
 
+var expEnums = {
+    SLOW: 'slow', //1
+    MSLOW: 'mslow', //2
+    MFAST: 'mfast', //3
+    FAST: 'fast', //4
+    FLUC: 'fluctuating', //5
+    ERRATIC: 'erratic' //6
+};
+
+var expTypeEnums = {
+    'slow': 1,
+    'mslow': 2,
+    'mfast': 3,
+    'fast': 4,
+    'fluctuating': 5,
+    'erratic': 6
+}
+
 var Pokemon = function(){
     this.MAX_ATTACKS = 4;
     this.MAX_EV_VALUE = 30000;
@@ -71,6 +89,21 @@ Pokemon.prototype.reset = function(){
     this.castingAttack = null
     this.currentTurnData = null;
     this.castingAttackTicker = 0;
+}
+Pokemon.prototype.battleReset = function(){
+    this.charge = 0;
+    this.castingAttack = null
+    this.currentTurnData = null;
+    this.castingAttackTicker = 0;
+
+    this.hp.reset(false);
+    this.speed.reset(false);
+    this.spattack.reset(false);
+    this.spdefense.reset(false);
+    this.defense.reset(false);
+    this.attack.reset(false);
+
+    //clear some status effects?
 }
 
 Pokemon.prototype.turnInvalid = function(){
@@ -146,6 +179,7 @@ Pokemon.prototype.init = function(base,data) {
     this.engine = data.engine;
     this.id = data.id; //REQUIRED IN <data>
 
+    this.baseExp = base['baseExp'];
     this.number = base.number;
     this.name = base.name;
     this.types = base.types; //list of types
@@ -156,7 +190,11 @@ Pokemon.prototype.init = function(base,data) {
     this.critChance = (typeof data.critChance == 'undefined') ? 0 : data.critChance;
     this.critMod = 2;
     this.level = (typeof data.level == 'undefined') ? 5 : data.level;
-    this.exp = (typeof data.exp == 'undefined') ? 0 : data.exp;
+    this.expType = expEnums.FAST;
+    this.exp = (typeof data.exp == 'undefined') ? this.getExpValue(this.level) : data.exp;
+    this.expToNextLevel = this.getExpValue(this.level+1);
+    this.expAtCurrentLevel = this.getExpValue(this.level);
+
 
     if (typeof data.moves == 'undefined'){
         this.getMoves();
@@ -336,7 +374,6 @@ Pokemon.prototype.init = function(base,data) {
         max: 100,
         name: 'Current HP Percent',
         formula: function(updateClient){
-            console.log('setting hp percent of ' + this.pokemon.name)
             return (this.pokemon.currentHP.value/this.pokemon.hp.value)*100;
         },
         next: function(updateClient){
@@ -374,6 +411,7 @@ Pokemon.prototype.getClientData = function(less = false){
         data[CENUMS.MOVES].push(this.moves[i].getClientData());
     }
     data[CENUMS.EXP] = this.exp;
+    data[CENUMS.EXPTYPE] = expTypeEnums[this.expType];
     data[CENUMS.CURRENTHP] = this.currentHP.value;
     data[CENUMS.CURRENTPP] = this.currentPP;
     data[CENUMS.SLOT] = this.slot;
@@ -436,6 +474,45 @@ Pokemon.prototype.getMove = function(id){
     }
     return false;
 }
+
+Pokemon.prototype.getExpValue = function(level){
+    if (level == 0){return 0;}
+    switch (this.expType){
+        case expEnums.SLOW:
+            return Math.round((5*Math.pow(level,3))/4);
+            break;
+        case expEnums.MSLOW:
+            return Math.max(level*20,Math.round((6/5)*Math.pow(level,3)-(15*Math.pow(level,2))+100*level-140));
+            break;
+        case expEnums.MFAST:
+            return Math.pow(level,3);
+            break;
+        case expEnums.FAST:
+            return Math.round((4*Math.pow(level,3))/5);
+            break;
+        case expEnums.ERRATIC:
+            if (level <= 50){
+                return Math.round((Math.pow(level,3)*(100-level))/50);
+            }else if (level <= 68){
+                return Math.round((Math.pow(level,3)*(150-level))/100);
+            }else if (level <= 98){
+                return Math.round((Math.pow(level,3)*((1911-10*level)/3))/500);
+            }else {
+                return Math.round((Math.pow(level,3)*(160-level))/100);
+            }
+            break;
+        case expEnums.FLUC:
+            if (level <= 15){
+                return Math.round(Math.pow(level,3)*((((level+1)/3)+24)/50));
+            }else if (level <= 36){
+                return Math.round(Math.pow(level,3)*((level+14)/50));
+            }else {
+                return Math.round(Math.pow(level,3)*(((level/2)+32)/50));
+            }
+            break;
+
+    }
+}
 Pokemon.prototype.getMoveIndex = function(id){
     for (var i = 0; i < this.moves.length;i++){
         if (this.moves[i].attackid == id){
@@ -446,7 +523,32 @@ Pokemon.prototype.getMoveIndex = function(id){
 }
 
 Pokemon.prototype.addExp = function(amt){
+    this.exp += amt;
+    while (this.exp >= this.expToNextLevel){
+        //levelup!!
+        this.level += 1;
+        this.expToNextLevel = this.getExpValue(this.level+1);
+        this.expAtCurrentLevel = this.getExpValue(this.level);
+    }
+    //change stats!!!
+    this.hp.set(true);
+    this.defense.set(true);
+    this.attack.set(true);
+    this.spdefense.set(true);
+    this.spattack.set(true);
+    this.speed.set(true);
 
+    if (this.character.owner){
+        var sData = {};
+        sData[CENUMS.STAT] = CENUMS.EXP;
+        sData[CENUMS.ID] = this.id;
+        sData[CENUMS.VALUE] = this.exp;
+        this.engine.queuePlayer(this.character.owner,CENUMS.SETUNITSTAT,sData);
+    }
+}
+
+Pokemon.prototype.levelup = function(){
+    this.level += 1;
 }
 
 

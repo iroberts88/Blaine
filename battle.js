@@ -5,6 +5,7 @@
 var Player = require('./player.js').Player,
     Character = require('./character.js').Character,
     Trainer = require('./trainer.js').Trainer,
+    Pokemon = require('./pokemon.js').Pokemon,
     Actions = require('./actions.js').Actions,
     Attacks = require('./attacks.js').Attacks,
     AWS = require("aws-sdk");
@@ -36,6 +37,10 @@ var Battle = function(ge) {
     this.team2 = [];
     this.team1Pokemon = [];//list of each team's pokemon
     this.team2Pokemon = [];
+
+    this.team1Exp = 0;
+    this.team2Exp = 0;
+
     this.activePokemon = {};
     this.players = {}; //keep track of players that receive the data of each round
     this.spectators = {};
@@ -158,16 +163,15 @@ Battle.prototype.tick = function(deltaTime){
             this.paused = false;
             this.waitingForNextPokemon = false;
             this.queueData(CENUMS.RESUME,{});
-            console.log('yey!!!')
         }
         return;
     }
+
     for (var i in this.activePokemon){
         var p = this.activePokemon[i];
         p.update(deltaTime);
-        if (!this.paused){
-            p.charge += deltaTime*p.speed.value;
-        }
+        if (this.paused){continue;}
+        p.charge += deltaTime*p.speed.value;
         if (p.charge >= this.chargeCounter){
             p.charge = this.chargeCounter;
             //if pokemon has a battle command ready - initiate it
@@ -278,38 +282,84 @@ Battle.prototype.checkReady = function(){
     }
     this.ready = true;
     this.engine.battleReady(this);
-    var cData = {}
+    var cData = {};
     for (var i in this.players){
         this.engine.queuePlayer(this.players[i],CENUMS.READY,cData);
     }
 };
+
 Battle.prototype.checkEnd = function(team){
     // check to see if the given team is out of pokemon 
     // (or has no active pokemon for more than 10 seconds)
-    var end = false;
+    var end = [];
+    var losers = [];
     for (var i = 0; i < team.length;i++){
-        if (!this.hasActivePokemon()){
-            if (this.battle.waitingTicker >= this.battle.waitingTime){
-                end = true;
+        losers.push(team[i].id);
+        if (!team[i].hasActivePokemon()){
+            if (this.waitingTicker >= this.waitingTime){
+                end.push(1);
+                continue;
             }
-            if (!this.hasWaitingPokemon()){
-                end = true;
+            if (!team[i].hasWaitingPokemon()){
+                end.push(1);
+                continue;
             }
+        }else{
+            end.push(0);
+            continue;
         }
     }
-    for (var i in this.players){
-        if (!this.players[i].ready){
-            this.ready = false;
+    for (var i = 0; i < end.length;i++){
+        if (!end[i]){
             return;
         }
     }
-    this.ready = true;
-    this.engine.battleReady(this);
-    var cData = {}
-    for (var i in this.players){
-        this.engine.queuePlayer(this.players[i],CENUMS.READY,cData);
+
+    //END THE BATTLE!!!!!!
+
+    var otherteam = null;
+    if (team == this.team1){
+        
+        //TODO if someone on the winning team has all fainted pokemon, bring one back to life??
+
+        otherteam = this.team2;
+        this.team2Exp = Math.ceil(this.team2Exp*1.25);
+        this.team1Exp = Math.ceil(this.team1Exp*0.75);
+    }else{
+        otherteam = this.team1;
+        this.team1Exp = Math.ceil(this.team1Exp*1.25);
+        this.team2Exp = Math.ceil(this.team2Exp*0.75);
     }
+
+    this.cleanUpPokemon();
+
+    //add all exp to pokemon that participated
+    var expInfo = {};
+    for (var i = 0; i < this.team1.length;i++){
+        var player = this.team1[i];
+        for (var p in player.participated){
+            if (!player.participated[p]){continue;}
+            var pokemon = player.getPokemon(p);
+            pokemon.addExp(this.team1Exp);
+        }
+    }
+    for (var i = 0; i < this.team2.length;i++){
+        var player = this.team2[i];
+        for (var p in player.participated){
+            if (!player.participated[p]){continue;}
+            var pokemon = player.getPokemon(p);
+            pokemon.addExp(this.team2Exp);
+        }
+    }
+    var cData = {};
+    cData[CENUMS.LOSERS] = losers;
+    this.queueData(CENUMS.BATTLEEND,cData);
+
+    this.cleanUp();
+    this.engine.battleEnd(this);
+    console.log('set battle as inactive!!!')
 };
+
 Battle.prototype.getChargeCounter = function(updateClient = true){
     //set the charge counter
     //slowest pokemon is found, counter is set to speed*10
@@ -343,7 +393,18 @@ Battle.prototype.cleanUp = function(){
     //remove players etc?
     for (var i in this.players){
         this.players[i].battle = null;
+        this.players[i].character.battle = null;
         this.players[i].ready = false;
+    }
+};
+Battle.prototype.cleanUpPokemon = function(){
+    //remove players etc?
+    for (var i in this.players){
+        for (var j = 0; j < this.players[i].character.party.length;j++){
+            if (this.players[i].character.party[j] instanceof Pokemon){
+                this.players[i].character.party[j].battleReset();
+            }
+        }
     }
 };
 
@@ -360,12 +421,25 @@ Battle.prototype.pokemonFainted = function(pkmn){
     if (this.wild){
         console.log("wild pokemon fainted!!! (run away!!)")
     }
+    //add to team exp!!
+
+    this.paused = true;
     if (pkmn.character.hasWaitingPokemon()){
-        this.paused = true;
         this.waitingForNextPokemon = true;
         this.waitingTicker = 0;
         this.waitingTime = 10.0;
     }
+    //add exp to team exp 
+
+    var teamn = this.getTeamN(pkmn.character);
+    var exp = Math.ceil((pkmn.baseExp*pkmn.level)/4);
+    if (teamn == 1){
+        this.team2Exp += exp;
+    }else{
+        this.team1Exp += exp;
+    }
+
+    //remove the pokemon and set timer to wait for a new one
     var team = this.getTeamPkmn(pkmn.character);
     for (var j = 0; j < team.length;j++){
         if (!team[j]){continue;}
@@ -385,7 +459,19 @@ Battle.prototype.pokemonFainted = function(pkmn){
         this.engine.queuePlayer(this.players[i],CENUMS.WAITING, cData);
     }
 }
-
+Battle.prototype.getTeamN = function(player){
+    for (var i = 0; i < this.team1.length;i++){
+        if (this.team1[i].id == player.id){
+            return 1;
+        }
+    }
+    for (var i = 0; i < this.team2.length;i++){
+        if (this.team2[i].id == player.id){
+            return 2;
+        }
+    }
+    return null;
+}
 Battle.prototype.getTeam = function(player){
     for (var i = 0; i < this.team1.length;i++){
         if (this.team1[i].id == player.id){

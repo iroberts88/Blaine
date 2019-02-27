@@ -16,6 +16,7 @@
         BALL: 'ba',
         BATTLE: 'bat',  
         BATTLECHAT: 'bcha',
+        BATTLEEND: 'ben', 
         BATTLEDATA: 'bda', //new battle action to client
         BATTLEPKMN: 'bpk',
         BATTLESWAP: 'bsw',
@@ -44,6 +45,7 @@
         EVASION: 'evasss',
         EXECUTETURN: 'ext',
         EXP: 'ex',
+        EXPTYPE: 'ext',
 
         FAINT: 'fai',
         FIELD: 'fie',
@@ -67,6 +69,7 @@
         LOGINATTEMPT: 'lga',
         LOGGEDIN: 'lgi',
         LOGOUT: 'log',
+        LOSERS: 'los',
 
         MAIN: 'mai',
         MAP: 'm',

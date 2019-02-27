@@ -15,7 +15,8 @@ var enums = {
         ATTACKIV: 'ati',
 
         BALL: 'ba',
-        BATTLE: 'bat',  
+        BATTLE: 'bat', 
+        BATTLEEND: 'ben', 
         BATTLECHAT: 'bcha',
         BATTLEDATA: 'bda', //new battle action to client
         BATTLEPKMN: 'bpk',
@@ -45,6 +46,7 @@ var enums = {
         EVASION: 'evasss',
         EXECUTETURN: 'ext',
         EXP: 'ex',
+        EXPTYPE: 'ext',
 
         FAINT: 'fai',
         FIELD: 'fie',
@@ -68,6 +70,7 @@ var enums = {
         LOGINATTEMPT: 'lga',
         LOGGEDIN: 'lgi',
         LOGOUT: 'log',
+        LOSERS: 'los',
 
         MAIN: 'mai',
         MAP: 'm',

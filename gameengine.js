@@ -230,11 +230,6 @@ GameEngine.prototype.tick = function() {
     //update all active battles
     for (var b in self.activeBattles){
         self.activeBattles[b].tick(deltaTime);
-        if (self.activeBattles[b].end){
-            //battle has ended
-            self.activeBattles[b].cleanUp();
-            delete self.activeBattles[b];
-        }
     }
     //update debug list
     for (var k in self.debugList){
@@ -257,6 +252,15 @@ GameEngine.prototype.battleReady = function(battle) {
     }else{
         this.activeBattles[battle.id] = battle;
         delete this.inactiveBattles[battle.id];
+    }
+}
+
+GameEngine.prototype.battleEnd = function(battle) {
+    if (typeof this.activeBattles[battle.id] == 'undefined'){
+        console.log('Battle does not exist or is not active');
+    }else{
+        this.inactiveBattles[battle.id] = battle;
+        delete this.activeBattles[battle.id];
     }
 }
 

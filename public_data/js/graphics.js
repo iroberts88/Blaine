@@ -138,6 +138,7 @@
         },
         clear: function(){
             this.bgContainer.clear();
+            this.bgContainer.alpha = 1.0;
             this.bgContainer.position.x = 0;
             this.bgContainer.position.y = 0;
             this.worldContainer.removeChildren();

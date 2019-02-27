@@ -12,6 +12,11 @@
             fill: '#ffa64d',
             align: 'left'
         },
+        style1: {
+            font: '48px Pokemon',
+            fill: '#000000',
+            align: 'left'
+        },
 
         style2: {
             font: '18px Pokemon',
@@ -137,6 +142,10 @@
                 Graphics.uiPrimitives2.endFill();
                 Graphics.uiPrimitives2.alpha = 0;
             });
+            Acorn.Net.on(CENUMS.BATTLEEND, function (data) {
+                console.log(data);
+                console.log('received battle end data');
+            });
 
             Acorn.Net.on(CENUMS.CHARGECOUNTER, function (data) {
                 var old = Battle.chargeCounter;
@@ -206,6 +215,19 @@
 
             Acorn.Net.on(CENUMS.BATTLECHAT, function (data) {
                 Battle.addChat(data.text);
+            });
+            Acorn.Net.on(CENUMS.BATTLEEND, function (data) {
+                //figure out which side lost based on data
+                var lost = false;
+                for (var i = 0; i < data[CENUMS.LOSERS].length;i++){
+                    if (Player.character.id == data[CENUMS.LOSERS][i]){
+                        lost = true;
+                    }
+                }
+
+                AfterBattle.lost = lost;
+                Battle.fadeOut = true;
+                Battle.fadeOutTicker = 0;
             });
 
             Acorn.Net.on(CENUMS.BATTLEDATA, function (data) {
@@ -380,6 +402,17 @@
                 },
                 update: function(dt){
                     Battle.update(dt);
+                }
+            });
+
+            Acorn.addState({
+                stateId: 'afterbattle',
+                init: function(){
+                    document.body.style.cursor = 'default';
+                    AfterBattle.init();
+                },
+                update: function(dt){
+                    AfterBattle.update(dt);
                 }
             });
             

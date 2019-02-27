@@ -4,11 +4,16 @@
         BUTTON_BUFFER: 10,
         battleData: null,
 
+
         init: function() { 
             this.wild = null;
             this.myTeam = null;
             this.otherTeam = null;
             this.chatLog = [];
+
+
+            this.fadeOut = false;
+            this.fadeoutTicker = 0;
 
             this.wildStart = false;
             this.trainerStart = false;
@@ -267,13 +272,27 @@
         },
         startGame: function(){
             for (var i in this.myTeam){
-                this.currentPokemon = this.myTeam[i];
-                break;
+                if (this.myTeam[i].owner == Player.character.id){
+                    this.currentPokemon = this.myTeam[i];
+                    break;
+                }
             }
             this.showTurnOptions();
         },
         update: function(dt){ 
             
+            if (this.fadeOut){
+                this.fadeOutTicker += dt;
+                if (this.fadeOutTicker >= 1.5){
+                    Acorn.changeState('afterbattle');
+                }else{
+                    Graphics.uiPrimitives2.lineStyle(3,0xFFFFFF,1);
+                    Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.03);
+                    Graphics.uiPrimitives2.drawRect(0,0,Graphics.width/1,Graphics.height);
+                    Graphics.uiPrimitives2.endFill();
+                }
+                return;
+            }
             if (this.wildStart){
                 //wild pokemon start battle cutscene
                 this.updateWildStart(dt);
@@ -346,6 +365,7 @@
         setChargeCounter: function(v){
             this.chargeCounter = v;
         },
+
         removePokemon: function(p){
             if (this.myTeam[p.id]){
                 delete this.myTeam[p.id];
@@ -364,6 +384,7 @@
             delete Battle.pokemonSpriteContainer[p.id];
             delete Battle.pokemonContainer[p.id];
         },
+
         addPokemon: function(p,n,team){
             team[p.id] = p;
             Battle.pokemonSpriteContainer[p.id] = Battle.getPokemonData(p,n,this.teamSize,team);
@@ -376,8 +397,8 @@
             Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].levelDisplay);
             Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].hpBar);
             Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].chargeBar);
-
         },
+
         getPokemonData: function(pkmn,n,teamSize,team){
             
             var d = {}; 
@@ -807,7 +828,7 @@
             Graphics.uiContainer2.removeChild(this.targetSelectText);
 
             for (var i in this.myTeam){
-                if (!this.myTeam[i].battleCommandSent){
+                if (!this.myTeam[i].battleCommandSent && this.myTeam[i].owner == Player.character.id){
                     this.currentPokemon = this.myTeam[i];
                     this.showTurnOptions();
                     return;

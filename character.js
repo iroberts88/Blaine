@@ -167,10 +167,6 @@ var Character = function(){
 
     trainer._initBattle = function(battle,wild,team){
         this.initBattle(battle,wild,team);
-        console.log('DSJADJSKALDJASKLDJ  --  ' + wild)
-        for (var i = 0; i < this.party.length;i++){
-            this.participated[this.party[i].id] = false;
-        }
     };
 
     trainer.swapPkmn = function(data){
@@ -217,15 +213,6 @@ var Character = function(){
         }
 
         return info;
-    };
-
-    trainer.getPokemon = function(id){
-        for (var i = 0; i < this.party.length; i++){
-            if (this.party[i].id == id){
-                return this.party[i];
-            }
-        }
-        return null;
     };
 
     trainer.hasWaitingPokemon = function(id){

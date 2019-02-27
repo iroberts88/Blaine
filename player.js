@@ -67,6 +67,7 @@ Player.prototype.startGame = function(char){
     cData[CENUMS.CHARACTER] = this.character.getClientData();
     cData[CENUMS.PLAYERS] = players;
     this.engine.queuePlayer(this,CENUMS.STARTGAME,cData);
+
 };
 
 
@@ -482,8 +483,8 @@ Player.prototype.setupSocket = function() {
                     //trainer battle
                     if (that.battle != null){console.log("Battle exists");return;}
                     console.log("Start Battle");
-                    var pokemon = [4,4,4,4,4,4];//[Math.ceil(Math.random()*15),Math.ceil(Math.random()*15),Math.ceil(Math.random()*15)];
-                    var levels = [3,3,3,3,3,3];
+                    var pokemon = [4,4,4];//[Math.ceil(Math.random()*15),Math.ceil(Math.random()*15),Math.ceil(Math.random()*15)];
+                    var levels = [3,3,3];
                     var battle = new Battle(that.engine);
                     var trainer = new Trainer(that.engine);
                     trainer.init({pokemon:pokemon,levels:levels});
