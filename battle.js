@@ -16,8 +16,7 @@ CENUMS.init();
 var Battle = function(ge) {
     this.engine = ge;
     this.id = ge.getId();
-    this.endAfterTurn = false;
-    this.end = false; //end the battle on next tick
+    this.ending = false; //end the battle on next tick
     //ALL BATTLE TYPES
 
     // 1v1      -   2 players   1-6 pokemon each, 1 active at a time, 1 from each player 
@@ -168,8 +167,10 @@ Battle.prototype.tick = function(deltaTime){
     }
 
     for (var i in this.activePokemon){
+        if (this.ending){return;}
         var p = this.activePokemon[i];
         p.update(deltaTime);
+        if (!this){return;}
         if (this.paused){continue;}
         p.charge += deltaTime*p.speed.value;
         if (p.charge >= this.chargeCounter){
@@ -190,7 +191,6 @@ Battle.prototype.tick = function(deltaTime){
                             p.turnInvalid();
                             return;
                         }
-                        p.character.participated[p.id] = true;
                         p.castingAttack = p.currentTurnData.move;
                         p.castingAttackTicker = 0;
                         //send to client!!
@@ -331,6 +331,7 @@ Battle.prototype.checkEnd = function(team){
         this.team2Exp = Math.ceil(this.team2Exp*0.75);
     }
 
+    this.ending = true;
     this.cleanUpPokemon();
 
     //add all exp to pokemon that participated
@@ -458,6 +459,7 @@ Battle.prototype.pokemonFainted = function(pkmn){
     for (var i in this.players){
         this.engine.queuePlayer(this.players[i],CENUMS.WAITING, cData);
     }
+
 }
 Battle.prototype.getTeamN = function(player){
     for (var i = 0; i < this.team1.length;i++){

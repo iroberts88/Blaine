@@ -142,10 +142,6 @@
                 Graphics.uiPrimitives2.endFill();
                 Graphics.uiPrimitives2.alpha = 0;
             });
-            Acorn.Net.on(CENUMS.BATTLEEND, function (data) {
-                console.log(data);
-                console.log('received battle end data');
-            });
 
             Acorn.Net.on(CENUMS.CHARGECOUNTER, function (data) {
                 var old = Battle.chargeCounter;
@@ -224,7 +220,7 @@
                         lost = true;
                     }
                 }
-
+                Party.reset(0);
                 AfterBattle.lost = lost;
                 Battle.fadeOut = true;
                 Battle.fadeOutTicker = 0;

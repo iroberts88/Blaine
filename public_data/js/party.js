@@ -21,6 +21,11 @@
             }
         },
 
+        reset: function(){
+            for (var i in this.pokemon){
+                this.pokemon[i].reset();
+            }
+        },
         setPokemon: function(slot,pokemon){
             this.pokemon[slot] = pokemon;
         },

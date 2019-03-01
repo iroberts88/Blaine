@@ -33,6 +33,17 @@
                 return false;
             }
         },
+        changeStateNoClear: function(stateId){
+            try{
+                this.currentState = stateId;
+                this.states[stateId].init();
+                return true;
+            }catch(e){
+                console.log('failed to change to state ' + stateId);
+                console.log(e);
+                return false;
+            }
+        },
         onReady: function(callback) {
             console.log('Loading state:');
         }

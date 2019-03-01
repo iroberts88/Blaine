@@ -123,6 +123,7 @@ Pokemon.prototype.update = function(deltaTime){
         this.castingAttackTicker += deltaTime;
         if (this.castingAttack.animationTime+1.0 <= this.castingAttackTicker){
             Actions.doAttack(this,this.castingAttack,this.currentTurnData);
+            this.character.participated[this.id] = true;
             this.reset();
             var cData = {};
             cData[CENUMS.POKEMON] = this.id;
@@ -132,6 +133,8 @@ Pokemon.prototype.update = function(deltaTime){
                 this.character.battle.paused = false;
             }
             this.character.battle.currentAction = null; 
+
+            this.character.checkBattleEnd();
         }
     }
 }

@@ -284,7 +284,7 @@
             if (this.fadeOut){
                 this.fadeOutTicker += dt;
                 if (this.fadeOutTicker >= 1.5){
-                    Acorn.changeState('afterbattle');
+                    Acorn.changeStateNoClear('afterbattle');
                 }else{
                     Graphics.uiPrimitives2.lineStyle(3,0xFFFFFF,1);
                     Graphics.uiPrimitives2.beginFill(0xFFFFFF,0.03);

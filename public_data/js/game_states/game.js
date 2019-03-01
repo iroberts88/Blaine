@@ -133,6 +133,11 @@
                     Graphics.uiContainer2.addChild(Game.chatButton);
                     Game.chatActive = false;
                 }
+                if (Acorn.currentState == 'afterbattle'){
+                    Game.setBattleChange(false);
+                    Acorn.changeStateNoClear('ingame');
+                    return;
+                }
                 if (Game.battleActive && Battle.ready){
                     Battle.turnData = {};
                     Game.clearUI();
@@ -140,6 +145,7 @@
                     Graphics.ui.removeChild(Battle.confirmTurnWindow);
                     Battle.checkBattleCommand();
                 }
+
             });
 
             Acorn.Input.onDown(Acorn.Input.Key.INTERACT, function(){
@@ -265,6 +271,7 @@
                 Graphics.uiContainer.addChild(this.characterButton);
                 Graphics.uiContainer.addChild(this.settingsButton);
                 Graphics.uiPrimitives2.clear();
+                Graphics.uiContainer2.removeChildren();
                 Graphics.uiPrimitives1.clear();
             }
         },
@@ -275,7 +282,7 @@
                 Graphics.uiPrimitives2.clear();
                 Graphics.uiPrimitives2.alpha = 1.0;
                 this.battleActive = true;
-                Battle.init();
+                Acorn.changeStateNoClear('battle');
             }else{
                 var sChange = 0.1625;
                 var a;
@@ -901,7 +908,7 @@
             
             c.overlayText.visible = false;
             c.fainted = false;
-            c.pkmnActive = false;            
+            c.pokemonActive = false;            
             if (pokemon.currentHP == 0){
                 c.overlayText.text = 'Fainted';
                 c.overlayText.visible = true;
@@ -1104,7 +1111,7 @@
             c.overlayText.style.fontSize = 64;
             c.overlayText.style.fill = 'red';
             c.fainted = false;
-            c.pkmnActive = false;
+            c.pokemonActive = false;
             sprites.addChild(c.overlayText);
             if (pokemon.hpPercent == 0){
                 c.overlayText.text = 'Fainted';

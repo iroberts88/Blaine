@@ -24,8 +24,11 @@
         this.name = Utils.udCheck(data[CENUMS.NAME],null,data[CENUMS.NAME]);
         this.types = Utils.udCheck(data[CENUMS.TYPES],null,data[CENUMS.TYPES]);
         this.moves = Utils.udCheck(data[CENUMS.MOVES],null,data[CENUMS.MOVES]);
+
         this.exp = Utils.udCheck(data[CENUMS.EXP],null,data[CENUMS.EXP]);
         this.expType = Utils.udCheck(data[CENUMS.EXPTYPE],null,data[CENUMS.EXPTYPE]);
+        this.expToNextLevel = Utils.udCheck(data[CENUMS.EXP],null,this.getExpValue(this.level+1));
+        this.expAtCurrentLevel = Utils.udCheck(data[CENUMS.EXP],null,this.getExpValue(this.level));
         this.currentHP = Utils.udCheck(data[CENUMS.CURRENTHP],null,data[CENUMS.CURRENTHP]);
         this.currentPP = Utils.udCheck(data[CENUMS.CURRENTPP],null,data[CENUMS.CURRENTPP]);
         this.slot = Utils.udCheck(data[CENUMS.SLOT],null,data[CENUMS.SLOT]);
@@ -43,7 +46,8 @@
             spattack: this.specialAttack,
             spdefense: this.specialDefense,
             defense: this.defense,
-            exp: this.exp
+            exp: this.exp,
+            lvl: this.level
         }
     }
 

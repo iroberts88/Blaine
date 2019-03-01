@@ -130,7 +130,6 @@ Trainer.prototype.checkBattleEnd = function(){
         }
     }
     if (end){
-        if (this.currentTeam == 1){}
         this.battle.checkEnd(this.currentTeam);
     }
 };
