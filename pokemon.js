@@ -534,7 +534,13 @@ Pokemon.prototype.addExp = function(amt){
         this.expAtCurrentLevel = this.getExpValue(this.level);
     }
     //change stats!!!
+    var currentRatio = this.currentHP.value/this.hp.value;
     this.hp.set(true);
+    var newRatio = this.currentHP.value/this.hp.value;
+    if (currentRatio != newRatio){
+        this.currentHP.value = Math.ceil(this.hp.value*currentRatio);
+    }
+    this.currentHP.set(true);
     this.defense.set(true);
     this.attack.set(true);
     this.spdefense.set(true);

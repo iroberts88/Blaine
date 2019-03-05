@@ -32,7 +32,7 @@
             for (var i in Party.pokemon){
             	var p = Party.pokemon[i];
             	if (p == ''){continue;}
-            	this.spriteContainer[p.id] = this.getPokemonSprite(p);
+            	this.spriteContainer[p.id] = this.getPokemonSprite(p,i);
             }
 
             this.okButton = Graphics.makeUiElement({
@@ -41,12 +41,22 @@
             	position: [Graphics.width-30,30],
             	interactive: true,
             	buttonMode: true,
-            	onClick: function(e){
-            		Game.setBattleChange(false);
-            		Acorn.changeStateNoClear('ingame');
+            	clickFunc: function(e){
+                    if (AfterBattle.stage == 3){
+                        Graphics.uiPrimitives1.clear();
+                        Graphics.uiPrimitives2.clear();
+                        Graphics.uiContainer2.removeChildren();
+                		Game.setBattleChange(false);
+                        Game.resetAllPokemon();
+                		Acorn.changeStateNoInit('ingame');
+                        Party.resetPreviousValues();
+                    }
             	}
             });
             Graphics.uiContainer2.addChild(this.okButton);
+            this.ticker = 0;
+            this.stage = 1;
+            this.cpoke = 1;
         },
 
         getPokemonSprite: function(p){
@@ -63,10 +73,10 @@
         	cont.alpha = alpha;
 
         	cont.sprite = Graphics.getSprite(p.number);
-            cont.sprite.scale.x = 2.5;
+            cont.sprite.scale.x = -2.5;
             cont.sprite.scale.y = 2.5;
             cont.sprite.anchor.y = 0.5;
-            cont.sprite.position.x = 50;
+            cont.sprite.position.x = 50 + cont.sprite.width;
             cont.sprite.position.y = yStart;
             cont.sprite.alpha = alpha;
             cont.nameText = new PIXI.Text(p.nickname,AcornSetup.style2);
@@ -86,11 +96,19 @@
             cont.expTxt.position.y = yStart-cont.nameText.height/2;
             cont.expTxt.alpha = alpha;
 
+            cont.expBarHeight = 20;
+            cont.expBarWidth = 400;
+            cont.bonusExpTxt = new PIXI.Text('',AcornSetup.style2);
+            cont.bonusExpTxt.position.x = cont.expTxt.position.x + cont.expTxt.width/2 + 25;
+            cont.bonusExpTxt.position.y = yStart - cont.expBarHeight/2 - 5 - cont.bonusExpTxt.height;
+            cont.bonusExpTxt.alpha = alpha;
+            if (participated){
+                cont.bonusExpTxt.text = '+' + (p.exp - p.previousStatValues.exp);
+            }
+
             cont.expDisplayed = p.previousStatValues.exp;
             cont.expToAdd = Math.max(0.1,((p.exp-p.previousStatValues.exp)/300));
 
-            cont.expBarHeight = 20;
-            cont.expBarWidth = 400;
             cont.expBar = new PIXI.Graphics();
             cont.expBar.position.x = cont.expTxt.position.x + cont.expTxt.width/2 + 25;
             cont.expBar.position.y = yStart - cont.expBarHeight/2;
@@ -112,6 +130,7 @@
                         Graphics.uiContainer2.addChild(cont.nameText);
                         Graphics.uiContainer2.addChild(cont.lvlText);
                         Graphics.uiContainer2.addChild(cont.expTxt);
+                        Graphics.uiContainer2.addChild(cont.bonusExpTxt);
                         Graphics.uiContainer2.addChild(cont.expBar);
                         this.drawExpBar(cont);
                         this.ticker = 0;

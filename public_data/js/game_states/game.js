@@ -134,9 +134,16 @@
                     Game.chatActive = false;
                 }
                 if (Acorn.currentState == 'afterbattle'){
-                    Game.setBattleChange(false);
-                    Acorn.changeStateNoClear('ingame');
-                    return;
+                    if (AfterBattle.stage == 3){
+                        Graphics.uiPrimitives1.clear();
+                        Graphics.uiPrimitives2.clear();
+                        Graphics.uiContainer2.removeChildren();
+                        Game.setBattleChange(false);
+                        Game.resetAllPokemon();
+                        Acorn.changeStateNoInit('ingame');
+                        Party.resetPreviousValues();
+                        return;
+                    }
                 }
                 if (Game.battleActive && Battle.ready){
                     Battle.turnData = {};
@@ -345,6 +352,9 @@
                 var tempPoke = Party.pokemon[first.pokemonNumber];
                 Party.pokemon[first.pokemonNumber] = Party.pokemon[second.pokemonNumber];
                 Party.pokemon[second.pokemonNumber] = tempPoke;
+
+                Party.pokemon[first.pokemonNumber].slot = first.pokemonNumber;
+                Party.pokemon[second.pokemonNumber].slot = second.pokemonNumber;
                 //reset data
                 this.pkmnSwapChange = false;
                 this.pkmnSwapData = null;
@@ -676,6 +686,7 @@
                 container.buttonMode = true;
                 container.hitArea = new PIXI.Rectangle(0, 0, this.pkmnBoxSize[0], this.pkmnBoxSize[1]);
                 container.pokemonNumber = i;
+                container.pokemon = Party.pokemon[i];
 
                 var mUpFunc = function(e){
                     if (Game.pkmnSwapChange){return;}
@@ -919,6 +930,13 @@
                     c.overlayText.text = 'Active';
                     c.overlayText.visible = true;
                     c.pokemonActive = true;
+                }
+            }
+        },
+        resetAllPokemon: function(){
+            for (var i in Party.pokemon){
+                if (Party.pokemon[i] != ''){
+                    this.resetPokemon(i);
                 }
             }
         },

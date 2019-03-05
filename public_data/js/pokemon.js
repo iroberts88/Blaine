@@ -71,10 +71,24 @@
         }
         return null;
     };
+
     Pokemon.prototype.reset = function(){
         this.battleCommand = null;
         this.battleCommandSent = false;
         this.charge = 0;
+    }
+
+    Pokemon.prototype.resetPreviousValues = function(){
+        this.previousStatValues = {
+            hp: this.hp,
+            speed: this.speed,
+            attack: this.attack,
+            spattack: this.specialAttack,
+            spdefense: this.specialDefense,
+            defense: this.defense,
+            exp: this.exp,
+            lvl: this.level
+        }
     }
 
     Pokemon.prototype.getExpValue = function(level){
