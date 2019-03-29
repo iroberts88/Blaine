@@ -212,6 +212,7 @@
             Acorn.Net.on(CENUMS.BATTLECHAT, function (data) {
                 Battle.addChat(data.text);
             });
+            
             Acorn.Net.on(CENUMS.BATTLEEND, function (data) {
                 //figure out which side lost based on data
                 var lost = false;

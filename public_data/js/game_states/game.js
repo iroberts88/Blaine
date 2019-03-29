@@ -617,19 +617,20 @@
                     var tt = item[CENUMS.TARGETTYPE];
                     if (Game.battleActive){
                         //use item in battle
+                        //
                         Battle.currentSelectedItem = Game.currentSelectedItem;
-                        if (tt == CENUMS.ALL || tt == CENUMS.BATTLE){
+                        if (tt == CENUMS.ALL || tt == CENUMS.BATTLE || tt == CENUMS.BALL){
                             Battle.turnData = {};
                             Battle.turnData[CENUMS.COMMAND] = CENUMS.ITEM;
                             Battle.turnData[CENUMS.POKEMON] = Battle.currentPokemon.id;
-                            Battle.turnData[CENUMS.ID] = item[CNUMS.ID];
+                            Battle.turnData[CENUMS.ID] = item[CENUMS.ID];
                             Battle.currentSelectedItem = item;
                             Battle.hideTurnOptions();
                             Battle.getConfirmTurnWindow();
                         }else if (tt == CENUMS.ALLPKMN || tt == CENUMS.BATTLEPKMN){
                             Battle.currentSelectedItem = item;
                             Game.switchUI(Game.pokemonUI);
-                        }else if (t == CENUMS.ENEMY){
+                        }else if (tt == CENUMS.ENEMY){
                             Battle.currentSelectedItem = item;
                             Game.clearUI();
                             Battle.hideTurnOptions();

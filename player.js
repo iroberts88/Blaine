@@ -213,6 +213,7 @@ Player.prototype.setupSocket = function() {
 
                 that.character.activePokemon[pkmn.id] = pkmn;
                 that.battle.activePokemon[pkmn.id] = pkmn;
+                pkmn.character.participated[pkmn.id] = true;
 
                 if (!that.character.hasFaintedPokemon()){
                     //still has a fainte pokemon?
@@ -260,6 +261,36 @@ Player.prototype.setupSocket = function() {
             case CENUMS.ITEM:
                 if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.ID])){
                     return;
+                }
+                var target = null;
+                var pokemon = that.character.getPokemon(data[CENUMS.POKEMON]);
+                var item = that.character.inventory.getItem(data[CENUMS.ID]);
+                if (!item){
+                    console.log('invalid item!!');
+                    pokemon.turnInvalid();
+                    return;
+                }
+                var tt = item.targetType;
+
+                if (tt == CENUMS.FEILD || tt == CENUMS.FIELDPKMN){
+                    console.log('Invalid Item type!! HAX');
+                    pokemon.turnInvalid();
+                    return;
+                }else if (tt == CENUMS.ALLPKMN || tt == CENUMS.BATTLEPKMN || tt == CENUMS.ENEMY){
+                    if (typeof that.battle.activePokemon[data[CENUMS.TARGET]] == 'undefined'){
+                        console.log("that item type needs a target");
+                        pokemon.turnInvalid();
+                        return;
+                    }else{
+                        target = that.battle.activePokemon[data[CENUMS.TARGET]]
+                    }
+                }
+
+                pokemon.currentTurnData = {
+                    command: 'item',
+                    id: that.engine.getId(),
+                    target: target,
+                    pkmn: pokemon
                 }
                 break;
             case CENUMS.RUN:

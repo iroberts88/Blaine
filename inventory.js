@@ -2,14 +2,15 @@ var CENUMS = require('./enums.js').Enums; //init client enums
 CENUMS.init();
 
 var targetTypeEnums = {
-    'all': CENUMS.ALL,
-    'allpkmn': CENUMS.ALLPKMN,
-    'ball': CENUMS.BALL,
-    'enemy': CENUMS.ENEMY,
-    'field': CENUMS.FIELD,
-    'fieldpkmn': CENUMS.FIELDPKMN,
-    'battlepkmn': CENUMS.BATTLEPKMN,
-    'battle': CENUMS.BATTLE
+    'field': CENUMS.FIELD, //ONLY used in the field, just a straight use
+    'fieldpkmn': CENUMS.FIELDPKMN, //only used in the field on pokemon
+
+    'all': CENUMS.ALL, //can be used in the field or in battle, just a straight use
+    'allpkmn': CENUMS.ALLPKMN, //can be used in the field or in battle, on a pokemon
+    'ball': CENUMS.BALL, //can be used in a wild battle to catch the opossing pokemon
+    'enemy': CENUMS.ENEMY, // can be used in a battle on an enemy pokemon
+    'battlepkmn': CENUMS.BATTLEPKMN, //can only be used in battle on a pokemon
+    'battle': CENUMS.BATTLE //can only be used in battle, on all pokemon!
 }
 
 var typeEnums = {
@@ -129,7 +130,7 @@ Inventory.prototype.getClientData = function(){
     var data = {}
     data[CENUMS.ITEMS] = {};
     for (var i in this.items){
-        data[CENUMS.ITEMS][i] = this.items[i].getClientData();
+        data[CENUMS.ITEMS][i] = this.items[i].clientData;
     }
     data[CENUMS.ORDER] = {};
     data[CENUMS.ORDER][CENUMS.MAIN] = [];
@@ -158,15 +159,18 @@ exports.Inventory = Inventory;
 var Item = function(){};
 
 Item.prototype.init = function(data) {
-    this.id = data.itemid;
-    this.name = data.name;
-    this.type = data.type;
-    this.price = data.price;
-    this.stack = data.stack;
-    this.description = data.description;
-    this.use = data.use;
+    this.id = data['itemid'];
+    this.name = data['name'];
+    this.type = data['type'];
+    this.price = data['price'];
+    this.stack = data['stack'];
+    this.description = data['description'];
+    this.use = data['use'];
     this.amount = 1;
 
+    this.targetType = this['use']['type'];
+
+    this.clientData = this.getClientData();
     //Target types
     //allpkmn
     //fieldpkmn
@@ -185,7 +189,7 @@ Item.prototype.getClientData = function() {
     data[CENUMS.PRICE] = this.price;
     data[CENUMS.DESCRIPTION] = this.description;
     data[CENUMS.AMOUNT] = this.amount;
-    data[CENUMS.TARGETTYPE] = targetTypeEnums[this.use.type];
+    data[CENUMS.TARGETTYPE] = targetTypeEnums[this.targetType];
     return data;
 };
 

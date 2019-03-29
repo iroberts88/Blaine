@@ -71,6 +71,7 @@ Trainer.prototype.update = function(deltaTime) {
 
                 this.activePokemon[pkmn.id] = pkmn;
                 this.battle.activePokemon[pkmn.id] = pkmn;
+                this.participated[pkmn.id] = true;
 
                 if (!this.hasFaintedPokemon() || !this.hasWaitingPokemon()){
                     //still has a fainte pokemon?

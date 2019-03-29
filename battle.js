@@ -98,9 +98,11 @@ Battle.prototype.init = function (data) {
     var t1p = [];
     var t2p = [];
     for (var i = 0; i < this.team1Pokemon.length;i++){
+        this.team1Pokemon[i].character.participated[this.team1Pokemon[i].id] = true;
         t1p.push(this.team1Pokemon[i].getLessClientData());
     }
     for (var i = 0; i < this.team2Pokemon.length;i++){
+        this.team2Pokemon[i].character.participated[this.team2Pokemon[i].id] = true;
         t2p.push(this.team2Pokemon[i].getLessClientData());
     }
     for (var i = 0; i < this.team1.length;i++){
@@ -205,10 +207,25 @@ Battle.prototype.tick = function(deltaTime){
                         this.currentAction = p.currentTurnData;
                         break;
                     case 'item':
+                        if (p.castingAttack){
+                            break;
+                        }
+                        //make sure the player has the item sent
+
+                        //check targeting type, set targets
+
+                        //do the item's on use actions
+
+                        //send results to the battle
+                        if (!this.activePokemon[p.currentTurnData.target.id]){
+                            console.log('target pokemon is not active');
+                            p.turnInvalid();
+                            return;
+                        }
+                        
                         break;
                     case 'switch':
                         //begin switch
-                        //CHECK TO MAKE SURE STILL VALID
 
                         var p1 = p.currentTurnData.pkmn;
                         var p2 = p.currentTurnData.target;
@@ -236,6 +253,7 @@ Battle.prototype.tick = function(deltaTime){
 
                         p1.character.activePokemon[p2.id] = p2;
                         this.activePokemon[p2.id] = p2;
+                        p2.character.participated[p2.id] = true;
                         //send to client!!
                         var cData = {};
                         p2.charge = 0;
