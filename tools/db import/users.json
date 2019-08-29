@@ -1,0 +1,31 @@
+{
+  "users": [
+    {
+      "createDate": "2018-01-23T19:18:23.194Z",
+      "password": "3fd17bd2624a86ccbf3526da497ed8bc8223cfc58e7a744a2448727269a01632",
+      "admin": false,
+      "chatlog": [],
+      "username": "ian",
+      "loggedin": false,
+      "lastLogin": "2018-03-02T14:29:10.209Z"
+    },
+    {
+      "createDate": "2018-01-23T19:24:34.199Z",
+      "password": "3fd17bd2624a86ccbf3526da497ed8bc8223cfc58e7a744a2448727269a01632",
+      "admin": false,
+      "chatlog": [],
+      "username": "ian2",
+      "loggedin": false,
+      "lastLogin": "2018-01-23T19:26:44.144Z"
+    },
+    {
+      "createDate": "2018-01-13T17:53:14.391Z",
+      "password": "3fd17bd2624a86ccbf3526da497ed8bc8223cfc58e7a744a2448727269a01632",
+      "admin": true,
+      "chatlog": [],
+      "username": "faulken",
+      "loggedin": false,
+      "lastLogin": "2018-03-02T14:52:05.974Z"
+    }
+  ]
+}

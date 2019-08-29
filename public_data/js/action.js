@@ -49,39 +49,6 @@
         }
     };
 
-    Action.prototype.scratch = function(dt,action,data){
-        if (typeof data.lmd == 'undefined'){
-            //update last action use of pokemon!
-            Battle.drawLastMoveDisplay(action.pokemonSC,action.mname);
-            data.lmd = true;
-        }
-        action.t += dt;
-        if (action.t < 1){
-            return;
-        }
-        if (typeof data.sprite == 'undefined'){
-            data.sprite = Graphics.getSprite('e_scratch4');
-            data.spriteNum = 4;
-            data.sprite.anchor.x = 0;
-            data.sprite.anchor.y = 1;
-            data.sprite.scale.x = 3;
-            data.sprite.scale.y = 3;
-            data.sprite.position.x = action.targetSC.sprite.position.x-action.targetSC.sprite.width/2;
-            data.sprite.position.y = action.targetSC.sprite.position.y+action.targetSC.sprite.height/2;
-            Graphics.uiContainer2.addChild(data.sprite);
-        }
-        if(action.t > 1.075){
-            data.spriteNum -= 1;
-            if (data.spriteNum < 1){
-                action.end = true;
-                Battle.pokemonSpriteContainer[action.pokemon.id].lastMoveDisplay.visible = false;
-                Graphics.uiContainer2.removeChild(data.sprite);
-                return;
-            }
-            data.sprite._texture = Graphics.getResource('e_scratch' + data.spriteNum);
-            action.t -= 0.075;
-        }
-    };
     Action.prototype.damage = function(dt,action,data){
         if (data.blinks == 'undefined'){
             data.blinks = 0;
@@ -130,6 +97,44 @@
                 Battle.addPokemon(data.p2,data.n,data.team);
                 Battle.addChat("& " + Battle.trainers[data.p1.owner].name + ' sends out ' + data.p2.nickname + '!');
             }
+        }
+    };
+
+
+    //MOVES
+
+
+    Action.prototype.scratch = function(dt,action,data){
+        if (typeof data.lmd == 'undefined'){
+            //update last action use of pokemon!
+            Battle.drawLastMoveDisplay(action.pokemonSC,action.mname);
+            data.lmd = true;
+        }
+        action.t += dt;
+        if (action.t < 1){
+            return;
+        }
+        if (typeof data.sprite == 'undefined'){
+            data.sprite = Graphics.getSprite('e_scratch4');
+            data.spriteNum = 4;
+            data.sprite.anchor.x = 0;
+            data.sprite.anchor.y = 1;
+            data.sprite.scale.x = 3;
+            data.sprite.scale.y = 3;
+            data.sprite.position.x = action.targetSC.sprite.position.x-action.targetSC.sprite.width/2;
+            data.sprite.position.y = action.targetSC.sprite.position.y+action.targetSC.sprite.height/2;
+            Graphics.uiContainer2.addChild(data.sprite);
+        }
+        if(action.t > 1.075){
+            data.spriteNum -= 1;
+            if (data.spriteNum < 1){
+                action.end = true;
+                Battle.pokemonSpriteContainer[action.pokemon.id].lastMoveDisplay.visible = false;
+                Graphics.uiContainer2.removeChild(data.sprite);
+                return;
+            }
+            data.sprite._texture = Graphics.getResource('e_scratch' + data.spriteNum);
+            action.t -= 0.075;
         }
     };
 
