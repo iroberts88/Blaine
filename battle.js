@@ -48,7 +48,7 @@ var Battle = function(ge) {
 
     this.chargeCounter = 1;
 
-    this.baseChargeTime = 12; //the lowest pokemon will take n secinds to charge
+    this.baseChargeTime = 15; //the lowest pokemon will take n secinds to charge
 
     this.wild = null;
 
@@ -217,6 +217,7 @@ Battle.prototype.tick = function(deltaTime){
                         //do the item's on use actions
 
                         //send results to the battle
+                        console.log(p.currentTurnData)
                         if (!this.activePokemon[p.currentTurnData.target.id]){
                             console.log('target pokemon is not active');
                             p.turnInvalid();

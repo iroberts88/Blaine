@@ -127,6 +127,7 @@ Actions.prototype.doAttack = function(pokemon,attack,data){
 
             //TODO add additional bonuses (burn,statuses weather etc.)
             damage = Math.ceil((((2*(pokemon.level*critMod)/5)*attack.power*(a/d)/50)+2)*mod);
+            damage = 10;
             console.log(pokemon.nickname + ' attacks ' + target.nickname + ' with ' + attack.name + ". Damage: " + damage);
         }
         //do the attack effects

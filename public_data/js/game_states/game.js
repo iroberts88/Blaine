@@ -724,7 +724,7 @@
                             Acorn.Net.socket_.emit(CENUMS.BATTLEUPDATE,cData);
                             Battle.selectingNewPokemon = false;
                             Battle.newPokemonButtons[Battle.newPokemonPos].visible = false;
-                            aGame.clearUI();
+                            Game.clearUI();
                             return;
                         }
                         Battle.turnData = {};

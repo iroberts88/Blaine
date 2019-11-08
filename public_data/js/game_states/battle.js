@@ -397,6 +397,7 @@
             Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].levelDisplay);
             Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].hpBar);
             Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].chargeBar);
+            Battle.showTurnOptions();   
         },
 
         getPokemonData: function(pkmn,n,teamSize,team){

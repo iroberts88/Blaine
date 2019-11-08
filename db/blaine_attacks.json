@@ -42,7 +42,7 @@
       "acc": 100,
       "pp": 35,
       "attackid": "scratch",
-      "power": 30,
+      "power": 300,
       "physical": true,
       "targetType": "single",
       "name": "Scratch",
