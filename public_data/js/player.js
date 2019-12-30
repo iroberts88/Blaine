@@ -33,7 +33,7 @@
                 sprite: Graphics.getSprite('ow_' + this.owTexture + '_d1'),
                 sprite2: Graphics.getSprite('ow_' + this.owTexture + '_d1'),
                 map: data[CENUMS.MAP],
-                inventory: data[CENUMS.INVENTORY]
+                inventory: Inventory(data[CENUMS.INVENTORY])
         	};
             Party.init(data[CENUMS.POKEMON]);
             this.character.sprite.scale.x = mainObj.GAME_SCALE;

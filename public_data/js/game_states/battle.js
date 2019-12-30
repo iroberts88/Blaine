@@ -973,7 +973,7 @@
                     }
                     break;
                 case CENUMS.ITEM:
-                    text += ('will forego its turn to use ' + Battle.currentSelectedItem[CENUMS.NAME]);
+                    text += ('will forego its turn to use ' + Battle.currentSelectedItem.id);
                     if (this.turnData[CENUMS.TARGET]){
                         text += (' on ' + this.turnData.t.nickname + '!');
                     }else{

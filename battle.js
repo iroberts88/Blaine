@@ -215,13 +215,34 @@ Battle.prototype.tick = function(deltaTime){
                         //check targeting type, set targets
 
                         //do the item's on use actions
-
+                        var item = this.activePokemon[i].character.inventory.getItemByOrder(tData.type,tData.oIndex);
+                        //get item info
+                        for (var j = 0;j<item.use.effects.length;j++){
+                            var A = Actions.getAction(item.use.effects[j].effectid);
+                            var data = {
+                                battle: this,
+                                item: item,
+                                ctd: clientTurnData,
+                                actionData: item.use.effects[j],
+                                turnData: tData,
+                                character: this.activePokemon[i].character
+                            }
+                            clientTurnData = A(data);
+                        }
+                        //remove the item?
+                        
                         //send results to the battle
-                        console.log(p.currentTurnData)
-                        if (!this.activePokemon[p.currentTurnData.target.id]){
-                            console.log('target pokemon is not active');
+                        if (!this.wild){
                             p.turnInvalid();
                             return;
+                        }
+                        if (p.currentTurnData.target){
+                            if (!this.activePokemon[p.currentTurnData.target.id]){
+                                p.turnInvalid();
+                                return;
+                            }
+                        }else{
+                            p.currentTurnData.target = this.team2Pokemon[0];
                         }
                         
                         break;

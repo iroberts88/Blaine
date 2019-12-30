@@ -614,7 +614,7 @@
                 interactive: true,buttonMode: true,
                 clickFunc: function onClick(e){
                     var item = Game.currentSelectedItem.itemInfo;
-                    var tt = item[CENUMS.TARGETTYPE];
+                    var tt = item.targetType;
                     if (Game.battleActive){
                         //use item in battle
                         //
@@ -623,7 +623,7 @@
                             Battle.turnData = {};
                             Battle.turnData[CENUMS.COMMAND] = CENUMS.ITEM;
                             Battle.turnData[CENUMS.POKEMON] = Battle.currentPokemon.id;
-                            Battle.turnData[CENUMS.ID] = item[CENUMS.ID];
+                            Battle.turnData[CENUMS.ID] = item.id;
                             Battle.currentSelectedItem = item;
                             Battle.hideTurnOptions();
                             Battle.getConfirmTurnWindow();
@@ -793,7 +793,7 @@
             }
             this.inventoryUIElements = [];
 
-            var itemTypes = [CENUMS.MAIN, CENUMS.BALL,CENUMS.TM,CENUMS.KEY];
+
             var yStart = 275;
             var xStart = Graphics.width*0.2;
             var options = {
@@ -801,12 +801,13 @@
                 roundedness: 20
             };
 
+            var itemTypes = [CENUMS.MAIN, CENUMS.BALL,CENUMS.TM,CENUMS.KEY];
             for (var j = 0; j < itemTypes.length;j++){
-                var itemArr = Player.character.inventory[CENUMS.ORDER][itemTypes[j]];
+                var itemArr = Player.character.inventory.order[itemTypes[j]];
                 for (var i = 0; i < itemArr.length;i++){
-                    var item = Player.character.inventory[CENUMS.ITEMS][itemArr[i]];
+                    var item = Player.character.inventory.items[itemArr[i]];
                     var newButton = Graphics.makeUiElement({
-                        texture: this.getTextButton(item[CENUMS.NAME],24,options),
+                        texture: this.getTextButton(item.name,24,options),
                         style: AcornSetup.style3,
                         position: [xStart,yStart],
                         interactive: true,buttonMode: true,
@@ -818,7 +819,7 @@
                             Game.currentSelectedItem = e.currentTarget;
                             var filter = new PIXI.filters.GlowFilter(10, 2, 1.5, 0xFF00000, 0.5);
                             Game.currentSelectedItem.filters = [filter];
-                            if (Game.canUse(e.currentTarget.itemInfo[CENUMS.TARGETTYPE])){
+                            if (Game.canUse(e.currentTarget.itemInfo.targetType)){
                                 Game.inventoryUseButton.visible = true;
                             }else{
                                 Game.inventoryUseButton.visible = false;
