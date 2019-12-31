@@ -36,8 +36,9 @@ Actions.prototype.doAttack = function(pokemon,attack,data){
     data.pokemon = pokemon;
     data.attack = attack;
     var battle = pokemon.character.battle;
-    var txt = pokemon.nickname + ' used ' + attack.name;
+    var txt = data.pokemon.nickname + ' used ' + attack.name;
     var targets = [];
+    var ctargets = [];
     switch(attack.targetType){
         case CENUMS.SINGLE:
             targets.push(data.target);
@@ -74,6 +75,8 @@ Actions.prototype.doAttack = function(pokemon,attack,data){
     battle.pausedTicker += battle.baseActionSpeed;
     data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,txt,CENUMS.T,battle.baseActionSpeed));
     //targets acquired.. do attack damage and move effects
+    battle.pausedTicker += data.attack.animationSpeed;
+    data.ctd.push(Utils.createClientData(CENUMS.ACTION,1,CENUMS.CLIENTID,data.attack.clientid,CENUMS.T,data.attack.animationSpeed,CENUMS.NAME,data.attack.name,CENUMS.POKEMON,pokemon.id,CENUMS.target,data.target?data.target.id:null));
     console.log('TARGETS:' +  targets.length);
     for (var tar = 0; tar < targets.length;tar++){
         //check to see if attack hits

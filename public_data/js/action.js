@@ -3,23 +3,20 @@
 (function(window) {
     var Action = function(){ }
 
-    var animationEnums = {
+    var actionEnums = {
         MOVE: 1,
         TEXT: 2,
         DAMAGE: 3,
         SWAP: 4
     };
+    var moveEnums = {
+        SCRATCH: 1,
+    };
 
     Action.prototype.init = function(data){
-        this.id = data[CENUMS.ID];
         this.actionData = data;
         this.t = 0;
-        this.pokemon = Battle.pokemonContainer[data[CENUMS.POKEMON]];
-        this.target = Battle.pokemonContainer[data[CENUMS.TARGET]];
-        this.pokemonSC = Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]];
-        this.targetSC = Battle.pokemonSpriteContainer[data[CENUMS.TARGET]];
         this.clientid = data[CENUMS.ACTION];
-        this.mname = data[CENUMS.NAME];
 
         this.end = false;
 
@@ -36,13 +33,13 @@
                 return this.text;
                 break;
             case actionEnums.DAMAGE:
-                return this.DAMAGE;
+                return this.damage;
                 break;
             case actionEnums.MOVE:
-                return this.MOVE;
+                return this.move;
                 break;
             case actionEnums.SWAP:
-                return this.SWAP;
+                return this.swap;
                 break;
         }
     };
@@ -57,7 +54,11 @@
     Action.prototype.scratch = function(dt,action,data){
         if (typeof data.lmd == 'undefined'){
             //update last action use of pokemon!
-            Battle.drawLastMoveDisplay(action.pokemonSC,action.mname);
+            action.pokemon = Battle.pokemonContainer[data[CENUMS.POKEMON]];
+            action.target = Battle.pokemonContainer[data[CENUMS.TARGET]];
+            action.pokemonSC = Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]];
+            action.targetSC = Battle.pokemonSpriteContainer[data[CENUMS.TARGET]];
+            Battle.drawLastMoveDisplay(action.pokemonSC,data[CENUMS.NAME]);
             data.lmd = true;
         }
         action.t += dt;
@@ -111,8 +112,17 @@
     };
     Action.prototype.text = function(dt,action,data){
         if (data.added == 'undefined'){
-            data.added = 0;
+            data.added = true;
+            Battle.addChat(data[CENUMS.TEXT])
         }
+        action.t += dt;
+        if (action.t >= data[CENUMS.T]){
+            action.end = true;
+        }
+    };
+    Action.prototype.move = function(dt,action,data){
+        var M = action.getMove(data[CENUMS.CLIENTID]);
+        M(dt,action,data);
     };
     Action.prototype.swap = function(dt,action,data){
         action.t += dt;
