@@ -7,11 +7,11 @@ var Player = require('./player.js').Player,
     Trainer = require('./trainer.js').Trainer,
     Pokemon = require('./pokemon.js').Pokemon,
     Actions = require('./actions.js').Actions,
-    Attacks = require('./attacks.js').Attacks,
-    AWS = require("aws-sdk");
+    AWS = require("aws-sdk"),
+    utils = require('./utils.js').Utils;
+var Utils = new utils();
 
 var CENUMS = require('./enums.js').Enums; //init client enums
-CENUMS.init();
 
 var Battle = function(ge) {
     this.engine = ge;
@@ -28,6 +28,8 @@ var Battle = function(ge) {
     // team4v4  -   8 players   1-6 pokemon each, 4 active at a time, 1 from each player
 
     // duoteam4v4   4 players   1-6 pokemon each, 4 active at a time, 2 from each player
+
+    // wild battle
 
     //Battle Types
     this.type = null;
@@ -62,6 +64,8 @@ var Battle = function(ge) {
 
     this.swapTime = 3.0;
     this.swapTicker = 0;
+
+    this.baseActionSpeed = 1.0;
 }
 
 Battle.prototype.init = function (data) {
@@ -167,13 +171,18 @@ Battle.prototype.tick = function(deltaTime){
         }
         return;
     }
-
+    if (this.pausedTicker > 0){
+        this.pausedTicker -= deltaTime;
+        return;
+    }else{
+        this.pausedTicker = 0;
+    }
     for (var i in this.activePokemon){
         if (this.ending){return;}
         var p = this.activePokemon[i];
         p.update(deltaTime);
         if (!this){return;}
-        if (this.paused){continue;}
+        if (this.pausedTicker > 0){continue;}
         p.charge += deltaTime*p.speed.value;
         if (p.charge >= this.chargeCounter){
             p.charge = this.chargeCounter;
@@ -184,27 +193,16 @@ Battle.prototype.tick = function(deltaTime){
                 switch (p.currentTurnData.command){
                     case 'attack':
                         //begin attack animation
-                        if (p.castingAttack){
-                            break;
-                        }
-
                         if (!this.activePokemon[p.currentTurnData.target.id]){
                             console.log('target pokemon is not active');
                             p.turnInvalid();
                             return;
                         }
-                        p.castingAttack = p.currentTurnData.move;
-                        p.castingAttackTicker = 0;
                         //send to client!!
-                        var cData = {};
-                        cData[CENUMS.POKEMON] = p.id;
-                        cData[CENUMS.TARGET] = p.currentTurnData.target.id;
-                        cData[CENUMS.ID] = p.currentTurnData.id;
-                        cData[CENUMS.CLIENTID] = p.currentTurnData.move.clientID;
-                        cData[CENUMS.NAME] = p.currentTurnData.move.name;
-                        this.queueData(CENUMS.ATTACK,cData);
-                        this.paused = true;
-                        this.currentAction = p.currentTurnData;
+                        Actions.doAttack(p,p.currentTurnData.move,p.currentTurnData);
+                        p.character.checkBattleEnd(p.currentTurnData.ctd);
+                        this.queueData(CENUMS.BATTLEDATA,Utils.createClientData(CENUMS.ACTIONS,p.currentTurnData.ctd));
+                        p.reset();
                         break;
                     case 'item':
                         if (p.castingAttack){

@@ -56,28 +56,6 @@
         pkmnSelected: null,
         pkmnCurrentlyMousedOver: null,
 
-        typeList: [
-            '',
-            'NORMAL',
-            'FIRE',
-            'WATER',
-            'ELECTRIC',
-            'GRASS',
-            'ICE',
-            'FIGHT',
-            'POISON',
-            'GOUND',
-            'FLYING',
-            'PSYCHIC',
-            'BUG',
-            'ROCK',
-            'GHOST',
-            'DRAGON',
-            'DARK',
-            'STEEL',
-            'FAIRY'
-        ],
-
         chatActive: false,
         uiActive: null,
         battleActive: false,
@@ -994,12 +972,12 @@
             //EXP Display
 
             //Types Display
-            c.type1Text = new PIXI.Text(this.typeList[pokemon.types[0]],AcornSetup.style2);
+            c.type1Text = new PIXI.Text(CENUMS.typeEnums[pokemon.types[0]],AcornSetup.style2);
             c.type1Text.position.x = c.pokeSprite.position.x + c.pokeSprite.width + 10;
             c.type1Text.position.y = c.pokeSprite.position.y;
             sprites.addChild(c.type1Text);
             if (pokemon.types.length > 1){
-                c.type2Text = new PIXI.Text(this.typeList[pokemon.types[1]],AcornSetup.style2);
+                c.type2Text = new PIXI.Text(CENUMS.typeEnums[pokemon.types[1]],AcornSetup.style2);
                 c.type2Text.position.x = c.pokeSprite.position.x + c.pokeSprite.width + 10;
                 c.type2Text.position.y = c.pokeSprite.position.y + c.type1Text.height + 5;
                 sprites.addChild(c.type2Text);
@@ -1105,7 +1083,7 @@
 
                 var name = new PIXI.Text(move[CENUMS.NAME],AcornSetup.style2);
                 var pp = new PIXI.Text('PP: ' + pokemon.currentPP[i] + '/' + move[CENUMS.PP],AcornSetup.style2);
-                var type = new PIXI.Text(this.typeList[move[CENUMS.TYPE]],AcornSetup.style2);
+                var type = new PIXI.Text(CENUMS.typeEnums[move[CENUMS.TYPE]],AcornSetup.style2);
                 name.anchor.x = 0.5;
                 pp.anchor.x = 0.5;
                 type.anchor.x = 0.5;

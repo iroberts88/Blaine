@@ -1,4 +1,6 @@
 
+var CENUMS = require('./enums.js').Enums; //init client enums
+
 var PokemonStorage = function(){
     this.MAX_BOXES = 10;
     this.POKEMON_PER_BOX = 100;

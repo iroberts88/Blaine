@@ -1,9 +1,7 @@
-var CENUMS = require('./enums.js').Enums; //init client enums
-
 var utils = require('./utils.js').Utils;
 var Utils = new utils();
 
-CENUMS.init();
+var CENUMS = require('./enums.js').Enums; //init client enums
     
 
 var Attribute = function(){

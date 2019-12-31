@@ -34,8 +34,8 @@
         ]
       },
       "types": [
-        8,
-        12
+        "bug",
+        "poison"
       ],
       "tmCompatability": {
         "1": true,
@@ -111,7 +111,7 @@
         ]
       },
       "types": [
-        3
+        "water"
       ],
       "tmCompatability": {
         "1": true,
@@ -182,7 +182,7 @@
         ]
       },
       "types": [
-        3
+        "water"
       ],
       "tmCompatability": {
         "1": true,
@@ -263,8 +263,8 @@
         ]
       },
       "types": [
-        5,
-        8
+        "grass",
+        "poison"
       ],
       "tmCompatability": {
         "1": true,
@@ -335,7 +335,7 @@
         ]
       },
       "types": [
-        2
+        "fire"
       ],
       "tmCompatability": {
         "1": true,
@@ -376,7 +376,7 @@
         ]
       },
       "types": [
-        12
+        "bug"
       ],
       "tmCompatability": {
         "1": true,
@@ -455,8 +455,8 @@
         ]
       },
       "types": [
-        5,
-        8
+        "grass",
+        "poison"
       ],
       "tmCompatability": {
         "1": true,
@@ -530,7 +530,7 @@
         ]
       },
       "types": [
-        3
+        "water"
       ],
       "tmCompatability": {
         "1": true,
@@ -606,8 +606,8 @@
         ]
       },
       "types": [
-        5,
-        8
+        "grass",
+        "poison"
       ],
       "tmCompatability": {
         "1": true,
@@ -683,8 +683,8 @@
         ]
       },
       "types": [
-        2,
-        10
+        "fire",
+        "flying"
       ],
       "tmCompatability": {
         "1": true,
@@ -758,7 +758,7 @@
         ]
       },
       "types": [
-        2
+        "fire"
       ],
       "tmCompatability": {
         "1": true,
@@ -825,8 +825,8 @@
         ]
       },
       "types": [
-        8,
-        12
+        "bug",
+        "poison"
       ],
       "tmCompatability": {
         "1": true,
@@ -869,7 +869,7 @@
         ]
       },
       "types": [
-        12
+        "bug"
       ],
       "tmCompatability": {},
       "name": "Metapod"
@@ -909,8 +909,8 @@
         ]
       },
       "types": [
-        8,
-        12
+        "bug",
+        "poison"
       ],
       "tmCompatability": {
         "1": true,
@@ -982,8 +982,8 @@
         ]
       },
       "types": [
-        12,
-        10
+        "bug",
+        "flying"
       ],
       "tmCompatability": {},
       "name": "Butterfree"

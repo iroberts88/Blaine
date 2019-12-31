@@ -1045,6 +1045,7 @@
         },
 
         addChat: function(text){
+            //TODO remove chat over a certain threshhold
             var newChat = new PIXI.Text(text,{
                 font: '18px Pokemon',
                 fill: 'black',
@@ -1111,7 +1112,7 @@
             nameText.position.y = ySize/3;
             t.addChild(nameText);
 
-            var typeText = new PIXI.Text(Game.typeList[move[CENUMS.TYPE]],AcornSetup.style2);
+            var typeText = new PIXI.Text(CENUMS.typeEnums[move[CENUMS.TYPE]],AcornSetup.style2);
             typeText.style.fontSize = 24;
             typeText.anchor.x = 0.5;
             typeText.anchor.y = 0.5;

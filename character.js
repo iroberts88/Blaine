@@ -4,8 +4,7 @@ var Inventory = require('./inventory.js').Inventory;
 var PokemonStorage = require('./pokemonstorage.js').PokemonStorage;
 
 
-CENUMS = require('./enums.js').Enums; //init client enums
-CENUMS.init();
+var CENUMS = require('./enums.js').Enums; //init client enums
 
 var Character = function(){
 

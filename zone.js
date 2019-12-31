@@ -6,8 +6,6 @@ var Player = require('./player.js').Player,
     CENUMS = require('./enums.js').Enums, //init client enums
     AWS = require("aws-sdk");
 
-    CENUMS.init();
-
 var Zone = function(ge) {
 
     this.engine = ge;

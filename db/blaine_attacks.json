@@ -14,12 +14,15 @@
       "power": 0,
       "targetType": "single",
       "name": "Leer",
-      "type": 1,
+      "type": "normal",
       "animationTime": 0.75,
       "clientID": 1
     },
     {
       "effects": [
+        {
+          "effectName": "damage"
+        },
         {
           "val": -1,
           "stat": "spd",
@@ -34,7 +37,7 @@
       "power": 30,
       "targetType": "single",
       "name": "Bubble",
-      "type": 3,
+      "type": "water",
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -46,7 +49,7 @@
       "physical": true,
       "targetType": "single",
       "name": "Scratch",
-      "type": 1,
+      "type": "normal",
       "animationTime": 0.33,
       "clientID": 1
     },
@@ -62,7 +65,7 @@
       "power": 0,
       "targetType": "single",
       "name": "Leech Seed",
-      "type": 5,
+      "type": "grass",
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -74,12 +77,15 @@
       "physical": true,
       "targetType": "single",
       "name": "Vine Whip",
-      "type": 5,
+      "type": "grass",
       "animationTime": 0.75,
       "clientID": 1
     },
     {
       "effects": [
+        {
+          "effectName": "damage"
+        },
         {
           "effectName": "burn",
           "chance": 0.1
@@ -92,7 +98,7 @@
       "power": 40,
       "targetType": "single",
       "name": "Ember",
-      "type": 2,
+      "type": "ember",
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -110,7 +116,7 @@
       "power": 0,
       "targetType": "single",
       "name": "Tail Whip",
-      "type": 1,
+      "type": "normal",
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -128,7 +134,7 @@
       "power": 0,
       "targetType": "single",
       "name": "Growl",
-      "type": 1,
+      "type": "normal",
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -140,7 +146,7 @@
       "physical": true,
       "targetType": "single",
       "name": "Tackle",
-      "type": 1,
+      "type": "normal",
       "animationTime": 0.75,
       "clientID": 1
     },
@@ -153,7 +159,7 @@
       "power": 40,
       "targetType": "single",
       "name": "Water Gun",
-      "type": 3,
+      "type": "water",
       "animationTime": 0.75,
       "clientID": 1
     }

@@ -1,7 +1,6 @@
 var Attribute = require('./attribute.js').Attribute;
 var Actions = require('./actions.js').Actions;
 var CENUMS = require('./enums.js').Enums; //init client enums
-CENUMS.init();
 
 var expEnums = {
     SLOW: 'slow', //1
@@ -92,9 +91,7 @@ Pokemon.prototype.reset = function(){
 }
 Pokemon.prototype.battleReset = function(){
     this.charge = 0;
-    this.castingAttack = null
     this.currentTurnData = null;
-    this.castingAttackTicker = 0;
 
     this.hp.reset(false);
     this.speed.reset(false);
@@ -184,7 +181,10 @@ Pokemon.prototype.init = function(base,data) {
     this.baseExp = base['baseExp'];
     this.number = base.number;
     this.name = base.name;
-    this.types = base.types; //list of types
+    this.types = []; //list of types
+    for (var i = 0; i < base.types.length;i++){
+        this.types.push(CENUMS.typeEnums[base.types[i]]);
+    }
 
     this.captureRate = (typeof base.captureRate == 'undefined') ? 1 : base.captureRate;
 

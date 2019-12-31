@@ -3,13 +3,11 @@
 (function(window) {
     var Action = function(){ }
 
-    var actionEnums = {
-        SCRATCH: 1,
-        DAMAGE: 2,
-        MISS: 3,
-        NVE: 4, //Not very effective
-        SUPERE: 5, //super effective!
-        SWAP: 6
+    var animationEnums = {
+        MOVE: 1,
+        TEXT: 2,
+        DAMAGE: 3,
+        SWAP: 4
     };
 
     Action.prototype.init = function(data){
@@ -20,7 +18,7 @@
         this.target = Battle.pokemonContainer[data[CENUMS.TARGET]];
         this.pokemonSC = Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]];
         this.targetSC = Battle.pokemonSpriteContainer[data[CENUMS.TARGET]];
-        this.clientid = data[CENUMS.CLIENTID];
+        this.clientid = data[CENUMS.ACTION];
         this.mname = data[CENUMS.NAME];
 
         this.end = false;
@@ -34,21 +32,63 @@
 
     Action.prototype.getAction = function(a){
         switch(a){
-            case actionEnums.SCRATCH:
-                return this.scratch;
+            case actionEnums.TEXT:
+                return this.text;
                 break;
             case actionEnums.DAMAGE:
-                return this.damage;
+                return this.DAMAGE;
+                break;
+            case actionEnums.MOVE:
+                return this.MOVE;
                 break;
             case actionEnums.SWAP:
-                return this.swap;
+                return this.SWAP;
                 break;
-            default:
+        }
+    };
+    Action.prototype.getMove = function(a){
+        switch(a){
+            case actionEnums.SCRATCH:
                 return this.scratch;
                 break;
         }
     };
+    //MOVES
+    Action.prototype.scratch = function(dt,action,data){
+        if (typeof data.lmd == 'undefined'){
+            //update last action use of pokemon!
+            Battle.drawLastMoveDisplay(action.pokemonSC,action.mname);
+            data.lmd = true;
+        }
+        action.t += dt;
+        if (action.t < 1){
+            return;
+        }
+        if (typeof data.sprite == 'undefined'){
+            data.sprite = Graphics.getSprite('e_scratch4');
+            data.spriteNum = 4;
+            data.sprite.anchor.x = 0;
+            data.sprite.anchor.y = 1;
+            data.sprite.scale.x = 3;
+            data.sprite.scale.y = 3;
+            data.sprite.position.x = action.targetSC.sprite.position.x-action.targetSC.sprite.width/2;
+            data.sprite.position.y = action.targetSC.sprite.position.y+action.targetSC.sprite.height/2;
+            Graphics.uiContainer2.addChild(data.sprite);
+        }
+        if(action.t > 1.075){
+            data.spriteNum -= 1;
+            if (data.spriteNum < 1){
+                action.end = true;
+                Battle.pokemonSpriteContainer[action.pokemon.id].lastMoveDisplay.visible = false;
+                Graphics.uiContainer2.removeChild(data.sprite);
+                return;
+            }
+            data.sprite._texture = Graphics.getResource('e_scratch' + data.spriteNum);
+            action.t -= 0.075;
+        }
+    };
 
+    //OTHER
     Action.prototype.damage = function(dt,action,data){
         if (data.blinks == 'undefined'){
             data.blinks = 0;
@@ -67,6 +107,11 @@
                 action.end = true;
                 actions.pokemonSC.sprite.visible = true;
             }
+        }
+    };
+    Action.prototype.text = function(dt,action,data){
+        if (data.added == 'undefined'){
+            data.added = 0;
         }
     };
     Action.prototype.swap = function(dt,action,data){
@@ -101,42 +146,7 @@
     };
 
 
-    //MOVES
-
-
-    Action.prototype.scratch = function(dt,action,data){
-        if (typeof data.lmd == 'undefined'){
-            //update last action use of pokemon!
-            Battle.drawLastMoveDisplay(action.pokemonSC,action.mname);
-            data.lmd = true;
-        }
-        action.t += dt;
-        if (action.t < 1){
-            return;
-        }
-        if (typeof data.sprite == 'undefined'){
-            data.sprite = Graphics.getSprite('e_scratch4');
-            data.spriteNum = 4;
-            data.sprite.anchor.x = 0;
-            data.sprite.anchor.y = 1;
-            data.sprite.scale.x = 3;
-            data.sprite.scale.y = 3;
-            data.sprite.position.x = action.targetSC.sprite.position.x-action.targetSC.sprite.width/2;
-            data.sprite.position.y = action.targetSC.sprite.position.y+action.targetSC.sprite.height/2;
-            Graphics.uiContainer2.addChild(data.sprite);
-        }
-        if(action.t > 1.075){
-            data.spriteNum -= 1;
-            if (data.spriteNum < 1){
-                action.end = true;
-                Battle.pokemonSpriteContainer[action.pokemon.id].lastMoveDisplay.visible = false;
-                Graphics.uiContainer2.removeChild(data.sprite);
-                return;
-            }
-            data.sprite._texture = Graphics.getResource('e_scratch' + data.spriteNum);
-            action.t -= 0.075;
-        }
-    };
+    
 
     
     window.Action = Action;

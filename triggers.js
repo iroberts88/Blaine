@@ -1,7 +1,6 @@
 //triggers.js
 
 var CENUMS = require('./enums.js').Enums; //init client enums
-CENUMS.init();
 
 var Triggers = function(){
 	this.TriggerEnums = {

@@ -3,6 +3,7 @@
 //
 //  trainer for the purpose of battles/
 
+var CENUMS = require('./enums.js').Enums; //init client enums
 var Pokemon = require('./pokemon.js').Pokemon;
 
 var Trainer = function(ge){
@@ -119,7 +120,7 @@ Trainer.prototype.update = function(deltaTime) {
     }
 };
 
-Trainer.prototype.checkBattleEnd = function(){
+Trainer.prototype.checkBattleEnd = function(data){
 
     var end = false;
     if (!this.hasActivePokemon()){
@@ -131,7 +132,7 @@ Trainer.prototype.checkBattleEnd = function(){
         }
     }
     if (end){
-        this.battle.checkEnd(this.currentTeam);
+        this.battle.checkEnd(this.currentTeam,data);
     }
 };
 

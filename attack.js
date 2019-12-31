@@ -1,7 +1,6 @@
 var Attack = function(){}
 
 var CENUMS = require('./enums.js').Enums; //init client enums
-CENUMS.init();
 
 var typeEnums = {
     'single': CENUMS.SINGLE,
@@ -23,10 +22,10 @@ Attack.prototype.init = function(data){
     this.animationTime = data.animationTime; //the full duration of the animation time before the attack completes
     this.clientID = data.clientID;
     //optional
-    this.type = (typeof data.type == 'undefined') ? 1 : data.type;
+    this.type = (typeof data.type == 'undefined') ? CENUMS.NORMAL : CENUMS.typeEnums[data.type];
     this.physical = (typeof data.physical == 'undefined') ? false : data.physical;
     this.description = (typeof data.description == 'undefined') ? '' : data.description;
-    this.effects = (typeof data.effects == 'undefined') ? [] : data.effects;
+    this.effects = (typeof data.effects == 'undefined') ? [{'effectName': 'damage'}] : data.effects;
 
     this.attackindex = 0;
 }

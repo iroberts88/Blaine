@@ -228,6 +228,13 @@
             });
 
             Acorn.Net.on(CENUMS.BATTLEDATA, function (data) {
+                console.log(data);
+                for (var i = 0; i < data[CENUMS.ACTIONS].length;i++){
+                    var newAction = new Action();
+                    newAction.init(data[CENUMS.ACTIONS][i]);
+                    Battle.actions.push(newAction);
+                    Battle.paused = true;
+                }
                 if (data.run){
                     Battle.addChat("You got away!");
                     Battle.end = true;

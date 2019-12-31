@@ -1,5 +1,5 @@
+
 var CENUMS = require('./enums.js').Enums; //init client enums
-CENUMS.init();
 
 var targetTypeEnums = {
     'field': CENUMS.FIELD, //ONLY used in the field, just a straight use

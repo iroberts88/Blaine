@@ -10,8 +10,6 @@ var User = require('./user.js').User,
     Pokemon = require('./pokemon.js').Pokemon,
     Triggers = require('./triggers.js').Triggers;
 
-    CENUMS.init();
-
 const crypto = require('crypto');
 
 var AWS = require("aws-sdk");

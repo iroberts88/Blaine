@@ -5,13 +5,11 @@
 var Player = require('./player.js').Player,
     Zone = require('./zone.js').Zone,
     Attack = require('./attack.js').Attack,
-    CENUMS = require('./enums.js').Enums, //init client enums
+    CENUMS = require('./enums.js').Enums,
     utils = require('./utils.js').Utils,
     Utils = new utils(),
     fs = require('fs'),
     AWS = require("aws-sdk");
-
-CENUMS.init();
 
 var self = null;
 
@@ -24,164 +22,146 @@ var GameEngine = function() {
     this.playerCount = 0;
 
     this.items = {};
-    this.moveEffectiveness = {
-        1: { //normal
-            13: 0.5,
-            14: 0,
-            17: 0.5
-        },
-        2: { //fire
-            2: 0.5,
-            3: 0.5,
-            5: 2,
-            6: 2,
-            12:2,
-            13:0.5,
-            15:0.5
-        },
-        3: { //water
-            2:2,
-            3:0.5,
-            5:0.5,
-            9:2,
-            13:2,
-            15:0.5
-        },
-        4: { //electric
-            3:2,
-            4:0.5,
-            5:0.5,
-            9:0,
-            10:2,
-            15:0.5
-        },
-        5: { //grass
-            2:0.5,
-            3:2,
-            5:0.5,
-            8:0.5,
-            9:2,
-            10:0.5,
-            12:0.5,
-            13:2,
-            15:0.5,
-            17:0.5
-        },
-        6: { //ice
-            2:0.5,
-            3:0.5,
-            5:2,
-            6:0.5,
-            9:2,
-            10:2,
-            15:2,
-            17:0.5
-        },
-        7: { //fighting
-            1:2,
-            6:2,
-            8:0.5,
-            10:0.5,
-            11:0.5,
-            12:0.5,
-            13:2,
-            14:0,
-            16:2,
-            17:2,
-            18:0.5
-        },
-        8: { //poison
-            5:2,
-            8:0.5,
-            9:0.5,
-            13:0.5,
-            14:0.5,
-            17:0,
-            18:2
-        },
-        9: { //ground
-            2:2,
-            4:2,
-            5:0.5,
-            8:2,
-            9:0.5,
-            10:0,
-            12:0.5,
-            13:2,
-            17:0.5
-        },
-        10: { //flying
-            4:0.5,
-            5:2,
-            7:2,
-            12:2,
-            13:0.5,
-            17:2,
-        },
-        11: { //psychic
-            7:2,
-            8:2,
-            11:0.5,
-            16:0,
-            17:0.5
-        },
-        12: { //bug
-            2:0.5,
-            5:2,
-            7:0.5,
-            8:0.5,
-            10:0.5,
-            11:2,
-            14:0.5,
-            16:2,
-            17:0.5,
-            18:0.5
-        },
-        13: { //rock
-            2:2,
-            6:2,
-            7:0.5,
-            9:0.5,
-            10:2,
-            12:2,
-            17:0.5
-        },
-        14: { //ghost
-            1:0,
-            11:2,
-            14:2,
-            16:0.5
-        },
-        15: { //dragon
-            15:2,
-            15:0.5,
-            18:0
-        },
-        16: { //dark
-            7:0.5,
-            11:2,
-            14:2,
-            16:0.5,
-            18:0.5
-        },
-        17: { //steel
-            2:0.5,
-            3:0.5,
-            4:0.5,
-            6:2,
-            13:2,
-            17:0.5,
-            18:2
-        },
-        18: { //fairy
-            2:0.5,
-            7:2,
-            8:0.5,
-            15:2,
-            16:2,
-            17:0.5
-        },
-    }
+    this.moveEffectiveness = {};
+    this.moveEffectiveness[CENUMS.TYPE_NORMAL] = {};
+    this.moveEffectiveness[CENUMS.TYPE_NORMAL][CENUMS.TYPE_ROCK] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_NORMAL][CENUMS.TYPE_STEEL] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_NORMAL][CENUMS.TYPE_GHOST] = 0;
+    this.moveEffectiveness[CENUMS.TYPE_FIRE] = {};
+    this.moveEffectiveness[CENUMS.TYPE_FIRE][CENUMS.TYPE_ROCK] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_FIRE][CENUMS.TYPE_STEEL] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FIRE][CENUMS.TYPE_BUG] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FIRE][CENUMS.TYPE_FIRE] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_FIRE][CENUMS.TYPE_WATER] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_FIRE][CENUMS.TYPE_GRASS] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FIRE][CENUMS.TYPE_ICE] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FIRE][CENUMS.TYPE_DRAGON] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_WATER] = {};
+    this.moveEffectiveness[CENUMS.TYPE_WATER][CENUMS.TYPE_ROCK] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_WATER][CENUMS.TYPE_GROUND] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_WATER][CENUMS.TYPE_FIRE] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_WATER][CENUMS.TYPE_WATER] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_WATER][CENUMS.TYPE_GRASS] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_WATER][CENUMS.TYPE_DRAGON] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_GRASS] = {};
+    this.moveEffectiveness[CENUMS.TYPE_GRASS][CENUMS.TYPE_FLYING] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_GRASS][CENUMS.TYPE_POISON] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_GRASS][CENUMS.TYPE_BUG] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_GRASS][CENUMS.TYPE_STEEL] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_GRASS][CENUMS.TYPE_FIRE] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_GRASS][CENUMS.TYPE_GRASS] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_GRASS][CENUMS.TYPE_DRAGON] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_GRASS][CENUMS.TYPE_GROUND] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_GRASS][CENUMS.TYPE_ROCK] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_GRASS][CENUMS.TYPE_WATER] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_ELECTRIC] = {};
+    this.moveEffectiveness[CENUMS.TYPE_ELECTRIC][CENUMS.TYPE_WATER] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_ELECTRIC][CENUMS.TYPE_FLYING] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_ELECTRIC][CENUMS.TYPE_GROUND] = 0;
+    this.moveEffectiveness[CENUMS.TYPE_ELECTRIC][CENUMS.TYPE_GRASS] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_ELECTRIC][CENUMS.TYPE_ELECTRIC] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_ELECTRIC][CENUMS.TYPE_DRAGON] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_ROCK] = {};
+    this.moveEffectiveness[CENUMS.TYPE_ROCK][CENUMS.TYPE_FLYING] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_ROCK][CENUMS.TYPE_BUG] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_ROCK][CENUMS.TYPE_FIRE] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_ROCK][CENUMS.TYPE_ICE] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_ROCK][CENUMS.TYPE_FIGHTING] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_ROCK][CENUMS.TYPE_GROUND] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_ROCK][CENUMS.TYPE_STEEL] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_GROUND] = {};
+    this.moveEffectiveness[CENUMS.TYPE_GROUND][CENUMS.TYPE_POISON] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_GROUND][CENUMS.TYPE_ROCK] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_GROUND][CENUMS.TYPE_STEEL] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_GROUND][CENUMS.TYPE_FIRE] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_GROUND][CENUMS.TYPE_ELECTRIC] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_GROUND][CENUMS.TYPE_FLYING] = 0;
+    this.moveEffectiveness[CENUMS.TYPE_GROUND][CENUMS.TYPE_BUG] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_GROUND][CENUMS.TYPE_GASS] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_POISON] = {};
+    this.moveEffectiveness[CENUMS.TYPE_POISON][CENUMS.TYPE_GRASS] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_POISON][CENUMS.TYPE_FAIRY] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_POISON][CENUMS.TYPE_STEEL] = 0;
+    this.moveEffectiveness[CENUMS.TYPE_POISON][CENUMS.TYPE_POISON] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_POISON][CENUMS.TYPE_GROUND] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_POISON][CENUMS.TYPE_ROCK] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_POISON][CENUMS.TYPE_GHOST] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_FLYING] = {};
+    this.moveEffectiveness[CENUMS.TYPE_FLYING][CENUMS.TYPE_FIGHTING] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FLYING][CENUMS.TYPE_BUG] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FLYING][CENUMS.TYPE_GRASS] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FLYING][CENUMS.TYPE_ROCK] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_FLYING][CENUMS.TYPE_STEEL] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_FLYING][CENUMS.TYPE_ELECTRIC] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_PSYCHIC] = {};
+    this.moveEffectiveness[CENUMS.TYPE_PSYCHIC][CENUMS.TYPE_FIGHTING] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_PSYCHIC][CENUMS.TYPE_POISON] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_PSYCHIC][CENUMS.TYPE_DARK] = 0;
+    this.moveEffectiveness[CENUMS.TYPE_PSYCHIC][CENUMS.TYPE_STEEL] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_PSYCHIC][CENUMS.TYPE_PSYCHIC] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_GHOST] = {};
+    this.moveEffectiveness[CENUMS.TYPE_GHOST][CENUMS.TYPE_GHOST] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_GHOST][CENUMS.TYPE_PSYCHIC] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_GHOST][CENUMS.TYPE_DARK] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_GHOST][CENUMS.TYPE_NORMAL] = 0;
+    this.moveEffectiveness[CENUMS.TYPE_FIGHTING] = {};
+    this.moveEffectiveness[CENUMS.TYPE_FIGHTING][CENUMS.TYPE_NORMAL] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FIGHTING][CENUMS.TYPE_ROCK] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FIGHTING][CENUMS.TYPE_STEEL] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FIGHTING][CENUMS.TYPE_ICE] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FIGHTING][CENUMS.TYPE_DARK] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FIGHTING][CENUMS.TYPE_GHOST] = 0;
+    this.moveEffectiveness[CENUMS.TYPE_FIGHTING][CENUMS.TYPE_FLYING] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_FIGHTING][CENUMS.TYPE_POISON] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_FIGHTING][CENUMS.TYPE_BUG] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_FIGHTING][CENUMS.TYPE_PSYCHIC] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_FIGHTING][CENUMS.TYPE_FAIRY] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_ICE] = {};
+    this.moveEffectiveness[CENUMS.TYPE_ICE][CENUMS.TYPE_FLYING] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_ICE][CENUMS.TYPE_GROUND] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_ICE][CENUMS.TYPE_GRASS] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_ICE][CENUMS.TYPE_DRAGON] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_ICE][CENUMS.TYPE_STEEL] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_ICE][CENUMS.TYPE_FIRE] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_ICE][CENUMS.TYPE_WATER] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_ICE][CENUMS.TYPE_ICE] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_BUG] = {};
+    this.moveEffectiveness[CENUMS.TYPE_BUG][CENUMS.TYPE_GRASS] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_BUG][CENUMS.TYPE_PSYCHIC] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_BUG][CENUMS.TYPE_DARK] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_BUG][CENUMS.TYPE_FIGHTING] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_BUG][CENUMS.TYPE_FLYING] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_BUG][CENUMS.TYPE_GHOST] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_BUG][CENUMS.TYPE_STEEL] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_BUG][CENUMS.TYPE_POISON] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_BUG][CENUMS.TYPE_FIRE] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_BUG][CENUMS.TYPE_FAIRY] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_STEEL] = {};
+    this.moveEffectiveness[CENUMS.TYPE_STEEL][CENUMS.TYPE_ROCK] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_STEEL][CENUMS.TYPE_ICE] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_STEEL][CENUMS.TYPE_FAIRY] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_STEEL][CENUMS.TYPE_STEEL] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_STEEL][CENUMS.TYPE_FIRE] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_STEEL][CENUMS.TYPE_WATER] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_STEEL][CENUMS.TYPE_ELECTRIC] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_DARK] = {};
+    this.moveEffectiveness[CENUMS.TYPE_DARK][CENUMS.TYPE_GHOST] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_DARK][CENUMS.TYPE_PSYCHIC] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_DARK][CENUMS.TYPE_FIGHTING] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_DARK][CENUMS.TYPE_DARK] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_DARK][CENUMS.TYPE_FAITY] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_DRAGON] = {};
+    this.moveEffectiveness[CENUMS.TYPE_DRAGON][CENUMS.TYPE_DRAGON] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_DRAGON][CENUMS.TYPE_STEEL] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_DRAGON][CENUMS.TYPE_FAIRY] = 0;
+    this.moveEffectiveness[CENUMS.TYPE_FAIRY] = {};
+    this.moveEffectiveness[CENUMS.TYPE_FAIRY][CENUMS.TYPE_FIGHTING] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FAIRY][CENUMS.TYPE_DRAGON] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FAIRY][CENUMS.TYPE_DARK] = 2;
+    this.moveEffectiveness[CENUMS.TYPE_FAIRY][CENUMS.TYPE_POISON] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_FAIRY][CENUMS.TYPE_STEEL] = 0.5;
+    this.moveEffectiveness[CENUMS.TYPE_FAIRY][CENUMS.TYPE_FIRE] = 0.5;
+ 
     //database objects
     this.mapids = [];
     this.mapCount = 0; //for checking if all maps have loaded before ready
