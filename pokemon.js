@@ -377,12 +377,6 @@ Pokemon.prototype.init = function(base,data) {
         name: 'Current HP Percent',
         formula: function(updateClient){
             return (this.pokemon.currentHP.value/this.pokemon.hp.value)*100;
-        },
-        next: function(updateClient){
-            //if in a battle, send battleData
-            if (this.pokemon.character.battle){
-                this.battleUpdate(this.pokemon.character.battle)
-            }
         }
     });
     this.attributeIndex[CENUMS.HPPERCENT] = this.hpPercent;

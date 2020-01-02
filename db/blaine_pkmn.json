@@ -2,7 +2,7 @@
   "items": [
     {
       "evolution": {
-        "into": 14,
+        "into": "kakuna",
         "level": 7
       },
       "captureRate": 255,
@@ -13,6 +13,7 @@
         "height": "1'00\""
       },
       "number": 13,
+      "id": "weedle",
       "baseStats": {
         "hp": 40,
         "spdefense": 20,
@@ -117,11 +118,12 @@
         "1": true,
         "2": true
       },
-      "name": "Blastoise"
+      "name": "Blastoise",
+      "id": "blastoise"
     },
     {
       "evolution": {
-        "into": 8,
+        "into": "wartortle",
         "level": 16
       },
       "captureRate": 45,
@@ -188,7 +190,8 @@
         "1": true,
         "2": true
       },
-      "name": "Squirtle"
+      "name": "Squirtle",
+      "id": "squirtle"
     },
     {
       "evolution": {
@@ -270,11 +273,12 @@
         "1": true,
         "2": true
       },
-      "name": "Venusaur"
+      "name": "Venusaur",
+      "id": "venusaur"
     },
     {
       "evolution": {
-        "into": 5,
+        "into": "charmeleon",
         "level": 16
       },
       "captureRate": 45,
@@ -341,11 +345,12 @@
         "1": true,
         "2": true
       },
-      "name": "Charmander"
+      "name": "Charmander",
+      "id": "charmander"
     },
     {
       "evolution": {
-        "into": 11,
+        "into": "metapod",
         "level": 7
       },
       "captureRate": 255,
@@ -382,11 +387,12 @@
         "1": true,
         "2": true
       },
-      "name": "Caterpie"
+      "name": "Caterpie",
+      "id": "caterpie"
     },
     {
       "evolution": {
-        "into": 3,
+        "into": "ivysaur",
         "level": 32
       },
       "captureRate": 45,
@@ -462,11 +468,12 @@
         "1": true,
         "2": true
       },
-      "name": "Ivysaur"
+      "name": "Ivysaur",
+      "id": "ivysaur"
     },
     {
       "evolution": {
-        "into": 9,
+        "into": "wartortle",
         "level": 36
       },
       "captureRate": 45,
@@ -536,11 +543,12 @@
         "1": true,
         "2": true
       },
-      "name": "Wartortle"
+      "name": "Wartortle",
+      "id": "wartortle"
     },
     {
       "evolution": {
-        "into": 2,
+        "into": "ivysaur",
         "level": 16
       },
       "captureRate": 45,
@@ -613,7 +621,8 @@
         "1": true,
         "2": true
       },
-      "name": "Bulbasaur"
+      "name": "Bulbasaur",
+      "id": "bulbasaur"
     },
     {
       "evolution": {
@@ -690,11 +699,12 @@
         "1": true,
         "2": true
       },
-      "name": "Charizard"
+      "name": "Charizard",
+      "id": "charizard"
     },
     {
       "evolution": {
-        "into": 6,
+        "into": "charizard",
         "level": 36
       },
       "captureRate": 45,
@@ -764,7 +774,8 @@
         "1": true,
         "2": true
       },
-      "name": "Charmeleon"
+      "name": "Charmeleon",
+      "id": "charmeleon"
     },
     {
       "evolution": {
@@ -832,11 +843,12 @@
         "1": true,
         "2": true
       },
-      "name": "Beedrill"
+      "name": "Beedrill",
+      "id": "beedrill"
     },
     {
       "evolution": {
-        "into": 12,
+        "into": "butterfree",
         "level": 10
       },
       "captureRate": 120,
@@ -872,11 +884,12 @@
         "bug"
       ],
       "tmCompatability": {},
-      "name": "Metapod"
+      "name": "Metapod",
+      "id": "metapod"
     },
     {
       "evolution": {
-        "into": 15,
+        "into": "beedrill",
         "level": 10
       },
       "captureRate": 120,
@@ -916,7 +929,8 @@
         "1": true,
         "2": true
       },
-      "name": "Kakuna"
+      "name": "Kakuna",
+      "id": "kakuna"
     },
     {
       "evolution": {
@@ -986,7 +1000,8 @@
         "flying"
       ],
       "tmCompatability": {},
-      "name": "Butterfree"
+      "name": "Butterfree",
+      "id": "butterfree"
     }
   ]
 }

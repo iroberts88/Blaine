@@ -309,24 +309,22 @@
                 return;
             }
 
-            if (!this.paused){
-                for (var i in this.pokemonContainer){
-                    this.pokemonContainer[i].update(dt);
+            if (this.actions.length){
+                this.actions[0].update(dt);
+                if (this.actions[0].end){
+                    this.actions.splice(0,1);
                 }
             }else if (this.waitingStart){
                 if (Date.now()-this.waitingStart >= (this.waitingTime*1000)){
                     this.waitingStart = null;
                     this.paused = false;
                 }
-            }
-
-            for (var i = 0; i < this.actions.length;i++){
-                this.actions[i].update(dt);
-                if (this.actions[i].end){
-                    this.actions.splice(i,1);
-                    i-=1;
+            }else{
+                for (var i in this.pokemonContainer){
+                    this.pokemonContainer[i].update(dt);
                 }
             }
+
             
             if (this.end){
                 this.endTicker += dt;

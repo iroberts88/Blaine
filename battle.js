@@ -57,6 +57,7 @@ var Battle = function(ge) {
     this.ready = false;
 
     this.paused = false;
+    this.pausedTicker = 0;
     this.waitingForNextPokemon = false;
     this.waitingTicker = 0;
     this.waitingTime = 10.0;
@@ -137,7 +138,9 @@ Battle.prototype.init = function (data) {
     }
     return true;
 };
-
+Battle.addPausedTicker = function(amt){
+    this.pausedTicker += amt;
+}
 Battle.prototype.tick = function(deltaTime){
     if (this.swapping){
         this.swapTicker += deltaTime;
@@ -151,16 +154,6 @@ Battle.prototype.tick = function(deltaTime){
         }
         return;
     }
-    for (var i = 0; i < this.team1.length;i++){
-        if (this.team1[i] instanceof Trainer){
-            this.team1[i].update(deltaTime);
-        }
-    }
-    for (var i = 0; i < this.team2.length;i++){
-        if (this.team2[i] instanceof Trainer){
-            this.team2[i].update(deltaTime);
-        }
-    }
     if (this.waitingForNextPokemon){
         this.waitingTicker += deltaTime;
         if (this.waitingTicker >= this.waitingTime){
@@ -173,9 +166,22 @@ Battle.prototype.tick = function(deltaTime){
     }
     if (this.pausedTicker > 0){
         this.pausedTicker -= deltaTime;
+        console.log("PASEDDDS: " + this.pausedTicker)
+        if (this.pausedTicker <= 0){
+            this.pausedTicker = 0;
+        }
         return;
-    }else{
-        this.pausedTicker = 0;
+    }
+
+    for (var i = 0; i < this.team1.length;i++){
+        if (this.team1[i] instanceof Trainer){
+            this.team1[i].update(deltaTime);
+        }
+    }
+    for (var i = 0; i < this.team2.length;i++){
+        if (this.team2[i] instanceof Trainer){
+            this.team2[i].update(deltaTime);
+        }
     }
     for (var i in this.activePokemon){
         if (this.ending){return;}

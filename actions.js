@@ -19,15 +19,9 @@ var ActionEnums = {
 
 
 Actions.prototype.testAction = function(data){
-    console.log(data);
-    data.ctd.push({
-        action: CENUMS.ACTION_TEXT,
-        text: 'derp'
-    });
-    data.ctd.push({
-        action: CENUMS.ACTION_TEXT,
-        text: 'It didn\'t do anything.... NOT IMPLEMENTED ZZZZZZ'
-    });
+    var battle = data.pokemon.character.battle;
+    battle.pausedTicker += battle.baseActionSpeed;
+    data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,'It didn\'t do anything.... NOT IMPLEMENTED ZZZZZZ',CENUMS.T,battle.baseActionSpeed));
     return data.ctd;
 }
 Actions.prototype.doAttack = function(pokemon,attack,data){
@@ -75,8 +69,8 @@ Actions.prototype.doAttack = function(pokemon,attack,data){
     battle.pausedTicker += battle.baseActionSpeed;
     data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,txt,CENUMS.T,battle.baseActionSpeed));
     //targets acquired.. do attack damage and move effects
-    battle.pausedTicker += data.attack.animationSpeed;
-    data.ctd.push(Utils.createClientData(CENUMS.ACTION,1,CENUMS.CLIENTID,data.attack.clientid,CENUMS.T,data.attack.animationSpeed,CENUMS.NAME,data.attack.name,CENUMS.POKEMON,pokemon.id,CENUMS.target,data.target?data.target.id:null));
+    battle.pausedTicker += data.attack.animationTime;
+    data.ctd.push(Utils.createClientData(CENUMS.ACTION,1,CENUMS.CLIENTID,data.attack.clientid,CENUMS.T,data.attack.animationSpeed,CENUMS.NAME,data.attack.name,CENUMS.POKEMON,pokemon.id,CENUMS.TARGET,data.target?data.target.id:null));
     console.log('TARGETS:' +  targets.length);
     for (var tar = 0; tar < targets.length;tar++){
         //check to see if attack hits
@@ -147,6 +141,9 @@ Actions.prototype.damage = function(data){
     data.target.currentHP.set(false);
 
 
+    battle.pausedTicker += battle.baseActionSpeed;
+    data.ctd.push(Utils.createClientData(CENUMS.ACTION,3,CENUMS.POKEMON,data.target.id,CENUMS.VALUE,data.target.hpPercent.value,CENUMS.T,battle.baseActionSpeed));
+
     if (effectiveness == 0){
         battle.pausedTicker += battle.baseActionSpeed;
         data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,'No effect!',CENUMS.T,battle.baseActionSpeed));
@@ -158,8 +155,6 @@ Actions.prototype.damage = function(data){
         battle.pausedTicker += battle.baseActionSpeed;
         data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,'Super effective!!!',CENUMS.T,battle.baseActionSpeed));
     }
-    battle.pausedTicker += battle.baseActionSpeed;
-    data.ctd.push(Utils.createClientData(CENUMS.ACTION,3,CENUMS.POKEMON,data.target.id,CENUMS.VALUE,data.target.currentHP.value,CENUMS.T,battle.baseActionSpeed));
 }
 Actions.prototype.catch = function(data){
     //TODO ATTEMPT TO CATCH THE POKEMON
@@ -261,10 +256,8 @@ Actions.prototype.alterStatStage = function(data){
                 text = data.target.nickname + '\'s ' + stat.name + ' went way down!';
         }
         console.log(stat.value);
-        data.ctd.push({
-            action: 'text',
-            text: text
-        });
+        battle.pausedTicker += battle.baseActionSpeed;
+        data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,text,CENUMS.T,battle.baseActionSpeed));
     }
 }
 

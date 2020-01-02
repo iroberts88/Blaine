@@ -7,7 +7,8 @@
         MOVE: 1,
         TEXT: 2,
         DAMAGE: 3,
-        SWAP: 4
+        SWAP: 4,
+        ANIMATION: 5
     };
     var moveEnums = {
         SCRATCH: 1,
@@ -60,7 +61,9 @@
             action.targetSC = Battle.pokemonSpriteContainer[data[CENUMS.TARGET]];
             Battle.drawLastMoveDisplay(action.pokemonSC,data[CENUMS.NAME]);
             data.lmd = true;
+            data.timeCount = 0;
         }
+        data.timeCount += dt;
         action.t += dt;
         if (action.t < 1){
             return;
@@ -80,6 +83,7 @@
             data.spriteNum -= 1;
             if (data.spriteNum < 1){
                 action.end = true;
+                console.log('TIME COUNT... ' + data.timeCount)
                 Battle.pokemonSpriteContainer[action.pokemon.id].lastMoveDisplay.visible = false;
                 Graphics.uiContainer2.removeChild(data.sprite);
                 return;
@@ -91,27 +95,35 @@
 
     //OTHER
     Action.prototype.damage = function(dt,action,data){
-        if (data.blinks == 'undefined'){
+        if (typeof data.blinks == 'undefined'){
             data.blinks = 0;
+            action.pokemonSC = Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]];
         }
         action.t += dt;
-        if(action.t > 0.15){
+        if(action.t > (data[CENUMS.T]/10)){
             data.blinks += 1;
-            if (actions.pokemonSC.sprite.visible){
-                actions.pokemonSC.sprite.visible = false;
+            if (action.pokemonSC.sprite.visible){
+                action.pokemonSC.sprite.visible = false;
             }else{
-                actions.pokemonSC.sprite.visible = true;
+                action.pokemonSC.sprite.visible = true;
             }
 
-            action.t -= 0.15;
-            if (data.blinks >= 10){
+            action.t -= (data[CENUMS.T]/10);
+            if (data.blinks > 10){
+                //also reduce HP
+
+                var pkmn = Battle.pokemonContainer[data[CENUMS.POKEMON]];
+                data[CENUMS.STAT] = CENUMS.HPPERCENT;
+                if (pkmn){
+                    pkmn.setStat(data);
+                }
                 action.end = true;
-                actions.pokemonSC.sprite.visible = true;
+                action.pokemonSC.sprite.visible = true;
             }
         }
     };
     Action.prototype.text = function(dt,action,data){
-        if (data.added == 'undefined'){
+        if (typeof data.added == 'undefined'){
             data.added = true;
             Battle.addChat(data[CENUMS.TEXT])
         }
@@ -121,8 +133,17 @@
         }
     };
     Action.prototype.move = function(dt,action,data){
+        action.pokemon = Battle.pokemonContainer[data[CENUMS.POKEMON]];
         var M = action.getMove(data[CENUMS.CLIENTID]);
         M(dt,action,data);
+        if  (action.end){
+            Battle.pokemonContainer[data[CENUMS.POKEMON]].charge = 0;
+            Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]].nextMoveText.text = '';
+            Battle.pokemonContainer[data[CENUMS.POKEMON]].reset();
+            if (!Battle.currentPokemon){
+                Battle.showTurnOptions();
+            }
+        }
     };
     Action.prototype.swap = function(dt,action,data){
         action.t += dt;
@@ -152,6 +173,9 @@
                 Battle.addPokemon(data.p2,data.n,data.team);
                 Battle.addChat("& " + Battle.trainers[data.p1.owner].name + ' sends out ' + data.p2.nickname + '!');
             }
+        }
+        if (action.t >= data[CENUMS.T]){
+            action.end = true;
         }
     };
 

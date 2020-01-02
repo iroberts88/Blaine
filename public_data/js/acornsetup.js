@@ -267,8 +267,9 @@
             });
             Acorn.Net.on(CENUMS.RESUME, function (data) {
                 //battle is waiting for 
-                Battle.paused = false;
-                Battle.waitingStart = null;
+                for (var i = 0; i < Battle.actions.length;i++){
+                    Battle.actions[i].end = true;
+                }
             });
 
 
