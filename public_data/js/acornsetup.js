@@ -210,7 +210,7 @@
             });
 
             Acorn.Net.on(CENUMS.BATTLECHAT, function (data) {
-                Battle.addChat(data.text);
+                Battle.addChat(data[CENUMS.TEXT]);
             });
             
             Acorn.Net.on(CENUMS.BATTLEEND, function (data) {
@@ -229,6 +229,11 @@
 
             Acorn.Net.on(CENUMS.BATTLEDATA, function (data) {
                 console.log(data);
+                for (var i in data[CENUMS.CHARGECOUNTER]){
+                    Battle.pokemonContainer[i].charge = data[CENUMS.CHARGECOUNTER][i];
+                    var bar = Battle.pokemonSpriteContainer[i].chargeBar;
+                    Battle.drawChargeBar(bar,Battle.pokemonContainer[i].charge/Battle.chargeCounter);
+                }
                 for (var i = 0; i < data[CENUMS.ACTIONS].length;i++){
                     var newAction = new Action();
                     newAction.init(data[CENUMS.ACTIONS][i]);
@@ -283,7 +288,6 @@
             });
             Acorn.Net.on(CENUMS.NEWPKMN, function (data) {
                 //new battle pokemon
-                console.log(data);
                 if (Party.getPokemon(data[CENUMS.POKEMON][CENUMS.ID])){
                     var newPoke = Party.getPokemon(data[CENUMS.POKEMON][CENUMS.ID]);
                     Battle.addChat("& " + 'Go, ' + newPoke.nickname + '!');
@@ -292,6 +296,7 @@
                     newPoke.init(data[CENUMS.POKEMON]);
                     Battle.addChat("& " + Battle.trainers[newPoke.owner].name + ' sends out ' + newPoke.nickname + '!');
                 }
+                Battle.checkBattleCommand();
                 Battle.addPokemon(newPoke,data[CENUMS.SLOT],Battle.trainers[newPoke.owner].team);
             });
 

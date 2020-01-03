@@ -166,7 +166,6 @@ Battle.prototype.tick = function(deltaTime){
     }
     if (this.pausedTicker > 0){
         this.pausedTicker -= deltaTime;
-        console.log("PASEDDDS: " + this.pausedTicker)
         if (this.pausedTicker <= 0){
             this.pausedTicker = 0;
         }
@@ -207,7 +206,7 @@ Battle.prototype.tick = function(deltaTime){
                         //send to client!!
                         Actions.doAttack(p,p.currentTurnData.move,p.currentTurnData);
                         p.character.checkBattleEnd(p.currentTurnData.ctd);
-                        this.queueData(CENUMS.BATTLEDATA,Utils.createClientData(CENUMS.ACTIONS,p.currentTurnData.ctd));
+                        this.queueData(CENUMS.BATTLEDATA,Utils.createClientData(CENUMS.ACTIONS,p.currentTurnData.ctd,CENUMS.CHARGECOUNTER,this.getPokemonCharges()));
                         p.reset();
                         break;
                     case 'item':
@@ -404,7 +403,13 @@ Battle.prototype.checkEnd = function(team){
     this.engine.battleEnd(this);
     console.log('set battle as inactive!!!')
 };
-
+Battle.prototype.getPokemonCharges = function(){
+    var c = {};
+    for (var i in this.activePokemon){
+        c[i] = this.activePokemon[i].charge;
+    }
+    return c;
+};
 Battle.prototype.getChargeCounter = function(updateClient = true){
     //set the charge counter
     //slowest pokemon is found, counter is set to speed*10
@@ -498,11 +503,16 @@ Battle.prototype.pokemonFainted = function(pkmn){
         pkmn.character.pokemonHasFainted = true;
         pkmn.character.pokemonHasFaintedTicker = 0;
     }
-    var cData = {};
-    cData[CENUMS.VALUE] = this.waitingTime;
-    for (var i in this.players){
-        this.engine.queuePlayer(this.players[i],CENUMS.WAITING, cData);
-    }
+
+    this.pausedTicker += 1.5;
+    this.queueData(CENUMS.BATTLEDATA,Utils.createClientData(
+        CENUMS.ACTIONS,
+        [Utils.createClientData(CENUMS.ACTION,6,CENUMS.POKEMON,pkmn.id,CENUMS.T,1.5)],
+        CENUMS.CHARGECOUNTER,
+        this.getPokemonCharges()
+    ));
+    
+    
 
 }
 Battle.prototype.getTeamN = function(player){
@@ -593,7 +603,7 @@ Battle.prototype.queueData = function(call,data){
 }
 Battle.prototype.sendChat = function(text){
     for (var i in this.players){
-        this.engine.queuePlayer(this.players[i],CENUMS.BATTLECHAT, {text: text});
+        this.engine.queuePlayer(this.players[i],CENUMS.BATTLECHAT, Utils.createClientData(CENUMS.TEXT,text));
     }
 }
 

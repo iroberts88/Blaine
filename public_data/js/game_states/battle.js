@@ -384,6 +384,13 @@
         },
 
         addPokemon: function(p,n,team){
+            //removepokemon if theres one in current slot???
+            for (var i in this.activePokemon){
+                if (this.activePokemon[i].n == n){
+                    //already a pokemon here!!
+                    this.removePokemon(this.activePokemon[i]);
+                }
+            }
             team[p.id] = p;
             Battle.pokemonSpriteContainer[p.id] = Battle.getPokemonData(p,n,this.teamSize,team);
             Battle.pokemonContainer[p.id] = p;
@@ -395,7 +402,7 @@
             Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].levelDisplay);
             Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].hpBar);
             Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].chargeBar);
-            Battle.showTurnOptions();   
+            Battle.showTurnOptions();
         },
 
         getPokemonData: function(pkmn,n,teamSize,team){

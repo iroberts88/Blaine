@@ -26,6 +26,7 @@ var Pokemon = function(){
     this.MAX_IV_VALUE = 32;
 
     this.id = null;
+    this.pokemonid = null;
     this.character = null;
     this.nickname = null;
     this.attributeIndex = {};
@@ -173,20 +174,20 @@ Pokemon.prototype.getMoves = function(options){
 Pokemon.prototype.init = function(base,data) {
     //Set up all stats and attributes
 
-    this.nickname = (data.nickname == '') ? base.name : data.nickname; //REQUIRED IN <data>
+    this.nickname = (data.nickname == '') ? base['name'] : data.nickname; //REQUIRED IN <data>
     this.character = data.character; //REQUIRED IN <data>
     this.engine = data.engine;
     this.id = data.id; //REQUIRED IN <data>
-
+    this.pokemonid = base['id'];
     this.baseExp = base['baseExp'];
-    this.number = base.number;
-    this.name = base.name;
+    this.number = base['number'];
+    this.name = base['name'];
     this.types = []; //list of types
-    for (var i = 0; i < base.types.length;i++){
-        this.types.push(CENUMS.typeEnums[base.types[i]]);
+    for (var i = 0; i < base['types'].length;i++){
+        this.types.push(CENUMS.typeEnums[base['types'][i]]);
     }
 
-    this.captureRate = (typeof base.captureRate == 'undefined') ? 1 : base.captureRate;
+    this.captureRate = (typeof base['captureRate'] == 'undefined') ? 1 : base['captureRate'];
 
     this.affection = (typeof data.affection == 'undefined') ? 0 : data.affection;
     this.critChance = (typeof data.critChance == 'undefined') ? 0 : data.critChance;
@@ -229,7 +230,7 @@ Pokemon.prototype.init = function(base,data) {
     this.hp.init({
         id: CENUMS.HP,
         pokemon: this,
-        value: base.baseStats.hp,
+        value: base['baseStats'].hp,
         min: 1,
         name: 'Maximum HP',
         max: 9999,
@@ -246,7 +247,7 @@ Pokemon.prototype.init = function(base,data) {
     this.speed.init({
         id: CENUMS.SPEED,
         pokemon: this,
-        value: base.baseStats.speed, 
+        value: base['baseStats']['speed'], 
         min: 1,
         name: 'Speed',
         max: 9999,
@@ -267,7 +268,7 @@ Pokemon.prototype.init = function(base,data) {
         id: CENUMS.ATTACK,
         pokemon: this,
         name: 'Attack',
-        value: base.baseStats.attack,
+        value: base['baseStats']['attack'],
         min: 1,
         max: 9999,
         formula: function(){
@@ -280,7 +281,7 @@ Pokemon.prototype.init = function(base,data) {
     this.spattack.init({
         id: CENUMS.SPECIALATTACK,
         pokemon: this,
-        value: base.baseStats.spattack,
+        value: base['baseStats']['spattack'],
         min: 1,
         max: 9999,
         name: 'Special Attack',
@@ -294,7 +295,7 @@ Pokemon.prototype.init = function(base,data) {
     this.defense.init({
         id: CENUMS.DEFENSE,
         pokemon: this,
-        value: base.baseStats.defense,
+        value: base['baseStats']['defense'],
         min: 1,
         max: 9999,
         name: 'Defense',
@@ -308,7 +309,7 @@ Pokemon.prototype.init = function(base,data) {
     this.spdefense.init({
         id: CENUMS.SPECIALDEFENSE,
         pokemon: this,
-        value: base.baseStats.spdefense,
+        value: base['baseStats']['spdefense'],
         min: 1,
         max: 9999,
         name: 'Special Defense',

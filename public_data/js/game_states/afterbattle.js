@@ -119,7 +119,7 @@
             this.ticker += dt;
             switch(this.stage){
                 case 1:
-                    if (this.ticker >= 0.5){
+                    if (this.ticker >= 0.18){
                         if (Party.pokemon[this.cpoke] == ''){
                             this.stage += 1;
                             this.ticker = 0;

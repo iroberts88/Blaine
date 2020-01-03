@@ -140,31 +140,35 @@
                     }
                 }
             });
+            Acorn.Input.onDown(Acorn.Input.Key.ENTER, function(){
+                if (Game.chatActive){
+                    var sData = {}
+                    sData[CENUMS.TEXT] = Game.chat.value;
+                    Acorn.Net.socket_.emit(CENUMS.CLIENTCOMMAND,sData);
+                    Game.chat.value = '';
+                    document.body.removeChild(Game.chat);
+                    Graphics.uiContainer2.addChild(Game.chatButton);
+                    Game.chatActive = false;
+                }
+            });
+            Acorn.Input.onDown(Acorn.Input.Key.SPACE, function(){
+                if (Game.chatActive){
+                    Game.chat.value += ' ';
+                    Acorn.Input.setValue(Acorn.Input.Key.SPACE,false)
+                }
+            });
         },
 
         update: function(deltaTime){
             if (!this.ready){return;}
-            if (this.chatActive){
-                if (Acorn.Input.isPressed(Acorn.Input.Key.ENTER)){
-                    var sData = {}
-                    sData[CENUMS.TEXT] = this.chat.value;
-                    Acorn.Net.socket_.emit(CENUMS.CLIENTCOMMAND,sData);
-                    this.chat.value = '';
-                    document.body.removeChild(this.chat);
-                    Graphics.uiContainer2.addChild(this.chatButton);
-                    this.chatActive = false;
-                }
-                if (Acorn.Input.isPressed(Acorn.Input.Key.SPACE)){
-                    this.chat.value += ' ';
-                    Acorn.Input.setValue(Acorn.Input.Key.SPACE,false)
-                }
-                if (document.activeElement != this.chat){
-                    this.clearUI();
-                }
-            }
             if (this.battleActive){
                 Battle.update(deltaTime);
                 return;
+            }
+            if (Game.chatActive){
+                if (document.activeElement != Game.chat){
+                    Game.clearUI();
+                }
             }
             if (this.screenChange){
                 this.updateScreenChange(deltaTime);

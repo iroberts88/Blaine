@@ -8,7 +8,8 @@
         TEXT: 2,
         DAMAGE: 3,
         SWAP: 4,
-        ANIMATION: 5
+        ANIMATION: 5,
+        FAINT: 6
     };
     var moveEnums = {
         SCRATCH: 1,
@@ -41,6 +42,12 @@
                 break;
             case actionEnums.SWAP:
                 return this.swap;
+                break;
+            case actionEnums.ANIMATION:
+                return this.animation;
+                break;
+            case actionEnums.FAINT:
+                return this.faint;
                 break;
         }
     };
@@ -123,6 +130,16 @@
         }
     };
     Action.prototype.text = function(dt,action,data){
+        if (typeof data.added == 'undefined'){
+            data.added = true;
+            Battle.addChat(data[CENUMS.TEXT])
+        }
+        action.t += dt;
+        if (action.t >= data[CENUMS.T]){
+            action.end = true;
+        }
+    };
+    Action.prototype.faint = function(dt,action,data){
         if (typeof data.added == 'undefined'){
             data.added = true;
             Battle.addChat(data[CENUMS.TEXT])

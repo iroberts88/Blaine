@@ -178,7 +178,9 @@ var Enums = {
 
 };
 
-
+Enums.timeEnums = {
+    
+}
 Enums.typeEnums = {
     'fire': Enums.TYPE_FIRE,
     'water': Enums.TYPE_WATER,
