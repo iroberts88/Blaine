@@ -21,7 +21,7 @@
       "itemid": "awakening",
       "name": "Awakening",
       "type": "main",
-      "price": 250,
+      "price": 250, 
       "stack": true,
       "description": "Cures sleep status",
       "use": {

@@ -9,7 +9,9 @@
         DAMAGE: 3,
         SWAP: 4,
         ANIMATION: 5,
-        FAINT: 6
+        FAINT: 6,
+        CATCHATTEMPT: 7,
+        BATTLEEND: 8
     };
     var moveEnums = {
         SCRATCH: 1,
@@ -48,6 +50,12 @@
                 break;
             case actionEnums.FAINT:
                 return this.faint;
+                break;
+            case actionEnums.CATCHATTEMPT:
+                return this.catchAttempt;
+                break;
+            case actionEnums.BATTLEEND:
+                return this.battleEnd;
                 break;
         }
     };
@@ -148,6 +156,21 @@
         if (action.t >= data[CENUMS.T]){
             action.end = true;
         }
+    };
+    Action.prototype.battleEnd = function(dt,action,data){
+        //figure out which side lost based on data
+        var lost = false;
+        for (var i = 0; i < data[CENUMS.LOSERS].length;i++){
+            if (Player.character.id == data[CENUMS.LOSERS][i]){
+                lost = true;
+            }
+        }
+        Party.reset(0);
+        AfterBattle.lost = lost;
+        Battle.fadeOut = true;
+        Battle.fadeOutTicker = 0;
+    };
+    Action.prototype.catchAttempt = function(dt,action,data){
     };
     Action.prototype.move = function(dt,action,data){
         action.pokemon = Battle.pokemonContainer[data[CENUMS.POKEMON]];

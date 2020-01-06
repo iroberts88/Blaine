@@ -218,35 +218,34 @@ Battle.prototype.tick = function(deltaTime){
                         //check targeting type, set targets
 
                         //do the item's on use actions
-                        var item = this.activePokemon[i].character.inventory.getItemByOrder(tData.type,tData.oIndex);
-                        //get item info
-                        for (var j = 0;j<item.use.effects.length;j++){
-                            var A = Actions.getAction(item.use.effects[j].effectid);
-                            var data = {
-                                battle: this,
-                                item: item,
-                                ctd: clientTurnData,
-                                actionData: item.use.effects[j],
-                                turnData: tData,
-                                character: this.activePokemon[i].character
-                            }
-                            clientTurnData = A(data);
-                        }
-                        //remove the item?
-                        
-                        //send results to the battle
-                        if (!this.wild){
-                            p.turnInvalid();
-                            return;
-                        }
-                        if (p.currentTurnData.target){
-                            if (!this.activePokemon[p.currentTurnData.target.id]){
+                        console.log(p.currentTurnData);
+                        var tData = p.currentTurnData;
+                        tData.ctd = {};
+                        if (tData[CENUMS.TARGET]){
+                            if (!this.activePokemon[tData[CENUMS.TARGET]]){
                                 p.turnInvalid();
                                 return;
                             }
-                        }else{
-                            p.currentTurnData.target = this.team2Pokemon[0];
                         }
+                        tData.target = tData[CENUMS.TARGET] ?  this.activePokemon[tData[CENUMS.TARGET]] : null;
+                        tData.pokemon = p;
+                        tData.battle = tData.pokemon.character.battle;
+                        tData.item = this.activePokemon[i].character.inventory.getItem(tData[CENUMS.ID]);
+                        //get item info
+                        for (var j = 0;j<tData.item.use.effects.length;j++){
+                            var A = Actions.getAction(tData.item.use.effects[j].effectid);
+                            A(tData);
+                            if (tData.failed){
+                                p.turnInvalid();
+                                return;
+                            }
+                        }
+                        //remove the item?
+                        if (tData.removeItem){
+                            //remove item
+                        }
+
+                        this.queueData(CENUMS.BATTLEDATA,Utils.createClientData(CENUMS.ACTIONS,tData.ctd,CENUMS.CHARGECOUNTER,this.getPokemonCharges()));
                         
                         break;
                     case 'switch':
@@ -395,10 +394,11 @@ Battle.prototype.checkEnd = function(team){
             pokemon.addExp(this.team2Exp);
         }
     }
-    var cData = {};
-    cData[CENUMS.LOSERS] = losers;
-    this.queueData(CENUMS.BATTLEEND,cData);
-
+    //end battle here!
+    this.queueData(CENUMS.BATTLEDATA,Utils.createClientData(
+        CENUMS.ACTIONS,
+        [Utils.createClientData(CENUMS.ACTION,8,CENUMS.LOSERS,losers)]
+    ));
     this.cleanUp();
     this.engine.battleEnd(this);
     console.log('set battle as inactive!!!')

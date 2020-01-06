@@ -158,7 +158,11 @@ Actions.prototype.damage = function(data){
 }
 Actions.prototype.catch = function(data){
     //TODO ATTEMPT TO CATCH THE POKEMON
-    var pokemon = data.battle.activePokemon[data.turnData.pID];
+    if (!data.battle.wild){
+        data.failed = true;
+        return;
+    }
+    var pokemon = data.target;
     var catchRate = ((3*pokemon.hp.value - 2*pokemon.currentHP) * pokemon.captureRate * data.actionData.power)/(3*pokemon.hp.value);
     //status bonuses?
     for (var i = 0; i < pokemon.status.length;i++){
@@ -183,15 +187,12 @@ Actions.prototype.catch = function(data){
         addedToPokedex: null,
         pcBox: null
     }
-    data.ctd.push({
-            action: 4,
-        text: 'Used ' + data.item.name + '!'
-    });
-    data.ctd.push({
-        action: 'catchattempt',
-        pokemon: pokemon.id,
-        shakes: shakes
-    });
+    data.battle.pausedTicker += data.battle.baseActionSpeed;
+    data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,'Used ' + data.item.name + '!',CENUMS.T,data.battle.baseActionSpeed));
+
+    //time is based on shakes #??
+    data.battle.pausedTicker += data.battle.baseActionSpeed+(data.battle.baseActionSpeed*shakes);
+    data.ctd.push(Utils.createClientData(CENUMS.ACTION,7,CENUMS.POKEMON,pokemon.id,CENUMS.VALUE,shakes,CENUMS.T,data.battle.baseActionSpeed+(data.battle.baseActionSpeed*shakes)));
 
     if (shakes == 4){
         info = data.character.addPokemon(pokemon);

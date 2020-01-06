@@ -212,20 +212,6 @@
             Acorn.Net.on(CENUMS.BATTLECHAT, function (data) {
                 Battle.addChat(data[CENUMS.TEXT]);
             });
-            
-            Acorn.Net.on(CENUMS.BATTLEEND, function (data) {
-                //figure out which side lost based on data
-                var lost = false;
-                for (var i = 0; i < data[CENUMS.LOSERS].length;i++){
-                    if (Player.character.id == data[CENUMS.LOSERS][i]){
-                        lost = true;
-                    }
-                }
-                Party.reset(0);
-                AfterBattle.lost = lost;
-                Battle.fadeOut = true;
-                Battle.fadeOutTicker = 0;
-            });
 
             Acorn.Net.on(CENUMS.BATTLEDATA, function (data) {
                 console.log(data);
