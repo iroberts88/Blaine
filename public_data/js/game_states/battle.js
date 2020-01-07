@@ -392,6 +392,7 @@
                 }
             }
             team[p.id] = p;
+            p.battleCommandSent = false;
             Battle.pokemonSpriteContainer[p.id] = Battle.getPokemonData(p,n,this.teamSize,team);
             Battle.pokemonContainer[p.id] = p;
             Graphics.uiContainer2.addChild(this.pokemonSpriteContainer[p.id].nameDisplay);

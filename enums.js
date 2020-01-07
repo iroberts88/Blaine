@@ -201,5 +201,15 @@ Enums.typeEnums = {
     'fairy': Enums.TYPE_FAIRY,
     'normal': Enums.TYPE_NORMAL,
 }
+Enums.statEnums = {
+    'atk': Enums.ATTACK,
+    'spatk': Enums.SPECIALATTACK,
+    'def': Enums.DEFENSE,
+    'spdef': Enums.SPECIALDEFENSE,
+    'speed': Enums.SPEED,
+    'hp': Enums.HP,
+    'ev': Enums.EVASION,
+    'acc': Enums.ACCURACY
+}
 
 exports.Enums = Enums;

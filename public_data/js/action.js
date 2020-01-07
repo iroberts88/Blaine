@@ -150,8 +150,11 @@
     Action.prototype.faint = function(dt,action,data){
         if (typeof data.added == 'undefined'){
             data.added = true;
-            Battle.addChat(data[CENUMS.TEXT])
+            data.pokemon = Battle.pokemonContainer[data[CENUMS.POKEMON]];
+            Battle.addChat(data.pokemon.nickname + ' fainted!');
         }
+        var sc = Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]];
+        sc.sprite.alpha *= 0.99;
         action.t += dt;
         if (action.t >= data[CENUMS.T]){
             action.end = true;
@@ -171,6 +174,14 @@
         Battle.fadeOutTicker = 0;
     };
     Action.prototype.catchAttempt = function(dt,action,data){
+        if (typeof data.added == 'undefined'){
+            console.log(action);
+            data.added = true;
+        }
+        action.t += dt;
+        if (action.t >= data[CENUMS.T]){
+            action.end = true;
+        }
     };
     Action.prototype.move = function(dt,action,data){
         action.pokemon = Battle.pokemonContainer[data[CENUMS.POKEMON]];
@@ -210,6 +221,7 @@
             if (action.t >= data[CENUMS.VALUE]){
                 action.end = true;
                 Battle.paused = false;
+                console.log(data);
                 Battle.addPokemon(data.p2,data.n,data.team);
                 Battle.addChat("& " + Battle.trainers[data.p1.owner].name + ' sends out ' + data.p2.nickname + '!');
             }

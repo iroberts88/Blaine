@@ -61,7 +61,6 @@ var Battle = function(ge) {
     this.waitingForNextPokemon = false;
     this.waitingTicker = 0;
     this.waitingTime = 10.0;
-    this.currentAction = null;
 
     this.swapTime = 3.0;
     this.swapTicker = 0;
@@ -142,18 +141,6 @@ Battle.addPausedTicker = function(amt){
     this.pausedTicker += amt;
 }
 Battle.prototype.tick = function(deltaTime){
-    if (this.swapping){
-        this.swapTicker += deltaTime;
-        if (this.swapTicker >= this.swapTime){
-            //swap done
-            console.log("SWAPPED!")
-            this.paused = false;
-            this.currentAction = null; 
-            this.swapTicker = 0;
-            this.swapping = false;
-        }
-        return;
-    }
     if (this.waitingForNextPokemon){
         this.waitingTicker += deltaTime;
         if (this.waitingTicker >= this.waitingTime){
@@ -192,7 +179,7 @@ Battle.prototype.tick = function(deltaTime){
         if (p.charge >= this.chargeCounter){
             p.charge = this.chargeCounter;
             //if pokemon has a battle command ready - initiate it
-            if (p.currentTurnData && !this.currentAction){
+            if (p.currentTurnData){
 
                 //EXECUTE TURN...
                 switch (p.currentTurnData.command){
@@ -250,7 +237,6 @@ Battle.prototype.tick = function(deltaTime){
                         break;
                     case 'switch':
                         //begin switch
-
                         var p1 = p.currentTurnData.pkmn;
                         var p2 = p.currentTurnData.target;
                         if (this.activePokemon[p2.id]){
@@ -263,9 +249,6 @@ Battle.prototype.tick = function(deltaTime){
                             p1.turnInvalid();
                             return;
                         }
-                        this.swapTicker = 0;
-                        this.paused = true;
-                        this.swapping = true;
                         var team = this.getTeamPkmn(p1.character);
                         for (var j = 0; j < team.length;j++){
                             if (p1.id == team[j].id){
@@ -281,14 +264,16 @@ Battle.prototype.tick = function(deltaTime){
                         //send to client!!
                         var cData = {};
                         p2.charge = 0;
+                        this.pausedTicker += this.swapTime;
                         cData[CENUMS.POKEMON1] = p1.id;
                         cData[CENUMS.POKEMON2] = p2.getLessClientData();
                         cData[CENUMS.ID] = p.currentTurnData.id;
                         cData[CENUMS.VALUE] = this.swapTime;
-                        cData[CENUMS.CLIENTID] = 6;
+                        cData[CENUMS.ACTION] = 4;
                         this.queueData(CENUMS.BATTLESWAP,cData);
-                        this.currentAction = p.currentTurnData;
                         this.getChargeCounter();
+                        p1.reset();
+                        p2.reset();
                         break;
                 }
 
@@ -504,13 +489,13 @@ Battle.prototype.pokemonFainted = function(pkmn){
         pkmn.character.pokemonHasFaintedTicker = 0;
     }
 
-    this.pausedTicker += 1.5;
+    /*this.pausedTicker += 1.5;
     this.queueData(CENUMS.BATTLEDATA,Utils.createClientData(
         CENUMS.ACTIONS,
         [Utils.createClientData(CENUMS.ACTION,6,CENUMS.POKEMON,pkmn.id,CENUMS.T,1.5)],
         CENUMS.CHARGECOUNTER,
         this.getPokemonCharges()
-    ));
+    ));*/
     
     
 

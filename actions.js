@@ -29,6 +29,7 @@ Actions.prototype.doAttack = function(pokemon,attack,data){
     data.ctd = [];
     data.pokemon = pokemon;
     data.attack = attack;
+    data.battle = pokemon.character.battle;
     var battle = pokemon.character.battle;
     var txt = data.pokemon.nickname + ' used ' + attack.name;
     var targets = [];
@@ -78,7 +79,7 @@ Actions.prototype.doAttack = function(pokemon,attack,data){
         for (var i = 0; i < attack.effects.length;i++){
             var A = this.getAction(attack.effects[i]['effectName']);
             data.target = target;
-            data.effect = attack.effects[i]['effectName'];
+            data.effect = attack.effects[i];
             A(data);
         }
     }
@@ -229,12 +230,14 @@ Actions.prototype.catch = function(data){
 
 
 Actions.prototype.alterStatStage = function(data){
+    console.log(data.effect)
     if (typeof data.effect.chance == 'undefined'){
         data.effect.chance = 1;
     }
     
     if (Math.random() < data.effect.chance){
-        var stat = data.target.getStat(data.effect.stat);
+        var stat = data.target.getStat(CENUMS.statEnums[data.effect.stat]);
+        if (!stat){return;}
         console.log(stat.value)
         var previous = stat.stage;
         stat.modStage(data.effect.val);
@@ -257,8 +260,8 @@ Actions.prototype.alterStatStage = function(data){
                 text = data.target.nickname + '\'s ' + stat.name + ' went way down!';
         }
         console.log(stat.value);
-        battle.pausedTicker += battle.baseActionSpeed;
-        data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,text,CENUMS.T,battle.baseActionSpeed));
+        data.battle.pausedTicker += data.battle.baseActionSpeed;
+        data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,text,CENUMS.T,data.battle.baseActionSpeed));
     }
 }
 

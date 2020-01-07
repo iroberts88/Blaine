@@ -674,6 +674,9 @@
                 var mUpFunc = function(e){
                     if (Game.pkmnSwapChange){return;}
                     if (Game.battleActive){
+                        if (Battle.confirmTurnWindow){
+                            return;
+                        }
                         //swap pokemon here??
                         //make sure it isnt active pokemon
                         if (Battle.currentSelectedItem){
@@ -883,7 +886,6 @@
                 c.gfx.drawRoundedRect(c.pokeSprite.position.x,c.pokeSprite.position.y + c.pokeSprite.height + 5,size,15,6);
                 c.gfx.drawRect(c.pokeSprite.position.x+10,c.pokeSprite.position.y + c.pokeSprite.height + 5,size-10,15);
                 c.gfx.endFill();
-
                 c.gfx.lineStyle(2,0x000000,1);
                 c.gfx.beginFill(0x707070,0);
                 c.gfx.drawRoundedRect(c.pokeSprite.position.x,c.pokeSprite.position.y + c.pokeSprite.height + 5,xSize/3,15,6);
@@ -900,11 +902,11 @@
             c.spattack.text = pokemon.specialAttack;
             c.spdefense.text = pokemon.specialDefense;
             c.speed.text = pokemon.speed;
-            
+
             c.overlayText.visible = false;
             c.fainted = false;
             c.pokemonActive = false;            
-            if (pokemon.currentHP == 0){
+            if (pokemon.hpPercent == 0){
                 c.overlayText.text = 'Fainted';
                 c.overlayText.visible = true;
                 c.fainted = true;
