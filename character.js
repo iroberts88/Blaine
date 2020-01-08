@@ -139,7 +139,7 @@ var Character = function(){
         this.pokedex = data.pokedex;
         //init pokemon
         this.party = [];
-        var pkmn = [1,4,7,10,13,15];
+        var pkmn = [1,4,7];
         for (var i = 0; i < pkmn.length;i++){
             var newPoke = new Pokemon();
             newPoke.init(this.owner.engine.pokemon[pkmn[i]],{

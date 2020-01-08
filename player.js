@@ -203,21 +203,17 @@ Player.prototype.setupSocket = function() {
                 }
                 team[repNum-1] = pkmn;
 
-                var cData = {};
-                cData[CENUMS.POKEMON] = pkmn.getLessClientData();
-                cData[CENUMS.SLOT] = repNum;
-                that.battle.queueData(CENUMS.NEWPKMN,cData);
-
+                that.battle.pausedTicker += 1.5;
+                that.battle.queueData(CENUMS.BATTLEDATA,Utils.createClientData(
+                    CENUMS.ACTIONS,
+                    [Utils.createClientData(CENUMS.ACTION,9,CENUMS.POKEMON,pkmn.getLessClientData(),CENUMS.SLOT,repNum,CENUMS.T,1.5)],
+                    CENUMS.CHARGECOUNTER,
+                    that.battle.getPokemonCharges()
+                ));
 
                 that.character.activePokemon[pkmn.id] = pkmn;
                 that.battle.activePokemon[pkmn.id] = pkmn;
                 pkmn.character.participated[pkmn.id] = true;
-
-                if (!that.character.hasFaintedPokemon()){
-                    //still has a fainte pokemon?
-                    that.battle.waitingTime = 1.5;
-                    that.battle.waitingTicker = 0;
-                }
                 break;
             case CENUMS.SWAPPKMN:
                 if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.TARGET])){

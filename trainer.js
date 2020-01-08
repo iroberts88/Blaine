@@ -4,7 +4,9 @@
 //  trainer for the purpose of battles/
 
 var CENUMS = require('./enums.js').Enums; //init client enums
-var Pokemon = require('./pokemon.js').Pokemon;
+var Pokemon = require('./pokemon.js').Pokemon,
+    utils = require('./utils.js').Utils;
+var Utils = new utils();
 
 var Trainer = function(ge){
     this.engine = ge;
@@ -55,32 +57,26 @@ Trainer.prototype.update = function(deltaTime) {
 
     if (this.hasFaintedPokemon()){
         this.checkBattleEnd();
-        this.pkmnHasFaintedTicker += deltaTime;
-        if (this.pkmnHasFaintedTicker >= 1.0){
-            //send out new pokemon
-            if (this.getWaitingPokemon()){
-                //get the waiting pokemon
-                var pkmn = this.getWaitingPokemon();
-                var cData = {};
-                var repNum = this.getFaintedPokemonSlot();
-                cData[CENUMS.POKEMON] = pkmn.getLessClientData();
-                cData[CENUMS.SLOT] = repNum+1;
-                this.battle.queueData(CENUMS.NEWPKMN,cData);
+        //send out new pokemon
+        if (this.getWaitingPokemon()){
+            //get the waiting pokemon
+            var pkmn = this.getWaitingPokemon();
+            var cData = {};
+            var repNum = this.getFaintedPokemonSlot();
 
-                var team = this.battle.getTeamPkmn(this);
-                team[repNum] = pkmn;
+            this.battle.pausedTicker += 1.5;
+            this.battle.queueData(CENUMS.BATTLEDATA,Utils.createClientData(
+                CENUMS.ACTIONS,
+                [Utils.createClientData(CENUMS.ACTION,9,CENUMS.POKEMON,pkmn.getLessClientData(),CENUMS.SLOT,repNum+1,CENUMS.T,1.5)],
+                CENUMS.CHARGECOUNTER,
+                this.battle.getPokemonCharges()
+            ));
+            var team = this.battle.getTeamPkmn(this);
+            team[repNum] = pkmn;
 
-                this.activePokemon[pkmn.id] = pkmn;
-                this.battle.activePokemon[pkmn.id] = pkmn;
-                this.participated[pkmn.id] = true;
-
-                if (!this.hasFaintedPokemon() || !this.hasWaitingPokemon()){
-                    //still has a fainte pokemon?
-                    this.battle.waitingTime = 1.5;
-                    this.battle.waitingTicker = 0;
-                }
-            }
-            this.pkmnHasFaintedTicker -= 1.0;
+            this.activePokemon[pkmn.id] = pkmn;
+            this.battle.activePokemon[pkmn.id] = pkmn;
+            this.participated[pkmn.id] = true;
         }
     }
     for (var i in this.activePokemon){

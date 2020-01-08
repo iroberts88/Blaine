@@ -58,9 +58,6 @@ var Battle = function(ge) {
 
     this.paused = false;
     this.pausedTicker = 0;
-    this.waitingForNextPokemon = false;
-    this.waitingTicker = 0;
-    this.waitingTime = 10.0;
 
     this.swapTime = 3.0;
     this.swapTicker = 0;
@@ -141,16 +138,6 @@ Battle.addPausedTicker = function(amt){
     this.pausedTicker += amt;
 }
 Battle.prototype.tick = function(deltaTime){
-    if (this.waitingForNextPokemon){
-        this.waitingTicker += deltaTime;
-        if (this.waitingTicker >= this.waitingTime){
-            this.waitingTicker = 0;
-            this.paused = false;
-            this.waitingForNextPokemon = false;
-            this.queueData(CENUMS.RESUME,{});
-        }
-        return;
-    }
     if (this.pausedTicker > 0){
         this.pausedTicker -= deltaTime;
         if (this.pausedTicker <= 0){
@@ -457,13 +444,6 @@ Battle.prototype.pokemonFainted = function(pkmn){
         console.log("wild pokemon fainted!!! (run away!!)")
     }
     //add to team exp!!
-
-    this.paused = true;
-    if (pkmn.character.hasWaitingPokemon()){
-        this.waitingForNextPokemon = true;
-        this.waitingTicker = 0;
-        this.waitingTime = 10.0;
-    }
     //add exp to team exp 
 
     var teamn = this.getTeamN(pkmn.character);

@@ -11,7 +11,8 @@
         ANIMATION: 5,
         FAINT: 6,
         CATCHATTEMPT: 7,
-        BATTLEEND: 8
+        BATTLEEND: 8,
+        NEWPKMN: 9
     };
     var moveEnums = {
         SCRATCH: 1,
@@ -56,6 +57,9 @@
                 break;
             case actionEnums.BATTLEEND:
                 return this.battleEnd;
+                break;
+            case actionEnums.NEWPKMN:
+                return this.newPokemon;
                 break;
         }
     };
@@ -227,6 +231,27 @@
             }
         }
         if (action.t >= data[CENUMS.T]){
+            action.end = true;
+        }
+    };
+    Action.prototype.newPokemon = function(dt,action,data){
+        action.t += dt;
+
+        if (typeof data.added == 'undefined'){
+            //new battle pokemon
+            if (Party.getPokemon(data[CENUMS.POKEMON][CENUMS.ID])){
+                var newPoke = Party.getPokemon(data[CENUMS.POKEMON][CENUMS.ID]);
+                Battle.addChat("& " + 'Go, ' + newPoke.nickname + '!');
+            }else{
+                var newPoke = new Pokemon();
+                newPoke.init(data[CENUMS.POKEMON]);
+                Battle.addChat("& " + Battle.trainers[newPoke.owner].name + ' sends out ' + newPoke.nickname + '!');
+            }
+            data.added = true;
+        }
+        if (action.t >= data[CENUMS.T]){
+            Battle.checkBattleCommand();
+            Battle.addPokemon(newPoke,data[CENUMS.SLOT],Battle.trainers[newPoke.owner].team);
             action.end = true;
         }
     };

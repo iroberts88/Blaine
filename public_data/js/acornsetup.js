@@ -214,8 +214,10 @@
             });
 
             Acorn.Net.on(CENUMS.BATTLEDATA, function (data) {
-                console.log(data);
                 for (var i in data[CENUMS.CHARGECOUNTER]){
+                    if (typeof Battle.pokemonContainer[i] == 'undefined'){
+                        continue;
+                    }
                     Battle.pokemonContainer[i].charge = data[CENUMS.CHARGECOUNTER][i];
                     var bar = Battle.pokemonSpriteContainer[i].chargeBar;
                     Battle.drawChargeBar(bar,Battle.pokemonContainer[i].charge/Battle.chargeCounter);

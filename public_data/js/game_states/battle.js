@@ -946,6 +946,7 @@
         clear: function(){
             this.hideTurnOptions();
             Graphics.ui.removeChild(Battle.confirmTurnWindow);
+            this.confirmTurnWindow.destroy();
             this.confirmTurnWindow = null;
             Battle.targetSelectMode = '';
             Battle.currentSelectedItem = null;
