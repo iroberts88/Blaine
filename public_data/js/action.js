@@ -172,7 +172,7 @@
                 lost = true;
             }
         }
-        Party.reset(0);
+        Party.reset();
         AfterBattle.lost = lost;
         Battle.fadeOut = true;
         Battle.fadeOutTicker = 0;
@@ -240,18 +240,18 @@
         if (typeof data.added == 'undefined'){
             //new battle pokemon
             if (Party.getPokemon(data[CENUMS.POKEMON][CENUMS.ID])){
-                var newPoke = Party.getPokemon(data[CENUMS.POKEMON][CENUMS.ID]);
-                Battle.addChat("& " + 'Go, ' + newPoke.nickname + '!');
+                data.newPoke = Party.getPokemon(data[CENUMS.POKEMON][CENUMS.ID]);
+                Battle.addChat("& " + 'Go, ' + data.newPoke.nickname + '!');
             }else{
-                var newPoke = new Pokemon();
-                newPoke.init(data[CENUMS.POKEMON]);
-                Battle.addChat("& " + Battle.trainers[newPoke.owner].name + ' sends out ' + newPoke.nickname + '!');
+                data.newPoke = new Pokemon();
+                data.newPoke.init(data[CENUMS.POKEMON]);
+                Battle.addChat("& " + Battle.trainers[data.newPoke.owner].name + ' sends out ' + data.newPoke.nickname + '!');
             }
             data.added = true;
         }
         if (action.t >= data[CENUMS.T]){
             Battle.checkBattleCommand();
-            Battle.addPokemon(newPoke,data[CENUMS.SLOT],Battle.trainers[newPoke.owner].team);
+            Battle.addPokemon(data.newPoke,data[CENUMS.SLOT],Battle.trainers[data.newPoke.owner].team);
             action.end = true;
         }
     };

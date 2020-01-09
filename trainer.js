@@ -29,6 +29,8 @@ var Trainer = function(ge){
 
     this.pkmnHasFainted = false;
     this.pkmnHasFaintedTicker = 0;
+
+    this.pkmnCatchable = false;
 }
 
 Trainer.prototype.init = function(data) {
@@ -134,12 +136,15 @@ Trainer.prototype.checkBattleEnd = function(data){
 
 Trainer.prototype.initBattle = function(battle,wild,team){
     this.activePokemon = {};
-    this.team
+    this.team = team;
     this.currentEnemyTeam = null;
     this.battle = battle;
     this.battleSlots = [];
     var n = 3;
-    if (wild){n = 1};
+    if (wild){
+        n = 1;
+        this.pkmnCatchable = true;
+    };
     if (battle.type == 'team'){
         n = 2;
     };
@@ -182,7 +187,9 @@ Trainer.prototype.addPokemon = function(p){
 Trainer.prototype.hasActivePokemon = function(id){
     for (var i = 0; i < this.party.length; i++){
         if (this.activePokemon[this.party[i].id]){
-            return true;
+            if (!this.activePokemon[this.party[i].id].caught){
+                return true;
+            }
         }
     }
     return false;

@@ -191,23 +191,25 @@ Battle.prototype.tick = function(deltaTime){
 
                         //check targeting type, set targets
 
-                        //do the item's on use actions
-                        console.log(p.currentTurnData);
+                        //do the item's on use actionsa
                         var tData = p.currentTurnData;
                         tData.ctd = {};
-                        if (tData[CENUMS.TARGET]){
-                            if (!this.activePokemon[tData[CENUMS.TARGET]]){
+                        if (tData.target){
+                            if (!this.activePokemon[tData.target]){
+                                console.log('target doesnt exist!')
                                 p.turnInvalid();
                                 return;
                             }
                         }
-                        tData.target = tData[CENUMS.TARGET] ?  this.activePokemon[tData[CENUMS.TARGET]] : null;
-                        tData.pokemon = p;
                         tData.battle = tData.pokemon.character.battle;
-                        tData.item = this.activePokemon[i].character.inventory.getItem(tData[CENUMS.ID]);
                         //get item info
-                        for (var j = 0;j<tData.item.use.effects.length;j++){
-                            var A = Actions.getAction(tData.item.use.effects[j].effectid);
+                        if (!tData.item){
+                            p.turnInvalid("no item with that id...");
+                            return;
+                        }
+                        for (var j = 0;j<tData.item.use['effects'].length;j++){
+                            var A = Actions.getAction(tData.item.use['effects'][j]['effectid']);
+                            tData.effect = tData.item.use['effects'][j];
                             A(tData);
                             if (tData.failed){
                                 p.turnInvalid();
@@ -218,7 +220,7 @@ Battle.prototype.tick = function(deltaTime){
                         if (tData.removeItem){
                             //remove item
                         }
-
+                        p.character.checkBattleEnd(tData.ctd);
                         this.queueData(CENUMS.BATTLEDATA,Utils.createClientData(CENUMS.ACTIONS,tData.ctd,CENUMS.CHARGECOUNTER,this.getPokemonCharges()));
                         
                         break;
@@ -302,7 +304,7 @@ Battle.prototype.checkReady = function(){
     }
 };
 
-Battle.prototype.checkEnd = function(team){
+Battle.prototype.checkEnd = function(team,forceEnd = false){
     // check to see if the given team is out of pokemon 
     // (or has no active pokemon for more than 10 seconds)
     var end = [];

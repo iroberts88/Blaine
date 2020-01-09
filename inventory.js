@@ -90,7 +90,7 @@ Inventory.prototype.getItem = function(id){
     if (typeof this.items[id] != 'undefined'){
         return this.items[id];
     }
-    return 0;
+    return null;
 }
 
 Inventory.prototype.getItemByOrder = function(type,index){
@@ -165,7 +165,7 @@ Item.prototype.init = function(data) {
     this.price = data['price'];
     this.stack = data['stack'];
     this.description = data['description'];
-    this.use = data['use'];
+    this.use = data['use']; 
     this.amount = 1;
 
     this.targetType = this['use']['type'];

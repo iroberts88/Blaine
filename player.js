@@ -8,7 +8,9 @@ var User = require('./user.js').User,
     CENUMS = require('./enums.js').Enums, //init client enums
     Trainer = require('./trainer.js').Trainer,
     Pokemon = require('./pokemon.js').Pokemon,
-    Triggers = require('./triggers.js').Triggers;
+    Triggers = require('./triggers.js').Triggers,
+    utils = require('./utils.js').Utils;
+var Utils = new utils();
 
 const crypto = require('crypto');
 
@@ -102,13 +104,10 @@ Player.prototype.setupSocket = function() {
             that.engine.log(data);
             return;
         }
-
         if (!that.battle){
             that.engine.log('no battle...');
             return;
-
         }
-        console.log(data);
         switch(data[CENUMS.COMMAND]){
             case CENUMS.ATTACK:
                 if (!that.checkData(data,[CENUMS.POKEMON,CENUMS.MOVEID])){
@@ -173,7 +172,6 @@ Player.prototype.setupSocket = function() {
                     default:
                         target = pokemon;
                         break;
-
                 }
                 //add the move the the pokemon!
                 pokemon.currentTurnData = {
@@ -282,9 +280,9 @@ Player.prototype.setupSocket = function() {
 
                 pokemon.currentTurnData = {
                     command: 'item',
-                    id: that.engine.getId(),
+                    item: item,
                     target: target,
-                    pkmn: pokemon
+                    pokemon: pokemon
                 }
                 break;
             case CENUMS.RUN:

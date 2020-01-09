@@ -163,7 +163,17 @@ Actions.prototype.catch = function(data){
         data.failed = true;
         return;
     }
-    var pokemon = data.target;
+    var pokemon = null
+    for (var i = 0; i < data.battle.activePokemon.length;i++){
+        if (data.battle.activePokemon[i].character.pkmnCatchable){
+            pokemon = data.battle.activePokemon[i];
+        }
+    }
+    if (!pokemon){
+        //no target - get a catchable pokemon
+        data.failed = true;
+        return;
+    }
     var catchRate = ((3*pokemon.hp.value - 2*pokemon.currentHP) * pokemon.captureRate * data.actionData.power)/(3*pokemon.hp.value);
     //status bonuses?
     for (var i = 0; i < pokemon.status.length;i++){
@@ -188,42 +198,31 @@ Actions.prototype.catch = function(data){
         addedToPokedex: null,
         pcBox: null
     }
+    data.removeItem = true;
+
     data.battle.pausedTicker += data.battle.baseActionSpeed;
     data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,'Used ' + data.item.name + '!',CENUMS.T,data.battle.baseActionSpeed));
 
     //time is based on shakes #??
-    data.battle.pausedTicker += data.battle.baseActionSpeed+(data.battle.baseActionSpeed*shakes);
-    data.ctd.push(Utils.createClientData(CENUMS.ACTION,7,CENUMS.POKEMON,pokemon.id,CENUMS.VALUE,shakes,CENUMS.T,data.battle.baseActionSpeed+(data.battle.baseActionSpeed*shakes)));
+    data.battle.pausedTicker += 1.5+(1.3*shakes);
+    data.ctd.push(Utils.createClientData(CENUMS.ACTION,7,CENUMS.POKEMON,pokemon.id,CENUMS.VALUE,shakes,CENUMS.T,1.5+(1.3*shakes)));
 
     if (shakes == 4){
         info = data.character.addPokemon(pokemon);
-        data.ctd.push({
-            action: 'getnickname',
-            pokemon: pokemon.id
-        });
 
         if (info.partySlot != null){
-            data.ctd.push({
-                action: 'text',
-                text: pokemon.nickname + ' added to party!'
-            });
+            data.battle.pausedTicker += data.battle.baseActionSpeed;
+            data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,pokemon.nickname + ' added to party!',CENUMS.T,data.battle.baseActionSpeed));
         }
         if (info.pcBox != null){
-            data.ctd.push({
-                action: 'text',
-                text: pokemon.nickname + ' added to PC box #' + info.pcBox + '!'
-            });
+            data.battle.pausedTicker += data.battle.baseActionSpeed;
+            data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,pokemon.nickname + ' added to PC box #' + info.pcBox + '!',CENUMS.T,data.battle.baseActionSpeed));
         }
         if (info.addedToPokedex != null){
-            data.ctd.push({
-                action: 'text',
-                text: pokemon.name + ' info added to pokedex!'
-            });
+            data.battle.pausedTicker += data.battle.baseActionSpeed;
+            data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,pokemon.name + ' info added to pokedex!',CENUMS.T,data.battle.baseActionSpeed));
         }
-        data.ctd.push({
-            action: 'endbattle'
-        });
-        data.battle.endAfterTurn = true;
+        pokemon.caught = true;
     }
     return data.ctd;
 }

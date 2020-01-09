@@ -176,7 +176,7 @@
         	var p = c.pokemon;
         	var gfx = c.expBar;
             gfx.clear();
-            var percent = (c.expDisplayed-p.expAtCurrentLevel)/(p.expToNextLevel-p.expAtCurrentLevel);
+            var percent = Math.min(1,(c.expDisplayed-p.expAtCurrentLevel)/(p.expToNextLevel-p.expAtCurrentLevel));
             var xSize = c.expBarWidth;
             var ySize = c.expBarHeight;
             if (!percent){

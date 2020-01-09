@@ -23,12 +23,16 @@
 
         reset: function(){
             for (var i in this.pokemon){
-                this.pokemon[i].reset();
+                if (this.pokemon[i] != ''){
+                    this.pokemon[i].reset();
+                }
             }
         },
         resetPreviousValues: function(){
             for (var i in this.pokemon){
-                this.pokemon[i].resetPreviousValues();
+                if (this.pokemon[i] != ''){
+                    this.pokemon[i].resetPreviousValues();
+                }
             }
         },
         setPokemon: function(slot,pokemon){
@@ -37,16 +41,20 @@
 
         getPokemon: function(id){
             for (var i = 1;i < 7;i++){
-                if (this.pokemon[i].id == id){
-                    return this.pokemon[i];
+                if (this.pokemon[i] != ''){ 
+                    if (this.pokemon[i].id == id){
+                        return this.pokemon[i];
+                    }
                 }
             }
             return null;
         },
         getPokemonIndex: function(id){
             for (var i = 1;i < 7;i++){
-                if (this.pokemon[i].id == id){
-                    return i;
+                if (this.pokemon[i] != ''){
+                    if (this.pokemon[i].id == id){
+                        return i;
+                    }
                 }
             }
             return null;

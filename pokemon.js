@@ -59,6 +59,8 @@ var Pokemon = function(){
 
     this.critChance = null;
 
+    this.caught = false;
+
     //this.nature = null;
 
     //this.ability = null;
@@ -89,6 +91,7 @@ Pokemon.prototype.reset = function(){
     this.castingAttack = null
     this.currentTurnData = null;
     this.castingAttackTicker = 0;
+    this.caught = false;
 }
 Pokemon.prototype.battleReset = function(){
     this.charge = 0;
@@ -100,6 +103,8 @@ Pokemon.prototype.battleReset = function(){
     this.spdefense.reset(false);
     this.defense.reset(false);
     this.attack.reset(false);
+    
+    this.caught = false;
 
     //clear some status effects?
 }
