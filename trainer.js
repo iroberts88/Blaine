@@ -118,7 +118,7 @@ Trainer.prototype.update = function(deltaTime) {
     }
 };
 
-Trainer.prototype.checkBattleEnd = function(data){
+Trainer.prototype.checkBattleEnd = function(ctd = null){
 
     var end = false;
     if (!this.hasActivePokemon()){
@@ -130,7 +130,7 @@ Trainer.prototype.checkBattleEnd = function(data){
         }
     }
     if (end){
-        this.battle.checkEnd(this.currentTeam,data);
+        this.battle.checkEnd(this.currentTeam,ctd);
     }
 };
 

@@ -161,10 +161,11 @@ Actions.prototype.catch = function(data){
     //TODO ATTEMPT TO CATCH THE POKEMON
     if (!data.battle.wild){
         data.failed = true;
+        console.log('here')
         return;
     }
     var pokemon = null
-    for (var i = 0; i < data.battle.activePokemon.length;i++){
+    for (var i in data.battle.activePokemon){
         if (data.battle.activePokemon[i].character.pkmnCatchable){
             pokemon = data.battle.activePokemon[i];
         }
@@ -172,9 +173,10 @@ Actions.prototype.catch = function(data){
     if (!pokemon){
         //no target - get a catchable pokemon
         data.failed = true;
+        console.log('here2')
         return;
     }
-    var catchRate = ((3*pokemon.hp.value - 2*pokemon.currentHP) * pokemon.captureRate * data.actionData.power)/(3*pokemon.hp.value);
+    var catchRate = ((3*pokemon.hp.value - 2*pokemon.currentHP.value) * pokemon.captureRate * data.effect['power'])/(3*pokemon.hp.value);
     //status bonuses?
     for (var i = 0; i < pokemon.status.length;i++){
         //TODO sleep poison etc.
@@ -208,7 +210,16 @@ Actions.prototype.catch = function(data){
     data.ctd.push(Utils.createClientData(CENUMS.ACTION,7,CENUMS.POKEMON,pokemon.id,CENUMS.VALUE,shakes,CENUMS.T,1.5+(1.3*shakes)));
 
     if (shakes == 4){
-        info = data.character.addPokemon(pokemon);
+
+        var teamn = data.battle.getTeamN(data.pokemon.character);
+        var exp = Math.ceil((data.pokemon.baseExp*data.pokemon.level)/4);
+        if (teamn == 1){
+            data.battle.team2Exp += exp;
+        }else{
+            data.battle.team1Exp += exp;
+        }
+        
+        info = data.pokemon.character._addPokemon(pokemon);
 
         if (info.partySlot != null){
             data.battle.pausedTicker += data.battle.baseActionSpeed;
@@ -223,6 +234,7 @@ Actions.prototype.catch = function(data){
             data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,pokemon.name + ' info added to pokedex!',CENUMS.T,data.battle.baseActionSpeed));
         }
         pokemon.caught = true;
+        pokemon.character.checkBattleEnd(data.ctd);
     }
     return data.ctd;
 }

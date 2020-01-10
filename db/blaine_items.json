@@ -132,7 +132,7 @@
         "effects": [
           {
             "effectid": "catch",
-            "power": 8
+            "power": 9999999
           }
         ]
       }

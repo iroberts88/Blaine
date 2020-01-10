@@ -214,6 +214,7 @@
             });
 
             Acorn.Net.on(CENUMS.BATTLEDATA, function (data) {
+                console.log(data);
                 for (var i in data[CENUMS.CHARGECOUNTER]){
                     if (typeof Battle.pokemonContainer[i] == 'undefined'){
                         continue;
@@ -272,7 +273,7 @@
                 var newpoke = new Pokemon();
                 newpoke.init(data[CENUMS.POKEMON]);
                 Party.setPokemon(data[CENUMS.SLOT],newpoke);
-                Game.resetPokemon(data[CENUMS.SLOT]);
+                //Game.resetPokemon(data[CENUMS.SLOT]);
             });
             Acorn.Net.on(CENUMS.NEWPKMN, function (data) {
                 //new battle pokemon

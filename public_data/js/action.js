@@ -144,7 +144,7 @@
     Action.prototype.text = function(dt,action,data){
         if (typeof data.added == 'undefined'){
             data.added = true;
-            Battle.addChat(data[CENUMS.TEXT])
+            Battle.addChat('& ' + data[CENUMS.TEXT])
         }
         action.t += dt;
         if (action.t >= data[CENUMS.T]){
@@ -179,11 +179,35 @@
     };
     Action.prototype.catchAttempt = function(dt,action,data){
         if (typeof data.added == 'undefined'){
-            console.log(action);
+            data.shakes = data[CENUMS.VALUE];
+            data.pc = Battle.pokemonContainer[data[CENUMS.POKEMON]];
+            data.psc = Battle.pokemonSpriteContainer[data[CENUMS.POKEMON]];
             data.added = true;
+            data.pTicker = 0;
+            data.phase = 0;
         }
         action.t += dt;
+        data.pTicker += dt;
+        if (data.phase == 0){
+            if (data.pTicker >= 1.5){
+                data.pTicker -= 1.5
+                data.phase += 1;
+            }
+        }else{
+            if (data.pTicker >= 1.3){
+                data.pTicker -= 1.3
+                if (data.phase == 4){
+                    Battle.addChat('CLICK!!');
+                }else{
+                    Battle.addChat('&SHAKE&');
+                }
+                data.phase += 1;
+            }
+        }
         if (action.t >= data[CENUMS.T]){
+            if (data.shakes != 4){
+                Battle.addChat('THE POKEMON BROKE FREE!!');
+            }
             action.end = true;
         }
     };

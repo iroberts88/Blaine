@@ -193,7 +193,7 @@ Battle.prototype.tick = function(deltaTime){
 
                         //do the item's on use actionsa
                         var tData = p.currentTurnData;
-                        tData.ctd = {};
+                        tData.ctd = [];
                         if (tData.target){
                             if (!this.activePokemon[tData.target]){
                                 console.log('target doesnt exist!')
@@ -212,6 +212,7 @@ Battle.prototype.tick = function(deltaTime){
                             tData.effect = tData.item.use['effects'][j];
                             A(tData);
                             if (tData.failed){
+                                console.log('failed')
                                 p.turnInvalid();
                                 return;
                             }
@@ -220,9 +221,9 @@ Battle.prototype.tick = function(deltaTime){
                         if (tData.removeItem){
                             //remove item
                         }
-                        p.character.checkBattleEnd(tData.ctd);
                         this.queueData(CENUMS.BATTLEDATA,Utils.createClientData(CENUMS.ACTIONS,tData.ctd,CENUMS.CHARGECOUNTER,this.getPokemonCharges()));
-                        
+                        p.reset();
+                        this.queueData(CENUMS.ATTACKDONE,Utils.createClientData(CENUMS.POKEMON,p.id));
                         break;
                     case 'switch':
                         //begin switch
@@ -304,7 +305,7 @@ Battle.prototype.checkReady = function(){
     }
 };
 
-Battle.prototype.checkEnd = function(team,forceEnd = false){
+Battle.prototype.checkEnd = function(team,ctd = null){
     // check to see if the given team is out of pokemon 
     // (or has no active pokemon for more than 10 seconds)
     var end = [];
@@ -369,10 +370,14 @@ Battle.prototype.checkEnd = function(team,forceEnd = false){
         }
     }
     //end battle here!
-    this.queueData(CENUMS.BATTLEDATA,Utils.createClientData(
-        CENUMS.ACTIONS,
-        [Utils.createClientData(CENUMS.ACTION,8,CENUMS.LOSERS,losers)]
-    ));
+    if (ctd){
+        ctd.push(Utils.createClientData(CENUMS.ACTION,8,CENUMS.LOSERS,losers));
+    }else{
+        this.queueData(CENUMS.BATTLEDATA,Utils.createClientData(
+            CENUMS.ACTIONS,
+            [Utils.createClientData(CENUMS.ACTION,8,CENUMS.LOSERS,losers)]
+        ));
+    }
     this.cleanUp();
     this.engine.battleEnd(this);
     console.log('set battle as inactive!!!')
