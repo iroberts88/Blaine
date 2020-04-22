@@ -275,6 +275,36 @@ Actions.prototype.alterStatStage = function(data){
         data.ctd.push(Utils.createClientData(CENUMS.ACTION,2,CENUMS.TEXT,text,CENUMS.T,data.battle.baseActionSpeed));
     }
 }
+Actions.prototype.burn = function(data){
+    if (typeof data.effect.chance == 'undefined'){
+        data.effect.chance = 1;
+    }
+    
+}
+Actions.prototype.poison = function(data){
+    if (typeof data.effect.chance == 'undefined'){
+        data.effect.chance = 1;
+    }
+    
+}
+Actions.prototype.confuse = function(data){
+    if (typeof data.effect.chance == 'undefined'){
+        data.effect.chance = 1;
+    }
+    
+}
+Actions.prototype.sleep = function(data){
+    if (typeof data.effect.chance == 'undefined'){
+        data.effect.chance = 1;
+    }
+    
+}
+Actions.prototype.leech = function(data){
+    if (typeof data.effect.chance == 'undefined'){
+        data.effect.chance = 1;
+    }
+    
+}
 
 ///////////////////////////////////
 ////        Get Actions        ////

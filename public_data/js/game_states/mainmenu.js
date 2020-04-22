@@ -111,7 +111,7 @@
                 MainMenu.mainPanel.removeChild(MainMenu.createButton);
                 MainMenu.mainPanel.removeChild(MainMenu.guestButton);
                 //TODO remove this
-                MainMenu.submit();
+                //MainMenu.submit();
                 //TODO REMOVE THIS
             }
             this.mainPanel.appendChild( this.guestButton );
@@ -135,7 +135,7 @@
                 MainMenu.mainPanel.removeChild(MainMenu.loginButton);
                 MainMenu.mainPanel.removeChild(MainMenu.createButton);
                 MainMenu.mainPanel.removeChild(MainMenu.guestButton);
-            }
+            }   
             this.mainPanel.appendChild( this.loginButton );
             //create a new user and play button
             this.createButton = document.createElement( 'div' );
@@ -226,10 +226,10 @@
             //TODO REMOVE THIS
 
                             //new character!
-                            MainMenu.currentChar = 1;
-                    console.log('play')
-                    Acorn.Sound.play('newChar');
-                    MainMenu.fadeOut = true;
+                            //MainMenu.currentChar = 1;
+                    //console.log('play')
+                    //Acorn.Sound.play('newChar');
+                    //MainMenu.fadeOut = true;
             //REMOVE THIS
             this.charSelect = true;
             Graphics.uiPrimitives.lineStyle(1,0xFFFFFF,1);
