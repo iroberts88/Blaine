@@ -235,6 +235,7 @@ Actions.prototype.catch = function(data){
         }
         pokemon.caught = true;
         pokemon.character.checkBattleEnd(data.ctd);
+        pokemon.character = data.pokemon.character;
     }
     return data.ctd;
 }

@@ -37,6 +37,7 @@
         },
         setPokemon: function(slot,pokemon){
             this.pokemon[slot] = pokemon;
+            pokemon.owner = Player.character.id;
         },
 
         getPokemon: function(id){

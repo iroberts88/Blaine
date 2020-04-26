@@ -40,7 +40,7 @@
       "type": "main",
       "price": 100,
       "stack": true,
-      "description": "Cures poison status",
+      "description": "Cures burn status",
       "use": {
         "type": "allpkmn",
         "effects": [
