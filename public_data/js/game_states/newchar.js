@@ -118,6 +118,7 @@
                 document.body.appendChild(this.okButton);
                 this.prompted = true;
 
+                /*
                 //TODO REMOVE THIS
                     var sData = {};
                     sData[CENUMS.COMMAND] = CENUMS.NEWCHAR;
@@ -126,6 +127,7 @@
                     sData[CENUMS.SLOT] = NewChar.slot;
                     Acorn.Net.socket_.emit(CENUMS.PLAYERUPDATE,sData);
                     ///REMOVE THIS
+                    */
             }
         }
 
