@@ -15,6 +15,11 @@ class MapGen extends Phaser.Scene {
 
         this.changesMade = false;
 
+        this.keyW;
+        this.keyA;
+        this.keyS;
+        this.keyD;
+
         this.mapName = '';
         this.animations = {
             'deep_water': true,
@@ -58,6 +63,37 @@ class MapGen extends Phaser.Scene {
 
         this.map.defaultTile = '1x1';
         this.map.init(this.data);
+
+
+        this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+        this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+        this.keyW.onDown = function(){
+            that.keyW.isDown = true;
+        }
+        this.keyA.onDown = function(){
+            that.keyA.isDown = true;
+        }
+        this.keyS.onDown = function(){
+            that.keyS.isDown = true;
+        }
+        this.keyD.onDown = function(){
+            that.keyD.isDown = true;
+        }
+        this.keyW.onUp = function(){
+            that.keyW.isDown = false;
+        }
+        this.keyA.onUp = function(){
+            that.keyA.isDown = false;
+        }
+        this.keyS.onUp = function(){
+            that.keyS.isDown = false;
+        }
+        this.keyD.onUp = function(){
+            that.keyD.isDown = false;
+        }
 
         /*
         //create tool buttons
@@ -372,6 +408,25 @@ class MapGen extends Phaser.Scene {
         Graphics.showLoadingMessage(false);
         */
 
+    }
+    update (time,delta)
+    {   
+        let deltaTime = (delta/1000);
+        this.map.moveVector.x = 0;
+        this.map.moveVector.y = 0;
+        if (this.keyA.isDown){
+            this.map.moveVector.x += 1;
+        }
+        if (this.keyD.isDown){
+            this.map.moveVector.x -= 1;
+        }
+        if (this.keyW.isDown){
+            this.map.moveVector.y += 1;
+        }
+        if (this.keyS.isDown){
+            this.map.moveVector.y -= 1;
+        }
+        this.map.update(deltaTime);
     }
 
     create ()

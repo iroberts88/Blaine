@@ -10,6 +10,16 @@
 
         this.worldContainer = this.scene.add.container();
         this.worldPrimitives = this.scene.add.graphics();
+        this.tileIndex = {};
+
+        this.moveSpeed = 400;
+        this.moveVector =  new Phaser.Math.Vector2(0,0);
+        this.newX = 0;
+        this.newY = 0;
+        this.oldX = 0;
+        this.oldY = 0;
+        this.horizontalTiles = Math.floor(1920/this.TILE_SIZE+1);
+        this.verticalTiles = Math.floor(1080/this.TILE_SIZE+1);
     };
 
     TileMap.prototype.init = function(data) {
@@ -27,6 +37,20 @@
                 var s = this.getSector(sectorCoords.x*this.fullSectorSize,sectorCoords.y*this.fullSectorSize,data.mapData[sector]);
             }
         }
+        for (var i = 0; i < this.horizontalTiles;i++){
+            if (typeof this.tileIndex[i] == 'undefined'){
+                continue;
+            }
+            for (var j = 0; j < this.verticalTiles;j++){
+                if (typeof this.tileIndex[i][j] == 'undefined'){
+                    continue;
+                }else{
+                    this.tileIndex[i][j].setSprite();
+                }
+            }
+        }
+        this.newTile = this.tileIndex[0][0];
+        this.oldTile = this.tileIndex[0][0];
     };
     TileMap.prototype.getXY = function(string){
         var x = '';
@@ -63,10 +87,55 @@
     };
 
     TileMap.prototype.move = function(x,y){
-        this.worldContainer.x += x/2;
-        this.worldContainer.y += y/2;
-        this.worldPrimitives.x += x/2;
-        this.worldPrimitives.y += y/2;
+        this.worldContainer.x += x;
+        this.worldContainer.y += y;
+        this.worldPrimitives.x += x;
+        this.worldPrimitives.y += y;
+        this.newX = Math.floor((this.worldContainer.x*-1)/this.TILE_SIZE);
+        this.newY = Math.floor((this.worldContainer.y*-1)/this.TILE_SIZE);
+        //update visible tiles
+        x = this.newX-this.oldX;
+        y = this.newY-this.oldY;
+        if (x < 0){//moved to the left
+            for (var i = x;i < 0;i++){
+                for (var j = -this.verticalTiles;j <= this.verticalTiles;j++){
+                    var tile = this.getTileAt(this.oldX+i,this.oldY+j);
+                    if (tile){tile.setSprite();}
+                    var tile2 = this.getTileAt(this.horizontalTiles+this.newX+Math.abs(i),this.oldY+j);
+                    if (tile2){tile2.destroy()}
+                }
+            }
+        }else if (x > 0){//moved to the right
+            for (var i = x;i > 0;i--){
+                for (var j = -this.verticalTiles;j <= this.verticalTiles;j++){
+                    var tile = this.getTileAt(this.horizontalTiles+this.oldX+i,this.oldY+j);
+                    if (tile){tile.setSprite();}
+                    var tile2 = this.getTileAt(-this.horizontalTiles+this.newX-i,this.oldY+j);
+                    if (tile2){tile2.destroy()}
+                }
+            }
+        }
+        if (y < 0){//moved up
+            for (var i = y;i < 0;i++){
+                for (var j = -this.horizontalTiles;j <= this.horizontalTiles;j++){
+                    var tile = this.getTileAt(this.newX+j,this.oldY+i);
+                    if (tile){tile.setSprite()}
+                    var tile2 = this.getTileAt(this.newX+j,this.newY+this.verticalTiles+Math.abs(i));
+                    if (tile2){tile2.destroy()}
+                }
+            }
+        }else if (y > 0){//moved down
+            for (var i = y;i > 0;i--){
+                for (var j = -this.horizontalTiles;j <= this.horizontalTiles;j++){
+                    var tile = this.getTileAt(this.newX+j,this.verticalTiles+this.oldY+i);
+                    if (tile){tile.setSprite()}
+                    var tile2 = this.getTileAt(this.newX+j,this.newY-this.verticalTiles-i);
+                    if (tile2){tile2.destroy()}
+                }
+            }
+        }
+        this.oldX = this.newX;
+        this.oldY = this.newY;
     };
 
     TileMap.prototype.deleteSector = function(x,y){
@@ -158,28 +227,23 @@
             this.worldPrimitives.lineTo(sector.pos[0]*zoom+this.fullSectorSize*zoom,sector.pos[1]*zoom + this.TILE_SIZE*i*zoom);
         }
     };
-    TileMap.prototype.getTile = function(){
-        //defaults to mouse position
-        var zoom = this.scene.ZOOM_SETTINGS[this.scene.currentZoomSetting];
-        try{
-            var mX = mainObj.game.input.mousePointer.x - this.worldContainer.x;
-            var mY = mainObj.game.input.mousePointer.y - this.worldContainer.y;
-
-            var sectorX = Math.floor(mX/(this.SECTOR_TILES*this.TILE_SIZE*zoom));
-            var sectorY = Math.floor(mY/(this.SECTOR_TILES*this.TILE_SIZE*zoom));
-
-            var mTX = mX - sectorX*(this.SECTOR_TILES*this.TILE_SIZE*zoom);
-            var mTY = mY - sectorY*(this.SECTOR_TILES*this.TILE_SIZE*zoom);
-            var tileX = Math.floor(mTX/(this.TILE_SIZE*zoom));
-            var tileY = Math.floor(mTY/(this.TILE_SIZE*zoom));
-            return this.sectors[sectorX + 'x' + sectorY].tiles[tileX][tileY];
-        }catch(e){
-            console.log(e);
-            return 'none';
-        }
-    }
     TileMap.prototype.update = function(deltaTime){
-
+        this.move(this.moveVector.x*this.moveSpeed*deltaTime,this.moveVector.y*this.moveSpeed*deltaTime);
+    };
+    TileMap.prototype.addTileAt = function(tile,x,y){
+        if (typeof this.tileIndex[x] == 'undefined'){
+            this.tileIndex[x] = {};
+        }
+        this.tileIndex[x][y] = tile;
+    };
+    TileMap.prototype.getTileAt = function(x,y){
+        if (typeof this.tileIndex[x] == 'undefined'){
+            return null;
+        }
+        if (typeof this.tileIndex[x][y] == 'undefined'){
+            return null;
+        }
+        return this.tileIndex[x][y];
     };
 
     window.TileMap = TileMap;
@@ -199,62 +263,78 @@
             this.x = data.x;
             this.y = data.y;
             this.resource = data.resource; //the graphics resource used
-            //this.setSprite(this.resource);
+            this.sprite = null;
             this.open = data.open
-
             this.overlayResource = data.overlayResource;
             this.overlaySprite = null; //2nd layer sprite
-            if (data.overlayResource){
-                //this.setOverlaySprite(data.overlayResource);
-            }
             this.triggers = data.triggers;
+            let secCoords = this.map.getXY(this.sectorId);
+            this.pos = {
+                x: secCoords.x*this.map.fullSectorSize+this.x*this.map.TILE_SIZE,
+                y: secCoords.y*this.map.fullSectorSize+this.y*this.map.TILE_SIZE
+            }
+            this.map.addTileAt(this,secCoords.x*this.map.SECTOR_TILES+this.x,secCoords.y*this.map.SECTOR_TILES+this.y);
+
+            /*this.setSprite(this.resource);
+            if (data.overlayResource){
+                this.setOverlaySprite(data.overlayResource);
+            }*/
         }catch(e){
             console.log("failed to init Tile");
             console.log(e);
         }
     };
-
-    Tile.prototype.setSprite = function(resource){
+    Tile.prototype.setResource = function(resource){
+        this.resource = resource;
+        this.setSprite();
+    }
+    Tile.prototype.setOverlayResource = function(resource){
+        this.overlayResource = resource;
+        this.setSprite();
+    }
+    Tile.prototype.setSprite = function(){
         if (this.map.worldContainer.exists(this.sprite)){
             this.map.worldContainer.remove(this.sprite);
             this.sprite.destroy();
         }
-        if (this.scene.animations[resource]){
+        if (this.scene.animations[this.resource]){
             this.sprite = this.scene.add.sprite(0,0,'sprites','1x1.png').play(this.resource);
         }else{
             this.sprite = this.scene.add.sprite(0,0,'sprites',this.resource + '.png');
         }
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
+        this.sprite.x = this.pos.x;
+        this.sprite.y = this.pos.y;
         this.sprite.setScale(2,2);
         this.map.worldContainer.add(this.sprite);
-        this.resource = resource;
-        try{
-            //check if sprite is above overlay
-            if (this.overlayResource){
-                if (this.map.worldContainer.getIndex(this.sprite) > this.map.worldContainer.getIndex(this.overlaySprite)){
-                    this.map.worldContainer.swap(this.sprite,this.overlaySprite);
-                    console.log('swapped');
-                }
-            }
-        }catch(e){
-            console.log(e);
-        }
+        this.setOverlaySprite();
     };
 
-    Tile.prototype.setOverlaySprite = function(resource){
+    Tile.prototype.setOverlaySprite = function(){
+        if (!this.overlayResource){
+            return;
+        }
         if (this.map.worldContainer.exists(this.overlaySprite)){
             this.map.worldContainer.remove(this.overlaySprite);
             this.overlaySprite.destroy();
         }
         this.overlaySprite = this.scene.add.sprite(0,0,'sprites',this.overlayResource + '.png');
-        this.overlaySprite.x = this.x;
-        this.overlaySprite.y = this.y;
+        this.overlaySprite.x = this.pos.x;
+        this.overlaySprite.y = this.pos.y;
         this.overlaySprite.setScale(2,2);
         this.overlaySprite.alpha = 0.5;
         this.map.worldContainer.add(this.overlaySprite);
-        this.overlayResource = resource;
     };
+    Tile.prototype.destroy = function(){
+
+        if (this.map.worldContainer.exists(this.overlaySprite)){
+            this.map.worldContainer.remove(this.overlaySprite);
+            this.overlaySprite.destroy();
+        }
+        if (this.map.worldContainer.exists(this.sprite)){
+            this.map.worldContainer.remove(this.sprite);
+            this.sprite.destroy();
+        }
+    }
     Tile.prototype.getTileData = function(){
         var data = {}
         data.resource = this.resource;
