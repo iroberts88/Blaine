@@ -2,7 +2,7 @@
 //enums.js
 //----------------------------------------------------------------
 var Enums = {
-               ACCURACY: 0,
+    ACCURACY: 0,
     ACTIONS: 1,
     ACTION: 2,
     ACTION_TEXT: 3,
