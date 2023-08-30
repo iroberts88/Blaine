@@ -52,6 +52,10 @@ class MapGen extends Phaser.Scene {
         this.currentPlaceTile = '1x1';
 
         this.linesOn = true;
+        this.uiIndex = [];
+        this.toolSize = 1;
+        this.TOOL_SIZE_MIN = 1;
+        this.TOOL_SIZE_MAX = 10;
     }
     preload ()
     {  
@@ -62,13 +66,15 @@ class MapGen extends Phaser.Scene {
         this.changesMade = false;
 
         this.map.defaultTile = '1x1';
-        this.map.init(this.data);
-
 
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.keyShift = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
+        this.keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        this.keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 
         this.keyW.onDown = function(){
             that.keyW.isDown = true;
@@ -94,26 +100,88 @@ class MapGen extends Phaser.Scene {
         this.keyD.onUp = function(){
             that.keyD.isDown = false;
         }
+        this.keySpace.onDown = function(){
+            that.toggleTileSelector();
+        }
+        this.keyShift.onDown = function(){
+            that.toggleModeSelector();
+        }
+        this.keyLeft.onDown = function(){
+            that.setToolSize(that.toolSize-1);
+        }
+        this.keyRight.onDown = function(){
+            that.setToolSize(that.toolSize+1);
+        }
+
+
+        this.input.on('gameobjectdown', function (event,obj) {
+            if (!game.scene.isActive('MapGen')){
+                return;
+            }
+            if (obj._resource){
+                that.setCurrentPlaceTile(obj._resource);
+            }
+             
+        }, that);
+
+        this.uiGFX = this.add.graphics();
+
+        //create tool buttons
+        this.tileSelector = this.add.text(50, 50, 'TILE SELECTOR', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        this.tileSelector.setOrigin(0,0.5);
+        this.tileSelector.setInteractive({ cursor: 'pointer' });
+        this.tileSelector.sceneToStart = '';
+        this.tileSelector.on('pointerdown', function () {
+            that.toggleTileSelector();
+        }, that);
+        this.uiIndex.push(this.tileSelector);
+
+        let xp = 475;
+        this.currentTileSprite = this.add.sprite(xp,50,'sprites','1x1.png');
+        this.currentTileSprite.setOrigin(0,0.5);
+        this.currentTileSprite.setScale(2,2);
+
+        //create tool buttons
+        this.modeSelector = this.add.text(50, 125, 'MODE SELECTOR', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        this.modeSelector.setOrigin(0,0.5);
+        this.modeSelector.setInteractive({ cursor: 'pointer' });
+        this.modeSelector.sceneToStart = '';
+        this.modeSelector.on('pointerdown', function () {
+            that.toggleModeSelector();
+        }, that);
+        this.uiIndex.push(this.modeSelector);
+
+
+        this.currentModeText2 = this.add.text(xp, 125, 'place', { fontFamily: mainObj.fonts[0], fontSize: 24, color: mainObj.palette[3][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        this.currentModeText2.setOrigin(0,0.5);
+
+        this.toolSizeText = this.add.text(50, 200, 'TOOL SIZE', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        this.toolSizeText.setOrigin(0,0.5);
+        this.uiIndex.push(this.toolSizeText);
+
+
+        this.tsLeft = this.add.text(xp, 200, '<', { fontFamily: mainObj.fonts[0], fontSize: 24, color: mainObj.palette[3][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        this.tsLeft.setInteractive({ cursor: 'pointer' });
+        this.tsLeft.on('pointerdown', function () {
+            that.setToolSize(that.toolSize-1);
+        }, that);
+        this.tsLeft.setOrigin(0,0.5);
+        this.tsText = this.add.text(this.tsLeft.x+this.tsLeft.width + 50, 200, '1', { fontFamily: mainObj.fonts[0], fontSize: 24, color: mainObj.palette[3][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        this.tsText.setOrigin(0.5,0.5);
+
+        this.tsRight = this.add.text(0, 200, '>', { fontFamily: mainObj.fonts[0], fontSize: 24, color: mainObj.palette[3][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        this.tsRight.x = this.tsText.x+50+this.tsRight.width;
+        this.tsRight.setInteractive({ cursor: 'pointer' });
+        this.tsRight.on('pointerdown', function () {
+            that.setToolSize(that.toolSize+1);
+        }, that);
+        this.tsRight.setOrigin(1,0.5);
+        this.tsDrawPos = {
+            x: 0,
+            y: 0
+        }
 
         /*
-        //create tool buttons
-        var style = AcornSetup.baseStyle;
-        style.fontSize = 24;
-
-        //Select Tile text
-        this.tileSelector = Graphics.makeUiElement({
-            text: 'Tile Selector',
-            style: style,
-            interactive: true,
-            buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                MapGen.showTileSelector();
-            }
-        });
-        this.tileSelector.position.x = 5 + this.tileSelector.width/2;
-        this.tileSelector.position.y = 5 + this.tileSelector.height/2;
-        Graphics.uiContainer.addChild(this.tileSelector);
-
         var tt = new PIXI.Text('Current - ', style);
         tt.position.y = this.tileSelector.position.y;
         tt.anchor.y = 0.5;
@@ -408,6 +476,16 @@ class MapGen extends Phaser.Scene {
         Graphics.showLoadingMessage(false);
         */
 
+        this.drawUIBoxes();
+
+        this.map.init(this.data);
+        this.tsgfx = this.add.graphics();
+        this.setupTileSelector();
+        this.setupModeSelector();
+    }
+    setToolSize (n){
+        this.toolSize = Math.max(this.TOOL_SIZE_MIN,Math.min(n,this.TOOL_SIZE_MAX));
+        this.tsText.text = this.toolSize;
     }
     update (time,delta)
     {   
@@ -427,11 +505,197 @@ class MapGen extends Phaser.Scene {
             this.map.moveVector.y -= 1;
         }
         this.map.update(deltaTime);
+        this.tsgfx.clear();
+        this.tsgfx.x = this.map.worldContainer.x;
+        this.tsgfx.y = this.map.worldContainer.y;
+        let size = this.map.TILE_SIZE;
+        this.tsDrawPos.x = this.input.x - this.tsgfx.x;
+        this.tsDrawPos.x -= this.tsDrawPos.x%size;
+        //this.tsDrawPos.x -= size*Math.floor(this.toolSize/2);
+        this.tsDrawPos.y = this.input.y - this.tsgfx.y;
+        this.tsDrawPos.y -= this.tsDrawPos.y%size;
+        //this.tsDrawPos.y -= size*Math.floor(this.toolSize/2);
+        this.tsgfx.lineStyle(4,0xFF0000,0.75);
+        this.tsgfx.strokeRect(this.tsDrawPos.x,this.tsDrawPos.y,size*(this.toolSize*2-1),size*(this.toolSize*2-1));
     }
 
+    drawUIBoxes ()
+    {
+        this.uiGFX.clear();
+        this.uiGFX.fillStyle(0x000000,0.5);
+        this.uiGFX.lineStyle(2,mainObj.palette[2][0],0.5);
+        let b = 12;
+        let r = 16;
+        let c = null;
+        for (var i = 0; i < this.uiIndex.length;i++){
+            c = this.uiIndex[i];
+            this.uiGFX.fillRoundedRect(c.x-b,c.y-c.height/2-b,c.width+b*2,c.height+b*2,r);
+            this.uiGFX.strokeRoundedRect(c.x-b,c.y-c.height/2-b,c.width+b*2,c.height+b*2,r);
+        }
+        let s = 38;
+        this.uiGFX.fillStyle(mainObj.palette[2][0],1);
+        this.uiGFX.fillRect(this.currentTileSprite.x-((s-32)/2),this.currentTileSprite.y-s/2,s,s);
+
+    }
     create ()
     {   
 
+    }
+
+    toggleTileSelector ()
+    {
+        this.modeSelectorContainer.visible = false;
+        if (this.tileSelectorContainer.visible){
+            this.tileSelectorContainer.visible = false;
+        }else{
+            this.tileSelectorContainer.visible = true;
+        }
+    }
+    toggleModeSelector ()
+    {
+        this.tileSelectorContainer.visible = false;
+        if (this.modeSelectorContainer.visible){
+            this.modeSelectorContainer.visible = false;
+        }else{
+            this.modeSelectorContainer.visible = true;
+        }
+    }
+
+    setCurrentPlaceTile (tile)
+    {
+        this.currentPlaceTile = tile;
+        this.tileSelectorContainer.visible = false;
+        this.currentTileSprite.stop();
+        if (this.animations[tile]){
+            this.currentTileSprite.play(tile);
+        }else{
+            this.currentTileSprite.setTexture('sprites',tile + '.png');
+        }
+    }
+    setupTileSelector ()
+    {
+        this.tileSelectorContainer = this.add.container();
+        this.tileSelectorContainer.visible = false;
+        let gfx = this.add.graphics();
+        let arr = [gfx];
+        gfx.fillStyle(0x000000,1);
+        gfx.fillRect(0,0,1920,1080);
+
+        let ypos = 55;
+        let xpos = 55;
+        for(let i = 0; i < 38; i++) {
+            for (let j = 0; j < 41;j++){
+                if (!this.cache.game.textures.list['sprites'].frames[i + 'x' + j + '.png']){continue;}
+                var s = this.add.sprite(0,0,'sprites',i + 'x' + j + '.png');
+                s.scaleX = 1.5;
+                s.scaleY = 1.5;
+                s.x = xpos + 25 * i;
+                s.y = ypos + 25 * j;
+                s._resource = i + 'x' + j;
+                s.setInteractive({ cursor: 'pointer' });
+                arr.push(s);
+            }
+        }
+
+        ypos = 55;
+        xpos = 960;
+        let iterator = 0;
+        for (var anim in this.animations){
+            var s = this.add.sprite(0,0,'sprites','1x1.png').play(anim);
+            s.scaleX = 1.5;
+            s.scaleY = 1.5;
+            s.x = xpos + 25 * iterator;
+            s.y = ypos + 25;
+            s._resource = anim;
+            s.setInteractive({ cursor: 'pointer' });
+            arr.push(s);
+            iterator += 1;
+        }
+        this.tileSelectorContainer.add(arr);
+    }
+    setMode (mode)
+    {
+        this.tileSelectorContainer.visible = false;
+        this.modeSelectorContainer.visible = false;
+        this.mode = mode;
+        this.currentModeText2.text = mode;
+    }
+    setupModeSelector ()
+    {
+        let that = this;
+        this.modeSelectorContainer = this.add.container();
+        this.modeSelectorContainer.visible = false;
+        let gfx = this.add.graphics();
+        let arr = [gfx];
+        gfx.fillStyle(0x000000,1);
+        gfx.fillRect(0,0,1920,1080);
+        let spacing = 50;
+        let placeText = this.add.text(50, 100, 'PLACE', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        placeText.setOrigin(0,0.5);
+        placeText.setInteractive({ cursor: 'pointer' });
+        placeText.sceneToStart = '';
+        placeText.on('pointerdown', function () {
+            that.toggleModeSelector();
+            that.setMode('place');
+        }, that);
+        arr.push(placeText);
+        //overlay
+        let olText = this.add.text(50, 100+spacing, 'OVERLAY', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        olText.setOrigin(0,0.5);
+        olText.setInteractive({ cursor: 'pointer' });
+        olText.sceneToStart = '';
+        olText.on('pointerdown', function () {
+            that.toggleModeSelector();
+            that.setMode('overlay');
+        }, that);
+        arr.push(olText);
+        //clear
+        let clText = this.add.text(50, 100+spacing*2, 'CLEAR', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        clText.setOrigin(0,0.5);
+        clText.setInteractive({ cursor: 'pointer' });
+        clText.sceneToStart = '';
+        clText.on('pointerdown', function () {
+            that.setMode('clear');
+        }, that);
+        arr.push(clText);
+        //setblocked
+        let blText = this.add.text(50, 100+spacing*3, 'BLOCKED', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        blText.setOrigin(0,0.5);
+        blText.setInteractive({ cursor: 'pointer' });
+        blText.sceneToStart = '';
+        blText.on('pointerdown', function () {
+            that.setMode('block');
+        }, that);
+        arr.push(blText);
+        //removeblocked
+        let ubText = this.add.text(50, 100+spacing*4, 'UNBLOCK', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        ubText.setOrigin(0,0.5);
+        ubText.setInteractive({ cursor: 'pointer' });
+        ubText.sceneToStart = '';
+        ubText.on('pointerdown', function () {
+            that.setMode('unblock');
+        }, that);
+        arr.push(ubText);
+        //applytrigger
+        let atText = this.add.text(50, 100+spacing*5, 'APPLY TRIGGER', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        atText.setOrigin(0,0.5);
+        atText.setInteractive({ cursor: 'pointer' });
+        atText.sceneToStart = '';
+        atText.on('pointerdown', function () {
+            that.setMode('trigger');
+        }, that);
+        arr.push(atText);
+        //cleartriggers
+        let ctText = this.add.text(50, 100+spacing*6, 'CLEAR TRIGGER', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        ctText.setOrigin(0,0.5);
+        ctText.setInteractive({ cursor: 'pointer' });
+        ctText.sceneToStart = '';
+        ctText.on('pointerdown', function () {
+            that.setMode('cleartrigger');
+        }, that);
+        arr.push(ctText);
+
+        this.modeSelectorContainer.add(arr);
     }
 
 }

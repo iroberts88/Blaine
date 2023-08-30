@@ -26,7 +26,7 @@ mainObj.setPalette = function(n){
     }
     mainObj.palette = palettes[n];
 };
-mainObj.setPalette(0);
+mainObj.setPalette(1);
 mainObj.fonts = ['Pokemon'];
 Acorn.init();
 
