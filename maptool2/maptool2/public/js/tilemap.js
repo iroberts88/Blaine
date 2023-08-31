@@ -10,7 +10,8 @@
 
         this.worldContainer = this.scene.add.container();
         this.worldPrimitives = this.scene.add.graphics();
-        this.tileIndex = {};
+        this.tileIndex = {}; //list of ALL tiles
+        this.visibleTiles = {}; //list of currently visible tiles
 
         this.moveSpeed = 400;
         this.moveVector =  new Phaser.Math.Vector2(0,0);
@@ -20,6 +21,7 @@
         this.oldY = 0;
         this.horizontalTiles = Math.floor(1920/this.TILE_SIZE+1);
         this.verticalTiles = Math.floor(1080/this.TILE_SIZE+1);
+        this.sb = false;
     };
 
     TileMap.prototype.init = function(data) {
@@ -73,6 +75,10 @@
         return coords;
     };
     TileMap.prototype.setSector = function(data){
+
+    };
+    TileMap.prototype.showBlocked = function(){
+
 
     };
     TileMap.prototype.getSector = function(x,y,data){
@@ -236,6 +242,18 @@
         }
         this.tileIndex[x][y] = tile;
     };
+
+    TileMap.prototype.getTileAtPos = function(x,y){
+        var mX = this.input.x - this.worldContainer.x;
+        var mY = this.input.y - this.worldContainer.y;
+
+        var mTX = mX - sectorX*(this.SECTOR_TILES*this.TILE_SIZE*zoom);
+        var mTY = mY - sectorY*(this.SECTOR_TILES*this.TILE_SIZE*zoom);
+
+        var tileX = Math.floor(mTX/(this.TILE_SIZE*zoom));
+        var tileY = Math.floor(mTY/(this.TILE_SIZE*zoom));
+        return this.getTileAt(tileX,tileY);
+    };
     TileMap.prototype.getTileAt = function(x,y){
         if (typeof this.tileIndex[x] == 'undefined'){
             return null;
@@ -264,7 +282,7 @@
             this.y = data.y;
             this.resource = data.resource; //the graphics resource used
             this.sprite = null;
-            this.open = data.open
+            this.open = data.open;
             this.overlayResource = data.overlayResource;
             this.overlaySprite = null; //2nd layer sprite
             this.triggers = data.triggers;
@@ -284,6 +302,15 @@
             console.log(e);
         }
     };
+    Tile.prototype.setOpen = function(b){
+        this.open = b;
+        if (!this.open && this.sprite){
+            this.sprite.tint = 0xf78d86;
+        }
+        if (this.open){
+            this.sprite.tnt = 0xFFFFFF;
+        }
+    }
     Tile.prototype.setResource = function(resource){
         this.resource = resource;
         this.setSprite();
@@ -293,6 +320,10 @@
         this.setSprite();
     }
     Tile.prototype.setSprite = function(){
+        if (typeof this.map.visibleTiles[this.x] == 'undefined'){
+            this.map.visibleTiles[this.x] = {};
+        }
+        this.map.visibleTiles[this.x][this.y] = this;
         if (this.map.worldContainer.exists(this.sprite)){
             this.map.worldContainer.remove(this.sprite);
             this.sprite.destroy();
@@ -304,7 +335,11 @@
         }
         this.sprite.x = this.pos.x;
         this.sprite.y = this.pos.y;
+        this.sprite.setOrigin(0,0);
         this.sprite.setScale(2,2);
+        if (!this.open){
+            this.sprite.tint = 0xf78d86;
+        }
         this.map.worldContainer.add(this.sprite);
         this.setOverlaySprite();
     };
@@ -321,6 +356,7 @@
         this.overlaySprite.x = this.pos.x;
         this.overlaySprite.y = this.pos.y;
         this.overlaySprite.setScale(2,2);
+        this.overlaySprite.setOrigin(0,0);
         this.overlaySprite.alpha = 0.5;
         this.map.worldContainer.add(this.overlaySprite);
     };
@@ -334,6 +370,7 @@
             this.map.worldContainer.remove(this.sprite);
             this.sprite.destroy();
         }
+        delete this.map.visibleTiles[this.x][this.y];
     }
     Tile.prototype.getTileData = function(){
         var data = {}

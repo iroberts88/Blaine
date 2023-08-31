@@ -56,6 +56,9 @@ class MapGen extends Phaser.Scene {
         this.toolSize = 1;
         this.TOOL_SIZE_MIN = 1;
         this.TOOL_SIZE_MAX = 10;
+        this.overTile = null;
+        this.m2Down = false;
+        this.actions = [];
     }
     preload ()
     {  
@@ -125,6 +128,10 @@ class MapGen extends Phaser.Scene {
         }, that);
 
         this.uiGFX = this.add.graphics();
+
+
+        this.tileText = this.add.text(960, 50, '0,0', { fontFamily: mainObj.fonts[0], fontSize: 24, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        this.tileText.setOrigin(0,0.5);
 
         //create tool buttons
         this.tileSelector = this.add.text(50, 50, 'TILE SELECTOR', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
@@ -482,6 +489,18 @@ class MapGen extends Phaser.Scene {
         this.tsgfx = this.add.graphics();
         this.setupTileSelector();
         this.setupModeSelector();
+
+
+        this.input.on('pointerdown', function(pointer, currentlyOver,what,what2){
+            if (pointer.button == 2){
+                that.m2Down = true;
+            }
+        }, that);
+        this.input.on('pointerup', function(pointer, currentlyOver,what,what2){
+            if (pointer.button == 2){
+                that.m2Down = false;
+            }
+        }, that);
     }
     setToolSize (n){
         this.toolSize = Math.max(this.TOOL_SIZE_MIN,Math.min(n,this.TOOL_SIZE_MAX));
@@ -509,16 +528,125 @@ class MapGen extends Phaser.Scene {
         this.tsgfx.x = this.map.worldContainer.x;
         this.tsgfx.y = this.map.worldContainer.y;
         let size = this.map.TILE_SIZE;
-        this.tsDrawPos.x = this.input.x - this.tsgfx.x;
-        this.tsDrawPos.x -= this.tsDrawPos.x%size;
-        //this.tsDrawPos.x -= size*Math.floor(this.toolSize/2);
-        this.tsDrawPos.y = this.input.y - this.tsgfx.y;
-        this.tsDrawPos.y -= this.tsDrawPos.y%size;
-        //this.tsDrawPos.y -= size*Math.floor(this.toolSize/2);
+        this.tsDrawPos.x = (Math.floor((this.input.x - this.tsgfx.x)/size)*size)-(Math.floor(this.toolSize/2)*size);
+        this.tsDrawPos.y = (Math.floor((this.input.y - this.tsgfx.y)/size)*size)-(Math.floor(this.toolSize/2)*size);
+        let tileX = Math.round(this.tsDrawPos.x/size);
+        let tileY = Math.round(this.tsDrawPos.y/size);
+        this.tileText.text = tileX + ',' + tileY;
         this.tsgfx.lineStyle(4,0xFF0000,0.75);
-        this.tsgfx.strokeRect(this.tsDrawPos.x,this.tsDrawPos.y,size*(this.toolSize*2-1),size*(this.toolSize*2-1));
-    }
+        this.tsgfx.strokeRect(this.tsDrawPos.x,this.tsDrawPos.y,size*this.toolSize,size*this.toolSize);
 
+        if (this.m2Down){
+            switch(this.currentMode){
+                case 'place':
+                    var action = 'place_' + this.currentPlaceTile + '_' + tileX + '_' + tileY + '_' + this.toolSize;
+                    if (this.actions[this.actions.length-1] != action){
+                        this.actions.push(action);
+                        this.place(tileX,tileY);
+                    } 
+                    break;
+                case 'overlay':
+                    var action = 'overlay_' + this.currentPlaceTile + '_' + tileX + '_' + tileY + '_' + this.toolSize;
+                    if (this.actions[this.actions.length-1] != action){
+                        this.actions.push(action);
+                        this.overlay(tileX,tileY);
+                    } 
+                    break;
+                case 'clear':
+                    var action = 'clear' + this.currentPlaceTile + '_' + tileX + '_' + tileY + '_' + this.toolSize;
+                    if (this.actions[this.actions.length-1] != action){
+                        this.actions.push(action);
+                        this.clear(tileX,tileY);
+                    } 
+                    break;
+                case 'block':
+                    var action = 'block' + this.currentPlaceTile + '_' + tileX + '_' + tileY + '_' + this.toolSize;
+                    if (this.actions[this.actions.length-1] != action){
+                        this.actions.push(action);
+                        this.setBlocked(tileX,tileY,0);
+                    } 
+                    break;
+                case 'unblock':
+                    var action = 'unblock' + this.currentPlaceTile + '_' + tileX + '_' + tileY + '_' + this.toolSize;
+                    if (this.actions[this.actions.length-1] != action){
+                        this.actions.push(action);
+                        this.setBlocked(tileX,tileY,1);
+                    } 
+                    break;
+            }
+        }
+    }
+    place (tileX,tileY){
+        for (let x = 0; x < this.toolSize;x++){
+            for (let y = 0; y < this.toolSize;y++){
+                this._place(tileX+x,tileY+y);
+            }
+        }
+    }
+    _place (x,y){
+        this.overTile = this.map.getTileAt(x,y);
+        if (!this.overTile){
+            var newTile = new Tile();
+            newTile.init({
+                sectorId: 0 + 'x' + 0,
+                x: x,
+                y: y,
+                resource: this.currentPlaceTile,
+                open: true,
+                triggers: [],
+                overlayResource: 0
+            });
+            newTile.setSprite();
+        }else{
+            this.overTile.setResource(this.currentPlaceTile);
+        }
+    }
+    overlay (tileX,tileY){
+        for (let x = 0; x < this.toolSize;x++){
+            for (let y = 0; y < this.toolSize;y++){
+                this._overlay(tileX+x,tileY+y);
+            }
+        }
+    }
+    _overlay (x,y){
+        this.overTile = this.map.getTileAt(x,y);
+        if (!this.overTile){
+            return
+        }else{
+            this.overTile.setOverlayResource(this.currentPlaceTile);
+        }
+    }
+    clear (tileX,tileY){
+        for (let x = 0; x < this.toolSize;x++){
+            for (let y = 0; y < this.toolSize;y++){
+                this._clear(tileX+x,tileY+y);
+            }
+        }
+    }
+    _clear (x,y){
+        this.overTile = this.map.getTileAt(x,y);
+        if (!this.overTile){
+            return
+        }else{
+            this.overTile.destroy();
+            delete this.map.tileIndex[x][y];
+        }
+    }
+    setBlocked (tileX,tileY,b){
+        for (let x = 0; x < this.toolSize;x++){
+            for (let y = 0; y < this.toolSize;y++){
+                this._setBlocked(tileX+x,tileY+y,b);
+            }
+        }
+    }
+    _setBlocked (x,y,b){
+        this.overTile = this.map.getTileAt(x,y);
+        if (!this.overTile){
+            return
+        }else{
+            this.overTile.setOpen(b)
+        }
+    }
     drawUIBoxes ()
     {
         this.uiGFX.clear();
@@ -617,8 +745,26 @@ class MapGen extends Phaser.Scene {
     {
         this.tileSelectorContainer.visible = false;
         this.modeSelectorContainer.visible = false;
-        this.mode = mode;
+        this.currentMode = mode;
         this.currentModeText2.text = mode;
+        if (mode == 'block' || mode == 'unblock'){
+            if (!this.map.sb){
+                this.map.sb = true;
+            }
+        }else{
+            if (this.map.sb){
+                this.map.sb = false;
+            }
+        }
+        if (mode == 'applytrigger' || mode == 'cleartrigger'){
+            if (!this.map.st){
+                this.map.st = true;
+            }
+        }else{
+            if (this.map.st){
+                this.map.st = false;
+            }
+        }
     }
     setupModeSelector ()
     {
