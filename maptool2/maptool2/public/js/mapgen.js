@@ -59,13 +59,16 @@ class MapGen extends Phaser.Scene {
         this.overTile = null;
         this.m2Down = false;
         this.actions = [];
+        this.currentOnTrigger;
+        this.currentDoTrigger;
+        this.doTriggerInfo;
+        this.data = {};
     }
     preload ()
     {  
         var that = this;
         this.map = new TileMap();
         window.currentGameMap = this.map;
-        console.log(this.map);
         this.changesMade = false;
 
         this.map.defaultTile = '1x1';
@@ -124,14 +127,36 @@ class MapGen extends Phaser.Scene {
             if (obj._resource){
                 that.setCurrentPlaceTile(obj._resource);
             }
+            if (obj.onTrigger){
+                that.currentOnTrigger = obj.onTrigger;
+            }else if (obj.doTrigger){
+                that.currentDoTrigger = obj.doTrigger;
+                if (obj.doTrigger == 'changeMap'){
+                    that.triggerDoInfo.map = prompt('enter map name','');
+                    that.triggerDoInfo.tile = prompt('enter tile','');
+                }
+                if (obj.doTrigger == 'playSound' || obj.doTrigger == 'playMusic'){
+                    that.triggerDoInfo.sound = prompt('enter sound name','');
+                }
+                if (obj.doTrigger == 'jumpToTile'){
+                    that.triggerDoInfo.tile = prompt('enter tile','');
+                }
+                that.triggerSelectorContainer.visible = false;
+                that.setMode('applytrigger');
+            }
              
         }, that);
 
+
+        this.map.init(this.data);
         this.uiGFX = this.add.graphics();
 
 
         this.tileText = this.add.text(960, 50, '0,0', { fontFamily: mainObj.fonts[0], fontSize: 24, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
         this.tileText.setOrigin(0,0.5);
+
+        this.triggerText = this.add.text(1920*3/4, 1080/2, '', { fontFamily: mainObj.fonts[0], fontSize: 16, color: mainObj.palette[4][1] ,wordWrap: true,wordWrapWidth: 300}).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        this.triggerText.setOrigin(0,0.5);
 
         //create tool buttons
         this.tileSelector = this.add.text(50, 50, 'TILE SELECTOR', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
@@ -188,307 +213,28 @@ class MapGen extends Phaser.Scene {
             y: 0
         }
 
-        /*
-        var tt = new PIXI.Text('Current - ', style);
-        tt.position.y = this.tileSelector.position.y;
-        tt.anchor.y = 0.5;
-        tt.position.x = 10 + this.tileSelector.width + 5;
-        Graphics.uiContainer.addChild(tt);
 
-        this.currentTileSprite = Graphics.makeUiElement({
-            sprite: this.map.defaultTile,
-            style: style
-        });
-        this.currentTileSprite.scale.x = 2;
-        this.currentTileSprite.scale.y = 2;
-        this.currentTileSprite.position.y = tt.position.y;
-        this.currentTileSprite.position.x = tt.position.x + tt.width + this.currentTileSprite.width/2;
-        Graphics.uiContainer.addChild(this.currentTileSprite);
+        this.exitBtn = this.add.text(1870, 50, 'EXIT', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        this.exitBtn.setOrigin(0,0.5);
+        this.exitBtn.x -= this.exitBtn.width;
+        this.exitBtn.setInteractive({ cursor: 'pointer' });
+        this.exitBtn.on('pointerdown', function () {
+        }, that);
+        this.uiIndex.push(this.exitBtn);
+        this.savebtn = this.add.text(1870, 125, 'SAVE', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        this.savebtn.setOrigin(0,0.5);
+        this.savebtn.x -= this.savebtn.width;
+        this.savebtn.setInteractive({ cursor: 'pointer' });
+        this.savebtn.on('pointerdown', function () {
+        }, that);
+        this.uiIndex.push(this.savebtn);
 
-        //Tool Selector
-
-        this.modeText = Graphics.makeUiElement({
-            text: 'Mode Select - Current: place',
-            style: style,
-            anchor: [0,1]
-        });
-        this.modeText.position.x = 5;
-        this.modeText.position.y = 150;
-        Graphics.uiContainer.addChild(this.modeText);
-
-        this.placeButton = Graphics.makeUiElement({
-            text: 'place',
-            style: style,
-            position: [5, this.modeText.position.y+35],
-            anchor: [0,0],
-            interactive: true,buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                MapGen.changeMode('place');
-            }
-        });
-        Graphics.uiContainer.addChild(this.placeButton);
-
-        this.overlayButton = Graphics.makeUiElement({
-            text: 'overlay',
-            style: style,
-            position: [5, this.placeButton.position.y + 5 + this.placeButton.height],
-            anchor: [0,0],
-            interactive: true,buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                MapGen.changeMode('overlay');
-            }
-        });
-        Graphics.uiContainer.addChild(this.overlayButton);
-
-        this.blockedButton = Graphics.makeUiElement({
-            text: 'blocked',
-            style: style,
-            position: [5, this.overlayButton.position.y + 5 + this.overlayButton.height],
-            anchor: [0,0],
-            interactive: true,buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-               MapGen.changeMode('blocked');
-            }
-        });
-        Graphics.uiContainer.addChild(this.blockedButton);
-
-        this.triggersButton = Graphics.makeUiElement({
-            text: 'set trigger',
-            style: style,
-            position: [5, this.blockedButton.position.y + 5 + this.blockedButton.height],
-            anchor: [0,0],
-            interactive: true,buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                MapGen.changeMode('settrigger');
-                MapGen.showTriggerSelector();
-            }
-        });
-        Graphics.uiContainer.addChild(this.triggersButton);
-
-        this.triggers2Button = Graphics.makeUiElement({
-            text: 'apply trigger',
-            style: style,
-            position: [5, this.triggersButton.position.y + 5 + this.triggersButton.height],
-            anchor: [0,0],
-            interactive: true,buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                MapGen.changeMode('applytrigger');
-            }
-        });
-        Graphics.uiContainer.addChild(this.triggers2Button);
-
-        this.deleteSectorsButton = Graphics.makeUiElement({
-            text: 'remove sectors',
-            style: style,
-            position: [5, this.triggers2Button.position.y + 5 + this.triggers2Button.height],
-            anchor: [0,0],
-            interactive: true,buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                MapGen.changeMode('deleteSectors');
-            }
-        });
-        Graphics.uiContainer.addChild(this.deleteSectorsButton);
-
-        this.deleteOverlayButton = Graphics.makeUiElement({
-            text: 'remove overlay',
-            style: style,
-            position: [5, this.deleteSectorsButton.position.y + 5 + this.deleteSectorsButton.height],
-            anchor: [0,0],
-            interactive: true,buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                MapGen.changeMode('deleteoverlay');
-            }
-        });
-        Graphics.uiContainer.addChild(this.deleteOverlayButton);
-
-        this.deleteBlockedButton = Graphics.makeUiElement({
-            text: 'remove blocked',
-            style: style,
-            position: [5, this.deleteOverlayButton.position.y + 5 + this.deleteOverlayButton.height],
-            anchor: [0,0],
-            interactive: true,buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                MapGen.changeMode('deleteblocked');
-            }
-        });
-        Graphics.uiContainer.addChild(this.deleteBlockedButton);
-
-        this.deleteTriggersButton = Graphics.makeUiElement({
-            text: 'remove triggers',
-            style: style,
-            position: [5, this.deleteBlockedButton.position.y + 5 + this.deleteBlockedButton.height],
-            anchor: [0,0],
-            interactive: true,buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                MapGen.changeMode('deletetriggers');
-            }
-        });
-        Graphics.uiContainer.addChild(this.deleteTriggersButton);
-
-        //back button
-        this.exitButton = Graphics.makeUiElement({
-            text: 'Exit',
-            style: style,
-            interactive: true,buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                if (MapGen.changesMade){
-                    if (confirm('Exit and lose unsaved data?') == true) {
-                        MapGen.data = null;
-                        MapGen.mapName = '';
-                        Acorn.changeState('mainmenu');
-                    }
-                }else{
-                    MapGen.data = null;
-                    MapGen.mapName = '';
-                    Acorn.changeState('mainmenu');
-                }
-            }
-        });
-        this.exitButton.position.x = Graphics.width - 25 - this.exitButton.width/2;
-        this.exitButton.position.y = 25 + this.exitButton.height/2;
-        Graphics.uiContainer.addChild(this.exitButton);
-
-        this.lineButton = Graphics.makeUiElement({
-            text: 'Toggle Lines',
-            style: style,
-            interactive: true,buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                if (MapGen.linesOn){
-                    MapGen.linesOn = false;
-                    Graphics.worldPrimitives.visible = false;
-                }else{
-                    MapGen.linesOn = true;
-                    Graphics.worldPrimitives.visible = true;
-                }
-            }
-        });
-        this.lineButton.position.x = Graphics.width/2;
-        this.lineButton.position.y = 25 + this.lineButton.height/2;
-        Graphics.uiContainer.addChild(this.lineButton);
-
-         this.zoomText = Graphics.makeUiElement({
-            text: 'Zoom (Current: 1)',
-            style: style,
-        });
-        this.zoomText.style.fontSize = 20;
-        this.zoomText.position.x = Graphics.width/1.5;
-        this.zoomText.position.y = this.zoomText.height/2;
-        Graphics.uiContainer.addChild(this.zoomText);
-
-        this.zoomUp = Graphics.makeUiElement({
-            text: '+',
-            style: style,
-            interactive: true,
-            buttonMode: true,
-            clickFunc: function onClick(){
-                Settings.zoom('in');
-            }
-        });
-        this.zoomUp.style.fontSize = 40;
-        this.zoomUp.position.x = Graphics.width/1.5 - this.zoomUp.width/2 - 20;
-        this.zoomUp.position.y = this.zoomUp.height/2 + this.zoomText.height/2+5;
-        Graphics.uiContainer.addChild(this.zoomUp);
-        this.zoomDown = Graphics.makeUiElement({
-            text: '-',
-            style: style,
-            interactive: true,
-            buttonMode: true,
-            clickFunc: function onClick(){
-                Settings.zoom('out');
-            }
-        });
-        this.zoomDown.style.fontSize = 40;
-        this.zoomDown.position.x = Graphics.width/1.5 + this.zoomDown.width/2 + 20;
-        this.zoomDown.position.y = this.zoomDown.height/2 + this.zoomText.height/2+5;
-        Graphics.uiContainer.addChild(this.zoomDown);
-        
-
-        this.saveButton = Graphics.makeUiElement({
-            text: "Save",
-            style: style,
-            interactive: true,
-            buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                var name = prompt("Please enter a name for the map", MapGen.mapName);
-                if (!name || name == ''){
-                    alert('Map not saved.');
-                }else{
-                    var mapData = {};
-                    for (var i in MapGen.map.sectors){
-                        mapData[i] = {tiles: [],x: MapGen.map.sectors[i].x,y: MapGen.map.sectors[i].y};
-                        for (var j = 0; j < MapGen.map.sectors[i].tiles.length;j++){
-                            var arr = [];
-                            for (var k = 0; k < MapGen.map.sectors[i].tiles[j].length;k++){
-                                var tile = MapGen.map.sectors[i].tiles[j][k];
-                                arr.push(tile.getTileData());
-                            }
-                            mapData[i].tiles.push(arr);
-                        }
-                    }
-                    MapGen.changesMade = false;
-                    MapGen.mapName = name;
-                    Acorn.Net.socket_.emit('createMap',{name:name,mapData: mapData});
-                }
-            }
-        });
-        this.saveButton.position.x = this.exitButton.position.x - this.exitButton.width/2 - 25- this.saveButton.width/2;
-        this.saveButton.position.y = this.exitButton.position.y;
-        Graphics.uiContainer.addChild(this.saveButton);
-
-        this.deleteButton = Graphics.makeUiElement({
-            text: "Delete",
-            style: style,
-            interactive: true,
-            buttonMode: true,buttonGlow: true,
-            clickFunc: function onClick(){
-                if (confirm('Delete map "' + MapGen.mapName + '"?') == true) {
-                    Acorn.Net.socket_.emit('deleteMap',{name:MapGen.mapName});
-                    Acorn.changeState('mainmenu');
-                }
-            }
-        });
-        this.deleteButton.position.x = this.saveButton.position.x - this.saveButton.width/2 - 25- this.deleteButton.width/2;
-        this.deleteButton.position.y = this.exitButton.position.y;
-        this.deleteButton.visible = false;
-        Graphics.uiContainer.addChild(this.deleteButton);
-
-        this.triggerInfo = new PIXI.Text('',{
-            font: '20px Sigmar One',
-            fill: Graphics.pallette.color1,
-            align: 'left',
-            stroke: '#000000',
-            strokeThickness: 2,
-            wordWrap: true,
-            wordWrapWidth: 500
-        });
-        this.triggerInfo.anchor.x = 0.5;
-        this.triggerInfo.anchor.y = 0;
-        this.triggerInfo.position.x = Graphics.width*0.75;
-        this.triggerInfo.position.y = 200;
-        this.triggerInfo.visible = false;
-        this.sectorInfo = new PIXI.Text("Sector: ",style);
-        this.tileInfo = new PIXI.Text('',style);
-        this.tileInfo.anchor.x = 0.5;
-        this.tileInfo.anchor.y = 1;
-        this.sectorInfo.anchor.x = 0.5;
-        this.sectorInfo.anchor.y = 1;
-        this.tileInfo.position.x = Graphics.width - 100;
-        this.tileInfo.position.y = Graphics.height - 20;
-        this.sectorInfo.visible = false;
-        this.tileInfo.visible = false;
-        Graphics.uiContainer.addChild(this.triggerInfo);
-        Graphics.uiContainer.addChild(this.sectorInfo);
-        Graphics.uiContainer.addChild(this.tileInfo);
-
-        Graphics.showLoadingMessage(false);
-        */
 
         this.drawUIBoxes();
-
-        this.map.init(this.data);
         this.tsgfx = this.add.graphics();
         this.setupTileSelector();
         this.setupModeSelector();
+        this.setupTriggerSelector();
 
 
         this.input.on('pointerdown', function(pointer, currentlyOver,what,what2){
@@ -536,6 +282,27 @@ class MapGen extends Phaser.Scene {
         this.tsgfx.lineStyle(4,0xFF0000,0.75);
         this.tsgfx.strokeRect(this.tsDrawPos.x,this.tsDrawPos.y,size*this.toolSize,size*this.toolSize);
 
+
+        this.overTile = this.map.getTileAt(Math.floor((this.input.x - this.tsgfx.x)/size),Math.floor((this.input.y - this.tsgfx.y)/size));
+        if (this.overTile){
+            if (this.overTile.triggers.length > 0){
+                var text = '';
+                for (var t = 0; t < this.overTile.triggers.length;t++){
+                    var trig = this.overTile.triggers[t];
+                    text += 'ON:\n' + trig.on + '\n\n' + 'DO:\n' + trig.do +'\n';
+                    for (let i in trig.data){
+                        text += i + ' - ' + trig.data[i] + '\n';
+                    }
+                    text += '\n\n';
+                } 
+                this.triggerText.text = text;
+            }else{
+                this.triggerText.text = '';
+            }
+        }else{
+            this.triggerText.text = '';
+        }
+
         if (this.m2Down){
             switch(this.currentMode){
                 case 'place':
@@ -573,7 +340,55 @@ class MapGen extends Phaser.Scene {
                         this.setBlocked(tileX,tileY,1);
                     } 
                     break;
+                case 'applytrigger':
+                    var action = 'applytrigger' + this.currentPlaceTile + '_' + tileX + '_' + tileY + '_' + this.toolSize;
+                    if (this.actions[this.actions.length-1] != action){
+                        this.actions.push(action);
+                        this.addTrigger(tileX,tileY);
+                    } 
+                    break;
+                case 'cleartrigger':
+                    var action = 'cleartrigger' + this.currentPlaceTile + '_' + tileX + '_' + tileY + '_' + this.toolSize;
+                    if (this.actions[this.actions.length-1] != action){
+                        this.actions.push(action);
+                        this.clearTriggers(tileX,tileY);
+                    } 
+                    break;
             }
+        }
+    }
+    addTrigger (tileX,tileY){
+        for (let x = 0; x < this.toolSize;x++){
+            for (let y = 0; y < this.toolSize;y++){
+                this._addTrigger(tileX+x,tileY+y);
+            }
+        }
+    }
+    _addTrigger (x,y){
+        this.overTile = this.map.getTileAt(x,y);
+        if (!this.overTile){
+            return
+        }else{
+            this.overTile.addTrigger({
+                on: this.currentOnTrigger,
+                do: this.currentDoTrigger,
+                data: this.triggerDoInfo
+            });
+        }
+    }
+    clearTriggers (tileX,tileY){
+        for (let x = 0; x < this.toolSize;x++){
+            for (let y = 0; y < this.toolSize;y++){
+                this._clearTriggers(tileX+x,tileY+y);
+            }
+        }
+    }
+    _clearTriggers (x,y){
+        this.overTile = this.map.getTileAt(x,y);
+        if (!this.overTile){
+            return
+        }else{
+            this.overTile.clearTriggers();
         }
     }
     place (tileX,tileY){
@@ -673,6 +488,7 @@ class MapGen extends Phaser.Scene {
     toggleTileSelector ()
     {
         this.modeSelectorContainer.visible = false;
+        this.triggerSelectorContainer.visible = false;
         if (this.tileSelectorContainer.visible){
             this.tileSelectorContainer.visible = false;
         }else{
@@ -682,10 +498,21 @@ class MapGen extends Phaser.Scene {
     toggleModeSelector ()
     {
         this.tileSelectorContainer.visible = false;
+        this.triggerSelectorContainer.visible = false;
         if (this.modeSelectorContainer.visible){
             this.modeSelectorContainer.visible = false;
         }else{
             this.modeSelectorContainer.visible = true;
+        }
+    }
+    toggleTriggerSelector ()
+    {
+        this.tileSelectorContainer.visible = false;
+        this.modeSelectorContainer.visible = false;
+        if (this.triggerSelectorContainer.visible){
+            this.triggerSelectorContainer.visible = false;
+        }else{
+            this.triggerSelectorContainer.visible = true;
         }
     }
 
@@ -756,7 +583,7 @@ class MapGen extends Phaser.Scene {
                 this.map.sb = false;
             }
         }
-        if (mode == 'applytrigger' || mode == 'cleartrigger'){
+        if (mode == 'applytrigger' || mode == 'cleartrigger' || mode == 'settrigger'){
             if (!this.map.st){
                 this.map.st = true;
             }
@@ -765,6 +592,7 @@ class MapGen extends Phaser.Scene {
                 this.map.st = false;
             }
         }
+        this.map.setTint();
     }
     setupModeSelector ()
     {
@@ -822,17 +650,30 @@ class MapGen extends Phaser.Scene {
             that.setMode('unblock');
         }, that);
         arr.push(ubText);
+        //settrigger
+        let stText = this.add.text(50, 100+spacing*5, 'SET TRIGGER', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        stText.setOrigin(0,0.5);
+        stText.setInteractive({ cursor: 'pointer' });
+        stText.sceneToStart = '';
+        stText.on('pointerdown', function () {
+            that.toggleTriggerSelector();
+            that.setMode('settrigger');
+        }, that);
+        arr.push(stText);
         //applytrigger
-        let atText = this.add.text(50, 100+spacing*5, 'APPLY TRIGGER', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        let atText = this.add.text(50, 100+spacing*6, 'APPLY TRIGGER', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
         atText.setOrigin(0,0.5);
         atText.setInteractive({ cursor: 'pointer' });
         atText.sceneToStart = '';
         atText.on('pointerdown', function () {
-            that.setMode('trigger');
+            if (!that.currentOnTrigger || !that.currentDoTrigger){
+                that.toggleModeSelector();
+            }
+            that.setMode('applytrigger');
         }, that);
         arr.push(atText);
         //cleartriggers
-        let ctText = this.add.text(50, 100+spacing*6, 'CLEAR TRIGGER', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        let ctText = this.add.text(50, 100+spacing*7, 'CLEAR TRIGGER', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
         ctText.setOrigin(0,0.5);
         ctText.setInteractive({ cursor: 'pointer' });
         ctText.sceneToStart = '';
@@ -842,6 +683,61 @@ class MapGen extends Phaser.Scene {
         arr.push(ctText);
 
         this.modeSelectorContainer.add(arr);
+    }
+    doTriggerButton(x,y,trigger){
+        var text = this.add.text(x, y, trigger, { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        text.setOrigin(0,0.5);
+        text.setInteractive({ cursor: 'pointer' });
+        text.doTrigger = trigger
+        return text;
+    }
+    onTriggerButton(x,y,trigger){
+        var text = this.add.text(x, y, trigger, { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true);
+        text.setOrigin(0,0.5);
+        text.setInteractive({ cursor: 'pointer' });
+        text.onTrigger = trigger;
+        return text;
+    }
+    setupTriggerSelector ()
+    {
+        let that = this;
+        this.triggerSelectorContainer = this.add.container();
+        this.triggerSelectorContainer.visible = false;
+        let gfx = this.add.graphics();
+        let arr = [gfx];
+        gfx.fillStyle(0x000000,1);
+        gfx.fillRect(0,0,1920,1080);
+
+        var onTriggers = [
+            'arrival',
+            'up',
+            'down',
+            'left',
+            'right',
+            'interact'
+        ];
+
+        var doTriggers = [
+            'changeMap',
+            'blockMovement',
+            'downwardHop',
+            'leftHop',
+            'rightHop',
+            'jumpToTile',
+            'playSound',
+            'playMusic'
+        ];
+        let spacing = 50;
+
+        arr.push(this.add.text(50, 100, 'ON:', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true));
+        for (var i = 0; i < onTriggers.length;i++){
+            arr.push(this.onTriggerButton(50,300+spacing*i,onTriggers[i]));
+        }
+        arr.push(this.add.text(960, 100, 'DO:', { fontFamily: mainObj.fonts[0], fontSize: 32, color: mainObj.palette[4][1] }).setShadow(2,2, mainObj.palette[3][1], 2, false, true));
+        for (var i = 0; i < doTriggers.length;i++){
+            arr.push(this.doTriggerButton(960,300+spacing*i,doTriggers[i]));
+        }
+        this.triggerSelectorContainer.add(arr);
     }
 
 }

@@ -22,13 +22,13 @@
         this.horizontalTiles = Math.floor(1920/this.TILE_SIZE+1);
         this.verticalTiles = Math.floor(1080/this.TILE_SIZE+1);
         this.sb = false;
+        this.st = false;
+        this.data = {};
     };
 
     TileMap.prototype.init = function(data) {
-        if (data.mapid == ''){
-            this.fullSectorSize = this.TILE_SIZE*this.SECTOR_TILES;
-            this.sectors = {};
-            var s = this.getSector(0,0);
+        console.log(data);
+        if (!data.mapid){
         }else{
             this.name = data.mapid;
             this.fullSectorSize = this.TILE_SIZE*this.SECTOR_TILES;
@@ -38,6 +38,8 @@
                 var sectorCoords = this.getXY(sector);
                 var s = this.getSector(sectorCoords.x*this.fullSectorSize,sectorCoords.y*this.fullSectorSize,data.mapData[sector]);
             }
+            this.newTile = this.tileIndex[0][0];
+            this.oldTile = this.tileIndex[0][0];
         }
         for (var i = 0; i < this.horizontalTiles;i++){
             if (typeof this.tileIndex[i] == 'undefined'){
@@ -51,8 +53,6 @@
                 }
             }
         }
-        this.newTile = this.tileIndex[0][0];
-        this.oldTile = this.tileIndex[0][0];
     };
     TileMap.prototype.getXY = function(string){
         var x = '';
@@ -79,7 +79,6 @@
     };
     TileMap.prototype.showBlocked = function(){
 
-
     };
     TileMap.prototype.getSector = function(x,y,data){
         //gets the sector at position x,y
@@ -104,7 +103,7 @@
         y = this.newY-this.oldY;
         if (x < 0){//moved to the left
             for (var i = x;i < 0;i++){
-                for (var j = -this.verticalTiles;j <= this.verticalTiles;j++){
+                for (var j = 0;j <= this.verticalTiles;j++){
                     var tile = this.getTileAt(this.oldX+i,this.oldY+j);
                     if (tile){tile.setSprite();}
                     var tile2 = this.getTileAt(this.horizontalTiles+this.newX+Math.abs(i),this.oldY+j);
@@ -113,17 +112,17 @@
             }
         }else if (x > 0){//moved to the right
             for (var i = x;i > 0;i--){
-                for (var j = -this.verticalTiles;j <= this.verticalTiles;j++){
+                for (var j = 0;j <= this.verticalTiles;j++){
                     var tile = this.getTileAt(this.horizontalTiles+this.oldX+i,this.oldY+j);
                     if (tile){tile.setSprite();}
-                    var tile2 = this.getTileAt(-this.horizontalTiles+this.newX-i,this.oldY+j);
+                    var tile2 = this.getTileAt(this.newX-i,this.oldY+j);
                     if (tile2){tile2.destroy()}
                 }
             }
         }
         if (y < 0){//moved up
             for (var i = y;i < 0;i++){
-                for (var j = -this.horizontalTiles;j <= this.horizontalTiles;j++){
+                for (var j = 0;j <= this.horizontalTiles;j++){
                     var tile = this.getTileAt(this.newX+j,this.oldY+i);
                     if (tile){tile.setSprite()}
                     var tile2 = this.getTileAt(this.newX+j,this.newY+this.verticalTiles+Math.abs(i));
@@ -132,10 +131,10 @@
             }
         }else if (y > 0){//moved down
             for (var i = y;i > 0;i--){
-                for (var j = -this.horizontalTiles;j <= this.horizontalTiles;j++){
+                for (var j = 0;j <= this.horizontalTiles;j++){
                     var tile = this.getTileAt(this.newX+j,this.verticalTiles+this.oldY+i);
                     if (tile){tile.setSprite()}
-                    var tile2 = this.getTileAt(this.newX+j,this.newY-this.verticalTiles-i);
+                    var tile2 = this.getTileAt(this.newX+j,this.newY-i);
                     if (tile2){tile2.destroy()}
                 }
             }
@@ -174,9 +173,9 @@
                 var newTile = new Tile();
                 if (data){
                     var d = {}
-                    d.x = i;
-                    d.y = j;
-                    d.sectorId = x + 'x' + y;
+                    d.x = x*this.SECTOR_TILES+i;
+                    d.y = y*this.SECTOR_TILES+j;
+                    d.sectorId = i + 'x' + j;
                     d.resource = data.tiles[i][j].resource;
                     d.open = (typeof data.tiles[i][j].open == 'undefined') ? 0 : data.tiles[i][j].open;
                     d.triggers = (typeof data.tiles[i][j].triggers == 'undefined') ? [] : data.tiles[i][j].triggers;
@@ -185,8 +184,8 @@
                 }else{
                     newTile.init({
                         sectorId: x + 'x' + y,
-                        x: i,
-                        y: j,
+                        x: x*this.SECTOR_TILES+i,
+                        y: y*this.SECTOR_TILES+j,
                         resource: this.defaultTile,
                         open: true,
                         triggers: [],
@@ -263,6 +262,13 @@
         }
         return this.tileIndex[x][y];
     };
+    TileMap.prototype.setTint = function(x,y){
+        for (var i in this.visibleTiles){
+            for (var j in this.visibleTiles[i]){
+                this.visibleTiles[i][j].setTint();
+            }
+        }
+    };
 
     window.TileMap = TileMap;
 })(window);
@@ -288,10 +294,10 @@
             this.triggers = data.triggers;
             let secCoords = this.map.getXY(this.sectorId);
             this.pos = {
-                x: secCoords.x*this.map.fullSectorSize+this.x*this.map.TILE_SIZE,
-                y: secCoords.y*this.map.fullSectorSize+this.y*this.map.TILE_SIZE
+                x: this.x*this.map.TILE_SIZE,
+                y: this.y*this.map.TILE_SIZE
             }
-            this.map.addTileAt(this,secCoords.x*this.map.SECTOR_TILES+this.x,secCoords.y*this.map.SECTOR_TILES+this.y);
+            this.map.addTileAt(this,this.x,this.y);
 
             /*this.setSprite(this.resource);
             if (data.overlayResource){
@@ -304,11 +310,38 @@
     };
     Tile.prototype.setOpen = function(b){
         this.open = b;
-        if (!this.open && this.sprite){
-            this.sprite.tint = 0xf78d86;
+        this.setTint();
+    }
+    Tile.prototype.addTrigger = function(t){
+        console.log(t);
+        console.log(this.triggers);
+        let hastrigger = false;
+        for (let i = 0; i < this.triggers.length;i++){
+            if (t.on == this.triggers[i].on && t.do == this.triggers[i].do){
+                hastrigger = true;
+            }
         }
-        if (this.open){
-            this.sprite.tnt = 0xFFFFFF;
+        if (!hastrigger){
+            this.triggers.push(t);
+            this.sprite.tint = 0x80aaff;
+        }
+    }
+    Tile.prototype.clearTriggers = function(){
+        this.triggers = [];
+        this.sprite.tint = 0xFFFFFF;
+    }
+    Tile.prototype.setTint = function(){
+        if (!this.sprite){
+            return;
+        }
+        if (this.map.sb && !this.open){
+            this.sprite.tint = 0xf78d86;
+        }else{
+            if (this.map.st && this.triggers.length > 0){
+                this.sprite.tint = 0x80aaff;
+            }else{
+                this.sprite.tint = 0xFFFFFF;
+            }
         }
     }
     Tile.prototype.setResource = function(resource){
@@ -337,9 +370,7 @@
         this.sprite.y = this.pos.y;
         this.sprite.setOrigin(0,0);
         this.sprite.setScale(2,2);
-        if (!this.open){
-            this.sprite.tint = 0xf78d86;
-        }
+        this.setTint();
         this.map.worldContainer.add(this.sprite);
         this.setOverlaySprite();
     };
@@ -361,16 +392,22 @@
         this.map.worldContainer.add(this.overlaySprite);
     };
     Tile.prototype.destroy = function(){
+        try{
+            if (this.map.worldContainer.exists(this.overlaySprite)){
+                this.map.worldContainer.remove(this.overlaySprite);
+                this.overlaySprite.destroy();
+            }
+            if (this.map.worldContainer.exists(this.sprite)){
+                this.map.worldContainer.remove(this.sprite);
+                this.sprite.destroy();
+            }
+            if (this.map.visibleTiles[this.x][this.y]){
+                delete this.map.visibleTiles[this.x][this.y];
+            }
+        }catch(e){
 
-        if (this.map.worldContainer.exists(this.overlaySprite)){
-            this.map.worldContainer.remove(this.overlaySprite);
-            this.overlaySprite.destroy();
+            console.log(this);
         }
-        if (this.map.worldContainer.exists(this.sprite)){
-            this.map.worldContainer.remove(this.sprite);
-            this.sprite.destroy();
-        }
-        delete this.map.visibleTiles[this.x][this.y];
     }
     Tile.prototype.getTileData = function(){
         var data = {}
